@@ -1,0 +1,46 @@
+a {
+    font-weight: var(--fontWeightNormal);
+    color: var(--anchorColor);
+    text-decoration: inherit;
+}
+
+a:hover {
+    color: var(--assistColor);
+}
+
+button {
+    border-radius: var(--buttonPrimary-border-radius);
+    border: var(--buttonPrimary-border);
+    padding: var(--buttonPrimary-padding);
+    font-size: var(--buttonPrimary-font-size);
+    font-weight: var(--buttonPrimary-font-weight);
+    font-family: var(--buttonPrimary-font-family);
+    background-color: var(--buttonPrimary-background-color);
+    cursor: var(--buttonPrimary-cursor);
+    transition: var(--buttonPrimary-transition);
+}
+
+button:hover {
+    border-color: var(--assistColor);
+}
+
+button:focus,
+button:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Light Mode Styles */
+@media (prefers-color-scheme: light) {
+    :root {
+        color: var(--secondaryColor);
+        background-color: var(--whiteColor);
+    }
+
+    a:hover {
+        color: var(--anchorColorLight);
+    }
+
+    button {
+        background-color: var(--whiteColor);
+    }
+}

@@ -1,0 +1,42 @@
+:root {
+    /* TYPOGRAPHY */
+    --fontPrimary: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    --fontSizeHeading: 3.2em;
+    --fontSizeNormal: 16px;
+    --fontWeightSmall: 200px;
+    --fontWeightNormal: 400px;
+  
+    /* COLORS */
+    /* TODO: replace these colors with actual colors */
+    --assistColor: #508991;
+    --assistColorLight: #eef3f4;
+    --primaryColor: #004346;
+    --whiteColor: #fff;
+    --secondaryColor: #172a3a;
+    --yellowColor: #f2c94c;
+    --formLight: #b5b5b5;
+    --ratingStarColor: #f2c94c;
+    --color: rgba(255, 255, 255, 0.87);
+    --backgroundColor: #242424;
+    --anchorColor: #0000FF;
+  
+    /* Anchor Colors */
+    --anchorColorHover: #FF6347;
+    --anchorColorLight: #8b8bf6;
+  
+    /* LINE HEIGHTS */
+    --lineHeightHeading: 2;
+    --lineHeightNormal: 1.5;
+    --lineHeightSmall: 1.15;
+  
+    /* Button Styles */
+    --buttonPrimary-border-radius: 8px;
+    --buttonPrimary-border: 1px solid transparent;
+    --buttonPrimary-padding: 0.6em 1.2em;
+    --buttonPrimary-font-size: 1em;
+    --buttonPrimary-font-weight: var(--fontWeightNormal);
+    --buttonPrimary-font-family: var(--fontPrimary);
+    --buttonPrimary-background-color: var(--backgroundColor);
+    --buttonPrimary-cursor: pointer;
+    --buttonPrimary-transition: border-color 0.25s;
+}
