@@ -1,20 +1,14 @@
 import DarkMode from "@mui/icons-material/DarkMode";
 import LightMode from "@mui/icons-material/LightMode";
 import IconButton from "@mui/material/IconButton";
-import { useColorScheme } from "@mui/material/styles";
+import { useTheme } from "@/hooks/useTheme";
 
 const ThemeToggleButton = () => {
-  const { colorScheme, setMode } = useColorScheme();
+  const { mode, toggleTheme } = useTheme();
 
   return (
-    <IconButton
-      disableRipple
-      onClick={() => {
-        setMode(colorScheme === "light" ? "dark" : "light");
-      }}
-      color="inherit"
-    >
-      {colorScheme === "dark" ? (
+    <IconButton disableRipple onClick={toggleTheme} color="inherit">
+      {mode === "dark" ? (
         <LightMode sx={{ width: 30, height: 30 }} />
       ) : (
         <DarkMode sx={{ width: 30, height: 30 }} />

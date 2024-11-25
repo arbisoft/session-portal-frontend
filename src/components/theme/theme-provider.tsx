@@ -4,21 +4,32 @@ import {
   createTheme,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material/styles";
-import { useMemo, PropsWithChildren } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useTheme } from "@/hooks/useTheme";
 
-function ThemeProvider(props: PropsWithChildren<{}>) {
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { mode } = useTheme();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const theme = useMemo(
     () =>
       createTheme({
-        cssVariables: {
-          colorSchemeSelector: "class",
+        palette: {
+          mode: isMounted ? mode : "light",
         },
-        colorSchemes: { light: true, dark: true },
       }),
-    []
+    [mode, isMounted]
   );
 
-  return <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>;
+  if (!isMounted) {
+    return null;
+  }
+
+  return <MuiThemeProvider theme={theme}>{children}</MuiThemeProvider>;
 }
 
 export default ThemeProvider;
