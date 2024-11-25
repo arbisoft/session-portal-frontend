@@ -4,6 +4,8 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import ThemeToggleButton from "@/components/theme-toggle-button";
 import Logo from "@/components/ASPLogo";
+import GoogleAuthButton from "@/components/google-auth-button";
+import GoogleAuthProvider from "@/services/google-auth/google-auth-provider";
 
 function SignIn() {
   return (
@@ -21,7 +23,9 @@ function SignIn() {
         </Box>
         <Box mb={20} width={"75%"}>
           <Box mb={5}>
-            <h1>Sign In Page</h1>
+            <GoogleAuthProvider>
+              <GoogleAuthButton />
+            </GoogleAuthProvider>
           </Box>
           <Box>
             <ThemeToggleButton />
