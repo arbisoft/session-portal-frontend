@@ -8,8 +8,8 @@ export const verifyGoogleToken = async (googleToken: string) => {
         token: googleToken,
       }
     );
-    if (response.status === 200 && response.data.user) {
-      return response.data.user;
+    if (response.status === 200) {
+      return response.data;
     } else {
       throw new Error("Invalid token or user not found");
     }

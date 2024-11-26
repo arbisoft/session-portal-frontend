@@ -1,21 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { TokenResponse, useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin, CodeResponse } from "@react-oauth/google";
 import { PageLoader } from "@/components/page-loader";
-import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import { useUserStore } from "@/stores/useUserStore";
+import Alert from "@mui/material/Alert";
 import { verifyGoogleToken } from "@/services/api/auth";
 import { StyledGoogleButton } from "./buttons/styled-google-button";
+import useAuthStore from "@/stores/useAuthStore";
+import { useRouter } from "next/navigation";
+import useLanguage from "@/services/i18n/use-language";
 
 export default function GoogleAuthButton() {
-  const { setUser } = useUserStore.getState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { fetchUser } = useAuthStore();
+  const router = useRouter();
+  const language = useLanguage();
 
-  const onSuccess = async (tokenResponse: TokenResponse) => {
-    if (!tokenResponse.access_token) {
+  const onSuccess = async (codeResponse: CodeResponse) => {
+    if (!codeResponse.code) {
       setError("Google login failed: No credential received.");
       setIsLoading(false);
       return;
@@ -23,9 +27,10 @@ export default function GoogleAuthButton() {
 
     try {
       setIsLoading(true);
-      const user = await verifyGoogleToken(tokenResponse.access_token);
-      setUser(user);
+      await verifyGoogleToken(codeResponse.code);
+      await fetchUser();
       setIsLoading(false);
+      router.replace(`/${language}/dashboard`);
     } catch (err) {
       setError(
         "Authentication Error: An error occurred while authenticating from the server."
@@ -42,7 +47,7 @@ export default function GoogleAuthButton() {
   const googleLoginHandler = useGoogleLogin({
     onSuccess: onSuccess,
     onError: onError,
-    flow: "implicit",
+    flow: "auth-code",
   });
 
   const handleCloseError = () => {

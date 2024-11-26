@@ -6,6 +6,7 @@ import ThemeToggleButton from "@/components/theme-toggle-button";
 import Logo from "@/components/ASPLogo";
 import GoogleAuthButton from "@/components/google-auth-button";
 import GoogleAuthProvider from "@/services/google-auth/google-auth-provider";
+import { withGuest } from "@/services/auth/route-protection";
 
 function SignIn() {
   return (
@@ -36,4 +37,4 @@ function SignIn() {
   );
 }
 
-export default SignIn;
+export default withGuest(SignIn);

@@ -16,6 +16,7 @@ import QueryClientProvider from "@/services/react-query/query-client-provider";
 import queryClient from "@/services/react-query/query-client";
 import ReactQueryDevtools from "@/services/react-query/react-query-devtools";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
+import { AuthProvider } from "@/services/auth/auth-provider";
 
 type Props = {
   params: { language: string };
@@ -46,12 +47,14 @@ export default function RootLayout({
         <InitColorSchemeScript />
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
-          <ThemeProvider>
-            <CssBaseline />
-            <SnackbarProvider maxSnack={3}>
-              <StoreLanguageProvider>{children}</StoreLanguageProvider>
-            </SnackbarProvider>
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider>
+              <CssBaseline />
+              <SnackbarProvider maxSnack={3}>
+                <StoreLanguageProvider>{children}</StoreLanguageProvider>
+              </SnackbarProvider>
+            </ThemeProvider>
+          </AuthProvider>
         </QueryClientProvider>
       </body>
     </html>

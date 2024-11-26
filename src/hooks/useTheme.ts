@@ -1,4 +1,3 @@
-// src/hooks/useTheme.ts
 import { useThemeStore } from "@/stores/useThemeStore";
 
 export const useTheme = () => {
