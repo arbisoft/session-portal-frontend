@@ -1,10 +1,14 @@
 import Card from "@mui/material/Card";
 import { cardContentClasses } from "@mui/material/CardContent";
+import { ratingClasses } from "@mui/material/Rating";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
+import { shouldForwardProp } from "@/utils/styleUtils";
+
 export const RecommendedVideoCardContainer = styled(Card, {
   name: "RecommendedVideoCardContainer",
+  shouldForwardProp,
 })<{ $width: string }>(({ theme, $width }) => {
   return css`
     display: inline-flex;
@@ -20,6 +24,10 @@ export const RecommendedVideoCardContainer = styled(Card, {
       gap: ${theme.spacing(10 / 8)};
       padding: 0;
 
+      :last-child {
+        padding-bottom: 10px;
+      }
+
       img {
         width: 113px;
         height: auto;
@@ -34,7 +42,7 @@ export const RecommendedVideoCardContainer = styled(Card, {
         .${typographyClasses.h5} {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
-          color: #fff;
+          color: ${theme.palette.colors.white};
           display: -webkit-box;
           font-size: 12px;
           font-style: normal;
@@ -47,7 +55,7 @@ export const RecommendedVideoCardContainer = styled(Card, {
         }
 
         .date-time {
-          color: #908e8e;
+          color: ${theme.palette.colors.gray};
           font-size: 12px;
           font-style: normal;
           font-weight: 500;
@@ -55,8 +63,12 @@ export const RecommendedVideoCardContainer = styled(Card, {
           letter-spacing: 0.4px;
 
           span {
-            color: #fff;
+            color: ${theme.palette.colors.white};
           }
+        }
+
+        .${ratingClasses.iconFilled} {
+          color: ${theme.palette.colors.gold};
         }
       }
     }
