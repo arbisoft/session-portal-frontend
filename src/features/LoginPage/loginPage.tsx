@@ -1,0 +1,96 @@
+"use client";
+
+import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
+import Box from "@mui/material/Box";
+import Image from "next/image";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import { useRouter } from "next/navigation";
+import useLanguage from "@/services/i18n/use-language";
+import { useEffect, useState } from "react";
+import { useProposalsMutation } from "@/redux/Login/loginSlice";
+import AlertModal from "@/components/AlertModal";
+import {
+  LoginButtonContainer,
+  LoginContainer,
+  LoginSubContainer,
+} from "./styled";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+
+export default function LoginPage() {
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+  const language = useLanguage();
+
+  const [login] = useProposalsMutation();
+
+  const onSuccess = async (credentialResponse: CredentialResponse) => {
+    if ("access_token" in credentialResponse) {
+      const response = await login({
+        auth_token: credentialResponse.access_token as string,
+      });
+      const errorState = response?.error as FetchBaseQueryError;
+
+      if (response.data) {
+        localStorage.setItem("access_token", response.data.access ?? "");
+        localStorage.setItem("refresh_token", response.data.refresh ?? "");
+        router.replace(`/${language}/`);
+      } else if (errorState) {
+        const errorMessage = errorState.data as string[];
+        setError(errorMessage[0]);
+      }
+    } else {
+      setError("Google login failed: No credential received.");
+      return;
+    }
+  };
+
+  const onError = () => {
+    setError("Authentication Error: Google login failed. Please try again.");
+  };
+
+  const googleLoginHandler = useGoogleLogin({
+    onSuccess: (response) => onSuccess(response as CredentialResponse),
+    onError: onError,
+  });
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      router.push(`/${language}/`);
+    }
+  }, [router]);
+
+  return (
+    <LoginContainer>
+      <LoginSubContainer>
+        <Image
+          height={33}
+          width={131}
+          src="/images/arbisoft-logo.png"
+          alt="arbisoft-logo"
+        />
+        <LoginButtonContainer>
+          <Button className="login-button" onClick={() => googleLoginHandler()}>
+            <Box className="button-content">
+              <Image
+                height={20}
+                width={20}
+                src="https://www.google.com/favicon.ico"
+                alt="google-logo"
+              />
+              <Typography color="#908E8E">Sign in with Google</Typography>
+            </Box>
+          </Button>
+        </LoginButtonContainer>
+      </LoginSubContainer>
+      {error && (
+        <AlertModal
+          handleCloseAlertModal={() => setError(null)}
+          errorMessage={error}
+        />
+      )}
+    </LoginContainer>
+  );
+}
