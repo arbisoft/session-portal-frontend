@@ -16,6 +16,7 @@ import QueryClientProvider from "@/services/react-query/query-client-provider";
 import queryClient from "@/services/react-query/query-client";
 import ReactQueryDevtools from "@/services/react-query/react-query-devtools";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
+import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 
 type Props = {
   params: { language: string };
@@ -49,7 +50,9 @@ export default function RootLayout({
           <ThemeProvider>
             <CssBaseline />
             <SnackbarProvider maxSnack={3}>
-              <StoreLanguageProvider>{children}</StoreLanguageProvider>
+              <StoreLanguageProvider>
+                <MainLayoutContainer>{children}</MainLayoutContainer>
+              </StoreLanguageProvider>
             </SnackbarProvider>
           </ThemeProvider>
         </QueryClientProvider>
