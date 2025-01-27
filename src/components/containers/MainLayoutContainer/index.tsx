@@ -1,10 +1,14 @@
 "use client";
 
 import React from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
 import { usePathname } from "next/navigation";
+import {
+  ContentContainer,
+  MainContainer,
+  MainStack,
+  RightBarContainer,
+  SidebarContainer,
+} from "@/components/layout/MainLayoutContainer.styled";
 
 type TMainLayoutContainer = {
   children: React.ReactNode;
@@ -12,24 +16,22 @@ type TMainLayoutContainer = {
 
 const MainLayoutContainer = ({ children }: TMainLayoutContainer) => {
   const pathname = usePathname();
-  const showRightBar = pathname.includes("/watch");
+  const showRightBar = pathname.includes("/");
 
   return (
-    <Container sx={{ height: "100svh" }}>
-      <Stack flexDirection="row" height="100%">
-        <Box height="100%" width="220px" border="1px solid #ddd"></Box>
+    <MainContainer>
+      <MainStack>
+        <SidebarContainer></SidebarContainer>
 
-        <Box flexGrow={1} height="100%" padding="2px">
-          {children}
-        </Box>
+        <ContentContainer>{children}</ContentContainer>
 
         {showRightBar && (
-          <Box height="100%" width="230px" border="1px solid #ddd">
+          <RightBarContainer>
             <h3>Suggested for You</h3>
-          </Box>
+          </RightBarContainer>
         )}
-      </Stack>
-    </Container>
+      </MainStack>
+    </MainContainer>
   );
 };
 

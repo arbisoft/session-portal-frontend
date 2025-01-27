@@ -50,6 +50,7 @@
     "react-hook-form": "^7.45.4",
     "react-i18next": "^15.0.0",
     "react-virtuoso": "4.12.0",
+    "styled-components": "^6.1.14",
     "typescript": "5.5.4",
     "yup": "^1.2.0"
   },
