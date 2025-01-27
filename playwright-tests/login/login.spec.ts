@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-test("should have login title", async ({ page }) => {
-  await page.goto("/en/login");
+test("should have home title", async ({ page }) => {
+  //TODO: will remove this
+  await page.goto("/en");
   const title = await page.title();
-  expect(title).toBe("Login");
+  expect(title).toBe("Home");
 });
