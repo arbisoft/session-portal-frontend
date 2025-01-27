@@ -41,8 +41,6 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { language: string };
 }) {
-  const clientId = process.env.NEXT_PUBLIC_CLIENT_ID;
-
   return (
     <html lang={language} dir={dir(language)}>
       <body>

@@ -60,7 +60,7 @@ export default function LoginPage() {
     if (token) {
       router.push(`/${language}/`);
     }
-  }, [router]);
+  }, [router, language]);
 
   return (
     <LoginContainer>
