@@ -16,8 +16,7 @@ import queryClient from "@/services/react-query/query-client";
 import ReactQueryDevtools from "@/services/react-query/react-query-devtools";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { Providers } from "@/redux/store/provider";
+import CssBaseline from "@mui/material/CssBaseline";
 
 type Props = {
   params: { language: string };
@@ -42,8 +41,6 @@ export default function RootLayout({
   children: React.ReactNode;
   params: { language: string };
 }) {
-  const clientId = process.env.NEXT_PUBLIC_CLIENT_ID;
-
   return (
     <html lang={language} dir={dir(language)}>
       <body>
