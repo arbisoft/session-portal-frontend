@@ -71,10 +71,7 @@ type AllType = {
   posts.details().sub.detail(42).sub.likes().key // ['posts', 'details', 'detail', 42, 'likes']
  */
 
-export function createQueryKeys<T extends Record<string, BodyType>>(
-  rootName: unknown[],
-  keys: T = {} as T
-): T & AllType {
+export function createQueryKeys<T extends Record<string, BodyType>>(rootName: unknown[], keys: T = {} as T): T & AllType {
   return {
     all: () => ({
       key: rootName,

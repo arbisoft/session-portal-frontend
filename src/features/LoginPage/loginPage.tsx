@@ -1,21 +1,20 @@
 "use client";
 
-import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useEffect, useState } from "react";
+
 import Box from "@mui/material/Box";
-import Image from "next/image";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useRouter } from "next/navigation";
-import useLanguage from "@/services/i18n/use-language";
-import { useEffect, useState } from "react";
-import { useProposalsMutation } from "@/redux/Login/loginSlice";
-import AlertModal from "@/components/AlertModal";
-import {
-  LoginButtonContainer,
-  LoginContainer,
-  LoginSubContainer,
-} from "./styled";
+import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+import AlertModal from "@/components/AlertModal";
+import { useProposalsMutation } from "@/redux/Login/loginSlice";
+import useLanguage from "@/services/i18n/use-language";
+
+import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
@@ -65,32 +64,17 @@ export default function LoginPage() {
   return (
     <LoginContainer>
       <LoginSubContainer>
-        <Image
-          height={33}
-          width={131}
-          src="/images/arbisoft-logo.png"
-          alt="arbisoft-logo"
-        />
+        <Image height={33} width={131} src="/images/arbisoft-logo.png" alt="arbisoft-logo" />
         <LoginButtonContainer>
           <Button className="login-button" onClick={() => googleLoginHandler()}>
             <Box className="button-content">
-              <Image
-                height={20}
-                width={20}
-                src="https://www.google.com/favicon.ico"
-                alt="google-logo"
-              />
+              <Image height={20} width={20} src="https://www.google.com/favicon.ico" alt="google-logo" />
               <Typography color="#908E8E">Sign in with Google</Typography>
             </Box>
           </Button>
         </LoginButtonContainer>
       </LoginSubContainer>
-      {error && (
-        <AlertModal
-          handleCloseAlertModal={() => setError(null)}
-          errorMessage={error}
-        />
-      )}
+      {error && <AlertModal handleCloseAlertModal={() => setError(null)} errorMessage={error} />}
     </LoginContainer>
   );
 }

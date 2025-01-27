@@ -1,14 +1,10 @@
 "use client";
 
-import React, { FC } from "react";
-import { useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef } from "react";
+
 import { MediaPlayer, MediaProvider } from "@vidstack/react";
 import { Poster, type MediaPlayerInstance } from "@vidstack/react";
-
-import {
-  defaultLayoutIcons,
-  DefaultVideoLayout,
-} from "@vidstack/react/player/layouts/default";
+import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 

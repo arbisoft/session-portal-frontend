@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import VideoPlayer from "./videoPlayer";
+
 import { VideoPlayerProps } from "./types";
+import VideoPlayer from "./videoPlayer";
 
 const meta: Meta<VideoPlayerProps> = {
   title: "Components/VideoPlayer",
@@ -12,8 +13,8 @@ const meta: Meta<VideoPlayerProps> = {
         type: "select",
         options: [true, "anonymous", "use-credentials", null, undefined],
       },
-      description:
-        "Defines how the media element handles cross-origin requests, thereby enabling the configuration of the CORS requests for the element's fetched data.",
+      description: `Defines how the media element handles cross-origin requests, thereby enabling the configuration
+        of the CORS requests for the element's fetched data.`,
     },
     height: {
       control: "text",
@@ -21,13 +22,13 @@ const meta: Meta<VideoPlayerProps> = {
     },
     playsInline: {
       control: "boolean",
-      description:
-        'Whether the video is to be played "inline", that is within the element\'s playback area. Note that setting this to false does not imply that the video will always be played in fullscreen. Depending on the provider, changing this prop may cause the player to completely reset.',
+      description: `Whether the video is to be played "inline", that is within the element's playback area. 
+        Note that setting this to false does not imply that the video will always be played in fullscreen. 
+        Depending on the provider, changing this prop may cause the player to completely reset.`,
     },
     posterAlt: {
       control: "text",
-      description:
-        "♿ ARIA: Provides alternative information for a poster image if a user for some reason cannot view it.",
+      description: "♿ ARIA: Provides alternative information for a poster image if a user for some reason cannot view it.",
     },
     posterSrc: {
       control: "text",
@@ -71,8 +72,7 @@ export const Default: Story = {
     title: "Sprite Fight",
     videoSrc: "https://files.vidstack.io/sprite-fight/720p.mp4",
     posterSrc: "https://files.vidstack.io/sprite-fight/poster.webp",
-    posterAlt:
-      "Girl walks into campfire with gnomes surrounding her friend ready for their next meal!",
+    posterAlt: "Girl walks into campfire with gnomes surrounding her friend ready for their next meal!",
   },
 };
 
@@ -97,8 +97,7 @@ export const NoPoster: Story = {
 export const DifferentVideo: Story = {
   args: {
     ...Default.args,
-    videoSrc:
-      "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4",
+    videoSrc: "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4",
   },
 };
 
@@ -115,7 +114,7 @@ export const WithVideoEndedCallback: Story = {
   args: {
     ...Default.args,
     onVideoEnded: () => {
-      console.log("Video ended!");
+      console.warn("Video ended!");
     },
   },
 };

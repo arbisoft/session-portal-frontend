@@ -1,16 +1,11 @@
 "use client";
 
-import {
-  createTheme,
-  ThemeProvider as MuiThemeProvider,
-  Shadows,
-  useTheme,
-} from "@mui/material/styles";
 import { useMemo, PropsWithChildren } from "react";
+
+import { createTheme, ThemeProvider as MuiThemeProvider, Shadows, useTheme } from "@mui/material/styles";
 
 function ThemeProvider(props: PropsWithChildren<{}>) {
   const defaultTheme = useTheme();
-
   const theme = useMemo(
     () =>
       createTheme({

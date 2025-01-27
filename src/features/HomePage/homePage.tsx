@@ -1,8 +1,10 @@
 "use client";
 
+import { FC, useEffect } from "react";
+
 import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
-import { FC, useEffect } from "react";
+
 import useLanguage from "@/services/i18n/use-language";
 
 const HomePage: FC<{ description: string }> = ({ description }) => {
