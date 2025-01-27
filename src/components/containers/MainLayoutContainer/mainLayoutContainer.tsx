@@ -1,14 +1,10 @@
 "use client";
 
 import React from "react";
+
 import { usePathname } from "next/navigation";
-import {
-  MainContainer,
-  MainStack,
-  SidebarContainer,
-  RightBarContainer,
-  ContentContainer,
-} from "./styled";
+
+import { MainContainer, MainStack, SidebarContainer, RightBarContainer, ContentContainer } from "./styled";
 
 type TMainLayoutContainer = {
   children: React.ReactNode;

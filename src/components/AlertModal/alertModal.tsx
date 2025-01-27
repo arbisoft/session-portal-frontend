@@ -1,7 +1,9 @@
 import { FC } from "react";
+
 import Snackbar from "@mui/material/Snackbar";
-import { AlertModalProps } from "./types";
+
 import { AlertContainer } from "./styled";
+import { AlertModalProps } from "./types";
 
 const AlertModal: FC<AlertModalProps> = ({
   handleCloseAlertModal,

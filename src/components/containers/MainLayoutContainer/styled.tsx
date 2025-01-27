@@ -1,7 +1,7 @@
-import { styled, css } from "@mui/material/styles";
-import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
+import { styled, css } from "@mui/material/styles";
 
 export const MainContainer = styled(Container, {
   name: "MainContainer",

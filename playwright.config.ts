@@ -1,11 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
-
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
  */
-import dotenv from "dotenv";
-dotenv.config({ path: ".env.local" });
+import { config } from "dotenv";
+
+config({ path: ".env.local" });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -75,9 +75,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: process.env.CI
-      ? "npm run build:e2e && npm run start"
-      : "npm run dev",
+    command: process.env.CI ? "npm run build:e2e && npm run start" : "npm run dev",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
   },

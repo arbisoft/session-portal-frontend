@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { getServerTranslation } from "@/services/i18n";
+
 import HomePage from "@/features/HomePage";
+import { getServerTranslation } from "@/services/i18n";
 
 type Props = {
   params: { language: string };

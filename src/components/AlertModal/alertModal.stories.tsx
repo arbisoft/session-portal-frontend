@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+
 import AlertModal from "./alertModal";
 import { AlertModalProps } from "./types";
 
@@ -13,8 +14,7 @@ const meta: Meta<AlertModalProps> = {
         type: "select",
         options: ["success", "info", "warning", "error"],
       },
-      description:
-        "The severity of the alert modal, indicating its purpose or importance.",
+      description: "The severity of the alert modal, indicating its purpose or importance.",
     },
     horizontal: {
       control: {
@@ -38,8 +38,7 @@ const meta: Meta<AlertModalProps> = {
     },
     handleCloseAlertModal: {
       control: false, // Disable the control as this is a function
-      description:
-        "Callback function triggered when the alert modal is closed.",
+      description: "Callback function triggered when the alert modal is closed.",
     },
   },
 };

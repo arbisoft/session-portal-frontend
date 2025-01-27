@@ -1,7 +1,7 @@
 import { login } from "@/endpoints";
+import { LoginResponse, LoginParams } from "@/models/Auth";
 
 import { baseApi } from "../baseApi";
-import { LoginResponse, LoginParams } from "@/models/Auth";
 
 export const proposalsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
