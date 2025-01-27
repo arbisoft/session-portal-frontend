@@ -3,12 +3,12 @@
 import React from "react";
 import { usePathname } from "next/navigation";
 import {
-  ContentContainer,
   MainContainer,
   MainStack,
-  RightBarContainer,
   SidebarContainer,
-} from "@/components/layout/MainLayoutContainer.styled";
+  RightBarContainer,
+  ContentContainer,
+} from "./styled";
 
 type TMainLayoutContainer = {
   children: React.ReactNode;
