@@ -1,11 +1,8 @@
+import acceptLanguage from "accept-language";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import acceptLanguage from "accept-language";
-import {
-  fallbackLanguage,
-  languages,
-  cookieName,
-} from "./services/i18n/config";
+
+import { fallbackLanguage, languages, cookieName } from "./services/i18n/config";
 
 acceptLanguage.languages([...languages]);
 
@@ -21,27 +18,18 @@ export function middleware(req: NextRequest) {
   }
 
   let language;
-  if (req.cookies.has(cookieName))
-    language = acceptLanguage.get(req.cookies.get(cookieName)?.value);
-  if (!language)
-    language = acceptLanguage.get(req.headers.get("Accept-Language"));
+  if (req.cookies.has(cookieName)) language = acceptLanguage.get(req.cookies.get(cookieName)?.value);
+  if (!language) language = acceptLanguage.get(req.headers.get("Accept-Language"));
   if (!language) language = fallbackLanguage;
 
   // Redirect if language in path is not supported
   if (!languages.some((loc) => req.nextUrl.pathname.startsWith(`/${loc}`))) {
-    return NextResponse.redirect(
-      new URL(
-        `/${language}${req.nextUrl.pathname}${req.nextUrl.search}`,
-        req.url
-      )
-    );
+    return NextResponse.redirect(new URL(`/${language}${req.nextUrl.pathname}${req.nextUrl.search}`, req.url));
   }
 
   if (req.headers.has("referer")) {
     const refererUrl = new URL(req.headers.get("referer") ?? "");
-    const languageInReferer = languages.find((l) =>
-      refererUrl.pathname.startsWith(`/${l}`)
-    );
+    const languageInReferer = languages.find((l) => refererUrl.pathname.startsWith(`/${l}`));
     const response = NextResponse.next();
     if (languageInReferer) response.cookies.set(cookieName, languageInReferer);
 

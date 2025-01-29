@@ -10,8 +10,7 @@ const rootReducer = combineReducers({
 
 const store = configureStore({
   devTools: process.env.NODE_ENV !== "production",
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat([baseApi.middleware]),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([baseApi.middleware]),
   reducer: rootReducer,
 });
 

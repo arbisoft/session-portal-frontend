@@ -1,28 +1,22 @@
 "use client";
 
-import i18next from "i18next";
 import { useEffect, useState } from "react";
-import {
-  initReactI18next,
-  useTranslation as useTranslationOriginal,
-} from "react-i18next";
-import resourcesToBackend from "i18next-resources-to-backend";
+
+import { use } from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
+import resourcesToBackend from "i18next-resources-to-backend";
+import { initReactI18next, useTranslation as useTranslationOriginal } from "react-i18next";
+
+import { runsOnServerSide } from "@/services/runs-on-server-side/runs-on-server-side";
+
 import { getOptions, languages } from "./config";
+import useLanguage from "./use-language";
 import useStoreLanguage from "./use-store-language";
 import useStoreLanguageActions from "./use-store-language-actions";
-import useLanguage from "./use-language";
-import { runsOnServerSide } from "../runs-on-server-side/runs-on-server-side";
 
-i18next
-  .use(initReactI18next)
+use(initReactI18next)
   .use(LanguageDetector)
-  .use(
-    resourcesToBackend(
-      (language: string, namespace: string) =>
-        import(`./locales/${language}/${namespace}.json`)
-    )
-  )
+  .use(resourcesToBackend((language: string, namespace: string) => import(`./locales/${language}/${namespace}.json`)))
   .init({
     ...getOptions(),
     lng: undefined, // Let detect the language on client side
