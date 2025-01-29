@@ -4,7 +4,7 @@ const nextConfig = {
     dirs: ["src", "playwright-tests"],
   },
   images: {
-    domains: ["www.google.com"],
+    remotePatterns: [{ hostname: "www.google.com" }],
   },
 };
 
