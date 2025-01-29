@@ -15,6 +15,7 @@ import QueryClientProvider from "@/services/react-query/query-client-provider";
 import queryClient from "@/services/react-query/query-client";
 import ReactQueryDevtools from "@/services/react-query/react-query-devtools";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
+import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Providers } from "@/redux/store/provider";
 
@@ -47,18 +48,17 @@ export default function RootLayout({
     <html lang={language} dir={dir(language)}>
       <body>
         <InitColorSchemeScript />
-        <GoogleOAuthProvider clientId={clientId ? clientId : ""}>
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <ThemeProvider>
-              <SnackbarProvider maxSnack={3}>
-                <StoreLanguageProvider>
-                  <Providers>{children}</Providers>
-                </StoreLanguageProvider>
-              </SnackbarProvider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </GoogleOAuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <ThemeProvider>
+            <CssBaseline />
+            <SnackbarProvider maxSnack={3}>
+              <StoreLanguageProvider>
+                <MainLayoutContainer>{children}</MainLayoutContainer>
+              </StoreLanguageProvider>
+            </SnackbarProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
