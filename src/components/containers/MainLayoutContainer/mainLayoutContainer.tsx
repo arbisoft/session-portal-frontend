@@ -2,6 +2,8 @@
 
 import React, { isValidElement, ReactNode } from "react";
 
+import Navbar from "@/components/Navbar";
+
 import { MainContainer, LeftSidebar, RightSidebar, ContentContainer } from "./styled";
 
 type TMainLayoutContainer = {
@@ -11,18 +13,21 @@ type TMainLayoutContainer = {
 
 const MainLayoutContainer = ({ children, rightSidebar }: TMainLayoutContainer) => {
   return (
-    <MainContainer maxWidth="xl">
-      <LeftSidebar />
-      <ContentContainer container>{children}</ContentContainer>
-      {isValidElement(rightSidebar) && (
-        <RightSidebar
-          // Hide on small screens
-          sx={{ display: { xs: "none", md: "block" } }}
-        >
-          {rightSidebar}
-        </RightSidebar>
-      )}
-    </MainContainer>
+    <>
+      <Navbar />
+      <MainContainer maxWidth="xl">
+        <LeftSidebar />
+        <ContentContainer container>{children}</ContentContainer>
+        {isValidElement(rightSidebar) && (
+          <RightSidebar
+            // Hide on small screens
+            sx={{ display: { xs: "none", md: "block" } }}
+          >
+            {rightSidebar}
+          </RightSidebar>
+        )}
+      </MainContainer>
+    </>
   );
 };
 
