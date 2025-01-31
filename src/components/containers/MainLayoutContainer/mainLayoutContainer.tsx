@@ -4,6 +4,8 @@ import React from "react";
 
 import { usePathname } from "next/navigation";
 
+import Navbar from "@/components/Navbar";
+
 import { MainContainer, MainStack, SidebarContainer, RightBarContainer, ContentContainer } from "./styled";
 
 type TMainLayoutContainer = {
@@ -15,19 +17,22 @@ const MainLayoutContainer = ({ children }: TMainLayoutContainer) => {
   const showRightBar = pathname.includes("/");
 
   return (
-    <MainContainer>
-      <MainStack>
-        <SidebarContainer></SidebarContainer>
+    <>
+      <Navbar />
+      <MainContainer>
+        <MainStack>
+          <SidebarContainer></SidebarContainer>
 
-        <ContentContainer>{children}</ContentContainer>
+          <ContentContainer>{children}</ContentContainer>
 
-        {showRightBar && (
-          <RightBarContainer>
-            <h3>Suggested for You</h3>
-          </RightBarContainer>
-        )}
-      </MainStack>
-    </MainContainer>
+          {showRightBar && (
+            <RightBarContainer>
+              <h3>Suggested for You</h3>
+            </RightBarContainer>
+          )}
+        </MainStack>
+      </MainContainer>
+    </>
   );
 };
 
