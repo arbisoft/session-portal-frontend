@@ -8,7 +8,6 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { dir } from "i18next";
 import type { Metadata } from "next";
 
-import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import SnackbarProvider from "@/components/snackbar-provider";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 import ThemeProvider from "@/components/theme/theme-provider";
@@ -56,9 +55,7 @@ export default function RootLayout({
             <Providers>
               <ThemeProvider>
                 <SnackbarProvider maxSnack={3}>
-                  <StoreLanguageProvider>
-                    <MainLayoutContainer>{children}</MainLayoutContainer>
-                  </StoreLanguageProvider>
+                  <StoreLanguageProvider>{children}</StoreLanguageProvider>
                 </SnackbarProvider>
               </ThemeProvider>
             </Providers>

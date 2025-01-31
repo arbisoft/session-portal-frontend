@@ -1,51 +1,43 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Stack from "@mui/material/Stack";
+import Grid2 from "@mui/material/Grid2";
 import { styled, css } from "@mui/material/styles";
 
 export const MainContainer = styled(Container, {
   name: "MainContainer",
-})(() => {
+})(({ theme }) => {
   return css`
-    height: 100vh;
+    display: flex;
+    min-height: 100vh;
+    padding: ${theme.spacing(2, 0)};
   `;
 });
 
-export const MainStack = styled(Stack, {
-  name: "MainStack",
+export const LeftSidebar = styled(Box, {
+  name: "LeftSidebar",
 })(() => {
   return css`
-    flex-direction: row;
-    height: 100%;
+    background-color: var(--mui-palette-primary-main);
+    flex-shrink: 0;
+    width: 240px;
   `;
 });
 
-export const SidebarContainer = styled(Box, {
-  name: "SidebarContainer",
-})(() => {
-  return css`
-    height: 100%;
-    width: 220px;
-    border: 1px solid #ddd;
-  `;
-});
-
-export const ContentContainer = styled(Box, {
+export const ContentContainer = styled(Grid2, {
   name: "ContentContainer",
-})(() => {
+})(({ theme }) => {
   return css`
-    flex-grow: 1;
-    height: 100%;
-    padding: 2px;
+    align-content: flex-start;
+    flex: 1;
+    padding: ${theme.spacing(0, 2)};
   `;
 });
 
-export const RightBarContainer = styled(Box, {
-  name: "RightBarContainer",
+export const RightSidebar = styled(Box, {
+  name: "RightSidebar",
 })(() => {
   return css`
-    height: 100%;
-    width: 230px;
-    border: 1px solid #ddd;
+    flex-shrink: 0;
+    width: 280px;
   `;
 });

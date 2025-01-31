@@ -1,32 +1,27 @@
 "use client";
 
-import React from "react";
+import React, { isValidElement, ReactNode } from "react";
 
-import { usePathname } from "next/navigation";
-
-import { MainContainer, MainStack, SidebarContainer, RightBarContainer, ContentContainer } from "./styled";
+import { MainContainer, LeftSidebar, RightSidebar, ContentContainer } from "./styled";
 
 type TMainLayoutContainer = {
   children: React.ReactNode;
+  rightSidebar?: ReactNode;
 };
 
-const MainLayoutContainer = ({ children }: TMainLayoutContainer) => {
-  const pathname = usePathname();
-  const showRightBar = pathname.includes("/");
-
+const MainLayoutContainer = ({ children, rightSidebar }: TMainLayoutContainer) => {
   return (
-    <MainContainer>
-      <MainStack>
-        <SidebarContainer></SidebarContainer>
-
-        <ContentContainer>{children}</ContentContainer>
-
-        {showRightBar && (
-          <RightBarContainer>
-            <h3>Suggested for You</h3>
-          </RightBarContainer>
-        )}
-      </MainStack>
+    <MainContainer maxWidth="xl">
+      <LeftSidebar />
+      <ContentContainer container>{children}</ContentContainer>
+      {isValidElement(rightSidebar) && (
+        <RightSidebar
+          // Hide on small screens
+          sx={{ display: { xs: "none", md: "block" } }}
+        >
+          {rightSidebar}
+        </RightSidebar>
+      )}
     </MainContainer>
   );
 };

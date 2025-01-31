@@ -1,9 +1,9 @@
 "use client";
-
 import { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
@@ -21,6 +21,7 @@ export default function LoginPage() {
 
   const router = useRouter();
   const language = useLanguage();
+  const theme = useTheme();
 
   const [login] = useProposalsMutation();
 
@@ -64,12 +65,12 @@ export default function LoginPage() {
   return (
     <LoginContainer>
       <LoginSubContainer>
-        <Image height={33} width={131} src="/images/arbisoft-logo.png" alt="arbisoft-logo" />
+        <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />
         <LoginButtonContainer>
           <Button className="login-button" onClick={() => googleLoginHandler()}>
             <Box className="button-content">
               <Image height={20} width={20} src="https://www.google.com/favicon.ico" alt="google-logo" />
-              <Typography color="#908E8E">Sign in with Google</Typography>
+              <Typography color={theme.palette.colors.gray}>Sign in with Google</Typography>
             </Box>
           </Button>
         </LoginButtonContainer>
