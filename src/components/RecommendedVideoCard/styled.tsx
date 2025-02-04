@@ -5,6 +5,7 @@ import { typographyClasses } from "@mui/material/Typography";
 
 export const RecommendedVideoCardContainer = styled(Card, {
   name: "RecommendedVideoCardContainer",
+  shouldForwardProp: (prop) => prop !== "$width",
 })<{ $width: string }>(({ theme, $width }) => {
   return css`
     display: inline-flex;
