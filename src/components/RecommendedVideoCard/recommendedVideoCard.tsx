@@ -20,14 +20,14 @@ const RecommendedVideoCard: FC<RecommendedVideoCardProps> = ({
   width = "100%",
 }) => {
   return (
-    <RecommendedVideoCardContainer $width={width} className={className}>
+    <RecommendedVideoCardContainer $width={width} className={className} data-testid="recommended-video-card">
       <CardContent>
         <Image alt={title} height={72} src={imgUrl ?? "/assets/images/temp-youtube-logo.webp"} width={113} />
         <Box className="video-detail">
           <Typography variant="h5" component="div" title={title}>
             {title}
           </Typography>
-          <Typography variant="body2" className="date-time">
+          <Typography variant="body2" className="date-time" data-testid="date-time">
             {date} <span>/ {duration}</span>
           </Typography>
           <Rating readOnly size="small" value={ratingValue} emptyIcon={<StarIcon fontSize="inherit" />} />
