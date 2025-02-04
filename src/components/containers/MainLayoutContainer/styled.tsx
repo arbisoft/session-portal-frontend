@@ -26,7 +26,6 @@ export const SidebarContainer = styled(Box, {
   return css`
     height: 100%;
     width: 220px;
-    border: 1px solid #ddd;
   `;
 });
 
@@ -36,7 +35,7 @@ export const ContentContainer = styled(Box, {
   return css`
     flex-grow: 1;
     height: 100%;
-    padding: 2px;
+    padding: 2px 20px;
   `;
 });
 
