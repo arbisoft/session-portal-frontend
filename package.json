@@ -14,7 +14,9 @@
     "generate:resource": "hygen generate resource",
     "postgenerate:resource": "npm run lint -- --fix",
     "sb": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "jest",
+    "test:cov": "jest --coverage"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -71,20 +73,30 @@
     "@storybook/nextjs": "^8.1.10",
     "@storybook/react": "^8.1.10",
     "@storybook/test": "^8.1.10",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/imap": "^0.8.40",
+    "@types/jest": "^29.5.14",
     "@types/js-cookie": "^3.0.3",
     "@types/mailparser": "^3.4.4",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^7.0.0",
+    "babel-jest": "^29.7.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.2",
     "eslint-plugin-storybook": "^0.11.0",
     "husky": "^9.0.10",
     "hygen": "^6.2.11",
+    "identity-obj-proxy": "^3.0.0",
     "is-ci": "^3.0.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.2.5",
     "release-it": "^17.1.1",
-    "storybook": "^8.1.10"
+    "storybook": "^8.1.10",
+    "ts-node": "^10.9.2"
   },
   "release-it": {
     "git": {
