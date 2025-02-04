@@ -4,6 +4,8 @@ import React from "react";
 
 import { usePathname } from "next/navigation";
 
+import Sidebar from "@/components/Sidebar";
+
 import { MainContainer, MainStack, SidebarContainer, RightBarContainer, ContentContainer } from "./styled";
 
 type TMainLayoutContainer = {
@@ -17,7 +19,9 @@ const MainLayoutContainer = ({ children }: TMainLayoutContainer) => {
   return (
     <MainContainer>
       <MainStack>
-        <SidebarContainer></SidebarContainer>
+        <SidebarContainer>
+          <Sidebar handleSiebarToggle={() => {}} />
+        </SidebarContainer>
 
         <ContentContainer>{children}</ContentContainer>
 
