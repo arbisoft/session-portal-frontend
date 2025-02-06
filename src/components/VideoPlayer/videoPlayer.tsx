@@ -14,7 +14,7 @@ import "./styles.css";
 const VideoPlayer: FC<VideoPlayerProps> = ({
   className,
   crossOrigin = true,
-  height = "300px",
+  height,
   onVideoEnded,
   playsInline = true,
   posterAlt,
