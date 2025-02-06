@@ -20,7 +20,7 @@ const MainLayoutContainer = ({ children }: TMainLayoutContainer) => {
     <MainContainer>
       <MainStack>
         <SidebarContainer>
-          <Sidebar handleSiebarToggle={() => {}} />
+          <Sidebar />
         </SidebarContainer>
 
         <ContentContainer>{children}</ContentContainer>
