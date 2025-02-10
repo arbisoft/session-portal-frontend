@@ -69,7 +69,7 @@ export default function LoginPage() {
         <LoginButtonContainer>
           <Button className="login-button" onClick={() => googleLoginHandler()}>
             <Box className="button-content">
-              <Image height={20} width={20} src="https://www.google.com/favicon.ico" alt="google-logo" />
+              <Image height={20} width={20} src="/assets/svgs/google.svg" alt="google-logo" />
               <Typography color={theme.palette.colors.gray}>Sign in with Google</Typography>
             </Box>
           </Button>

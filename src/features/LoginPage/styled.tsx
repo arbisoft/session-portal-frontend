@@ -5,10 +5,10 @@ export const LoginContainer = styled(Box, {
   name: "LoginContainer",
 })(
   () => css`
-    align-self: center;
-    height: 100vh;
     align-items: center;
+    align-self: center;
     display: flex;
+    height: 100vh;
     justify-content: center;
   `
 );
@@ -17,15 +17,14 @@ export const LoginSubContainer = styled(Box, {
   name: "LoginSubContainer",
 })(
   ({ theme }) => css`
-    width: 450px;
+    align-items: center;
+    background-color: ${theme.palette.colors.white};
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 50px;
     gap: 30px;
-    border: 1px solid black;
-    border-radius: 12px;
-    background-color: ${theme.palette.colors.white};
+    padding: 50px;
+    width: 450px;
   `
 );
 
@@ -33,21 +32,22 @@ export const LoginButtonContainer = styled(Box, {
   name: "LoginButtonContainer",
 })(
   ({ theme }) => css`
-    width: 100%;
-    border: 1px solid ${theme.palette.colors.gray};
     border-radius: 6px;
+    border: 1px solid ${theme.palette.colors.gray};
+    width: 100%;
 
     .login-button {
       padding: 0;
+      text-transform: unset;
       width: 100%;
     }
 
     .button-content {
+      align-items: center;
       display: flex;
       gap: 8px;
-      padding: 10px 30px;
-      align-items: center;
       justify-content: center;
+      padding: 10px 30px;
       width: 100%;
     }
   `

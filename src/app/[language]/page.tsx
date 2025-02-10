@@ -24,4 +24,3 @@ export default async function Home({ params }: Props) {
       <Typography>{t("description")}</Typography>
     </HomePage>
   );
-}
