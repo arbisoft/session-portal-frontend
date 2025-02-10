@@ -14,6 +14,16 @@ function ThemeProvider(props: PropsWithChildren<{}>) {
   const theme = useMemo(
     () =>
       createTheme({
+        palette: {
+          primary: {
+            main: "#18465e", // TODO: will change colors when colors are provided
+            contrastText: "#fff",
+          },
+          secondary: {
+            main: "#eb6009", // TODO: will change colors are provided
+            contrastText: "#fff",
+          },
+        },
         cssVariables: {
           colorSchemeSelector: "class",
         },
