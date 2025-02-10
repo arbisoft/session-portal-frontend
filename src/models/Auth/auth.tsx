@@ -1,11 +1,11 @@
 export type LoginResponse = {
-  access: string;
-  refresh: string;
+  access: string | null;
+  refresh: string | null;
   user_info: {
-    avatar: string;
-    first_name: string;
-    full_name: string;
-    last_name: string;
+    avatar: string | null;
+    first_name: string | null;
+    full_name: string | null;
+    last_name: string | null;
   };
 };
 

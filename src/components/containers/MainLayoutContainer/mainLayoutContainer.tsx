@@ -4,6 +4,7 @@ import React, { isValidElement, ReactNode } from "react";
 
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar/sidebar";
+import useAuth from "@/hooks/useAuth";
 
 import { MainContainer, LeftSidebar, RightSidebar, ContentContainer } from "./styled";
 
@@ -13,6 +14,8 @@ type TMainLayoutContainer = {
 };
 
 const MainLayoutContainer = ({ children, rightSidebar }: TMainLayoutContainer) => {
+  useAuth();
+
   return (
     <>
       <Navbar />
