@@ -1,13 +1,13 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { FC, ReactNode, useEffect } from "react";
 
-import Typography from "@mui/material/Typography";
 import { useRouter } from "next/navigation";
 
+import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import useLanguage from "@/services/i18n/use-language";
 
-const HomePage: FC<{ description: string }> = ({ description }) => {
+const HomePage: FC<{ children: ReactNode }> = ({ children }) => {
   const router = useRouter();
   const language = useLanguage();
 
@@ -18,7 +18,7 @@ const HomePage: FC<{ description: string }> = ({ description }) => {
     }
   }, [language, router]);
 
-  return <Typography variant="h3">{description}</Typography>;
+  return <MainLayoutContainer>{children}</MainLayoutContainer>;
 };
 
 export default HomePage;
