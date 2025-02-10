@@ -21,6 +21,14 @@ function ThemeProvider(props: PropsWithChildren<{}>) {
         shadows: [...defaultTheme.shadows].map(() => "none") as Shadows,
         palette: {
           ...defaultTheme.palette,
+          primary: {
+            main: "#18465e", // TODO: will change colors when colors are provided
+            contrastText: "#fff",
+          },
+          secondary: {
+            main: "#eb6009", // TODO: will change colors are provided
+            contrastText: "#fff",
+          },
           colors: {
             ...colors,
           },
