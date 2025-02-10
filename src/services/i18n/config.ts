@@ -5,7 +5,7 @@ export const cookieName = "i18next";
 
 export function getOptions(language: string = fallbackLanguage, namespace = defaultNamespace) {
   return {
-    debug: process.env.NODE_ENV === "development",
+    debug: false,
     supportedLngs: languages,
     fallbackLng: fallbackLanguage,
     lng: language,

@@ -15,8 +15,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function Home({ params }: Props) {
-  const { t } = await getServerTranslation(params.language, "home");
-
-  return <HomePage description={t("description")} />;
+export default function Home() {
+  return <HomePage />;
 }
