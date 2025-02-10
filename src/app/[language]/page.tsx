@@ -1,4 +1,3 @@
-import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
 
 import HomePage from "@/features/HomePage";
@@ -16,11 +15,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function Home({ params }: Props) {
-  const { t } = await getServerTranslation(params.language, "home");
-
-  return (
-    <HomePage>
-      <Typography>{t("description")}</Typography>
-    </HomePage>
-  );
+export default async function Home() {
+  return <HomePage />;
+}

@@ -1,18 +1,15 @@
 "use client";
 
-import { FC, ReactNode, useEffect } from "react";
-
+import { useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
-
 import { useRouter } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import useLanguage from "@/services/i18n/use-language";
 
-
-const HomePage: FC = () => {
+const HomePage = () => {
   const router = useRouter();
   const language = useLanguage();
 
@@ -25,14 +22,13 @@ const HomePage: FC = () => {
     }
   }, [language, router]);
 
-
-  return 
+  return (
     <MainLayoutContainer>
       <Box width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center">
         <Skeleton variant="rectangular" width={450} height={203} sx={{ borderRadius: "12px" }} />
       </Box>
-  </MainLayoutContainer>;
-
+    </MainLayoutContainer>
+  );
 };
 
 export default HomePage;
