@@ -17,7 +17,6 @@ export const LeftSidebar = styled(Box, {
   name: "LeftSidebar",
 })(() => {
   return css`
-    background-color: var(--mui-palette-primary-main);
     flex-shrink: 0;
     width: 240px;
   `;
