@@ -3,7 +3,7 @@
 import React, { isValidElement, ReactNode } from "react";
 
 import Navbar from "@/components/Navbar";
-import Sidebar from "@/components/Sidebar/sidebar";
+import Sidebar from "@/components/Sidebar";
 
 import { MainContainer, LeftSidebar, RightSidebar, ContentContainer } from "./styled";
 
