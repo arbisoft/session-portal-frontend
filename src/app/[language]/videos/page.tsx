@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import VideosPage from "@/features/VideosPage";
+import VideosListingPage from "@/features/VideosListingPage";
 import { getServerTranslation } from "@/services/i18n";
 
 type Props = {
@@ -16,5 +16,5 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default function Videos() {
-  return <VideosPage />;
+  return <VideosListingPage />;
 }
