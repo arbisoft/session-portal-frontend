@@ -14,7 +14,13 @@ function ThemeProvider(props: PropsWithChildren<{}>) {
   const theme = useMemo(
     () =>
       createTheme({
+        cssVariables: {
+          colorSchemeSelector: "class",
+        },
+        colorSchemes: { light: true, dark: true },
+        shadows: [...defaultTheme.shadows].map(() => "none") as Shadows,
         palette: {
+          ...defaultTheme.palette,
           primary: {
             main: "#18465e", // TODO: will change colors when colors are provided
             contrastText: "#fff",
@@ -23,14 +29,6 @@ function ThemeProvider(props: PropsWithChildren<{}>) {
             main: "#eb6009", // TODO: will change colors are provided
             contrastText: "#fff",
           },
-        },
-        cssVariables: {
-          colorSchemeSelector: "class",
-        },
-        colorSchemes: { light: true, dark: true },
-        shadows: [...defaultTheme.shadows].map(() => "none") as Shadows,
-        palette: {
-          ...defaultTheme.palette,
           colors: {
             ...colors,
           },

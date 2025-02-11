@@ -3,6 +3,7 @@
 import React, { isValidElement, ReactNode } from "react";
 
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar/sidebar";
 
 import { MainContainer, LeftSidebar, RightSidebar, ContentContainer } from "./styled";
 
@@ -16,7 +17,9 @@ const MainLayoutContainer = ({ children, rightSidebar }: TMainLayoutContainer) =
     <>
       <Navbar />
       <MainContainer maxWidth="xl">
-        <LeftSidebar />
+        <LeftSidebar>
+          <Sidebar />
+        </LeftSidebar>
         <ContentContainer container>{children}</ContentContainer>
         {isValidElement(rightSidebar) && (
           <RightSidebar
