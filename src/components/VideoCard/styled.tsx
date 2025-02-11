@@ -1,6 +1,5 @@
 import Card from "@mui/material/Card";
 import { cardContentClasses } from "@mui/material/CardContent";
-import { ratingClasses } from "@mui/material/Rating";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
@@ -62,10 +61,6 @@ export const VideoCardContainer = styled(Card, {
           font-weight: 500;
           line-height: 17px;
           letter-spacing: 0.4px;
-        }
-
-        .${ratingClasses.iconFilled} {
-          color: ${theme.palette.colors.gold};
         }
       }
     }

@@ -19,7 +19,7 @@ const VideoCard: FC<VideoCardProps> = ({ className, date, imgUrl, organizerName,
           <Typography variant="h3" component="div" title={title}>
             {title}
           </Typography>
-          <Typography variant="body2" className="organizer-name" data-testid="video-card-organizer-name">
+          <Typography variant="body2" className="organizer-name" data-testid="video-card-organizer">
             {organizerName}
           </Typography>
           <Typography variant="body2" className="date-time" data-testid="video-card-date-time">
