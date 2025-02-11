@@ -1,17 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import { faker } from "@faker-js/faker";
+import Chip from "@mui/material/Chip";
+import Typography from "@mui/material/Typography";
 import { format } from "date-fns";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import VideoCard from "@/components/VideoCard";
 import { VideoCardProps } from "@/components/VideoCard/types";
 
-import { VideoListingContainer } from "./styled";
+import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
+
+const filterTitles: string[] = Array(5)
+  .fill("")
+  .map(() => faker.lorem.words(1));
 
 const VideosListingPage = () => {
+  const [selectedTitle, setSelectedTitle] = useState("");
   const videoCards: VideoCardProps[] = Array(10)
     .fill("")
     .map(() => ({
@@ -23,6 +30,22 @@ const VideosListingPage = () => {
 
   return (
     <MainLayoutContainer>
+      <FilterBox>
+        <Typography variant="h2" component="div" title={selectedTitle}>
+          {selectedTitle}
+        </Typography>
+        <TagsContainer>
+          {filterTitles.map((title) => (
+            <Chip
+              key={title}
+              label={title}
+              size="small"
+              variant={selectedTitle === title ? "filled" : "outlined"}
+              onClick={() => setSelectedTitle(title)}
+            />
+          ))}
+        </TagsContainer>
+      </FilterBox>
       <VideoListingContainer>
         {videoCards.map((videoCard, index) => (
           <VideoCard key={index} {...videoCard} />
