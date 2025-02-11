@@ -117,6 +117,69 @@ npx playwright install
 ### 3. **View Coverage**:
    After running tests, check the `./coverage/` directory for detailed coverage reports.
 
+# **Using `nvm use` to Switch to Node.js 22 LTS**
+
+## **Overview**
+This guide explains how to use `nvm` (Node Version Manager) to switch to **Node.js 22 LTS** and ensure that the correct version is being used in your project.
+
+## **1. Install NVM (If Not Installed)**
+If you don’t have `nvm` installed, follow these steps:
+
+### **For macOS & Linux:**
+Run the following command:
+```sh
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+```
+Then restart your terminal or run:
+```sh
+source ~/.nvm/nvm.sh
+```
+
+### **For Windows:**
+Use **nvm-windows**: [Download Here](https://github.com/coreybutler/nvm-windows/releases)
+
+## **2. Verify NVM Installation**
+To check if `nvm` is installed, run:
+```sh
+nvm --version
+```
+You should see the version number displayed.
+
+## **3. Install and Use Node.js 22 LTS**
+Run the following command to install Node.js 22 LTS:
+```sh
+nvm install 22
+```
+
+Once installed, switch to Node.js 22:
+```sh
+nvm use 22
+```
+
+To verify that the correct version is active, run:
+```sh
+node -v
+```
+This should output something like:
+```sh
+v22.x.x
+```
+
+## **4. Set Node.js 22 as the Default Version (Optional)**
+If you want Node.js 22 LTS to be the default version when opening a new terminal, set it globally:
+```sh
+nvm alias default 22
+```
+Now, every time you open a new terminal session, Node.js 22 will be used.
+
+## **6. Troubleshooting**
+- If `nvm use 22` does not work, make sure you have installed Node.js 22 using `nvm install 22`.  
+- If `nvm` commands are not recognized, restart your terminal or run:
+  ```sh
+  source ~/.nvm/nvm.sh
+  ```
+- On Windows, ensure you're using `nvm-windows` and check `nvm list` for installed versions.
+
 ## Inspiration
 
 Boilerplate Inspiration (https://github.com/brocoders/extensive-react-boilerplate).
