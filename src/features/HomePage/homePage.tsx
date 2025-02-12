@@ -13,12 +13,12 @@ const HomePage: FC = () => {
   const language = useLanguage();
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      router.push(`/${language}/login/`);
-    } else {
-      router.push(`/${language}/videos/`);
-    }
+    // const token = localStorage.getItem("access_token");
+    // if (!token) {
+    //   router.push(`/${language}/login/`);
+    // } else {
+    router.push(`/${language}/videos/`);
+    // }
   }, [language, router]);
 
   return (
