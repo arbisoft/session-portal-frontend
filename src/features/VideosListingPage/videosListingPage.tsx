@@ -9,6 +9,8 @@ import Typography from "@mui/material/Typography";
 import { format } from "date-fns";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import FeaturedVideoCard from "@/components/FeaturedVideoCard/featuredVideoCard";
+import { FeaturedVideoCardProps } from "@/components/FeaturedVideoCard/types";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { VideoCardProps } from "@/components/VideoCard/types";
@@ -25,6 +27,16 @@ const selectMenuItems: string[] = Array(3)
 
 const VideosListingPage = () => {
   const [selectedTitle, setSelectedTitle] = useState("");
+
+  const featuredVideoCard: FeaturedVideoCardProps = {
+    isVisible: true,
+    date: format(faker.date.past(), "MMM dd, yyyy"),
+    description: faker.lorem.words(20),
+    imgUrl: "/assets/images/temp-youtube-logo.webp",
+    title: faker.lorem.words(10),
+    organizerName: faker.lorem.words(10),
+  };
+
   const videoCards: VideoCardProps[] = Array(10)
     .fill("")
     .map(() => ({
@@ -60,6 +72,9 @@ const VideosListingPage = () => {
           ))}
         </TagsContainer>
       </FilterBox>
+
+      <FeaturedVideoCard {...featuredVideoCard} />
+
       <VideoListingContainer>
         {videoCards.map((videoCard, index) => (
           <VideoCard key={index} {...videoCard} />
