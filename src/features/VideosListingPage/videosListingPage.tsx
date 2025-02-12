@@ -1,19 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { faker } from "@faker-js/faker";
 import Chip from "@mui/material/Chip";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { format } from "date-fns";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { VideoCardProps } from "@/components/VideoCard/types";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
 
 const filterTitles: string[] = Array(5)
+  .fill("")
+  .map(() => faker.lorem.words(1));
+
+const selectMenuItems: string[] = Array(3)
   .fill("")
   .map(() => faker.lorem.words(1));
 
@@ -28,12 +34,20 @@ const VideosListingPage = () => {
       organizerName: faker.lorem.words(10),
     }));
 
+  // TODO: remove this when we have data from the api
+  useEffect(() => {
+    setSelectedTitle(filterTitles[0]);
+  }, []);
+
   return (
     <MainLayoutContainer>
       <FilterBox>
-        <Typography variant="h2" component="div" title={selectedTitle}>
-          {selectedTitle}
-        </Typography>
+        <Stack>
+          <Typography variant="h2" component="div" title={selectedTitle}>
+            {selectedTitle}
+          </Typography>
+          <Select label={"Sort by"} menuItems={selectMenuItems} handleChange={() => {}} />
+        </Stack>
         <TagsContainer>
           {filterTitles.map((title) => (
             <Chip
