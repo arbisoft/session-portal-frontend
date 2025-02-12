@@ -1,0 +1,34 @@
+export interface EventDetail {
+  duration: number;
+  event: Event;
+  file_size: number;
+  status: string;
+  thumbnail: string;
+  title: string;
+  video_file: string;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+}
+
+interface Event {
+  description: string;
+  event_time: string;
+  event_type: string;
+  id: number;
+  is_featured: boolean;
+  publisher: Publisher;
+  status: string;
+  tags: string[];
+  thumbnail: string;
+  title: string;
+  workstream_id: string;
+}
+
+interface Publisher {
+  first_name: string;
+  id: number;
+  last_name: string;
+}
