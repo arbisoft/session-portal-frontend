@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { chipClasses } from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
+import Stack, { stackClasses } from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
@@ -19,19 +19,28 @@ export const FilterBox = styled(Box, {
   name: "FilterBox",
 })(
   ({ theme }) => css`
-    .${typographyClasses.h2} {
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      color: ${theme.palette.colors.white};
-      display: -webkit-box;
-      font-size: 24px;
-      font-style: normal;
-      font-weight: 500;
-      letter-spacing: 0.4px;
-      line-height: 28px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    width: 100%;
+    .${stackClasses.root} {
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
       margin-bottom: 10px;
+
+      .${typographyClasses.h2} {
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        color: ${theme.palette.colors.white};
+        display: -webkit-box;
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 500;
+        letter-spacing: 0.4px;
+        line-height: 28px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 10px;
+        text-transform: capitalize;
+      }
     }
   `
 );
@@ -48,6 +57,7 @@ export const TagsContainer = styled(Box, {
       border-radius: 6px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       cursor: pointer;
+      text-transform: capitalize;
       &.${chipClasses.filled} {
         background: ${theme.palette.colors.white};
         color: rgba(0, 0, 0, 0.7);

@@ -3,13 +3,11 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
 
-// Define the metadata for the component
 const meta: Meta<VideoCardProps> = {
-  title: "Components/RecommendedVideoCard", // Storybook title
-  component: VideoCard, // The component itself
-  tags: ["autodocs"], // Optional: Enable autodocs for better documentation
+  title: "Components/RecommendedVideoCard",
+  component: VideoCard,
+  tags: ["autodocs"],
   argTypes: {
-    // Define controls for the props
     title: {
       control: "text",
       description: "The title of the video",
@@ -35,10 +33,8 @@ const meta: Meta<VideoCardProps> = {
 
 export default meta;
 
-// Define the template for the stories
 type Story = StoryObj<VideoCardProps>;
 
-// Default story
 export const Default: Story = {
   args: {
     title: "Sample Video Title",
@@ -48,7 +44,6 @@ export const Default: Story = {
   },
 };
 
-// Story with a long title
 export const LongTitle: Story = {
   args: {
     ...Default.args,

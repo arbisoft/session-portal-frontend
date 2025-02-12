@@ -9,7 +9,7 @@ export const MainContainer = styled(Container, {
   return css`
     display: flex;
     min-height: 100vh;
-    padding: ${theme.spacing(2, 0)};
+    padding: ${theme.spacing(4, 0)};
   `;
 });
 
