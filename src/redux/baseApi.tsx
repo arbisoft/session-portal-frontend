@@ -1,4 +1,6 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+import customBaseQuery from "./customBaseQuery";
 
 export const REDUCER_PATH = "api";
 
@@ -6,7 +8,7 @@ export const tagTypes = [] as const; // TODO: will add tags here
 
 export const baseApi = createApi({
   reducerPath: REDUCER_PATH,
-  baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BASE_URL + "/api/v1" }),
+  baseQuery: customBaseQuery,
   tagTypes,
   endpoints: () => ({}),
 });
