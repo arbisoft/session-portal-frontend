@@ -38,9 +38,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
         </Box>
       </CardContent>
     </FeaturedVideoCardContainer>
-  ) : (
-    <></>
-  );
+  ) : null;
 };
 
 export default FeaturedVideoCard;

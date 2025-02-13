@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import { format } from "date-fns";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
-import FeaturedVideoCard from "@/components/FeaturedVideoCard/featuredVideoCard";
+import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import { FeaturedVideoCardProps } from "@/components/FeaturedVideoCard/types";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
