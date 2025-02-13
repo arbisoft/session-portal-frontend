@@ -3,9 +3,9 @@
 exports[`RecommendedVideoCard should matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-1d48sfh-MuiPaper-root-MuiCard-root-RecommendedVideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-18r2xxk-MuiPaper-root-MuiCard-root-RecommendedVideoCardContainer-root"
     data-testid="recommended-video-card"
-    style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"
+    style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
   >
     <div
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
@@ -25,13 +25,13 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
         class="video-detail MuiBox-root css-0"
       >
         <div
-          class="MuiTypography-root MuiTypography-h5 css-16xl4zq-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 css-1ayj0vs-MuiTypography-root"
           title="Sample Video Title"
         >
           Sample Video Title
         </div>
         <p
-          class="MuiTypography-root MuiTypography-body2 date-time css-7ctihp-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body2 date-time css-ljgvyt-MuiTypography-root"
           data-testid="date-time"
         >
           Jan 01, 2024 
@@ -41,7 +41,7 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
         </p>
         <span
           aria-label="4 Stars"
-          class="MuiRating-root MuiRating-sizeSmall Mui-readOnly MuiRating-readOnly css-mrxd2j-MuiRating-root"
+          class="MuiRating-root MuiRating-sizeSmall Mui-readOnly MuiRating-readOnly css-1ynetyc-MuiRating-root"
           role="img"
         >
           <span>
@@ -50,7 +50,7 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1ckov0h-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
                 data-testid="StarIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -67,7 +67,7 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1ckov0h-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
                 data-testid="StarIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -84,7 +84,7 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1ckov0h-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
                 data-testid="StarIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -101,7 +101,7 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1ckov0h-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
                 data-testid="StarIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -114,11 +114,11 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
           </span>
           <span>
             <span
-              class="MuiRating-icon MuiRating-iconEmpty css-9xw0na-MuiRating-icon"
+              class="MuiRating-icon MuiRating-iconEmpty css-h06ynj-MuiRating-icon"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-1ckov0h-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
                 data-testid="StarIcon"
                 focusable="false"
                 viewBox="0 0 24 24"

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { customRender as render, screen } from "@/jest/utils/testUtils";
 
 import RecommendedVideoCard from "./recommendedVideoCard";
 import { RecommendedVideoCardProps } from "./types";
