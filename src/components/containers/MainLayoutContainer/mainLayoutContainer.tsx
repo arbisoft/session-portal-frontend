@@ -17,15 +17,12 @@ const MainLayoutContainer = ({ children, rightSidebar }: TMainLayoutContainer) =
     <>
       <Navbar />
       <MainContainer maxWidth="xl">
-        <LeftSidebar>
+        <LeftSidebar data-testid="left-sidebar">
           <Sidebar />
         </LeftSidebar>
         <ContentContainer container>{children}</ContentContainer>
         {isValidElement(rightSidebar) && (
-          <RightSidebar
-            // Hide on small screens
-            sx={{ display: { xs: "none", md: "block" } }}
-          >
+          <RightSidebar sx={{ display: { xs: "none", md: "block" } }} data-testid="right-sidebar">
             {rightSidebar}
           </RightSidebar>
         )}

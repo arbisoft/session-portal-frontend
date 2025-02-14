@@ -3,6 +3,8 @@ import Stack from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
+import { shouldForwardProp } from "@/utils/styleUtils";
+
 export const SidebarContainer = styled(Box, {
   name: "SidebarContainer",
 })(() => {
@@ -24,7 +26,8 @@ export const MenuStack = styled(Stack, {
 
 export const MenuItem = styled(Stack, {
   name: "MenuItem",
-})<{ isSelected: boolean }>((props) => {
+  shouldForwardProp,
+})<{ $isSelected: boolean }>(({ $isSelected }) => {
   return css`
     flex-direction: row;
     gap: 10px;
@@ -32,7 +35,7 @@ export const MenuItem = styled(Stack, {
     cursor: pointer;
     color: #fff;
     border-radius: 8px;
-    background-color: ${props.isSelected ? "rgba(255, 255, 255, 0.2)" : "transparent"};
+    background-color: ${$isSelected ? "rgba(255, 255, 255, 0.2)" : "transparent"};
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.2);

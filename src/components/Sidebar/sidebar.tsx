@@ -20,7 +20,7 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
     <SidebarContainer>
       <MenuStack>
         {sidebarItems.map((item) => (
-          <MenuItem key={item} isSelected={item === selected} onClick={() => handleClick(item)}>
+          <MenuItem key={item} $isSelected={item === selected} onClick={() => handleClick(item)}>
             <Image src="/assets/images/sidebar-item-icon.svg" alt={item} width={18} height={12} />
             <Text>{item}</Text>
           </MenuItem>
