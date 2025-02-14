@@ -58,7 +58,7 @@ function Navbar() {
             <Search>
               <StyledInputBase placeholder="Search..." inputProps={{ "aria-label": "search" }} />
               <SearchIconWrapper>
-                <SearchIcon />
+                <SearchIcon data-testid="SearchIcon" />
               </SearchIconWrapper>
             </Search>
           </Box>
