@@ -2,6 +2,7 @@
 
 import { useMemo, PropsWithChildren } from "react";
 
+import GlobalStyles from "@mui/material/GlobalStyles";
 import { createTheme, ThemeProvider as MuiThemeProvider, Shadows, useTheme } from "@mui/material/styles";
 import { Roboto_Condensed } from "next/font/google";
 
@@ -40,7 +41,21 @@ function ThemeProvider(props: PropsWithChildren<{}>) {
     [defaultTheme.shadows]
   );
 
-  return <MuiThemeProvider theme={theme}>{props.children}</MuiThemeProvider>;
+  return (
+    <MuiThemeProvider theme={theme}>
+      <GlobalStyles
+        styles={{
+          "html,body,#__next": {
+            backgroundColor: "unset",
+            fontFamily: theme.typography.fontFamily,
+            height: "100%",
+            width: "100%",
+          },
+        }}
+      />
+      {props.children}
+    </MuiThemeProvider>
+  );
 }
 
 export default ThemeProvider;

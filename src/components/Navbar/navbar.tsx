@@ -12,12 +12,20 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import { useDispatch, useSelector } from "react-redux";
+
+import { selectUserInfo } from "@/redux/login/selectors";
+import { loginActions } from "@/redux/login/slice";
+import { persistor } from "@/redux/store/configureStore";
 
 import { Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+const settings = ["Profile", "Account", "Dashboard"];
 
 function Navbar() {
+  const dispatch = useDispatch();
+  const userInfo = useSelector(selectUserInfo);
+
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -26,6 +34,13 @@ function Navbar() {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = async () => {
+    dispatch(loginActions.logout());
+    await persistor.purge();
+    persistor.persist();
+    handleCloseUserMenu();
   };
 
   return (
@@ -50,7 +65,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 0, width: 240, display: "flex", justifyContent: "flex-end" }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar variant="rounded" alt="Remy Sharp" />
+                <Avatar variant="rounded" alt={userInfo.full_name ?? ""} src={userInfo.avatar ?? ""} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -72,6 +87,9 @@ function Navbar() {
                   <Typography>{setting}</Typography>
                 </MenuItem>
               ))}
+              <MenuItem onClick={handleLogout}>
+                <Typography>Logout</Typography>
+              </MenuItem>
             </Menu>
           </Box>
         </Toolbar>

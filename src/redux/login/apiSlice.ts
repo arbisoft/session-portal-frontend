@@ -1,11 +1,10 @@
 import { login } from "@/endpoints";
 import { LoginResponse, LoginParams } from "@/models/Auth";
+import { baseApi } from "@/redux/baseApi";
 
-import { baseApi } from "../baseApi";
-
-export const proposalsApi = baseApi.injectEndpoints({
+export const loginApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    proposals: builder.mutation<LoginResponse, LoginParams>({
+    login: builder.mutation<LoginResponse, LoginParams>({
       query: ({ auth_token }) => ({
         url: login.login,
         method: "POST",
@@ -15,4 +14,4 @@ export const proposalsApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useProposalsMutation } = proposalsApi;
+export const { useLoginMutation } = loginApi;
