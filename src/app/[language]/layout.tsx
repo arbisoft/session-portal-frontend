@@ -8,7 +8,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { dir } from "i18next";
 import type { Metadata } from "next";
 
-import SnackbarProvider from "@/components/snackbar-provider";
+import { NotificationProvider } from "@/components/Notification";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 import ThemeProvider from "@/components/theme/theme-provider";
 import { Providers } from "@/redux/store/provider";
@@ -54,9 +54,9 @@ export default function RootLayout({
             <ReactQueryDevtools initialIsOpen={false} />
             <Providers>
               <ThemeProvider>
-                <SnackbarProvider maxSnack={3}>
+                <NotificationProvider>
                   <StoreLanguageProvider>{children}</StoreLanguageProvider>
-                </SnackbarProvider>
+                </NotificationProvider>
               </ThemeProvider>
             </Providers>
           </QueryClientProvider>

@@ -10,7 +10,7 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import AlertModal from "@/components/AlertModal";
+import { useNotification } from "@/components/Notification";
 import useAuth from "@/hooks/useAuth";
 import { useLoginMutation } from "@/redux/login/apiSlice";
 import useLanguage from "@/services/i18n/use-language";
@@ -23,8 +23,8 @@ export default function LoginPage() {
   const router = useRouter();
   const language = useLanguage();
   const theme = useTheme();
+  const { dispatch } = useNotification();
 
-  const [error, setError] = useState<string | null>(null);
   const [isLogin, setIsLogin] = useState(false);
 
   const [login] = useLoginMutation();
@@ -41,17 +41,36 @@ export default function LoginPage() {
         router.replace(`/${language}/videos`);
       } else if (errorState) {
         const errorMessage = errorState.data as string[];
-        setError(errorMessage[0]);
+        if (errorMessage) {
+          dispatch({
+            type: "SHOW_NOTIFICATION",
+            payload: {
+              message: errorMessage[0],
+              severity: "error",
+            },
+          });
+        }
       }
     } else {
-      setError("Google login failed: No credential received.");
+      dispatch({
+        type: "SHOW_NOTIFICATION",
+        payload: {
+          message: "Google login failed: No credential received.",
+          severity: "error",
+        },
+      });
       return;
     }
   };
 
   const onError = () => {
-    setIsLogin(false);
-    setError("Authentication Error: Google login failed. Please try again.");
+    dispatch({
+      type: "SHOW_NOTIFICATION",
+      payload: {
+        message: "Authentication Error: Google login failed. Please try again.",
+        severity: "error",
+      },
+    });
   };
 
   const googleLoginHandler = useGoogleLogin({
@@ -79,7 +98,6 @@ export default function LoginPage() {
           </Button>
         </LoginButtonContainer>
       </LoginSubContainer>
-      {error && <AlertModal handleCloseAlertModal={() => setError(null)} errorMessage={error} />}
     </LoginContainer>
   );
 }
