@@ -6,7 +6,7 @@ import VideoCard from "@/components/VideoCard";
 const VideosPage = () => {
   return (
     <MainLayoutContainer>
-      <VideoCard />
+      <></>
     </MainLayoutContainer>
   );
 };
