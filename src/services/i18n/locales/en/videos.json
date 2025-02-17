@@ -1,0 +1,7 @@
+{
+  "title": "Videos",
+  "description": "Videos of session portal!",
+  "dropdown": {
+    "defaultFilter": "Sort By"
+  }
+}
