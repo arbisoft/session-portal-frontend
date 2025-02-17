@@ -103,6 +103,13 @@ export const TagsContainer = styled(Box, {
       .${chipClasses.icon} {
         margin: 0;
       }
+
+      &.icon {
+        padding-left: ${theme.spacing()};
+        max-width: unset;
+        min-height: unset;
+        width: unset;
+      }
     }
   `
 );
