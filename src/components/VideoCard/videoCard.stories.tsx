@@ -12,17 +12,21 @@ const meta: Meta<VideoCardProps> = {
       control: "text",
       description: "The title of the video",
     },
-    organizerName: {
+    workstream_id: {
       control: "text",
       description: "The organizer/creator of the video",
     },
-    date: {
+    event_time: {
       control: "text",
       description: "The upload date of the video",
     },
-    imgUrl: {
+    thumbnail: {
       control: "text",
       description: "The URL of the video thumbnail image",
+    },
+    tags: {
+      control: "object",
+      description: "The tags available in the video",
     },
     width: {
       control: "text",
@@ -38,9 +42,10 @@ type Story = StoryObj<VideoCardProps>;
 export const Default: Story = {
   args: {
     title: "Sample Video Title",
-    organizerName: "Arbisoft",
-    date: "2023-10-01",
-    imgUrl: "/assets/images/temp-youtube-logo.webp",
+    workstream_id: "Arbisoft",
+    event_time: "2023-10-01",
+    thumbnail: "/assets/images/temp-youtube-logo.webp",
+    tags: ["Workshop", "Ollama", "AI"],
   },
 };
 

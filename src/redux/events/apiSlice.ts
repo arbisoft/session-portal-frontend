@@ -1,5 +1,7 @@
-import { EventDetail, Tag } from "@/models/Events";
+import { EventDetail, Tag, AllEventResponse } from "@/models/Events";
 import { baseApi } from "@/redux/baseApi";
+
+import { TAllEventsPyaload } from "./types";
 
 export const eventsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -15,7 +17,27 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    allEvents: builder.query<AllEventResponse, TAllEventsPyaload>({
+      query: (params) => ({
+        url: "/events/all/",
+        method: "GET",
+        params,
+      }),
+    }),
+    eventsTypes: builder.query<Tag[], void>({
+      query: () => ({
+        url: "/events/event_types/",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useEventDetailQuery, useEventTagsQuery, useLazyEventDetailQuery, useLazyEventTagsQuery } = eventsApi;
+export const {
+  useEventDetailQuery,
+  useAllEventsQuery,
+  useEventTagsQuery,
+  useLazyEventDetailQuery,
+  useLazyAllEventsQuery,
+  useLazyEventTagsQuery,
+} = eventsApi;

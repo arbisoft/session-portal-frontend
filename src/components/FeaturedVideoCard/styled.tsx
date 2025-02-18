@@ -28,7 +28,7 @@ export const FeaturedVideoCardContainer = styled(Card, {
 
       img {
         width: 315px;
-        height: auto;
+        height: 205px;
         border-radius: ${theme.shape.borderRadius + 8}px;
       }
 
@@ -71,6 +71,37 @@ export const FeaturedVideoCardContainer = styled(Card, {
           line-height: 21px;
           letter-spacing: 0.4px;
           padding-top: 10px;
+        }
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .${cardContentClasses.root} {
+        .video-detail {
+          .${typographyClasses.h3} {
+            font-size: 20px;
+            line-height: 24px;
+          }
+          .date-time,
+          .organizer-name {
+            font-size: 14px;
+            line-height: 14px;
+          }
+          .video-description {
+            font-size: 14px;
+            line-height: 14px;
+          }
+        }
+      }
+    }
+
+    @media (max-width: 992px) {
+      padding: ${theme.spacing(1)};
+      .${cardContentClasses.root} {
+        flex-direction: column;
+        img {
+          width: 225px;
+          height: 170px;
         }
       }
     }

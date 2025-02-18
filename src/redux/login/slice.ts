@@ -32,7 +32,7 @@ const loginSlice = createSlice({
     logout: () => initialState,
   },
   extraReducers: (builder) => {
-    builder.addMatcher(loginApi.endpoints.login.matchFulfilled, (state, action) => {
+    builder.addMatcher(loginApi?.endpoints?.login?.matchFulfilled, (state, action) => {
       state.session = action.payload;
     });
   },

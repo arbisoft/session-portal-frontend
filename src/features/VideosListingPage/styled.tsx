@@ -10,6 +10,7 @@ export const VideoListingContainer = styled(Stack, {
   ({ theme }) => css`
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: space-between;
     gap: ${theme.spacing(3)};
     padding-top: ${theme.spacing(3)};
   `
@@ -52,12 +53,24 @@ export const TagsContainer = styled(Box, {
     display: flex;
     gap: 5px;
     padding-bottom: 10px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .${chipClasses.root} {
+      flex: 0 0 auto;
       border-radius: 6px;
       border: 1px solid rgba(255, 255, 255, 0.3);
       cursor: pointer;
       text-transform: capitalize;
+      scroll-snap-align: start;
+
       &.${chipClasses.filled} {
         background: ${theme.palette.colors.white};
         color: rgba(0, 0, 0, 0.7);

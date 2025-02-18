@@ -32,3 +32,10 @@ interface Publisher {
   id: number;
   last_name: string;
 }
+
+export interface AllEventResponse {
+  count: number;
+  next: number | null;
+  previous: number | null;
+  results: Event[];
+}

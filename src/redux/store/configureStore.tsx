@@ -42,7 +42,7 @@ const persistConfig = {
 
 const combinedReducers = persistCombineReducers<ReducersState, Action>(persistConfig, {
   login: loginReducer,
-  [baseApi.reducerPath]: baseApi.reducer,
+  [baseApi?.reducerPath]: baseApi?.reducer,
 });
 
 const rootReducer = (state: (ReducersState & PersistPartial) | undefined, action: Action) => {
