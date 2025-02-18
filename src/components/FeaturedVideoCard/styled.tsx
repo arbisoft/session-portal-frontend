@@ -20,20 +20,24 @@ export const FeaturedVideoCardContainer = styled(Card, {
     margin-top: 10px;
 
     .${cardContentClasses.root} {
-      align-items: center;
+      align-items: flex-start;
       display: flex;
       flex-direction: row;
-      padding: 0;
       gap: ${theme.spacing(2.5)};
+      padding: 0;
+      :last-child {
+        padding: 0;
+      }
 
       img {
-        width: 315px;
-        height: auto;
         border-radius: ${theme.shape.borderRadius + 8}px;
+        height: auto;
+        object-fit: cover;
+        width: 400px;
       }
 
       .video-detail {
-        width: 100%;
+        width: calc(100% - 400px);
         display: flex;
         flex-direction: column;
         gap: 7px;
