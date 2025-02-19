@@ -75,7 +75,7 @@ export const FeaturedVideoCardContainer = styled(Card, {
       }
     }
 
-    @media (max-width: 1200px) {
+    ${theme.breakpoints.down("xl")} {
       .${cardContentClasses.root} {
         .video-detail {
           .${typographyClasses.h3} {
@@ -95,7 +95,7 @@ export const FeaturedVideoCardContainer = styled(Card, {
       }
     }
 
-    @media (max-width: 992px) {
+    ${theme.breakpoints.down("lg")} {
       padding: ${theme.spacing(1)};
       .${cardContentClasses.root} {
         flex-direction: column;

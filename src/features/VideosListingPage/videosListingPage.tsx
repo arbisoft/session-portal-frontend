@@ -15,9 +15,8 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
-import { Tag } from "@/models/Events";
-import { useAllEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
-import { TAllEventsPyaload } from "@/redux/events/types";
+import { Tag, TAllEventsPyaload } from "@/models/Events";
+import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
 import useLanguage from "@/services/i18n/use-language";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
@@ -37,7 +36,7 @@ const VideosListingPage = () => {
   const language = useLanguage();
   const [selectedTag, setSelectedTag] = useState<Tag>();
   const [requestParams, setRequestParams] = useState<TAllEventsPyaload>(defaultParams);
-  const { data: videoListings, isFetching, isLoading, isUninitialized, error } = useAllEventsQuery(requestParams);
+  const { data: videoListings, isFetching, isLoading, isUninitialized, error } = useGetEventsQuery(requestParams);
 
   const { data: tags } = useEventTagsQuery();
 
