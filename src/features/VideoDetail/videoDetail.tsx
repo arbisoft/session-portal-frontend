@@ -11,21 +11,21 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { format } from "date-fns";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import RecommendedVideoCard, { RecommendedVideoCardProps } from "@/components/RecommendedVideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
+import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
-import useLanguage from "@/services/i18n/use-language";
 import { secondsToTime } from "@/utils/utils";
 
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
-  const router = useRouter();
-  const language = useLanguage();
+
+  const { navigateTo } = useNavigation();
 
   const parsedId = Number(videoId);
 
@@ -47,7 +47,7 @@ const VideoDetail = () => {
 
   useEffect(() => {
     if (isNaN(parsedId) || error) {
-      router.push(`/${language}/videos`);
+      navigateTo("videos");
     }
   }, [error]);
 
@@ -58,23 +58,17 @@ const VideoDetail = () => {
       rightSidebar={
         <div>
           <TagsContainer>
-            <Chip onClick={() => router.push(`/${language}/videos`)} label="All" size="small" />
+            <Chip onClick={() => navigateTo("videos")} label="All" size="small" />
             {tags?.map((tag) => (
               <Chip
-                onClick={() => router.push(`/${language}/videos?tag=${tag.id}`)}
+                onClick={() => navigateTo("videos", { tag: tag.id })}
                 label={tag.name}
                 key={tag.id}
                 variant="outlined"
                 size="small"
               />
             ))}
-            <Chip
-              onClick={() => router.push(`/${language}/videos`)}
-              icon={<ArrowForward />}
-              variant="outlined"
-              size="small"
-              className="icon"
-            />
+            <Chip onClick={() => navigateTo("videos")} icon={<ArrowForward />} variant="outlined" size="small" className="icon" />
           </TagsContainer>
           {recommendedVideo.map((vid, index) => (
             <RecommendedVideoCard
