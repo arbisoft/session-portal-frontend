@@ -32,9 +32,11 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
           <Typography variant="body2" className="date-time" data-testid="video-card-date-time">
             {date}
           </Typography>
-          <Typography variant="body2" className="video-description" data-testid="video-description">
-            {description}
-          </Typography>
+          {description && (
+            <Typography variant="body2" className="video-description" data-testid="video-description">
+              {description}
+            </Typography>
+          )}
         </Box>
       </CardContent>
     </FeaturedVideoCardContainer>

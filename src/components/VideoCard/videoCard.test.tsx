@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { customRender as render, screen } from "@/jest/utils/testUtils";
 
 import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
@@ -19,7 +19,7 @@ describe("VideoCard", () => {
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-date-time")).toBeInTheDocument();
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(screen.getByRole("img", { name: mockProps.title })).toHaveAttribute("src", imgUrl);
+    expect(decodeURIComponent(imgUrl)).toContain(mockProps.imgUrl);
   });
 
   test("should displays default image when imgUrl is not provided", () => {

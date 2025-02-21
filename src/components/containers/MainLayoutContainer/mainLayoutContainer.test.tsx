@@ -2,18 +2,6 @@ import { customRender as render, screen, waitFor } from "@/jest/utils/testUtils"
 
 import MainLayoutContainer from "./mainLayoutContainer";
 
-jest.mock("@/components/Navbar", () => {
-  const MockNavbar = () => <div data-testid="navbar" />;
-  MockNavbar.displayName = "MockNavbar";
-  return MockNavbar;
-});
-
-jest.mock("@/components/Sidebar/sidebar", () => {
-  const MockSidebar = () => <div />;
-  MockSidebar.displayName = "MockSidebar";
-  return MockSidebar;
-});
-
 describe("MainLayoutContainer", () => {
   test("should renders Navbar component", () => {
     render(
