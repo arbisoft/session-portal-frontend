@@ -10,8 +10,9 @@ export const VideoListingContainer = styled(Stack, {
   ({ theme }) => css`
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
-    gap: ${theme.spacing(3)};
+    justify-content: flex-start;
+    column-gap: ${theme.spacing(8)};
+    row-gap: ${theme.spacing(5)};
     padding-top: ${theme.spacing(3)};
   `
 );

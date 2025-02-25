@@ -13,7 +13,7 @@ export interface Tag {
   name: string;
 }
 
-interface Event {
+export interface Event {
   description: string;
   event_time: string;
   event_type: string;
