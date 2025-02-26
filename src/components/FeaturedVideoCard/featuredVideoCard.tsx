@@ -21,7 +21,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   return isVisible ? (
     <FeaturedVideoCardContainer $width={width} className={className} data-testid="video-card">
       <CardContent>
-        <Image alt={title} height={192} width={315} src={imgUrl ?? "/assets/images/temp-youtube-logo.webp"} />
+        <Image alt={title} height={192} width={400} src={imgUrl ?? "/assets/images/temp-youtube-logo.webp"} />
         <Box className="video-detail">
           <Typography variant="h3" component="div" title={title}>
             {title}
