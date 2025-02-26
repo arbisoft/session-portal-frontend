@@ -17,7 +17,7 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
   };
 
   return (
-    <SidebarContainer>
+    <SidebarContainer data-testid="sidebar-container">
       <MenuStack>
         {sidebarItems.map((item) => (
           <MenuItem key={item} $isSelected={item === selected} onClick={() => handleClick(item)}>
