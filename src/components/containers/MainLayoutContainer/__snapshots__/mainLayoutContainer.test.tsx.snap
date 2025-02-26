@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
+<DocumentFragment>
+  <div
+    data-testid="navbar"
+  />
+  <div
+    class="MuiContainer-root MuiContainer-maxWidthXl css-1k20d1f-MuiContainer-root-MainContainer-root"
+  >
+    <div
+      class="MuiBox-root css-1i3wj7r-LeftSidebar-root"
+      data-testid="left-sidebar"
+    >
+      <div />
+    </div>
+    <div
+      class="MuiGrid2-root MuiGrid2-container MuiGrid2-direction-xs-row css-1zhuio-MuiGrid2-root-ContentContainer-root"
+    >
+      <div>
+        Test Content
+      </div>
+    </div>
+    <div
+      class="MuiBox-root css-1gxza0d-RightSidebar-root"
+      data-testid="right-sidebar"
+    >
+      <div>
+        Right Content
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

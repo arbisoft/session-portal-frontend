@@ -44,7 +44,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" data-testid="navbar">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
           <Logo>
