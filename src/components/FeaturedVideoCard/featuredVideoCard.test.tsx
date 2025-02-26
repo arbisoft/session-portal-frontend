@@ -13,31 +13,62 @@ const mockProps: FeaturedVideoCardProps = {
 };
 
 describe("FeaturedVideoCard", () => {
-  test("should renders the component with provided props", () => {
+  test("should render the component with provided props", () => {
     render(<FeaturedVideoCard {...mockProps} />);
-
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-date-time")).toBeInTheDocument();
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
     expect(screen.getByRole("img", { name: mockProps.title })).toHaveAttribute("src", imgUrl);
   });
 
-  test("should displays default image when imgUrl is not provided", () => {
+  test("should display default image when imgUrl is not provided", () => {
     render(<FeaturedVideoCard {...mockProps} imgUrl={undefined} />);
-
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-
     expect(decodeURIComponent(imgUrl)).toContain("/assets/images/temp-youtube-logo.webp");
   });
 
-  test("should renders the organizer name", () => {
+  test("should render the organizer name", () => {
     render(<FeaturedVideoCard {...mockProps} />);
-    expect(screen.getByText(mockProps.title)).toBeInTheDocument();
+    expect(screen.getByText(mockProps.organizerName)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-organizer")).toBeInTheDocument();
   });
 
-  test("should matches snapshot", () => {
+  test("should match snapshot", () => {
     const { asFragment } = render(<FeaturedVideoCard {...mockProps} />);
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  test("should not render when isVisible is false", () => {
+    render(<FeaturedVideoCard {...mockProps} isVisible={false} />);
+    expect(screen.queryByTestId("video-card")).toBeNull();
+  });
+
+  test("should render correctly with different width values", () => {
+    const { container } = render(<FeaturedVideoCard {...mockProps} width="200px" />);
+    const card = container.firstChild as HTMLElement;
+    expect(card).toHaveStyle("width: 200px");
+  });
+
+  test("should render with empty description", () => {
+    const mockPropsEmptyDescription = { ...mockProps, description: "" };
+    render(<FeaturedVideoCard {...mockPropsEmptyDescription} />);
+    expect(screen.getByTestId("video-description")).toBeEmptyDOMElement();
+  });
+
+  test("should have the correct alt text for the image", () => {
+    render(<FeaturedVideoCard {...mockProps} />);
+    const image = screen.getByRole("img", { name: mockProps.title });
+    expect(image).toHaveAttribute("alt", mockProps.title);
+  });
+
+  test("should render empty date when date is not provided", () => {
+    const mockPropsEmptyDate = { ...mockProps, date: "" };
+    render(<FeaturedVideoCard {...mockPropsEmptyDate} />);
+    expect(screen.getByTestId("video-card-date-time")).toHaveTextContent("");
+  });
+
+  test("should render the default class name", () => {
+    render(<FeaturedVideoCard {...mockProps} />);
+    expect(screen.getByTestId("video-card")).toHaveClass("custom-class");
   });
 });
