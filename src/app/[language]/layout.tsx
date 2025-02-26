@@ -15,9 +15,6 @@ import { Providers } from "@/redux/store/provider";
 import { getServerTranslation } from "@/services/i18n";
 import { languages } from "@/services/i18n/config";
 import StoreLanguageProvider from "@/services/i18n/store-language-provider";
-import queryClient from "@/services/react-query/query-client";
-import QueryClientProvider from "@/services/react-query/query-client-provider";
-import ReactQueryDevtools from "@/services/react-query/react-query-devtools";
 
 type Props = {
   params: { language: string };
@@ -50,16 +47,13 @@ export default function RootLayout({
         <CssBaseline />
         <InitColorSchemeScript />
         <GoogleOAuthProvider clientId={clientId}>
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            <Providers>
-              <ThemeProvider>
-                <NotificationProvider>
-                  <StoreLanguageProvider>{children}</StoreLanguageProvider>
-                </NotificationProvider>
-              </ThemeProvider>
-            </Providers>
-          </QueryClientProvider>
+          <Providers>
+            <ThemeProvider>
+              <NotificationProvider>
+                <StoreLanguageProvider>{children}</StoreLanguageProvider>
+              </NotificationProvider>
+            </ThemeProvider>
+          </Providers>
         </GoogleOAuthProvider>
       </body>
     </html>
