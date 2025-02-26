@@ -1,26 +1,28 @@
 import { useEffect } from "react";
 
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 
 import { selectAccessToken } from "@/redux/login/selectors";
 import useLanguage from "@/services/i18n/use-language";
 
+import useNavigation from "./useNavigation";
+
 const useAuth = () => {
   const language = useLanguage();
-  const router = useRouter();
   const pathname = usePathname();
   const token = useSelector(selectAccessToken);
+  const { navigateTo, getPageUrl } = useNavigation();
 
   useEffect(() => {
-    const isRootOrLoginPage = pathname === `/${language}` || pathname === `/${language}/login`;
+    const isRootOrLoginPage = getPageUrl("home").includes(pathname) || pathname === getPageUrl("login");
 
     if (token && isRootOrLoginPage) {
-      router.push(`/${language}/videos`);
+      navigateTo("videos");
     } else if (!token) {
-      router.push(`/${language}/login`);
+      navigateTo("login");
     }
-  }, [router, language, token, pathname]);
+  }, [language, token, pathname]);
 };
 
 export default useAuth;

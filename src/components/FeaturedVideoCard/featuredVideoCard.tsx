@@ -26,6 +26,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
     <FeaturedVideoCardContainer $width={width} className={className} data-testid="video-card">
       <CardContent>
         <Image alt={title} height={192} width={315} src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"} />
+
         <Box className="video-detail">
           <Typography variant="h3" component="div" title={title}>
             {trimTextLength(title, 70)}

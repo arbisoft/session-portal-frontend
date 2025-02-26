@@ -1,19 +1,18 @@
 import Box from "@mui/material/Box";
 import { chipClasses } from "@mui/material/Chip";
-import Stack, { stackClasses } from "@mui/material/Stack";
+import { stackClasses } from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
-export const VideoListingContainer = styled(Stack, {
+export const VideoListingContainer = styled("div", {
   name: "VideoListingContainer",
 })(
   ({ theme }) => css`
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    column-gap: ${theme.spacing(8)};
-    row-gap: ${theme.spacing(5)};
+    display: grid;
+    gap: ${theme.spacing(3)};
+    grid-template-columns: repeat(auto-fill, minmax(287px, 1fr));
     padding-top: ${theme.spacing(3)};
+    width: 100%;
   `
 );
 

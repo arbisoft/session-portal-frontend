@@ -8,20 +8,19 @@ import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 import { useNotification } from "@/components/Notification";
 import useAuth from "@/hooks/useAuth";
+import useNavigation from "@/hooks/useNavigation";
 import { useLoginMutation } from "@/redux/login/apiSlice";
-import useLanguage from "@/services/i18n/use-language";
 
 import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
 
 export default function LoginPage() {
   useAuth();
 
-  const router = useRouter();
-  const language = useLanguage();
+  const { navigateTo } = useNavigation();
+
   const theme = useTheme();
   const { dispatch } = useNotification();
 
@@ -38,7 +37,7 @@ export default function LoginPage() {
       const errorState = response?.error as FetchBaseQueryError;
 
       if (response.data) {
-        router.replace(`/${language}/videos`);
+        navigateTo("videos");
       } else if (errorState) {
         const errorMessage = errorState.data as string[];
         if (errorMessage) {

@@ -85,19 +85,11 @@ const VideosListingPage = () => {
 
       <FeaturedVideoCard isVisible={!!latestFeaturedVideo} {...latestFeaturedVideo} />
 
-      <Box>
-        <VideoListingContainer>
-          {error || isDataLoading
-            ? loaderCards.map((_) => (
-                <Box key={_}>
-                  <Skeleton width={315} height={245} variant="rounded" animation="wave" />
-                  <Skeleton width="50%" height={30} />
-                  <Skeleton width="30%" height={30} />
-                </Box>
-              ))
-            : videoListings?.results.map((videoCard) => <VideoCard key={videoCard.id} {...videoCard} />)}
-        </VideoListingContainer>
-      </Box>
+      <VideoListingContainer>
+        {videoCards.map((videoCard, index) => (
+          <VideoCard key={index} {...videoCard} width="100%" />
+        ))}
+      </VideoListingContainer>
     </MainLayoutContainer>
   );
 };
