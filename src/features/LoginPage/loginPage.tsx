@@ -24,12 +24,12 @@ export default function LoginPage() {
   const theme = useTheme();
   const { dispatch } = useNotification();
 
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [login] = useLoginMutation();
 
   const onSuccess = async (credentialResponse: CredentialResponse) => {
-    setIsLogin(false);
+    setIsLoading(false);
     if ("access_token" in credentialResponse) {
       const response = await login({
         auth_token: credentialResponse.access_token as string,
@@ -83,16 +83,16 @@ export default function LoginPage() {
         <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />
         <LoginButtonContainer>
           <Button
-            disabled={isLogin}
+            disabled={isLoading}
             className="login-button"
             onClick={() => {
-              setIsLogin(true);
+              setIsLoading(true);
               googleLoginHandler();
             }}
           >
             <Box className="button-content">
               <Image height={20} width={20} src="/assets/svgs/google.svg" alt="google-logo" />
-              <Typography color={theme.palette.colors.gray}>Sign in with Google</Typography>
+              <Typography color={theme.palette.colors.gray}>{isLoading ? "Loading..." : "Sign in with Google"}</Typography>
             </Box>
           </Button>
         </LoginButtonContainer>
