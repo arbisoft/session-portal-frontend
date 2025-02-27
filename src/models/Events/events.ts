@@ -13,7 +13,7 @@ export interface Tag {
   name: string;
 }
 
-interface Event {
+export interface Event {
   description: string;
   event_time: string;
   event_type: string;
@@ -32,3 +32,19 @@ interface Publisher {
   id: number;
   last_name: string;
 }
+
+export interface AllEventResponse {
+  count: number;
+  next: number | null;
+  previous: number | null;
+  results: Event[];
+}
+
+export type TAllEventsPyaload = {
+  event_type: string;
+  is_featured?: boolean;
+  page: number;
+  status: string;
+  search?: string;
+  tag?: string;
+};

@@ -78,5 +78,36 @@ export const FeaturedVideoCardContainer = styled(Card, {
         }
       }
     }
+
+    ${theme.breakpoints.down("xl")} {
+      .${cardContentClasses.root} {
+        .video-detail {
+          .${typographyClasses.h3} {
+            font-size: 20px;
+            line-height: 24px;
+          }
+          .date-time,
+          .organizer-name {
+            font-size: 14px;
+            line-height: 14px;
+          }
+          .video-description {
+            font-size: 14px;
+            line-height: 14px;
+          }
+        }
+      }
+    }
+
+    ${theme.breakpoints.down("lg")} {
+      padding: ${theme.spacing(1)};
+      .${cardContentClasses.root} {
+        flex-direction: column;
+        img {
+          width: 225px;
+          height: 170px;
+        }
+      }
+    }
   `;
 });

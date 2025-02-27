@@ -4,11 +4,18 @@ import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
 
 const mockProps: VideoCardProps = {
+  id: 1,
   className: "custom-class",
-  date: "Jan 01, 2024",
-  imgUrl: "https://example.com/sample.jpg",
+  event_time: "2024-10-22T12:00:00Z",
+  event_type: "SESSION",
+  description: "Sample Video Description",
+  thumbnail: "https://example.com/sample.jpg",
   title: "Sample Video Title",
-  organizerName: "Sample Video Organizer",
+  publisher: { id: 1, first_name: "John", last_name: "Doe" },
+  tags: ["Workshop", "Ollama", "AI"],
+  is_featured: false,
+  status: "PUBLISHED",
+  workstream_id: "Ikram Ali",
   width: "300px",
 };
 
@@ -19,11 +26,11 @@ describe("VideoCard", () => {
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-date-time")).toBeInTheDocument();
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain(mockProps.imgUrl);
+    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
   });
 
   test("should displays default image when imgUrl is not provided", () => {
-    render(<VideoCard {...mockProps} imgUrl={undefined} />);
+    render(<VideoCard {...mockProps} thumbnail={""} />);
 
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
 

@@ -1,5 +1,6 @@
 import Card from "@mui/material/Card";
 import { cardContentClasses } from "@mui/material/CardContent";
+import { skeletonClasses } from "@mui/material/Skeleton";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
@@ -64,6 +65,28 @@ export const VideoCardContainer = styled(Card, {
           letter-spacing: 0.4px;
         }
       }
+    }
+  `;
+});
+
+export const ImageWrapper = styled(Card, {
+  name: "ImageWrapper",
+  shouldForwardProp,
+})(({ theme }) => {
+  return css`
+    position: relative;
+
+    .${skeletonClasses.root} {
+      position: absolute;
+      z-index: -1;
+      top: 0;
+    }
+
+    img {
+      width: 315px;
+      height: auto;
+      min-height: 192px;
+      border-radius: ${theme.shape.borderRadius + 8}px;
     }
   `;
 });

@@ -8,33 +8,32 @@ import { FeaturedVideoCardProps } from "./types";
 describe("FeaturedVideoCard", () => {
   const mockProps: FeaturedVideoCardProps = {
     className: "custom-class",
-    date: "Jan 01, 2024",
-    imgUrl: "https://example.com/sample.jpg",
+    event_time: "Jan 01, 2024",
+    thumbnail: "https://example.com/sample.jpg",
     title: "Sample Video Title",
-    organizerName: "Sample Video Organizer",
+    workstream_id: "Sample Video Organizer",
     description: "Sample video description",
-    isVisible: true,
   };
 
   test("should render the component with provided props", () => {
     render(<FeaturedVideoCard {...mockProps} />);
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
-    expect(screen.getByTestId("video-card-date-time")).toHaveTextContent(mockProps.date);
-    expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.organizerName);
+    expect(screen.getByTestId("video-card-date-time")).toHaveTextContent(mockProps.event_time);
+    expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.workstream_id);
     expect(screen.getByTestId("video-description")).toHaveTextContent(mockProps.description);
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain(mockProps.imgUrl);
+    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
   });
 
   test("should display default image when imgUrl is not provided", () => {
-    render(<FeaturedVideoCard {...mockProps} imgUrl={undefined} />);
+    render(<FeaturedVideoCard {...mockProps} thumbnail={undefined} />);
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
     expect(decodeURIComponent(imgUrl)).toContain("/assets/images/temp-youtube-logo.webp");
   });
 
   test("should render the organizer name", () => {
     render(<FeaturedVideoCard {...mockProps} />);
-    expect(screen.getByText(mockProps.organizerName)).toBeInTheDocument();
+    expect(screen.getByText(mockProps.workstream_id)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-organizer")).toBeInTheDocument();
   });
 

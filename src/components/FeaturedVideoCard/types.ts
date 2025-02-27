@@ -1,10 +1,10 @@
 export type FeaturedVideoCardProps = {
   isVisible?: boolean;
   className?: string;
-  date: string;
-  imgUrl?: string;
+  event_time: string;
+  thumbnail?: string;
   title: string;
   description: string;
-  organizerName: string;
+  workstream_id: string;
   width?: string;
 };
