@@ -21,7 +21,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   return isVisible ? (
     <FeaturedVideoCardContainer $width={width} className={className} data-testid="video-card">
       <CardContent>
-        <Image alt={title} height={192} width={315} src={imgUrl ?? "/assets/images/temp-youtube-logo.webp"} />
+        <Image alt={title} height={192} width={400} src={imgUrl ?? "/assets/images/temp-youtube-logo.webp"} />
         <Box className="video-detail">
           <Typography variant="h3" component="div" title={title}>
             {title}
@@ -32,9 +32,11 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
           <Typography variant="body2" className="date-time" data-testid="video-card-date-time">
             {date}
           </Typography>
-          <Typography variant="body2" className="video-description" data-testid="video-description">
-            {description}
-          </Typography>
+          {description && (
+            <Typography variant="body2" className="video-description" data-testid="video-description">
+              {description}
+            </Typography>
+          )}
         </Box>
       </CardContent>
     </FeaturedVideoCardContainer>

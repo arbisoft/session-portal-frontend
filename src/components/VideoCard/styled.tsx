@@ -10,7 +10,7 @@ export const VideoCardContainer = styled(Card, {
   shouldForwardProp,
 })<{ $width: string }>(({ theme, $width }) => {
   return css`
-    display: flex;
+    display: grid;
     background: transparent;
     overflow: unset;
     border-radius: unset;
@@ -24,13 +24,14 @@ export const VideoCardContainer = styled(Card, {
       padding: 0;
 
       :last-child {
-        padding-bottom: 10px;
+        padding-bottom: 0px;
       }
 
       img {
-        width: 315px;
-        height: auto;
         border-radius: ${theme.shape.borderRadius + 8}px;
+        height: auto;
+        object-fit: cover;
+        width: 100%;
       }
 
       .video-detail {
