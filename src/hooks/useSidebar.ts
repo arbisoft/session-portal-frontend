@@ -1,16 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEventTagsQuery } from "@/redux/events/apiSlice";
+
+const defaultTag = { id: 0, name: "All" };
 
 const useSidebar = () => {
-  const [sidebarItems, setSidebarItems] = useState<string[]>([]);
+  const { data: tags, isFetching, isLoading, isUninitialized } = useEventTagsQuery();
+  const isDataLoading = isFetching || isLoading || isUninitialized;
 
-  useEffect(() => {
-    const onGetSidebarItems = async () => {
-      //   TODO: Remove static code and get items from backend
-      setSidebarItems(["All", "All-Hands Meetings", "AMA Sessions", "Product Showcase", "Nurture Sessions", "Security Session"]);
-    };
-    onGetSidebarItems();
-  }, []);
+  const sidebarItems = tags?.length ? [defaultTag, ...tags] : [];
 
-  return { sidebarItems };
+  return { sidebarItems, isDataLoading };
 };
 export default useSidebar;
