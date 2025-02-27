@@ -6,11 +6,11 @@ import Skeleton from "@mui/material/Skeleton";
 import Image from "next/image";
 
 import useSidebar from "@/hooks/useSidebar";
+import useNavigation from "@/hooks/useNavigation";
 import { Tag } from "@/models/Events";
 
 import { MenuItem, MenuStack, SidebarContainer, Text } from "./styled";
 import { SidebarProps } from "./types";
-import useNavigation from "@/hooks/useNavigation";
 
 const loadingTags: string[] = Array(5)
   .fill("")
@@ -25,7 +25,7 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
   const handleClick = (item: Tag) => {
     setSelected(item.name);
     handleSidebarToggle?.();
-    item.id === 0 ? navigateTo("videos"): navigateTo("videos", { tagId: item.id });
+    item.id === 0 ? navigateTo("videos") : navigateTo("videos", { tagId: item.id });
   };
 
   return (
