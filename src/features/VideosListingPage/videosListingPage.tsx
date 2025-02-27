@@ -15,12 +15,12 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
+import useNavigation from "@/hooks/useNavigation";
 import { Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
 import { defaultParams, defaultTag } from "./types";
-import useNavigation from "@/hooks/useNavigation";
 
 const selectMenuItems: string[] = Array(3)
   .fill("")
@@ -33,7 +33,7 @@ const loaderCards: string[] = Array(5)
 const VideosListingPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
-  
+
   const [selectedTag, setSelectedTag] = useState<Tag>();
   const [requestParams, setRequestParams] = useState<TAllEventsPyaload>(defaultParams);
   const { data: videoListings, isFetching, isLoading, isUninitialized, error } = useGetEventsQuery(requestParams);
