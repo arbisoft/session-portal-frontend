@@ -4,22 +4,20 @@ import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 import useSidebar from "@/hooks/useSidebar";
 import { Tag } from "@/models/Events";
-import useLanguage from "@/services/i18n/use-language";
 
 import { MenuItem, MenuStack, SidebarContainer, Text } from "./styled";
 import { SidebarProps } from "./types";
+import useNavigation from "@/hooks/useNavigation";
 
 const loadingTags: string[] = Array(5)
   .fill("")
   .map(() => faker.lorem.words(1));
 
 const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
-  const router = useRouter();
-  const language = useLanguage();
+  const { navigateTo } = useNavigation();
   const { sidebarItems, isDataLoading } = useSidebar();
 
   const [selected, setSelected] = useState("");
@@ -27,7 +25,7 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
   const handleClick = (item: Tag) => {
     setSelected(item.name);
     handleSidebarToggle?.();
-    router.push(item.id === 0 ? `/${language}/videos` : `/${language}/videos?tag=${item.id}`);
+    item.id === 0 ? navigateTo("videos"): navigateTo("videos", { tagId: item.id });
   };
 
   return (
