@@ -77,7 +77,7 @@ const VideosListingPage = () => {
 
       <VideoListingContainer>
         {videoCards.map((videoCard, index) => (
-          <VideoCard key={index} {...videoCard} />
+          <VideoCard key={index} {...videoCard} width="100%" />
         ))}
       </VideoListingContainer>
     </MainLayoutContainer>

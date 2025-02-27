@@ -8,29 +8,28 @@ import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
 import { useNotification } from "@/components/Notification";
 import useAuth from "@/hooks/useAuth";
+import useNavigation from "@/hooks/useNavigation";
 import { useLoginMutation } from "@/redux/login/apiSlice";
-import useLanguage from "@/services/i18n/use-language";
 
 import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
 
 export default function LoginPage() {
   useAuth();
 
-  const router = useRouter();
-  const language = useLanguage();
+  const { navigateTo } = useNavigation();
+
   const theme = useTheme();
   const { dispatch } = useNotification();
 
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [login] = useLoginMutation();
 
   const onSuccess = async (credentialResponse: CredentialResponse) => {
-    setIsLogin(false);
+    setIsLoading(false);
     if ("access_token" in credentialResponse) {
       const response = await login({
         auth_token: credentialResponse.access_token as string,
@@ -38,7 +37,7 @@ export default function LoginPage() {
       const errorState = response?.error as FetchBaseQueryError;
 
       if (response.data) {
-        router.replace(`/${language}/videos`);
+        navigateTo("videos");
       } else if (errorState) {
         const errorMessage = errorState.data as string[];
         if (errorMessage) {
@@ -84,16 +83,16 @@ export default function LoginPage() {
         <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />
         <LoginButtonContainer>
           <Button
-            disabled={isLogin}
+            disabled={isLoading}
             className="login-button"
             onClick={() => {
-              setIsLogin(true);
+              setIsLoading(true);
               googleLoginHandler();
             }}
           >
             <Box className="button-content">
               <Image height={20} width={20} src="/assets/svgs/google.svg" alt="google-logo" />
-              <Typography color={theme.palette.colors.gray}>Sign in with Google</Typography>
+              <Typography color={theme.palette.colors.gray}>{isLoading ? "Loading..." : "Sign in with Google"}</Typography>
             </Box>
           </Button>
         </LoginButtonContainer>

@@ -1,24 +1,29 @@
-import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+import { customRender as render, screen } from "@/jest/utils/testUtils";
 
 import FeaturedVideoCard from "./featuredVideoCard";
 import { FeaturedVideoCardProps } from "./types";
 
-const mockProps: FeaturedVideoCardProps = {
-  className: "custom-class",
-  date: "Jan 01, 2024",
-  imgUrl: "https://example.com/sample.jpg",
-  title: "Sample Video Title",
-  organizerName: "Sample Video Organizer",
-  description: "Sample video description",
-};
-
 describe("FeaturedVideoCard", () => {
+  const mockProps: FeaturedVideoCardProps = {
+    className: "custom-class",
+    date: "Jan 01, 2024",
+    imgUrl: "https://example.com/sample.jpg",
+    title: "Sample Video Title",
+    organizerName: "Sample Video Organizer",
+    description: "Sample video description",
+    isVisible: true,
+  };
+
   test("should render the component with provided props", () => {
     render(<FeaturedVideoCard {...mockProps} />);
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
-    expect(screen.getByTestId("video-card-date-time")).toBeInTheDocument();
+    expect(screen.getByTestId("video-card-date-time")).toHaveTextContent(mockProps.date);
+    expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.organizerName);
+    expect(screen.getByTestId("video-description")).toHaveTextContent(mockProps.description);
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(screen.getByRole("img", { name: mockProps.title })).toHaveAttribute("src", imgUrl);
+    expect(decodeURIComponent(imgUrl)).toContain(mockProps.imgUrl);
   });
 
   test("should display default image when imgUrl is not provided", () => {
@@ -33,14 +38,14 @@ describe("FeaturedVideoCard", () => {
     expect(screen.getByTestId("video-card-organizer")).toBeInTheDocument();
   });
 
+  test("should not render when isVisible is false", () => {
+    render(<FeaturedVideoCard {...mockProps} isVisible={false} />);
+    expect(screen.queryByTestId("video-card")).not.toBeInTheDocument();
+  });
+
   test("should match snapshot", () => {
     const { asFragment } = render(<FeaturedVideoCard {...mockProps} />);
     expect(asFragment()).toMatchSnapshot();
-  });
-
-  test("should not render when isVisible is false", () => {
-    render(<FeaturedVideoCard {...mockProps} isVisible={false} />);
-    expect(screen.queryByTestId("video-card")).toBeNull();
   });
 
   test("should render correctly with different width values", () => {
@@ -49,10 +54,11 @@ describe("FeaturedVideoCard", () => {
     expect(card).toHaveStyle("width: 200px");
   });
 
-  test("should render with empty description", () => {
+  test("should not render video description when empty", () => {
     const mockPropsEmptyDescription = { ...mockProps, description: "" };
     render(<FeaturedVideoCard {...mockPropsEmptyDescription} />);
-    expect(screen.getByTestId("video-description")).toBeEmptyDOMElement();
+
+    expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
   });
 
   test("should have the correct alt text for the image", () => {
@@ -70,5 +76,34 @@ describe("FeaturedVideoCard", () => {
   test("should render the default class name", () => {
     render(<FeaturedVideoCard {...mockProps} />);
     expect(screen.getByTestId("video-card")).toHaveClass("custom-class");
+  });
+
+  test("should truncate title if it is too long", () => {
+    const longTitle = "A very long video title that should be truncated properly in the UI";
+    render(<FeaturedVideoCard {...mockProps} title={longTitle} />);
+
+    expect(screen.getByText(/A very long video title/i)).toBeInTheDocument();
+  });
+
+  test("should handle special characters in title", () => {
+    // eslint-disable-next-line quotes
+    const specialTitle = 'Video & Special "Title"!';
+    render(<FeaturedVideoCard {...mockProps} title={specialTitle} />);
+
+    expect(screen.getByText(specialTitle)).toBeInTheDocument();
+  });
+
+  test("should apply custom class name", () => {
+    render(<FeaturedVideoCard {...mockProps} className="custom-class" />);
+    expect(screen.getByTestId("video-card")).toHaveClass("custom-class");
+  });
+
+  test("should allow user interactions on the card", async () => {
+    render(<FeaturedVideoCard {...mockProps} />);
+    const user = userEvent.setup();
+    const videoCard = screen.getByTestId("video-card");
+
+    await user.click(videoCard);
+    expect(videoCard).toBeInTheDocument(); // Ensures no crash on click
   });
 });

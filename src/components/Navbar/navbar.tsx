@@ -44,7 +44,7 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" data-testid="navbar">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
           <Logo>
@@ -58,7 +58,7 @@ function Navbar() {
             <Search>
               <StyledInputBase placeholder="Search..." inputProps={{ "aria-label": "search" }} />
               <SearchIconWrapper>
-                <SearchIcon />
+                <SearchIcon data-testid="SearchIcon" />
               </SearchIconWrapper>
             </Search>
           </Box>

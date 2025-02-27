@@ -3,7 +3,7 @@ import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolk
 
 import { selectAccessToken } from "./login/selectors";
 import { parseError } from "./parseError";
-import { persistor, store } from "./store/configureStore";
+import { ReducersState } from "./store/configureStore";
 
 const HOST_URL = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1";
 
@@ -13,8 +13,8 @@ interface ExtraOptions {
 
 const baseQuery = fetchBaseQuery({
   baseUrl: HOST_URL,
-  prepareHeaders: (headers) => {
-    const token = selectAccessToken(store.getState());
+  prepareHeaders: (headers, api) => {
+    const token = selectAccessToken(api.getState() as ReducersState);
 
     // If we have a token set in state, let's assume that we should be passing it.
     if (token) {
@@ -30,9 +30,8 @@ const customBaseQuery: BaseQueryFn<FetchArgs, unknown, FetchBaseQueryError, Extr
 
   if (result.error) {
     if (result.error.status === 401) {
-      api.dispatch({ type: "auth/logout" });
-      await persistor.purge();
-      persistor.persist();
+      api.dispatch({ type: "login/logout" });
+      localStorage.removeItem("persist:session-portal");
     }
 
     if (options.showErrorToast) {
