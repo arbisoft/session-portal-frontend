@@ -5,8 +5,8 @@ import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Image from "next/image";
 
-import useSidebar from "@/hooks/useSidebar";
 import useNavigation from "@/hooks/useNavigation";
+import useSidebar from "@/hooks/useSidebar";
 import { Tag } from "@/models/Events";
 
 import { MenuItem, MenuStack, SidebarContainer, Text } from "./styled";
