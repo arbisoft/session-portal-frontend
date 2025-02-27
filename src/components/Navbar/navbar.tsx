@@ -18,6 +18,8 @@ import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 
+import ThemeToggle from "../ThemeToggle";
+
 import { Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
 const settings = ["Profile", "Account", "Dashboard"];
@@ -65,7 +67,7 @@ function Navbar() {
           <Box sx={{ flexGrow: 0, width: 240, display: "flex", justifyContent: "flex-end" }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar variant="rounded" alt={userInfo.full_name ?? ""} src={userInfo.avatar ?? ""} />
+                <Avatar variant="rounded" alt={userInfo?.full_name ?? ""} src={userInfo?.avatar ?? ""} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -89,6 +91,9 @@ function Navbar() {
               ))}
               <MenuItem onClick={handleLogout}>
                 <Typography>Logout</Typography>
+              </MenuItem>
+              <MenuItem disableRipple disableTouchRipple>
+                <ThemeToggle />
               </MenuItem>
             </Menu>
           </Box>
