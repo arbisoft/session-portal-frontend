@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root css-cd9kc0-SidebarContainer-root"
+    data-testid="sidebar-container"
+  >
+    <div
+      class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
+    >
+      <div
+        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+      >
+        <img
+          alt="Home"
+          data-nimg="1"
+          decoding="async"
+          height="12"
+          loading="lazy"
+          src="/assets/images/sidebar-item-icon.svg"
+          style="color: transparent;"
+          width="18"
+        />
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+        >
+          Home
+        </p>
+      </div>
+      <div
+        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+      >
+        <img
+          alt="Settings"
+          data-nimg="1"
+          decoding="async"
+          height="12"
+          loading="lazy"
+          src="/assets/images/sidebar-item-icon.svg"
+          style="color: transparent;"
+          width="18"
+        />
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+        >
+          Settings
+        </p>
+      </div>
+      <div
+        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+      >
+        <img
+          alt="Profile"
+          data-nimg="1"
+          decoding="async"
+          height="12"
+          loading="lazy"
+          src="/assets/images/sidebar-item-icon.svg"
+          style="color: transparent;"
+          width="18"
+        />
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+        >
+          Profile
+        </p>
+      </div>
+      <div
+        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+      >
+        <img
+          alt="Logout"
+          data-nimg="1"
+          decoding="async"
+          height="12"
+          loading="lazy"
+          src="/assets/images/sidebar-item-icon.svg"
+          style="color: transparent;"
+          width="18"
+        />
+        <p
+          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+        >
+          Logout
+        </p>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;
