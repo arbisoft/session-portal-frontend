@@ -51,7 +51,8 @@ const VideoDetail = () => {
     }
   }, [error]);
 
-  const name = [data?.event?.publisher.first_name, data?.event?.publisher.last_name].filter(Boolean).join(" ");
+  const dataEvent = data?.event;
+  const name = [dataEvent?.publisher.first_name, dataEvent?.publisher?.last_name].filter(Boolean).join(" ");
 
   return (
     <MainLayoutContainer
@@ -112,12 +113,12 @@ const VideoDetail = () => {
           </StyledTitleSection>
           <StyledDetailSection>
             {name && <Typography variant="h6">{name}</Typography>}
-            <Typography>{format(data?.event?.event_time ?? "", "MMM dd, yyy")}</Typography>
+            <Typography>{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
           </StyledDetailSection>
           <StyledNotesSection>
             <Typography variant="h5">Session Notes</Typography>
             <div className="description">
-              <Typography color="textSecondary">{data?.event?.description}</Typography>
+              <Typography color="textSecondary">{dataEvent?.description}</Typography>
             </div>
           </StyledNotesSection>
         </>
