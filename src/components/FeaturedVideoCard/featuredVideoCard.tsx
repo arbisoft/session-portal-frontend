@@ -20,7 +20,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   isVisible = false,
   width = "100%",
 }) => {
-  const inAppThumbnail = `http://localhost:8000/${thumbnail}`;
+  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
 
   return isVisible ? (
     <FeaturedVideoCardContainer $width={width} className={className} data-testid="video-card">

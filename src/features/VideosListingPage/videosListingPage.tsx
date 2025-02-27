@@ -9,7 +9,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { parseISO } from "date-fns";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import FeaturedVideoCard from "@/components/FeaturedVideoCard";
@@ -17,10 +17,10 @@ import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
-import useLanguage from "@/services/i18n/use-language";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
 import { defaultParams, defaultTag } from "./types";
+import useNavigation from "@/hooks/useNavigation";
 
 const selectMenuItems: string[] = Array(3)
   .fill("")
@@ -31,9 +31,9 @@ const loaderCards: string[] = Array(5)
   .map(() => faker.lorem.words(1));
 
 const VideosListingPage = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const language = useLanguage();
+  const { navigateTo } = useNavigation();
+  
   const [selectedTag, setSelectedTag] = useState<Tag>();
   const [requestParams, setRequestParams] = useState<TAllEventsPyaload>(defaultParams);
   const { data: videoListings, isFetching, isLoading, isUninitialized, error } = useGetEventsQuery(requestParams);
@@ -66,7 +66,7 @@ const VideosListingPage = () => {
         </Stack>
         <TagsContainer>
           <Chip
-            onClick={() => router.push(`/${language}/videos`)}
+            onClick={() => navigateTo("videos")}
             variant={selectedTag?.id === 0 ? "filled" : "outlined"}
             label="All"
             size="small"
@@ -74,7 +74,7 @@ const VideosListingPage = () => {
           {tags?.map((tag) => (
             <Chip
               key={tag.id}
-              onClick={() => router.push(`/${language}/videos?tag=${tag.id}`)}
+              onClick={() => navigateTo("videos", { tag: tag.id })}
               label={tag.name}
               variant={selectedTag?.id === tag.id ? "filled" : "outlined"}
               size="small"
