@@ -88,5 +88,22 @@ export const ImageWrapper = styled(Card, {
       min-height: 192px;
       border-radius: ${theme.shape.borderRadius + 8}px;
     }
+
+    .${typographyClasses.body2} {
+      background-color: rgba(0, 0, 0, 0.7);
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      color: ${theme.palette.colors.white};
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 11.72px;
+      border-radius: 2px;
+      padding: 2px 4px;
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      z-index: 9999;
+    }
   `;
 });

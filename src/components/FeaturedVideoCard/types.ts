@@ -5,6 +5,7 @@ export type FeaturedVideoCardProps = {
   thumbnail?: string;
   title: string;
   description: string;
+  video_duration: number;
   workstream_id: string;
   width?: string;
 };

@@ -8,12 +8,20 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
-import { formatDateTime } from "@/utils/utils";
+import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
 
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
-const VideoCard: FC<VideoCardProps> = ({ className, event_time, thumbnail, workstream_id, title, width = "315px" }) => {
+const VideoCard: FC<VideoCardProps> = ({
+  className,
+  event_time,
+  thumbnail,
+  workstream_id,
+  title,
+  video_duration,
+  width = "315px",
+}) => {
   const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
 
   return (
@@ -27,6 +35,9 @@ const VideoCard: FC<VideoCardProps> = ({ className, event_time, thumbnail, works
             width={315}
             src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"}
           />
+          <Typography variant="body2" component="div">
+            {convertSecondsToFormattedTime(video_duration)}
+          </Typography>
         </ImageWrapper>
         <Box className="video-detail">
           <Typography variant="h3" component="div" title={title}>

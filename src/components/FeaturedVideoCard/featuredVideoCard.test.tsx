@@ -13,6 +13,7 @@ describe("FeaturedVideoCard", () => {
     title: "Sample Video Title",
     workstream_id: "Sample Video Organizer",
     description: "Sample video description",
+    video_duration: 1800,
   };
 
   test("should render the component with provided props", () => {

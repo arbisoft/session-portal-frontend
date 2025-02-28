@@ -5,9 +5,9 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
-import { formatDateTime, trimTextLength } from "@/utils/utils";
+import { convertSecondsToFormattedTime, formatDateTime, trimTextLength } from "@/utils/utils";
 
-import { FeaturedVideoCardContainer } from "./styled";
+import { FeaturedVideoCardContainer, ImageContainerBox } from "./styled";
 import { FeaturedVideoCardProps } from "./types";
 
 const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
@@ -18,6 +18,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   title,
   description,
   isVisible = false,
+  video_duration,
   width = "100%",
 }) => {
   const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
@@ -25,7 +26,17 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   return isVisible ? (
     <FeaturedVideoCardContainer $width={width} className={className} data-testid="video-card">
       <CardContent>
-        <Image alt={title} height={192} width={315} src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"} />
+        <ImageContainerBox>
+          <Image
+            alt={title}
+            height={192}
+            width={315}
+            src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"}
+          />
+          <Typography variant="body2" component="div">
+            {convertSecondsToFormattedTime(video_duration)}
+          </Typography>
+        </ImageContainerBox>
 
         <Box className="video-detail">
           <Typography variant="h3" component="div" title={title}>
