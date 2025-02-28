@@ -36,14 +36,14 @@ const VideoCard: FC<VideoCardProps> = ({
     >
       <CardContent>
         <ImageWrapper>
-          <Skeleton width={315} height={192} variant="rounded" animation="wave" />
+          <Skeleton width="100%" height={192} variant="rounded" animation="wave" />
           <Image
             alt={title}
             height={192}
             width={315}
             src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"}
           />
-          <Typography variant="body2" component="div">
+          <Typography className="video-duration" component="div">
             {convertSecondsToFormattedTime(video_duration)}
           </Typography>
         </ImageWrapper>
@@ -51,10 +51,10 @@ const VideoCard: FC<VideoCardProps> = ({
           <Typography variant="h3" component="div" title={title}>
             {title}
           </Typography>
-          <Typography variant="body2" className="organizer-name" data-testid="video-card-organizer">
+          <Typography variant="bodyMedium" className="organizer-name" data-testid="video-card-organizer">
             {workstream_id}
           </Typography>
-          <Typography variant="body2" className="date-time" data-testid="video-card-date-time">
+          <Typography variant="bodyMedium" className="date-time" data-testid="video-card-date-time">
             {formatDateTime(event_time)}
           </Typography>
         </Box>

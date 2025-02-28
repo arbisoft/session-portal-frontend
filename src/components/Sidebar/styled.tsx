@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { styled, css } from "@mui/material/styles";
+import { styled, css, alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
 import { shouldForwardProp } from "@/utils/styleUtils";
@@ -27,18 +27,19 @@ export const MenuStack = styled(Stack, {
 export const MenuItem = styled(Stack, {
   name: "MenuItem",
   shouldForwardProp,
-})<{ $isSelected: boolean }>(({ $isSelected }) => {
+})<{ $isSelected: boolean }>(({ theme, $isSelected }) => {
+  const backgroundColor = alpha(theme.palette.colors.white, 0.2);
   return css`
+    background-color: ${$isSelected ? backgroundColor : "transparent"};
+    border-radius: 8px;
+    color: ${theme.palette.colors.white};
+    cursor: pointer;
     flex-direction: row;
     gap: 10px;
     padding: 12px;
-    cursor: pointer;
-    color: #fff;
-    border-radius: 8px;
-    background-color: ${$isSelected ? "rgba(255, 255, 255, 0.2)" : "transparent"};
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.2);
+      background-color: ${backgroundColor};
     }
   `;
 });

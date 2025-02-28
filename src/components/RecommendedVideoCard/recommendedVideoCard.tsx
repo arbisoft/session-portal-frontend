@@ -27,7 +27,7 @@ const RecommendedVideoCard: FC<RecommendedVideoCardProps> = ({
           <Typography variant="h5" component="div" title={title}>
             {title}
           </Typography>
-          <Typography variant="body2" className="date-time" data-testid="date-time">
+          <Typography variant="bodySmall" className="date-time" data-testid="date-time">
             {date} <span>/ {duration}</span>
           </Typography>
           <Rating readOnly size="small" value={ratingValue} emptyIcon={<StarIcon fontSize="inherit" />} />
