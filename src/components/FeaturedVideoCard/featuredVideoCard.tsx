@@ -5,12 +5,14 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
+import useNavigation from "@/hooks/useNavigation";
 import { convertSecondsToFormattedTime, formatDateTime, trimTextLength } from "@/utils/utils";
 
 import { FeaturedVideoCardContainer, ImageContainerBox } from "./styled";
 import { FeaturedVideoCardProps } from "./types";
 
 const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
+  id,
   className,
   event_time,
   thumbnail,
@@ -21,10 +23,16 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   video_duration,
   width = "100%",
 }) => {
+  const { navigateTo } = useNavigation();
   const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
 
   return isVisible ? (
-    <FeaturedVideoCardContainer $width={width} className={className} data-testid="video-card">
+    <FeaturedVideoCardContainer
+      $width={width}
+      className={className}
+      data-testid="video-card"
+      onClick={() => navigateTo("videoDetail", { id })}
+    >
       <CardContent>
         <ImageContainerBox>
           <Image

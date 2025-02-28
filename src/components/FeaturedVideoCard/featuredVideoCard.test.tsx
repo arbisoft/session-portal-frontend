@@ -7,6 +7,7 @@ import { FeaturedVideoCardProps } from "./types";
 
 describe("FeaturedVideoCard", () => {
   const mockProps: FeaturedVideoCardProps = {
+    id: 1,
     className: "custom-class",
     event_time: "Jan 01, 2024",
     thumbnail: "https://example.com/sample.jpg",

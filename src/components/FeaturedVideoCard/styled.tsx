@@ -19,6 +19,7 @@ export const FeaturedVideoCardContainer = styled(Card, {
     overflow: hidden;
     width: ${$width};
     margin-top: 10px;
+    cursor: pointer;
 
     .${cardContentClasses.root} {
       align-items: flex-start;

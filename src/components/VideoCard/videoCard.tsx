@@ -8,12 +8,14 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
+import useNavigation from "@/hooks/useNavigation";
 import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
 
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
 const VideoCard: FC<VideoCardProps> = ({
+  id,
   className,
   event_time,
   thumbnail,
@@ -22,10 +24,16 @@ const VideoCard: FC<VideoCardProps> = ({
   video_duration,
   width = "315px",
 }) => {
+  const { navigateTo } = useNavigation();
   const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
 
   return (
-    <VideoCardContainer $width={width} className={className} data-testid="video-card">
+    <VideoCardContainer
+      $width={width}
+      className={className}
+      data-testid="video-card"
+      onClick={() => navigateTo("videoDetail", { id })}
+    >
       <CardContent>
         <ImageWrapper>
           <Skeleton width={315} height={192} variant="rounded" animation="wave" />

@@ -16,6 +16,7 @@ export const VideoCardContainer = styled(Card, {
     overflow: unset;
     border-radius: unset;
     width: ${$width};
+    cursor: pointer;
 
     .${cardContentClasses.root} {
       align-items: flex-start;

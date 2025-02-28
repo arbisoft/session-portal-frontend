@@ -1,4 +1,5 @@
 export type FeaturedVideoCardProps = {
+  id: number;
   isVisible?: boolean;
   className?: string;
   event_time: string;
