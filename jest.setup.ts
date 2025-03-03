@@ -1,4 +1,5 @@
 import "@testing-library/jest-dom";
+import "whatwg-fetch";
 import { cleanup } from "@testing-library/react";
 // Run cleanup after each test
 afterEach(() => {
