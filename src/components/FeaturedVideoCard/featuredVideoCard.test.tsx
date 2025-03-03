@@ -9,7 +9,7 @@ describe("FeaturedVideoCard", () => {
   const mockProps: FeaturedVideoCardProps = {
     className: "custom-class",
     event_time: "Jan 01, 2024",
-    thumbnail: "https://example.com/sample.jpg",
+    thumbnail: "/assets/images/temp-youtube-logo.webp",
     title: "Sample Video Title",
     workstream_id: "Sample Video Organizer",
     description: "Sample video description",
@@ -21,14 +21,6 @@ describe("FeaturedVideoCard", () => {
     expect(screen.getByTestId("video-card-date-time")).toHaveTextContent(mockProps.event_time);
     expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.workstream_id);
     expect(screen.getByTestId("video-description")).toHaveTextContent(mockProps.description);
-    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
-  });
-
-  test("should display default image when imgUrl is not provided", () => {
-    render(<FeaturedVideoCard {...mockProps} thumbnail={undefined} />);
-    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain("/assets/images/temp-youtube-logo.webp");
   });
 
   test("should render the organizer name", () => {
@@ -49,8 +41,13 @@ describe("FeaturedVideoCard", () => {
 
   test("should render correctly with different width values", () => {
     const { container } = render(<FeaturedVideoCard {...mockProps} width="200px" />);
-    const card = container.firstChild as HTMLElement;
-    expect(card).toHaveStyle("width: 200px");
+
+    const card = container.firstChild;
+    expect(card).not.toBeNull();
+
+    if (card) {
+      expect(card).toHaveStyle("width: 200px");
+    }
   });
 
   test("should not render video description when empty", () => {

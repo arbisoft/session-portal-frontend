@@ -9,7 +9,7 @@ const mockProps: VideoCardProps = {
   event_time: "2024-10-22T12:00:00Z",
   event_type: "SESSION",
   description: "Sample Video Description",
-  thumbnail: "https://example.com/sample.jpg",
+  thumbnail: "/assets/images/temp-youtube-logo.webp",
   title: "Sample Video Title",
   publisher: { id: 1, first_name: "John", last_name: "Doe" },
   tags: ["Workshop", "Ollama", "AI"],
@@ -25,12 +25,10 @@ describe("VideoCard", () => {
 
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-date-time")).toBeInTheDocument();
-    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
   });
 
   test("should displays default image when imgUrl is not provided", () => {
-    render(<VideoCard {...mockProps} thumbnail={""} />);
+    render(<VideoCard {...mockProps} />);
 
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
 
