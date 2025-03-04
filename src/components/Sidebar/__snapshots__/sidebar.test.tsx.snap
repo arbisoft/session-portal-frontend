@@ -24,6 +24,7 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
         />
         <p
           class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          data-testid="sidebar-item-Home"
         >
           Home
         </p>
@@ -43,6 +44,7 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
         />
         <p
           class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          data-testid="sidebar-item-Settings"
         >
           Settings
         </p>
@@ -62,6 +64,7 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
         />
         <p
           class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          data-testid="sidebar-item-Profile"
         >
           Profile
         </p>
@@ -81,6 +84,7 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
         />
         <p
           class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          data-testid="sidebar-item-Logout"
         >
           Logout
         </p>

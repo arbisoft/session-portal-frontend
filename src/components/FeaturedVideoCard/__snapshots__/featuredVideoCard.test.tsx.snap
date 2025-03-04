@@ -3,7 +3,7 @@
 exports[`FeaturedVideoCard should match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-1dub9uu-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-k3lj1h-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
     data-testid="video-card"
     style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
   >
@@ -16,10 +16,10 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
         decoding="async"
         height="192"
         loading="lazy"
-        src="/_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=828&q=75"
-        srcset="/_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=640&q=75 1x, /_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=828&q=75 2x"
+        src="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75"
+        srcset="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=384&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75 2x"
         style="color: transparent;"
-        width="400"
+        width="315"
       />
       <div
         class="video-detail MuiBox-root css-0"
@@ -40,7 +40,7 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
           class="MuiTypography-root MuiTypography-body2 date-time css-ljgvyt-MuiTypography-root"
           data-testid="video-card-date-time"
         >
-          Jan 01, 2024
+          Oct 22, 2024
         </p>
         <p
           class="MuiTypography-root MuiTypography-body2 video-description css-ljgvyt-MuiTypography-root"

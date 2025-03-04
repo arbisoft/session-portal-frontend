@@ -20,7 +20,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   isVisible = false,
   width = "100%",
 }) => {
-  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
+  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/${thumbnail}`;
 
   return isVisible ? (
     <FeaturedVideoCardContainer $width={width} className={className} data-testid="video-card">
@@ -35,11 +35,13 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
             {workstream_id}
           </Typography>
           <Typography variant="body2" className="date-time" data-testid="video-card-date-time">
-            {formatDateTime(event_time)}
+            {event_time ? formatDateTime(event_time) : null}
           </Typography>
-          <Typography variant="body2" className="video-description" data-testid="video-description">
-            {trimTextLength(description, 200)}
-          </Typography>
+          {description && (
+            <Typography variant="body2" className="video-description" data-testid="video-description">
+              {trimTextLength(description, 200)}
+            </Typography>
+          )}
         </Box>
       </CardContent>
     </FeaturedVideoCardContainer>

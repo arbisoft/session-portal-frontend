@@ -9,7 +9,7 @@ const mockProps: VideoCardProps = {
   event_time: "2024-10-22T12:00:00Z",
   event_type: "SESSION",
   description: "Sample Video Description",
-  thumbnail: "/assets/images/temp-youtube-logo.webp",
+  thumbnail: "assets/images/temp-youtube-logo.webp",
   title: "Sample Video Title",
   publisher: { id: 1, first_name: "John", last_name: "Doe" },
   tags: ["Workshop", "Ollama", "AI"],

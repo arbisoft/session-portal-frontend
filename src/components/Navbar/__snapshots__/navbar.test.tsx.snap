@@ -36,7 +36,7 @@ exports[`Navbar Component should snapshot test for Navbar 1`] = `
         <div
           class="MuiBox-root css-1rqqp05"
         >
-          <div
+          <form
             class="css-1yzrppa-Search-root"
           >
             <div
@@ -50,8 +50,9 @@ exports[`Navbar Component should snapshot test for Navbar 1`] = `
                 value=""
               />
             </div>
-            <div
-              class="css-1fwm7ty-SearchIconWrapper-root"
+            <button
+              class="css-140grxj-SearchIconButton-root"
+              type="submit"
             >
               <svg
                 aria-hidden="true"
@@ -64,8 +65,8 @@ exports[`Navbar Component should snapshot test for Navbar 1`] = `
                   d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"
                 />
               </svg>
-            </div>
-          </div>
+            </button>
+          </form>
         </div>
         <div
           class="MuiBox-root css-1v32olg"
@@ -74,6 +75,7 @@ exports[`Navbar Component should snapshot test for Navbar 1`] = `
             aria-label="Open settings"
             class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1j2eanh-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
+            data-testid="avatar-btn"
             tabindex="0"
             type="button"
           >

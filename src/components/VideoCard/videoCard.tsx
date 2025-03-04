@@ -14,7 +14,7 @@ import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
 const VideoCard: FC<VideoCardProps> = ({ className, event_time, thumbnail, workstream_id, title, width = "315px" }) => {
-  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
+  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/${thumbnail}`;
 
   return (
     <VideoCardContainer $width={width} className={className} data-testid="video-card">

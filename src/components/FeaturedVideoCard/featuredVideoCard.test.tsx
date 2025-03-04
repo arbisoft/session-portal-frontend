@@ -8,19 +8,28 @@ import { FeaturedVideoCardProps } from "./types";
 describe("FeaturedVideoCard", () => {
   const mockProps: FeaturedVideoCardProps = {
     className: "custom-class",
-    event_time: "Jan 01, 2024",
-    thumbnail: "/assets/images/temp-youtube-logo.webp",
+    event_time: "2024-10-22T12:00:00Z",
+    thumbnail: "assets/images/temp-youtube-logo.webp",
     title: "Sample Video Title",
     workstream_id: "Sample Video Organizer",
     description: "Sample video description",
+    isVisible: true,
   };
 
   test("should render the component with provided props", () => {
     render(<FeaturedVideoCard {...mockProps} />);
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
-    expect(screen.getByTestId("video-card-date-time")).toHaveTextContent(mockProps.event_time);
+    expect(screen.getByTestId("video-card-date-time")).toHaveTextContent("Oct 22, 2024");
     expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.workstream_id);
     expect(screen.getByTestId("video-description")).toHaveTextContent(mockProps.description);
+    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
+    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
+  });
+
+  test("should display default image when imgUrl is not provided", () => {
+    render(<FeaturedVideoCard {...mockProps} thumbnail={undefined} />);
+    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
+    expect(decodeURIComponent(imgUrl)).toContain("/assets/images/temp-youtube-logo.webp");
   });
 
   test("should render the organizer name", () => {
@@ -41,7 +50,6 @@ describe("FeaturedVideoCard", () => {
 
   test("should render correctly with different width values", () => {
     const { container } = render(<FeaturedVideoCard {...mockProps} width="200px" />);
-
     const card = container.firstChild;
     expect(card).not.toBeNull();
 
@@ -64,7 +72,7 @@ describe("FeaturedVideoCard", () => {
   });
 
   test("should render empty date when date is not provided", () => {
-    const mockPropsEmptyDate = { ...mockProps, date: "" };
+    const mockPropsEmptyDate: FeaturedVideoCardProps = { ...mockProps, event_time: "" };
     render(<FeaturedVideoCard {...mockPropsEmptyDate} />);
     expect(screen.getByTestId("video-card-date-time")).toHaveTextContent("");
   });

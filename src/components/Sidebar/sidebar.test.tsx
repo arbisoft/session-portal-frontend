@@ -86,10 +86,14 @@ describe("Sidebar Component", () => {
 
     fireEvent.click(item1);
     fireEvent.click(item2);
-
     await waitFor(() => {
       expect(item2.parentElement).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
     });
+  });
+
+  test("should snapshot test for Sidebar", () => {
+    const { asFragment } = customRender(<Sidebar />);
+    expect(asFragment()).toMatchSnapshot();
   });
 
   test("should not render menu items if sidebarItems is empty", () => {

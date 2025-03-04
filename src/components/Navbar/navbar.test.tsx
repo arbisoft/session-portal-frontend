@@ -21,19 +21,19 @@ describe("Navbar Component", () => {
 
   test("should renders avatar button", () => {
     render(<Navbar />);
-    expect(screen.getByRole("button")).toBeInTheDocument();
+    expect(screen.getByTestId("avatar-btn")).toBeInTheDocument();
   });
 
   test("should opens user menu when avatar is clicked", () => {
     render(<Navbar />);
-    const avatarButton = screen.getByRole("button");
+    const avatarButton = screen.getByTestId("avatar-btn");
     fireEvent.click(avatarButton);
     expect(screen.getByText("Profile")).toBeInTheDocument();
   });
 
   test("should closes user menu when menu item is clicked", () => {
     render(<Navbar />);
-    const avatarButton = screen.getByRole("button");
+    const avatarButton = screen.getByTestId("Profile");
     fireEvent.click(avatarButton);
     const menuItem = screen.getByText("Profile");
     fireEvent.click(menuItem);
@@ -51,7 +51,7 @@ describe("Navbar Component", () => {
 
   test("should user menu contains all settings", () => {
     render(<Navbar />);
-    const avatarButton = screen.getByRole("button");
+    const avatarButton = screen.getByTestId("avatar-btn");
     fireEvent.click(avatarButton);
     const settings = ["Profile", "Account", "Dashboard", "Logout"];
     settings.forEach((setting) => {
@@ -67,7 +67,7 @@ describe("Navbar Component", () => {
 
   test("should tooltip is present on avatar button", async () => {
     render(<Navbar />);
-    const avatarButton = screen.getByRole("button");
+    const avatarButton = screen.getByTestId("avatar-btn");
     fireEvent.mouseOver(avatarButton);
     expect(await screen.findByText("Open settings")).toBeInTheDocument();
   });
