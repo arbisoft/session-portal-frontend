@@ -7,12 +7,14 @@ import { FeaturedVideoCardProps } from "./types";
 
 describe("FeaturedVideoCard", () => {
   const mockProps: FeaturedVideoCardProps = {
+    id: 1,
     className: "custom-class",
     event_time: "Jan 01, 2024",
     thumbnail: "https://example.com/sample.jpg",
     title: "Sample Video Title",
     workstream_id: "Sample Video Organizer",
     description: "Sample video description",
+    video_duration: 1800,
   };
 
   test("should render the component with provided props", () => {

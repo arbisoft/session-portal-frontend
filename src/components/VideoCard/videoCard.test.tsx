@@ -17,6 +17,7 @@ const mockProps: VideoCardProps = {
   status: "PUBLISHED",
   workstream_id: "Ikram Ali",
   width: "300px",
+  video_duration: 1800,
 };
 
 describe("VideoCard", () => {

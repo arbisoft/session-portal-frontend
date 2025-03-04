@@ -9,6 +9,7 @@ export type VideoCardProps = {
   status: string;
   workstream_id: string;
   is_featured: boolean;
+  video_duration: number;
   tags: string[];
   thumbnail: string;
   width?: string;
