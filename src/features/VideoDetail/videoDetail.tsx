@@ -118,7 +118,9 @@ const VideoDetail = () => {
           <StyledNotesSection>
             <Typography variant="h5">Session Notes</Typography>
             <div className="description">
-              <Typography color="textSecondary">{dataEvent?.description}</Typography>
+              <Typography variant="bodySmall" color="textSecondary">
+                {dataEvent?.description}
+              </Typography>
             </div>
           </StyledNotesSection>
         </>

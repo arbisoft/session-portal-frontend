@@ -120,21 +120,17 @@ export const ImageContainerBox = styled(Box, {
 })(({ theme }) => {
   return css`
     position: relative;
+    display: inline-flex;
 
-    .${typographyClasses.body2} {
+    .video-duration {
       background-color: rgba(0, 0, 0, 0.7);
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
+      border-radius: 2px;
+      bottom: 10px;
       color: ${theme.palette.colors.white};
       font-size: 12px;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 11.72px;
-      border-radius: 2px;
       padding: 2px 4px;
       position: absolute;
       right: 10px;
-      bottom: 10px;
       z-index: 9999;
     }
   `;
