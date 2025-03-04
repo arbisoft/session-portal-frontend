@@ -25,7 +25,7 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
   const handleClick = (item: Tag) => {
     setSelected(item.name);
     handleSidebarToggle?.();
-    item.id === 0 ? navigateTo("videos") : navigateTo("videos", { tagId: item.id });
+    item.id === 0 ? navigateTo("videos") : navigateTo("videos", { tag: item.id });
   };
 
   return (
