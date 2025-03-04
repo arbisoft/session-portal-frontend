@@ -18,7 +18,8 @@ import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 
-import { Logo, Search, SearchIconButton, StyledInputBase } from "./styled";
+import ThemeToggle from "../ThemeToggle";
+import { Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
 const settings = ["Profile", "Account", "Dashboard"];
 
@@ -99,6 +100,9 @@ function Navbar() {
               ))}
               <MenuItem onClick={handleLogout}>
                 <Typography>Logout</Typography>
+              </MenuItem>
+              <MenuItem disableRipple disableTouchRipple>
+                <ThemeToggle />
               </MenuItem>
             </Menu>
           </Box>
