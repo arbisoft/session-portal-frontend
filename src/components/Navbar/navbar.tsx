@@ -19,7 +19,8 @@ import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 
 import ThemeToggle from "../ThemeToggle";
-import { Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
+
+import { Logo, Search, SearchIconButton, StyledInputBase } from "./styled";
 
 const settings = ["Profile", "Account", "Dashboard"];
 
