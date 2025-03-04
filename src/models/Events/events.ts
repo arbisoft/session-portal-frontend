@@ -18,6 +18,7 @@ export interface Event {
   event_time: string;
   event_type: string;
   id: number;
+  video_duration: number;
   is_featured: boolean;
   publisher: Publisher;
   status: string;

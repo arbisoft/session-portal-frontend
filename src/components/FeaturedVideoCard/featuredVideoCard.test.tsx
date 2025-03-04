@@ -7,6 +7,7 @@ import { FeaturedVideoCardProps } from "./types";
 
 describe("FeaturedVideoCard", () => {
   const mockProps: FeaturedVideoCardProps = {
+    id: 1,
     className: "custom-class",
     event_time: "2024-10-22T12:00:00Z",
     thumbnail: "assets/images/temp-youtube-logo.webp",
@@ -14,6 +15,7 @@ describe("FeaturedVideoCard", () => {
     workstream_id: "Sample Video Organizer",
     description: "Sample video description",
     isVisible: true,
+    video_duration: 1800,
   };
 
   test("should render the component with provided props", () => {
