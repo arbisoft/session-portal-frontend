@@ -10,7 +10,7 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
       class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
     >
       <div
-        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+        class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
       >
         <img
           alt="Home"
@@ -23,14 +23,14 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
           width="18"
         />
         <p
-          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
           data-testid="sidebar-item-Home"
         >
           Home
         </p>
       </div>
       <div
-        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+        class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
       >
         <img
           alt="Settings"
@@ -43,14 +43,14 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
           width="18"
         />
         <p
-          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
           data-testid="sidebar-item-Settings"
         >
           Settings
         </p>
       </div>
       <div
-        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+        class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
       >
         <img
           alt="Profile"
@@ -63,14 +63,14 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
           width="18"
         />
         <p
-          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
           data-testid="sidebar-item-Profile"
         >
           Profile
         </p>
       </div>
       <div
-        class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+        class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
       >
         <img
           alt="Logout"
@@ -83,7 +83,7 @@ exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
           width="18"
         />
         <p
-          class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+          class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
           data-testid="sidebar-item-Logout"
         >
           Logout

@@ -3,47 +3,56 @@
 exports[`FeaturedVideoCard should match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-k3lj1h-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-1ahnmrs-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
     data-testid="video-card"
     style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
   >
     <div
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
-      <img
-        alt="Sample Video Title"
-        data-nimg="1"
-        decoding="async"
-        height="192"
-        loading="lazy"
-        src="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75"
-        srcset="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=384&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75 2x"
-        style="color: transparent;"
-        width="315"
-      />
+      <div
+        class="MuiBox-root css-15l7p1e-ImageContainerBox-root"
+      >
+        <img
+          alt="Sample Video Title"
+          data-nimg="1"
+          decoding="async"
+          height="192"
+          loading="lazy"
+          src="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75"
+          srcset="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=384&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75 2x"
+          style="color: transparent;"
+          width="315"
+        />
+        <div
+          class="MuiTypography-root MuiTypography-bodyMedium video-duration css-149i8z5-MuiTypography-root"
+        >
+          30:00
+        </div>
+      </div>
       <div
         class="video-detail MuiBox-root css-0"
       >
         <div
-          class="MuiTypography-root MuiTypography-h3 css-1udo365-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h3 css-1fho9p8-MuiTypography-root"
           title="Sample Video Title"
         >
           Sample Video Title
         </div>
         <p
-          class="MuiTypography-root MuiTypography-body2 organizer-name css-ljgvyt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-149i8z5-MuiTypography-root"
           data-testid="video-card-organizer"
         >
           Sample Video Organizer
         </p>
         <p
-          class="MuiTypography-root MuiTypography-body2 date-time css-ljgvyt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body2 date-time css-okaa2r-MuiTypography-root"
           data-testid="video-card-date-time"
         >
           Oct 22, 2024
         </p>
         <p
-          class="MuiTypography-root MuiTypography-body2 video-description css-ljgvyt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-body2 video-description css-okaa2r-MuiTypography-root"
           data-testid="video-description"
         >
           Sample video description

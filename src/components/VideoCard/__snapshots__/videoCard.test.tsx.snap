@@ -3,7 +3,7 @@
 exports[`VideoCard should matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-w4ebyq-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-1izo6yh-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
     data-testid="video-card"
     style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
   >
@@ -11,12 +11,12 @@ exports[`VideoCard should matches snapshot 1`] = `
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <div
-        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-14hlj3q-MuiPaper-root-MuiCard-root-ImageWrapper-root"
+        class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-dt9jx5-MuiPaper-root-MuiCard-root-ImageWrapper-root"
         style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
       >
         <span
           class="MuiSkeleton-root MuiSkeleton-rounded MuiSkeleton-wave css-116i1gn-MuiSkeleton-root"
-          style="width: 315px; height: 192px;"
+          style="width: 100%; height: 192px;"
         />
         <img
           alt="Sample Video Title"
@@ -29,24 +29,29 @@ exports[`VideoCard should matches snapshot 1`] = `
           style="color: transparent;"
           width="315"
         />
+        <div
+          class="MuiTypography-root MuiTypography-bodyMedium video-duration css-149i8z5-MuiTypography-root"
+        >
+          30:00
+        </div>
       </div>
       <div
         class="video-detail MuiBox-root css-0"
       >
         <div
-          class="MuiTypography-root MuiTypography-h3 css-1udo365-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h3 css-1fho9p8-MuiTypography-root"
           title="Sample Video Title"
         >
           Sample Video Title
         </div>
         <p
-          class="MuiTypography-root MuiTypography-body2 organizer-name css-ljgvyt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-149i8z5-MuiTypography-root"
           data-testid="video-card-organizer"
         >
           Ikram Ali
         </p>
         <p
-          class="MuiTypography-root MuiTypography-body2 date-time css-ljgvyt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodyMedium date-time css-149i8z5-MuiTypography-root"
           data-testid="video-card-date-time"
         >
           Oct 22, 2024

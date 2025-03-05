@@ -28,7 +28,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             />
           </svg>
           <h6
-            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-gy6dzc-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1c6flzx-MuiTypography-root"
           >
             Arbisoft Sessions Portal
           </h6>
@@ -40,7 +40,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             class="css-1yzrppa-Search-root"
           >
             <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-1v5fh7w-MuiInputBase-root-StyledInputBase-root"
+              class="MuiInputBase-root MuiInputBase-colorPrimary css-a2oob5-MuiInputBase-root-StyledInputBase-root"
             >
               <input
                 aria-label="search"
@@ -80,7 +80,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             type="button"
           >
             <div
-              class="MuiAvatar-root MuiAvatar-rounded MuiAvatar-colorDefault css-p5wg1c-MuiAvatar-root"
+              class="MuiAvatar-root MuiAvatar-rounded MuiAvatar-colorDefault css-5ta4e5-MuiAvatar-root"
             >
               <svg
                 aria-hidden="true"
@@ -114,7 +114,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
         >
           <div
-            class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
           >
             <img
               alt="Home"
@@ -127,14 +127,14 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               width="18"
             />
             <p
-              class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
               data-testid="sidebar-item-Home"
             >
               Home
             </p>
           </div>
           <div
-            class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
           >
             <img
               alt="Settings"
@@ -147,14 +147,14 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               width="18"
             />
             <p
-              class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
               data-testid="sidebar-item-Settings"
             >
               Settings
             </p>
           </div>
           <div
-            class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
           >
             <img
               alt="Profile"
@@ -167,14 +167,14 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               width="18"
             />
             <p
-              class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
               data-testid="sidebar-item-Profile"
             >
               Profile
             </p>
           </div>
           <div
-            class="MuiStack-root css-1gweisr-MuiStack-root-MenuItem-root"
+            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
           >
             <img
               alt="Logout"
@@ -187,7 +187,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               width="18"
             />
             <p
-              class="MuiTypography-root MuiTypography-body1 css-9bjbpq-MuiTypography-root-Text-root"
+              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
               data-testid="sidebar-item-Logout"
             >
               Logout

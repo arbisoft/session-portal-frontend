@@ -53,12 +53,11 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
           <Typography className="organizer-name" data-testid="video-card-organizer">
             {workstream_id}
           </Typography>
-          <Typography variant="body2" className="date-time" data-testid="video-card-date-time">
+          <Typography variant="bodySmall" className="date-time" data-testid="video-card-date-time">
             {event_time ? formatDateTime(event_time) : null}
-
           </Typography>
           {description && (
-            <Typography variant="body2" className="video-description" data-testid="video-description">
+            <Typography variant="bodySmall" className="video-description" data-testid="video-description">
               {trimTextLength(description, 200)}
             </Typography>
           )}
