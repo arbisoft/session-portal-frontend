@@ -16,11 +16,12 @@ import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import useNavigation from "@/hooks/useNavigation";
-import { Tag, TAllEventsPyaload } from "@/models/Events";
+import { Event, Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
+import { runsOnServerSide } from "@/services/runs-on-server-side/runs-on-server-side";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
-import { defaultParams, defaultTag } from "./types";
+import { defaultParams, defaultTag, ISearchEventDetail } from "./types";
 
 const selectMenuItems: string[] = Array(3)
   .fill("")
@@ -51,9 +52,25 @@ const VideosListingPage = () => {
     });
   }, [searchParams]);
 
+  useEffect(() => {
+    if (runsOnServerSide) return;
+    const handleCustomSearchEvent = (searchEvent: CustomEvent<ISearchEventDetail>) => {
+      setRequestParams((previous) => ({ ...previous, search: searchEvent?.detail?.searchQuery }));
+    };
+
+    window.addEventListener("searchEvent", handleCustomSearchEvent as EventListener);
+
+    return () => {
+      window.removeEventListener("searchEvent", handleCustomSearchEvent as EventListener);
+    };
+  }, []);
+
   const featuredVideos = videoListings?.results.filter((video) => video.is_featured) || [];
   const latestFeaturedVideo =
     featuredVideos?.sort((a, b) => parseISO(b.event_time).getTime() - parseISO(a.event_time).getTime())[0] || null;
+  const listedVideos = latestFeaturedVideo
+    ? videoListings?.results.filter((video: Event) => video.id !== latestFeaturedVideo.id)
+    : videoListings?.results;
 
   return (
     <MainLayoutContainer>
@@ -95,7 +112,7 @@ const VideosListingPage = () => {
                   <Skeleton width="30%" height={30} />
                 </Box>
               ))
-            : videoListings?.results.map((videoCard) => <VideoCard key={videoCard.id} {...videoCard} width="100%" />)}
+            : listedVideos?.map((videoCard) => <VideoCard key={videoCard.id} {...videoCard} width="100%" />)}
         </VideoListingContainer>
       </Box>
     </MainLayoutContainer>

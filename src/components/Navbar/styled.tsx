@@ -24,7 +24,7 @@ export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
   `;
 });
 
-export const Search = styled("div", { name: "Search" })(({ theme }) => {
+export const Search = styled("form", { name: "Search" })(({ theme }) => {
   return css`
     align-items: center;
     background-color: ${alpha(theme.palette.common.white, 0.15)};
@@ -40,7 +40,7 @@ export const Search = styled("div", { name: "Search" })(({ theme }) => {
   `;
 });
 
-export const SearchIconWrapper = styled("div", { name: "SearchIconWrapper" })(({ theme }) => {
+export const SearchIconWrapper = styled("button", { name: "SearchIconWrapper" })(({ theme }) => {
   return css`
     align-items: center;
     background-color: ${alpha(theme.palette.common.white, 0.25)};
@@ -50,7 +50,16 @@ export const SearchIconWrapper = styled("div", { name: "SearchIconWrapper" })(({
     height: 100%;
     justify-content: center;
     padding: ${theme.spacing(0, 2)};
-    pointer-events: none;
+    border: none;
+    cursor: pointer;
+  `;
+});
+
+export const CancelIconWrapper = styled("div", { name: "CancelIconWrapper" })(({ theme }) => {
+  return css`
+    padding-right: ${theme.spacing(1)};
+    padding-top: ${theme.spacing(1)};
+    cursor: pointer;
   `;
 });
 
@@ -60,7 +69,7 @@ export const StyledInputBase = styled(InputBase, { name: "StyledInputBase" })(
     width: 100%;
     & .${inputBaseClasses.input} {
       padding: ${theme.spacing(1, 1, 1, 1)};
-      padding-right: calc(1em + ${theme.spacing(4)});
+      padding-right: calc(1em + ${theme.spacing(1)});
     }
   `
 );

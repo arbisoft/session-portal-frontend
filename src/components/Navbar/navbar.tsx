@@ -1,5 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
+import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
 import YouTube from "@mui/icons-material/YouTube";
 import AppBar from "@mui/material/AppBar";
@@ -17,10 +18,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
+import { runsOnServerSide } from "@/services/runs-on-server-side/runs-on-server-side";
 
 import ThemeToggle from "../ThemeToggle";
 
-import { Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
+import { CancelIconWrapper, Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
 const settings = ["Profile", "Account", "Dashboard"];
 
@@ -29,6 +31,7 @@ function Navbar() {
   const userInfo = useSelector(selectUserInfo);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -45,6 +48,26 @@ function Navbar() {
     handleCloseUserMenu();
   };
 
+  const handleSearch = (searchEvent: React.FormEvent) => {
+    searchEvent.preventDefault();
+    if (searchQuery.length > 0 && !runsOnServerSide) {
+      const event = new CustomEvent("searchEvent", {
+        detail: { searchQuery },
+      });
+      window.dispatchEvent(event);
+    }
+  };
+
+  const handleClearSearch = () => {
+    if (!runsOnServerSide) {
+      const event = new CustomEvent("searchEvent", {
+        detail: { searchQuery: "" },
+      });
+      setSearchQuery("");
+      window.dispatchEvent(event);
+    }
+  };
+
   return (
     <AppBar position="static" data-testid="navbar">
       <Container maxWidth={false}>
@@ -57,8 +80,20 @@ function Navbar() {
           </Logo>
 
           <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-            <Search>
-              <StyledInputBase placeholder="Search..." inputProps={{ "aria-label": "search" }} />
+            <Search onSubmit={handleSearch}>
+              <StyledInputBase
+                value={searchQuery}
+                onInput={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
+                placeholder="Search..."
+                inputProps={{ "aria-label": "search" }}
+              />
+
+              {searchQuery.length > 0 && (
+                <CancelIconWrapper onClick={handleClearSearch}>
+                  <CancelIcon data-testid="CancelIcon" />
+                </CancelIconWrapper>
+              )}
+
               <SearchIconWrapper>
                 <SearchIcon data-testid="SearchIcon" />
               </SearchIconWrapper>
