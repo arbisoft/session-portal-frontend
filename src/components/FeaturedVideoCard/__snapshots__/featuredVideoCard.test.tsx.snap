@@ -46,13 +46,13 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
           Sample Video Organizer
         </p>
         <p
-          class="MuiTypography-root MuiTypography-body2 date-time css-okaa2r-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodySmall date-time css-1pot96k-MuiTypography-root"
           data-testid="video-card-date-time"
         >
           Oct 22, 2024
         </p>
         <p
-          class="MuiTypography-root MuiTypography-body2 video-description css-okaa2r-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodySmall video-description css-1pot96k-MuiTypography-root"
           data-testid="video-description"
         >
           Sample video description
