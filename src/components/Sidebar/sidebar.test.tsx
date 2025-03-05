@@ -1,12 +1,17 @@
 import useSidebar from "@/hooks/useSidebar";
-import { customRender, fireEvent, screen } from "@/jest/utils/testUtils";
+import { customRender, fireEvent, screen, waitFor } from "@/jest/utils/testUtils";
 
 import Sidebar from "./sidebar";
 
 jest.mock("@/hooks/useSidebar", () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    sidebarItems: ["Home", "Settings", "Profile", "Logout"],
+    sidebarItems: [
+      { id: 1, name: "Home" },
+      { id: 2, name: "Settings" },
+      { id: 3, name: "Profile" },
+      { id: 5, name: "Logout" },
+    ],
   })),
 }));
 
@@ -17,10 +22,15 @@ describe("Sidebar Component", () => {
   });
 
   test("should renders all sidebar items", () => {
-    const items = ["Home", "Settings", "Profile", "Logout"];
+    const items = [
+      { id: 1, name: "Home" },
+      { id: 2, name: "Settings" },
+      { id: 3, name: "Profile" },
+      { id: 4, name: "Logout" },
+    ];
     customRender(<Sidebar />);
     items.forEach((item) => {
-      expect(screen.getByText(item)).toBeInTheDocument();
+      expect(screen.getByText(item.name)).toBeInTheDocument();
     });
   });
 
@@ -28,6 +38,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
     const item = screen.getByText("Home");
     fireEvent.click(item);
+    expect(screen.getByTestId("sidebar-item-Home")).toBeInTheDocument();
     expect(item.parentElement).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
   });
 
@@ -35,6 +46,7 @@ describe("Sidebar Component", () => {
     const handleSidebarToggle = jest.fn();
     customRender(<Sidebar handleSidebarToggle={handleSidebarToggle} />);
     fireEvent.click(screen.getByText("Home"));
+    expect(screen.getByTestId("sidebar-item-Home")).toBeInTheDocument();
     expect(handleSidebarToggle).toHaveBeenCalled();
   });
 
@@ -46,31 +58,37 @@ describe("Sidebar Component", () => {
   test("should does not call handleSidebarToggle if it is not provided", () => {
     customRender(<Sidebar />);
     fireEvent.click(screen.getByText("Profile"));
-    expect(true).toBe(true); // No error should be thrown
+    expect(screen.getByTestId("sidebar-item-Profile")).toBeInTheDocument();
+    expect(true).toBe(true);
   });
 
   test("should menu items should be clickable", () => {
     customRender(<Sidebar />);
     const item = screen.getByText("Logout");
+    expect(screen.getByTestId("sidebar-item-Logout")).toBeInTheDocument();
     fireEvent.click(item);
     expect(item).toBeTruthy();
   });
 
   test("should menu should not change selection when clicking on the same item twice", () => {
     customRender(<Sidebar />);
+    expect(screen.getByTestId("sidebar-item-Home")).toBeInTheDocument();
     const item = screen.getByText("Home");
     fireEvent.click(item);
     fireEvent.click(item);
     expect(item.parentElement).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
   });
 
-  test("should menu should support multiple clicks on different items", () => {
+  test("should menu should support multiple clicks on different items", async () => {
     customRender(<Sidebar />);
     const item1 = screen.getByText("Home");
     const item2 = screen.getByText("Settings");
+
     fireEvent.click(item1);
     fireEvent.click(item2);
-    expect(item2.parentElement).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
+    await waitFor(() => {
+      expect(item2.parentElement).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
+    });
   });
 
   test("should snapshot test for Sidebar", () => {

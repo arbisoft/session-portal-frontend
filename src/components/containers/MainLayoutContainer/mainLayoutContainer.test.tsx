@@ -2,6 +2,18 @@ import { customRender as render, screen, waitFor } from "@/jest/utils/testUtils"
 
 import MainLayoutContainer from "./mainLayoutContainer";
 
+jest.mock("@/hooks/useSidebar", () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    sidebarItems: [
+      { id: 1, name: "Home" },
+      { id: 2, name: "Settings" },
+      { id: 3, name: "Profile" },
+      { id: 4, name: "Logout" },
+    ],
+  })),
+}));
+
 describe("MainLayoutContainer", () => {
   test("should renders Navbar component", () => {
     render(

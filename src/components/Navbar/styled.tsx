@@ -24,7 +24,7 @@ export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
   `;
 });
 
-export const Search = styled("div", { name: "Search" })(({ theme }) => {
+export const Search = styled("form", { name: "Search" })(({ theme }) => {
   return css`
     align-items: center;
     background-color: ${alpha(theme.palette.common.white, 0.15)};
@@ -40,9 +40,10 @@ export const Search = styled("div", { name: "Search" })(({ theme }) => {
   `;
 });
 
-export const SearchIconWrapper = styled("div", { name: "SearchIconWrapper" })(({ theme }) => {
+export const SearchIconButton = styled("button", { name: "SearchIconButton" })(({ theme }) => {
   return css`
     align-items: center;
+    border: none;
     background-color: ${alpha(theme.palette.common.white, 0.25)};
     border-bottom-right-radius: ${theme.shape.borderRadius * 2}px;
     border-top-right-radius: ${theme.shape.borderRadius * 2}px;
@@ -50,7 +51,7 @@ export const SearchIconWrapper = styled("div", { name: "SearchIconWrapper" })(({
     height: 100%;
     justify-content: center;
     padding: ${theme.spacing(0, 2)};
-    pointer-events: none;
+    cursor: pointer;
   `;
 });
 

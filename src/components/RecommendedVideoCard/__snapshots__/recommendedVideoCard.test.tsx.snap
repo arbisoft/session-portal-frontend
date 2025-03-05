@@ -25,13 +25,13 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
         class="video-detail MuiBox-root css-0"
       >
         <div
-          class="MuiTypography-root MuiTypography-h5 css-1ayj0vs-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h5 css-1y8o188-MuiTypography-root"
           title="Sample Video Title"
         >
           Sample Video Title
         </div>
         <p
-          class="MuiTypography-root MuiTypography-body2 date-time css-ljgvyt-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodySmall date-time css-1pot96k-MuiTypography-root"
           data-testid="date-time"
         >
           Jan 01, 2024 
