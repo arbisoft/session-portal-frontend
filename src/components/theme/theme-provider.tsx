@@ -3,7 +3,7 @@
 import { useMemo, PropsWithChildren } from "react";
 
 import GlobalStyles from "@mui/material/GlobalStyles";
-import { createTheme, ThemeProvider as MuiThemeProvider, Shadows, useTheme } from "@mui/material/styles";
+import { createTheme, ThemeProvider as MuiThemeProvider, Shadows, Theme, useTheme } from "@mui/material/styles";
 import { Roboto_Condensed, Inter } from "next/font/google";
 
 import { colors } from "./colors";
@@ -35,7 +35,7 @@ declare module "@mui/material/Typography" {
   }
 }
 
-function ThemeProvider(props: PropsWithChildren<{}>) {
+function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
   const fontFamily = [robotoCondensed.style.fontFamily, inter.style.fontFamily, "Helvetica", "Arial", "sans-serif"].join();
   const defaultTheme = useTheme();
   const theme = useMemo(
@@ -94,7 +94,7 @@ function ThemeProvider(props: PropsWithChildren<{}>) {
   );
 
   return (
-    <MuiThemeProvider theme={theme}>
+    <MuiThemeProvider theme={props.customTheme || theme}>
       <GlobalStyles
         styles={{
           "html,body,#__next": {
