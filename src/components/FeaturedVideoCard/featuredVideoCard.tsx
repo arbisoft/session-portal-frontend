@@ -41,7 +41,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
             width={315}
             src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"}
           />
-          <Typography variant="body2" component="div">
+          <Typography className="video-duration" component="div">
             {convertSecondsToFormattedTime(video_duration)}
           </Typography>
         </ImageContainerBox>
@@ -50,11 +50,12 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
           <Typography variant="h3" component="div" title={title}>
             {trimTextLength(title, 70)}
           </Typography>
-          <Typography variant="body2" className="organizer-name" data-testid="video-card-organizer">
+          <Typography className="organizer-name" data-testid="video-card-organizer">
             {workstream_id}
           </Typography>
           <Typography variant="body2" className="date-time" data-testid="video-card-date-time">
             {event_time ? formatDateTime(event_time) : null}
+
           </Typography>
           {description && (
             <Typography variant="body2" className="video-description" data-testid="video-description">
