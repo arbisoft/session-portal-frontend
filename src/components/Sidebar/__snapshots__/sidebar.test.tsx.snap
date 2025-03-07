@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Sidebar Component should snapshot test for Sidebar 1`] = `
+exports[`Sidebar Component should match snapshot 1`] = `
 <DocumentFragment>
   <div
     class="MuiBox-root css-cd9kc0-SidebarContainer-root"

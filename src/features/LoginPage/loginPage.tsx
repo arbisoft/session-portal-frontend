@@ -83,6 +83,7 @@ export default function LoginPage() {
         <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />
         <LoginButtonContainer>
           <Button
+            data-testid="login-button"
             disabled={isLoading}
             className="login-button"
             onClick={() => {

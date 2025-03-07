@@ -5,7 +5,11 @@ import { selectAccessToken } from "./login/selectors";
 import { parseError } from "./parseError";
 import { ReducersState } from "./store/configureStore";
 
-const HOST_URL = process.env.NEXT_PUBLIC_BASE_URL + "/api/v1";
+let HOST_URL = (process.env.NEXT_PUBLIC_BASE_URL ?? "") + "/api/v1";
+
+if (process.env.NODE_ENV === "test") {
+  HOST_URL = "http://localhost:8000/api/v1";
+}
 
 interface ExtraOptions {
   showErrorToast?: boolean;

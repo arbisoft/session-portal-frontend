@@ -31,19 +31,23 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
   return (
     <SidebarContainer data-testid="sidebar-container">
       <MenuStack>
-        {isDataLoading
-          ? loadingTags?.map((item) => (
+        {isDataLoading ? (
+          <Box data-testid="loading">
+            {loadingTags?.map((item) => (
               <Box key={item} display="flex" justifyContent="space-between" alignItems={"center"} width="90%">
                 <Skeleton variant="rounded" width="20%" height={30} />
                 <Skeleton width="76%" height={25} />
               </Box>
-            ))
-          : sidebarItems.map((item) => (
-              <MenuItem key={item.id} $isSelected={item.name === selected} onClick={() => handleClick(item)}>
-                <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
-                <Text data-testid={`sidebar-item-${item.name}`}>{item.name}</Text>
-              </MenuItem>
             ))}
+          </Box>
+        ) : (
+          sidebarItems.map((item) => (
+            <MenuItem key={item.id} $isSelected={item.name === selected} onClick={() => handleClick(item)}>
+              <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
+              <Text data-testid={`sidebar-item-${item.name}`}>{item.name}</Text>
+            </MenuItem>
+          ))
+        )}
       </MenuStack>
     </SidebarContainer>
   );
