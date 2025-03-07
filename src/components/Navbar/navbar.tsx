@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
-
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
 import YouTube from "@mui/icons-material/YouTube";
