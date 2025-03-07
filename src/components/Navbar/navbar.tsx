@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import { useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
@@ -13,12 +16,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { useDispatch, useSelector } from "react-redux";
 
+import useNavigation from "@/hooks/useNavigation";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
-import { runsOnServerSide } from "@/services/runs-on-server-side/runs-on-server-side";
 
 import ThemeToggle from "../ThemeToggle";
 
@@ -28,7 +30,14 @@ const settings = ["Profile", "Account", "Dashboard"];
 
 function Navbar() {
   const dispatch = useDispatch();
+  const searchParams = useSearchParams();
   const userInfo = useSelector(selectUserInfo);
+  const { navigateTo } = useNavigation();
+
+  useEffect(() => {
+    const search = searchParams.get("search") as string;
+    if (search) setSearchQuery(search);
+  }, [searchParams]);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,22 +59,12 @@ function Navbar() {
 
   const handleSearch = (searchEvent: React.FormEvent) => {
     searchEvent.preventDefault();
-    if (searchQuery.length > 0 && !runsOnServerSide) {
-      const event = new CustomEvent("searchEvent", {
-        detail: { searchQuery },
-      });
-      window.dispatchEvent(event);
-    }
+    navigateTo("videos", { search: searchQuery });
   };
 
   const handleClearSearch = () => {
-    if (!runsOnServerSide) {
-      const event = new CustomEvent("searchEvent", {
-        detail: { searchQuery: "" },
-      });
-      setSearchQuery("");
-      window.dispatchEvent(event);
-    }
+    navigateTo("videos");
+    setSearchQuery("");
   };
 
   return (

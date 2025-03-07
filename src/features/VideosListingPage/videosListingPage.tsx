@@ -18,10 +18,9 @@ import VideoCard from "@/components/VideoCard";
 import useNavigation from "@/hooks/useNavigation";
 import { Event, Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
-import { runsOnServerSide } from "@/services/runs-on-server-side/runs-on-server-side";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
-import { defaultParams, defaultTag, ISearchEventDetail } from "./types";
+import { defaultParams, defaultTag } from "./types";
 
 const selectMenuItems: string[] = Array(3)
   .fill("")
@@ -45,25 +44,29 @@ const VideosListingPage = () => {
 
   useEffect(() => {
     const tagId = searchParams.get("tag") as string;
+    const search = searchParams.get("search") as string;
+
     const tag = tags?.find((t) => String(t.id) === tagId) || defaultTag;
     setSelectedTag(tag);
     setRequestParams((prev) => {
-      return tagId ? { ...prev, tag: tag.name } : { ...prev };
+      const newParams = { ...prev };
+      const urlParams: { [key: string]: string } = {};
+
+      if (tag && tag.id !== 0) {
+        urlParams.tag = String(tag.id);
+        newParams.tag = tag.name;
+      } else delete newParams.tag;
+
+      if (search) {
+        urlParams.search = search;
+        newParams.search = search;
+      } else delete newParams.search;
+
+      //  navigateTo("videos", { ...urlParams })
+
+      return { ...newParams };
     });
   }, [searchParams]);
-
-  useEffect(() => {
-    if (runsOnServerSide) return;
-    const handleCustomSearchEvent = (searchEvent: CustomEvent<ISearchEventDetail>) => {
-      setRequestParams((previous) => ({ ...previous, search: searchEvent?.detail?.searchQuery }));
-    };
-
-    window.addEventListener("searchEvent", handleCustomSearchEvent as EventListener);
-
-    return () => {
-      window.removeEventListener("searchEvent", handleCustomSearchEvent as EventListener);
-    };
-  }, []);
 
   const featuredVideos = videoListings?.results.filter((video) => video.is_featured) || [];
   const latestFeaturedVideo =
