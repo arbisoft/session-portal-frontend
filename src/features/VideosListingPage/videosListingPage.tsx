@@ -67,7 +67,6 @@ const VideosListingPage = () => {
   const listedVideos = latestFeaturedVideo
     ? videoListings?.results.filter((video: Event) => video.id !== latestFeaturedVideo.id)
     : videoListings?.results;
-console.log("listedVideos :: ", listedVideos);
 
   return (
     <MainLayoutContainer>
