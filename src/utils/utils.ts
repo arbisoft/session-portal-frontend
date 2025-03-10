@@ -36,3 +36,18 @@ export const convertSecondsToFormattedTime = (seconds: number): string => {
 
   return `${formattedMinutes}:${formattedSeconds}`;
 };
+
+export function parseNonPassedParams<T extends Record<string, unknown>>(data: T): Record<string, unknown> {
+  return Object.entries(data)
+    .filter(([, value]) => {
+      let hasLength = true;
+      if (typeof value === "string" || Array.isArray(value)) {
+        hasLength = value.length !== 0;
+      }
+      return value === false || (!!value && hasLength);
+    })
+    .reduce((acc: Record<string, unknown>, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {});
+}

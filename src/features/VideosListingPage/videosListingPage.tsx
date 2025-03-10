@@ -18,6 +18,7 @@ import VideoCard from "@/components/VideoCard";
 import useNavigation from "@/hooks/useNavigation";
 import { Event, Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
+import { parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
 import { defaultParams, defaultTag } from "./types";
@@ -43,28 +44,20 @@ const VideosListingPage = () => {
   const isDataLoading = isFetching || isLoading || isUninitialized;
 
   useEffect(() => {
-    const tagId = searchParams.get("tag") as string;
-    const search = searchParams.get("search") as string;
+    const tagId = searchParams?.get("tag") as string;
+    const search = searchParams?.get("search") as string;
 
     const tag = tags?.find((t) => String(t.id) === tagId) || defaultTag;
     setSelectedTag(tag);
     setRequestParams((prev) => {
-      const newParams = { ...prev };
-      const urlParams: { [key: string]: string } = {};
-
-      if (tag && tag.id !== 0) {
-        urlParams.tag = String(tag.id);
-        newParams.tag = tag.name;
-      } else delete newParams.tag;
-
+      const apiParams = { ...prev };
+      if (tag) apiParams.tag = tag.name;
       if (search) {
-        urlParams.search = search;
-        newParams.search = search;
-      } else delete newParams.search;
-
-      //  navigateTo("videos", { ...urlParams })
-
-      return { ...newParams };
+        apiParams.tag = "";
+        apiParams.search = search;
+      }
+      const updatedParams = parseNonPassedParams(apiParams) as TAllEventsPyaload;
+      return updatedParams;
     });
   }, [searchParams]);
 

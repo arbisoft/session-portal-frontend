@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { useSearchParams } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
 import YouTube from "@mui/icons-material/YouTube";
@@ -15,6 +13,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import { useSearchParams } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
 
 import useNavigation from "@/hooks/useNavigation";
 import { selectUserInfo } from "@/redux/login/selectors";
@@ -32,10 +32,10 @@ function Navbar() {
   const searchParams = useSearchParams();
   const userInfo = useSelector(selectUserInfo);
   const { navigateTo } = useNavigation();
+  const search = searchParams.get("search") as string;
 
   useEffect(() => {
-    const search = searchParams.get("search") as string;
-    if (search) setSearchQuery(search);
+    setSearchQuery(search ?? "");
   }, [searchParams]);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
