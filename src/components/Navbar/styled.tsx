@@ -43,6 +43,7 @@ export const Search = styled("form", { name: "Search" })(({ theme }) => {
 export const SearchIconWrapper = styled("button", { name: "SearchIconWrapper" })(({ theme }) => {
   return css`
     align-items: center;
+    border: none;
     background-color: ${alpha(theme.palette.common.white, 0.25)};
     border-bottom-right-radius: ${theme.shape.borderRadius * 2}px;
     border-top-right-radius: ${theme.shape.borderRadius * 2}px;

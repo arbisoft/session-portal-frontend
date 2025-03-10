@@ -22,7 +22,6 @@ import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 
 import ThemeToggle from "../ThemeToggle";
-
 import { CancelIconWrapper, Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
 const settings = ["Profile", "Account", "Dashboard"];
@@ -38,6 +37,7 @@ function Navbar() {
     setSearchQuery(search ?? "");
   }, [searchParams]);
 
+  const [searchQuery, setSearchQuery] = useState("");
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -64,7 +64,6 @@ function Navbar() {
   const handleClearSearch = () => {
     navigateTo("videos");
     setSearchQuery("");
-  };
 
   return (
     <AppBar position="static" data-testid="navbar">
@@ -94,13 +93,13 @@ function Navbar() {
 
               <SearchIconWrapper>
                 <SearchIcon data-testid="SearchIcon" />
-              </SearchIconWrapper>
+              </SearchIconButton>
             </Search>
           </Box>
           <Box sx={{ flexGrow: 0, width: 240, display: "flex", justifyContent: "flex-end" }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar variant="rounded" alt={userInfo?.full_name ?? ""} src={userInfo?.avatar ?? ""} />
+              <IconButton data-testid="avatar-btn" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar variant="rounded" alt={userInfo.full_name ?? ""} src={userInfo.avatar ?? ""} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -118,7 +117,7 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem data-testid={setting} key={setting} onClick={handleCloseUserMenu}>
                   <Typography>{setting}</Typography>
                 </MenuItem>
               ))}

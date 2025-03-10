@@ -23,8 +23,8 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   video_duration,
   width = "100%",
 }) => {
+  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/${thumbnail}`;
   const { navigateTo } = useNavigation();
-  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
 
   return isVisible ? (
     <FeaturedVideoCardContainer
@@ -53,12 +53,14 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
           <Typography className="organizer-name" data-testid="video-card-organizer">
             {workstream_id}
           </Typography>
-          <Typography className="date-time" data-testid="video-card-date-time">
-            {formatDateTime(event_time)}
+          <Typography variant="bodySmall" className="date-time" data-testid="video-card-date-time">
+            {event_time ? formatDateTime(event_time) : null}
           </Typography>
-          <Typography className="video-description" data-testid="video-description">
-            {trimTextLength(description, 200)}
-          </Typography>
+          {description && (
+            <Typography variant="bodySmall" className="video-description" data-testid="video-description">
+              {trimTextLength(description, 200)}
+            </Typography>
+          )}
         </Box>
       </CardContent>
     </FeaturedVideoCardContainer>

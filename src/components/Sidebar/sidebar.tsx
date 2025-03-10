@@ -25,7 +25,7 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
   const handleClick = (item: Tag) => {
     setSelected(item.name);
     handleSidebarToggle?.();
-    item.id === 0 ? navigateTo("videos") : navigateTo("videos", { tagId: item.id });
+    item.id === 0 ? navigateTo("videos") : navigateTo("videos", { tag: item.id });
   };
 
   return (
@@ -41,7 +41,7 @@ const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
           : sidebarItems.map((item) => (
               <MenuItem key={item.id} $isSelected={item.name === selected} onClick={() => handleClick(item)}>
                 <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
-                <Text>{item.name}</Text>
+                <Text data-testid={`sidebar-item-${item.name}`}>{item.name}</Text>
               </MenuItem>
             ))}
       </MenuStack>

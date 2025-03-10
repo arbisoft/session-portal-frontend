@@ -10,7 +10,7 @@ jest.mock("@/hooks/useSidebar", () => ({
       { id: 1, name: "Home" },
       { id: 2, name: "Settings" },
       { id: 3, name: "Profile" },
-      { id: 5, name: "Logout" },
+      { id: 4, name: "Logout" },
     ],
   })),
 }));

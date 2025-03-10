@@ -25,7 +25,7 @@ const VideoCard: FC<VideoCardProps> = ({
   width = "315px",
 }) => {
   const { navigateTo } = useNavigation();
-  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL}/${thumbnail}`;
+  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/${thumbnail}`;
 
   return (
     <VideoCardContainer
