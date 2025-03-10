@@ -9,10 +9,10 @@ import { SelectProps } from "./types";
 const Select: React.FC<SelectProps> = ({ handleChange, value = "", menuItems }) => {
   return (
     <SelectFormControl>
-      <MuiSelect value={value as string} onChange={handleChange} displayEmpty>
+      <MuiSelect value={value as string} onChange={handleChange} displayEmpty data-testid="sort-select">
         <MenuItem value="">Sort By</MenuItem>
         {menuItems.map((item) => (
-          <MenuItem key={item} value={10}>
+          <MenuItem data-testid={item} key={item} value={item}>
             {item}
           </MenuItem>
         ))}
