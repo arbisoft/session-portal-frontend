@@ -22,6 +22,7 @@ import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 
 import ThemeToggle from "../ThemeToggle";
+
 import { CancelIconWrapper, Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
 const settings = ["Profile", "Account", "Dashboard"];
@@ -39,7 +40,6 @@ function Navbar() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [searchQuery, setSearchQuery] = useState("");
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -64,6 +64,7 @@ function Navbar() {
   const handleClearSearch = () => {
     navigateTo("videos");
     setSearchQuery("");
+  };
 
   return (
     <AppBar position="static" data-testid="navbar">
@@ -93,7 +94,7 @@ function Navbar() {
 
               <SearchIconWrapper>
                 <SearchIcon data-testid="SearchIcon" />
-              </SearchIconButton>
+              </SearchIconWrapper>
             </Search>
           </Box>
           <Box sx={{ flexGrow: 0, width: 240, display: "flex", justifyContent: "flex-end" }}>

@@ -51,7 +51,7 @@ const VideosListingPage = () => {
     setSelectedTag(tag);
     setRequestParams((prev) => {
       const apiParams = { ...prev };
-      if (tag) apiParams.tag = tag.name;
+      if (tag && tag.id !== 0) apiParams.tag = tag.name;
       if (search) {
         apiParams.tag = "";
         apiParams.search = search;
@@ -67,6 +67,7 @@ const VideosListingPage = () => {
   const listedVideos = latestFeaturedVideo
     ? videoListings?.results.filter((video: Event) => video.id !== latestFeaturedVideo.id)
     : videoListings?.results;
+console.log("listedVideos :: ", listedVideos);
 
   return (
     <MainLayoutContainer>
