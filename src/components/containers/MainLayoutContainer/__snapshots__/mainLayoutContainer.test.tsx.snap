@@ -40,19 +40,33 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             class="css-1yzrppa-Search-root"
           >
             <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-a2oob5-MuiInputBase-root-StyledInputBase-root"
+              class="MuiInputBase-root MuiInputBase-colorPrimary css-16stwic-MuiInputBase-root-StyledInputBase-root"
             >
               <input
                 aria-label="search"
                 class="MuiInputBase-input css-1943rd7-MuiInputBase-input"
                 placeholder="Search..."
                 type="text"
-                value=""
+                value="test search"
               />
             </div>
+            <div
+              class="css-8brctg-CancelIconWrapper-root"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
+                data-testid="CancelIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z"
+                />
+              </svg>
+            </div>
             <button
-              class="css-140grxj-SearchIconButton-root"
-              type="submit"
+              class="css-ejiypo-SearchIconWrapper-root"
             >
               <svg
                 aria-hidden="true"

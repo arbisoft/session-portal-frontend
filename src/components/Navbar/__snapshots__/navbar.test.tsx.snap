@@ -3,12 +3,12 @@
 exports[`Navbar Component should match snapshot 1`] = `
 <DocumentFragment>
   <header
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-ptdwpq-MuiPaper-root-MuiAppBar-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionStatic css-1mb2kr5-MuiPaper-root-MuiAppBar-root"
     data-testid="navbar"
-    style="--Paper-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12);"
+    style="--Paper-shadow: var(--mui-shadows-4); --Paper-overlay: var(--mui-overlays-4);"
   >
     <div
-      class="MuiContainer-root css-12pwiy3-MuiContainer-root"
+      class="MuiContainer-root css-12f197v-MuiContainer-root"
     >
       <div
         class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
@@ -18,7 +18,7 @@ exports[`Navbar Component should match snapshot 1`] = `
         >
           <svg
             aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
             data-testid="YouTubeIcon"
             focusable="false"
             viewBox="0 0 24 24"
@@ -28,7 +28,7 @@ exports[`Navbar Component should match snapshot 1`] = `
             />
           </svg>
           <h6
-            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1xs0nbu-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1c6flzx-MuiTypography-root"
           >
             Arbisoft Sessions Portal
           </h6>
@@ -40,23 +40,37 @@ exports[`Navbar Component should match snapshot 1`] = `
             class="css-1yzrppa-Search-root"
           >
             <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-ixlbt1-MuiInputBase-root-StyledInputBase-root"
+              class="MuiInputBase-root MuiInputBase-colorPrimary css-16stwic-MuiInputBase-root-StyledInputBase-root"
             >
               <input
                 aria-label="search"
-                class="MuiInputBase-input css-yimnyd-MuiInputBase-input"
+                class="MuiInputBase-input css-1943rd7-MuiInputBase-input"
                 placeholder="Search..."
                 type="text"
-                value=""
+                value="test search"
               />
             </div>
-            <button
-              class="css-g1ov8e-SearchIconButton-root"
-              type="submit"
+            <div
+              class="css-8brctg-CancelIconWrapper-root"
             >
               <svg
                 aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-1umw9bq-MuiSvgIcon-root"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
+                data-testid="CancelIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z"
+                />
+              </svg>
+            </div>
+            <button
+              class="css-ejiypo-SearchIconWrapper-root"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
                 data-testid="SearchIcon"
                 focusable="false"
                 viewBox="0 0 24 24"
@@ -73,14 +87,14 @@ exports[`Navbar Component should match snapshot 1`] = `
         >
           <button
             aria-label="Open settings"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1ty4zuc-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1j2eanh-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
             data-testid="avatar-btn"
             tabindex="0"
             type="button"
           >
             <div
-              class="MuiAvatar-root MuiAvatar-rounded css-14h7kw6-MuiAvatar-root"
+              class="MuiAvatar-root MuiAvatar-rounded css-11kq5jj-MuiAvatar-root"
             >
               <img
                 alt="John Doe"

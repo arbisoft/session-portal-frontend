@@ -1,9 +1,11 @@
 import { ReactElement } from "react";
 
 import { configureStore } from "@reduxjs/toolkit";
+import { useSearchParams } from "next/navigation";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
 import { act, fireEvent, screen, waitFor, render, RenderOptions } from "@/jest/utils/testUtils";
+import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 
@@ -11,14 +13,16 @@ import ThemeProvider from "../theme/theme-provider";
 
 import Navbar from "./navbar";
 
-// Mock Redux hooks
+jest.mock("next/navigation", () => ({
+  useSearchParams: jest.fn(),
+}));
+
 jest.mock("react-redux", () => ({
-  ...jest.requireActual("react-redux"), // Preserve other exports
+  ...jest.requireActual("react-redux"),
   useDispatch: jest.fn(),
   useSelector: jest.fn(),
 }));
 
-// Mock persistor
 jest.mock("@/redux/store/configureStore", () => ({
   persistor: {
     purge: jest.fn(),
@@ -26,9 +30,16 @@ jest.mock("@/redux/store/configureStore", () => ({
   },
 }));
 
+const mockNavigateTo = jest.fn();
+jest.mock("@/hooks/useNavigation", () => ({
+  __esModule: true,
+  default: () => ({
+    navigateTo: mockNavigateTo,
+  }),
+}));
+
 const mockStore = configureStore({
   reducer: {
-    // Add your reducers here
     login: () => ({
       userInfo: {
         full_name: "John Doe",
@@ -56,13 +67,15 @@ describe("Navbar Component", () => {
   };
 
   beforeEach(() => {
-    // Mock useSelector to return userInfo
-    (useSelector as unknown as jest.Mock).mockReturnValue(mockUserInfo);
+    (useSelector as unknown as jest.Mock).mockImplementation((selector) =>
+      selector === selectUserInfo ? mockUserInfo : undefined
+    );
 
-    // Mock useDispatch to return mockDispatch
     (useDispatch as unknown as jest.Mock).mockReturnValue(mockDispatch);
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue("test search"),
+    });
 
-    // Clear all mocks before each test
     jest.clearAllMocks();
   });
 
@@ -71,41 +84,37 @@ describe("Navbar Component", () => {
     expect(screen.getByTestId("navbar")).toBeInTheDocument();
   });
 
-  test("should render the logo with YouTube icon and text", () => {
-    render(<Navbar />);
-    expect(screen.getByTestId("navbar")).toBeInTheDocument();
+  test("should render logo with YouTube icon and text", () => {
+    customRender(<Navbar />);
     expect(screen.getByText("Arbisoft Sessions Portal")).toBeInTheDocument();
     expect(screen.getByTestId("YouTubeIcon")).toBeInTheDocument();
   });
 
-  test("should render search input", () => {
-    render(<Navbar />);
-    expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
+  test("should render search input with search query pre-filled", () => {
+    customRender(<Navbar />);
+    expect(screen.getByPlaceholderText("Search...")).toHaveValue("test search");
   });
 
   test("should render avatar button", () => {
-    render(<Navbar />);
+    customRender(<Navbar />);
     expect(screen.getByTestId("avatar-btn")).toBeInTheDocument();
   });
 
   test("should open user menu when avatar is clicked", () => {
-    render(<Navbar />);
-    const avatarButton = screen.getByTestId("avatar-btn");
-    fireEvent.click(avatarButton);
+    customRender(<Navbar />);
+    fireEvent.click(screen.getByTestId("avatar-btn"));
     expect(screen.getByText("Profile")).toBeInTheDocument();
   });
 
   test("should close user menu when menu item is clicked", () => {
-    render(<Navbar />);
-    const avatarButton = screen.getByTestId("Profile");
-    fireEvent.click(avatarButton);
-    const menuItem = screen.getByText("Profile");
-    fireEvent.click(menuItem);
-    expect(menuItem).not.toBeVisible();
+    customRender(<Navbar />);
+    fireEvent.click(screen.getByTestId("avatar-btn"));
+    fireEvent.click(screen.getByTestId("Profile"));
+    expect(screen.queryByText("Profile")).not.toBeVisible();
   });
 
   test("should focus on search input when clicked", () => {
-    render(<Navbar />);
+    customRender(<Navbar />);
     const searchInput = screen.getByPlaceholderText("Search...");
     act(() => {
       searchInput.focus();
@@ -113,62 +122,58 @@ describe("Navbar Component", () => {
     expect(searchInput).toHaveFocus();
   });
 
-  test("should user menu contains all settings and logout option", () => {
-    render(<Navbar />);
-    const avatarButton = screen.getByTestId("avatar-btn");
-    fireEvent.click(avatarButton);
+  test("should render search cancel icon when there is input", () => {
+    customRender(<Navbar />);
+    expect(screen.getByTestId("CancelIcon")).toBeInTheDocument();
+  });
+
+  test("should clear search when cancel icon is clicked", () => {
+    customRender(<Navbar />);
+    fireEvent.click(screen.getByTestId("CancelIcon"));
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
+  });
+
+  test("should navigate on search submit", () => {
+    customRender(<Navbar />);
+    fireEvent.submit(screen.getByPlaceholderText("Search..."));
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "test search" });
+  });
+
+  test("should contain all user menu options", () => {
+    customRender(<Navbar />);
+    fireEvent.click(screen.getByTestId("avatar-btn"));
     const settings = ["Profile", "Account", "Dashboard", "Logout"];
     settings.forEach((setting) => {
       expect(screen.getByText(setting)).toBeInTheDocument();
     });
   });
 
-  test("should apply correct styles for the search box", () => {
-    render(<Navbar />);
-    const searchBox = screen.getByPlaceholderText("Search...");
-    expect(searchBox).toHaveStyle("color: currentColor");
-  });
-
   test("should display tooltip on avatar button hover", async () => {
-    render(<Navbar />);
-    const avatarButton = screen.getByTestId("avatar-btn");
-    fireEvent.mouseOver(avatarButton);
+    customRender(<Navbar />);
+    fireEvent.mouseOver(screen.getByTestId("avatar-btn"));
     expect(await screen.findByText("Open settings")).toBeInTheDocument();
   });
 
-  test("should render search icon", () => {
-    render(<Navbar />);
-    expect(screen.getByTestId("SearchIcon")).toBeInTheDocument();
-  });
-
   test("should call logout and purge persistor when logout is clicked", async () => {
-    render(<Navbar />);
-    const avatarButton = screen.getByRole("button", { name: /open settings/i });
-    fireEvent.click(avatarButton);
+    customRender(<Navbar />);
+    fireEvent.click(screen.getByTestId("avatar-btn"));
+    fireEvent.click(screen.getByText("Logout"));
 
-    // Click the logout menu item
-    const logoutMenuItem = screen.getByText("Logout");
-    fireEvent.click(logoutMenuItem);
-
-    // Verify that logout action and persistor purge are called
     expect(mockDispatch).toHaveBeenCalledWith(loginActions.logout());
     expect(persistor.purge).toHaveBeenCalled();
-
-    // Wait for persistor.persist to be called
     await waitFor(() => expect(persistor.persist).toHaveBeenCalled());
   });
 
   test("should render ThemeToggle in the user menu", () => {
-    render(<Navbar />);
-    const avatarButton = screen.getByRole("button", { name: /open settings/i });
-    fireEvent.click(avatarButton);
+    customRender(<Navbar />);
+    fireEvent.click(screen.getByTestId("avatar-btn"));
     expect(screen.getByRole("button", { name: /light/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /system/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /dark/i })).toBeInTheDocument();
   });
 
   test("should match snapshot", () => {
-    const { asFragment } = render(<Navbar />);
+    const { asFragment } = customRender(<Navbar />);
     expect(asFragment()).toMatchSnapshot();
   });
 });
