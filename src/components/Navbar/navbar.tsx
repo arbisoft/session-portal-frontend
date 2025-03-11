@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
@@ -13,7 +13,6 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 import useNavigation from "@/hooks/useNavigation";
@@ -29,14 +28,8 @@ const settings = ["Profile", "Account", "Dashboard"];
 
 function Navbar() {
   const dispatch = useDispatch();
-  const searchParams = useSearchParams();
   const userInfo = useSelector(selectUserInfo);
   const { navigateTo } = useNavigation();
-  const search = searchParams.get("search") as string;
-
-  useEffect(() => {
-    setSearchQuery(search ?? "");
-  }, [searchParams]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -62,7 +55,6 @@ function Navbar() {
   };
 
   const handleClearSearch = () => {
-    navigateTo("videos");
     setSearchQuery("");
   };
 
@@ -81,14 +73,15 @@ function Navbar() {
             <Search onSubmit={handleSearch}>
               <StyledInputBase
                 value={searchQuery}
-                onInput={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
+                onChange={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
                 placeholder="Search..."
                 inputProps={{ "aria-label": "search" }}
+                data-testid="search-query"
               />
 
               {searchQuery.length > 0 && (
-                <CancelIconWrapper onClick={handleClearSearch}>
-                  <CancelIcon data-testid="CancelIcon" />
+                <CancelIconWrapper data-testid="cancelIcon" onClick={handleClearSearch}>
+                  <CancelIcon />
                 </CancelIconWrapper>
               )}
 

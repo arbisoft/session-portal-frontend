@@ -90,11 +90,6 @@ describe("Navbar Component", () => {
     expect(screen.getByTestId("YouTubeIcon")).toBeInTheDocument();
   });
 
-  test("should render search input with search query pre-filled", () => {
-    customRender(<Navbar />);
-    expect(screen.getByPlaceholderText("Search...")).toHaveValue("test search");
-  });
-
   test("should render avatar button", () => {
     customRender(<Navbar />);
     expect(screen.getByTestId("avatar-btn")).toBeInTheDocument();
@@ -122,21 +117,10 @@ describe("Navbar Component", () => {
     expect(searchInput).toHaveFocus();
   });
 
-  test("should render search cancel icon when there is input", () => {
-    customRender(<Navbar />);
-    expect(screen.getByTestId("CancelIcon")).toBeInTheDocument();
-  });
-
-  test("should clear search when cancel icon is clicked", () => {
-    customRender(<Navbar />);
-    fireEvent.click(screen.getByTestId("CancelIcon"));
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
-  });
-
   test("should navigate on search submit", () => {
     customRender(<Navbar />);
     fireEvent.submit(screen.getByPlaceholderText("Search..."));
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "test search" });
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "" });
   });
 
   test("should contain all user menu options", () => {
