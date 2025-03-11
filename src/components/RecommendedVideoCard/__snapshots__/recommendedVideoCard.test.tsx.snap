@@ -10,17 +10,27 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
     <div
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
-      <img
-        alt="Sample Video Title"
-        data-nimg="1"
-        decoding="async"
-        height="72"
-        loading="lazy"
-        src="/_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=256&q=75"
-        srcset="/_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=128&q=75 1x, /_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=256&q=75 2x"
-        style="color: transparent;"
-        width="113"
-      />
+      <div
+        class="image-container MuiBox-root css-1eenwvx-ImageContainer-root"
+      >
+        <img
+          alt="Sample Video Title"
+          data-nimg="1"
+          decoding="async"
+          height="72"
+          loading="lazy"
+          src="/_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=256&q=75"
+          srcset="/_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=128&q=75 1x, /_next/image?url=https%3A%2F%2Fexample.com%2Fsample.jpg&w=256&q=75 2x"
+          style="color: transparent;"
+          width="113"
+        />
+        <p
+          class="MuiTypography-root MuiTypography-bodySmall duration css-1pot96k-MuiTypography-root"
+          data-testid="duration"
+        >
+          10:15
+        </p>
+      </div>
       <div
         class="video-detail MuiBox-root css-0"
       >
@@ -34,102 +44,8 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
           class="MuiTypography-root MuiTypography-bodySmall date-time css-1pot96k-MuiTypography-root"
           data-testid="date-time"
         >
-          Jan 01, 2024 
-          <span>
-            / 10:15
-          </span>
+          Jan 01, 2024
         </p>
-        <span
-          aria-label="4 Stars"
-          class="MuiRating-root MuiRating-sizeSmall Mui-readOnly MuiRating-readOnly css-1ynetyc-MuiRating-root"
-          role="img"
-        >
-          <span>
-            <span
-              class="MuiRating-icon MuiRating-iconFilled css-1sagf1d-MuiRating-icon"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
-                data-testid="StarIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                />
-              </svg>
-            </span>
-          </span>
-          <span>
-            <span
-              class="MuiRating-icon MuiRating-iconFilled css-1sagf1d-MuiRating-icon"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
-                data-testid="StarIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                />
-              </svg>
-            </span>
-          </span>
-          <span>
-            <span
-              class="MuiRating-icon MuiRating-iconFilled css-1sagf1d-MuiRating-icon"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
-                data-testid="StarIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                />
-              </svg>
-            </span>
-          </span>
-          <span>
-            <span
-              class="MuiRating-icon MuiRating-iconFilled css-1sagf1d-MuiRating-icon"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
-                data-testid="StarIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                />
-              </svg>
-            </span>
-          </span>
-          <span>
-            <span
-              class="MuiRating-icon MuiRating-iconEmpty css-h06ynj-MuiRating-icon"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeInherit css-8hoymy-MuiSvgIcon-root"
-                data-testid="StarIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
-                />
-              </svg>
-            </span>
-          </span>
-        </span>
       </div>
     </div>
   </div>
