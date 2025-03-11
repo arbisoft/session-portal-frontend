@@ -4,7 +4,7 @@ import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
 
 const meta: Meta<VideoCardProps> = {
-  title: "Components/RecommendedVideoCard",
+  title: "Components/VideoCard",
   component: VideoCard,
   tags: ["autodocs"],
   argTypes: {

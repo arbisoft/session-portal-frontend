@@ -21,17 +21,14 @@ const NotificationDemo: FC<{ vertical?: SnackbarOrigin["vertical"]; horizontal?:
   vertical = "top",
   horizontal = "right",
 }) => {
-  const { dispatch } = useNotification();
+  const notificationManager = useNotification();
 
   const showNotification = (severity: "success" | "error" | "warning" | "info") => {
-    dispatch({
-      type: "SHOW_NOTIFICATION",
-      payload: {
-        message: `This is a ${severity} message!`,
-        severity,
-        vertical,
-        horizontal,
-      },
+    notificationManager.showNotification({
+      message: `This is a ${severity} message!`,
+      severity,
+      vertical,
+      horizontal,
     });
   };
 

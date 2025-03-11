@@ -22,7 +22,7 @@ export default function LoginPage() {
   const { navigateTo } = useNavigation();
 
   const theme = useTheme();
-  const { dispatch } = useNotification();
+  const { showNotification } = useNotification();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,34 +41,25 @@ export default function LoginPage() {
       } else if (errorState) {
         const errorMessage = errorState.data as string[];
         if (errorMessage) {
-          dispatch({
-            type: "SHOW_NOTIFICATION",
-            payload: {
-              message: errorMessage[0],
-              severity: "error",
-            },
+          showNotification({
+            message: errorMessage[0],
+            severity: "error",
           });
         }
       }
     } else {
-      dispatch({
-        type: "SHOW_NOTIFICATION",
-        payload: {
-          message: "Google login failed: No credential received.",
-          severity: "error",
-        },
+      showNotification({
+        message: "Google login failed: No credential received.",
+        severity: "error",
       });
       return;
     }
   };
 
   const onError = () => {
-    dispatch({
-      type: "SHOW_NOTIFICATION",
-      payload: {
-        message: "Authentication Error: Google login failed. Please try again.",
-        severity: "error",
-      },
+    showNotification({
+      message: "Authentication Error: Google login failed. Please try again.",
+      severity: "error",
     });
   };
 
