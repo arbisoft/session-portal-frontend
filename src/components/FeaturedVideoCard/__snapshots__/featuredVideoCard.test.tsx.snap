@@ -26,6 +26,7 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
         />
         <div
           class="MuiTypography-root MuiTypography-bodyMedium video-duration css-149i8z5-MuiTypography-root"
+          data-testid="video-duration"
         >
           30:00
         </div>

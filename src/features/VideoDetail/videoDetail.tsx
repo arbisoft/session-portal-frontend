@@ -18,7 +18,7 @@ import RecommendedVideoCard, { RecommendedVideoCardProps } from "@/components/Re
 import VideoPlayer from "@/components/VideoPlayer";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
-import { secondsToTime } from "@/utils/utils";
+import { convertSecondsToFormattedTime } from "@/utils/utils";
 
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
@@ -33,7 +33,7 @@ const VideoDetail = () => {
     .fill("")
     .map(() => ({
       date: format(faker.date.past(), "MMM dd, yyyy"),
-      duration: secondsToTime(faker.number.int({ min: 100, max: 1000 })),
+      duration: convertSecondsToFormattedTime(faker.number.int({ min: 100, max: 1000 })),
       imgUrl: "/assets/images/temp-youtube-logo.webp",
       ratingValue: faker.number.int({ min: 1, max: 5 }),
       title: faker.lorem.words(10),

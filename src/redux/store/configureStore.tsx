@@ -10,7 +10,7 @@ import createFilter from "redux-persist-transform-filter";
 import { baseApi, REDUCER_PATH } from "@/redux/baseApi";
 import loginReducer, { loginActions, LoginState } from "@/redux/login/slice";
 
-const createNoopStorage = () => {
+export const createNoopStorage = () => {
   return {
     getItem(_key: string) {
       return Promise.resolve(_key);
@@ -61,6 +61,8 @@ const store = configureStore({
       },
     }).concat([baseApi.middleware]),
   reducer: rootReducer,
+  // @ts-ignore
+  preloadedState: global.preloadedState,
 });
 
 const persistor = persistStore(store);

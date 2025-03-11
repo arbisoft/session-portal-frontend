@@ -41,7 +41,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
             width={315}
             src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"}
           />
-          <Typography className="video-duration" component="div">
+          <Typography data-testid="video-duration" className="video-duration" component="div">
             {convertSecondsToFormattedTime(video_duration)}
           </Typography>
         </ImageContainerBox>

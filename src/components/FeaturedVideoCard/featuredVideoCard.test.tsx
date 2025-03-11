@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import userEvent from "@testing-library/user-event";
 
 import { customRender as render, screen } from "@/jest/utils/testUtils";
@@ -85,7 +86,7 @@ describe("FeaturedVideoCard", () => {
   });
 
   test("should truncate title if it is too long", () => {
-    const longTitle = "A very long video title that should be truncated properly in the UI";
+    const longTitle = "A very long video title that should be truncated properly in the UI " + faker.lorem.paragraph();
     render(<FeaturedVideoCard {...mockProps} title={longTitle} />);
 
     expect(screen.getByText(/A very long video title/i)).toBeInTheDocument();
@@ -111,5 +112,10 @@ describe("FeaturedVideoCard", () => {
 
     await user.click(videoCard);
     expect(videoCard).toBeInTheDocument(); // Ensures no crash on click
+  });
+
+  test("should display correct video duration", () => {
+    render(<FeaturedVideoCard {...mockProps} video_duration={3605} />);
+    expect(screen.getByTestId("video-duration")).toHaveTextContent("01:00:05");
   });
 });

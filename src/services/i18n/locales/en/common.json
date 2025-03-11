@@ -1,4 +1,7 @@
 {
   "video_detail": "Video Detail",
-  "videos": "Videos"
+  "videos": "Videos",
+  "light": "Light",
+  "system": "System",
+  "dark": "Dark"
 }
