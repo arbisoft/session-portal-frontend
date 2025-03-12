@@ -6,23 +6,6 @@ export type ErrorType = {
   details?: Record<string, string>;
 };
 
-export interface ResetPasswordErrorType {
-  data?: {
-    uid?: string[];
-    token?: string[];
-  };
-}
-
-export const getResetPasswordErrorMessage = (error: ResetPasswordErrorType) => {
-  if (!error || !error.data) return null;
-  const { uid, token } = error.data;
-
-  if (uid) return uid.join(" ");
-  if (token) return token.join(" ");
-
-  return "Something went wrong. Please try again.";
-};
-
 type ErrorStatus = number | string | "FETCH_ERROR" | "PARSING_ERROR" | "TIMEOUT_ERROR" | "CUSTOM_ERROR";
 
 const isErrorAnObject = (err: unknown): err is Record<string, unknown> =>

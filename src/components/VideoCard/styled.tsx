@@ -75,14 +75,16 @@ export const ImageWrapper = styled(Card, {
   shouldForwardProp,
 })(({ theme }) => {
   return css`
+    background: transparent;
     display: inline-flex;
     position: relative;
     width: 100%;
 
     .${skeletonClasses.root} {
+      border-radius: ${theme.shape.borderRadius + 8}px;
       position: absolute;
-      z-index: -1;
       top: 0;
+      z-index: -1;
     }
 
     img {
