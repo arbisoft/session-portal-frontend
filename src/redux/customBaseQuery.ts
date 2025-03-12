@@ -1,6 +1,8 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
+import { notificationManager } from "@/components/Notification";
+
 import { selectAccessToken } from "./login/selectors";
 import { parseError } from "./parseError";
 import { ReducersState } from "./store/configureStore";
@@ -8,6 +10,7 @@ import { ReducersState } from "./store/configureStore";
 let HOST_URL = (process.env.NEXT_PUBLIC_BASE_URL ?? "") + "/api/v1";
 
 if (process.env.NODE_ENV === "test") {
+  // TODO: mock test server
   HOST_URL = "http://localhost:8000/api/v1";
 }
 
@@ -39,8 +42,8 @@ const customBaseQuery: BaseQueryFn<FetchArgs, unknown, FetchBaseQueryError, Extr
     }
 
     if (options.showErrorToast) {
-      // TODO: use notification here for network error from this PR #23
-      console.error(parseError(result.error.data, result.error.status));
+      const errors = parseError(result.error.data, result.error.status);
+      notificationManager.showNotification({ message: errors[0].message, severity: "error" });
     }
   }
 

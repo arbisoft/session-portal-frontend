@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useReducer, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useEffect, useState } from "react";
 
 import MuiAlert, { AlertColor } from "@mui/material/Alert";
 import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
@@ -35,26 +35,62 @@ const notificationReducer = (state: NotificationState, action: NotificationActio
   }
 };
 
-const NotificationContext = createContext<{
-  state: NotificationState;
-  dispatch: React.Dispatch<NotificationAction>;
-} | null>(null);
+class NotificationManager {
+  private state: NotificationState = initialState;
+  private listeners: Array<(state: NotificationState) => void> = [];
+
+  public showNotification(payload: Omit<Notification, "open">) {
+    this.state = notificationReducer(this.state, { type: "SHOW_NOTIFICATION", payload });
+    this.notifyListeners();
+  }
+
+  public hideNotification() {
+    this.state = notificationReducer(this.state, { type: "HIDE_NOTIFICATION" });
+    this.notifyListeners();
+  }
+
+  public getState(): NotificationState {
+    return this.state;
+  }
+
+  public subscribe(listener: (state: NotificationState) => void) {
+    this.listeners.push(listener);
+    return () => {
+      this.listeners = this.listeners.filter((l) => l !== listener);
+    };
+  }
+
+  private notifyListeners() {
+    this.listeners.forEach((listener) => listener(this.state));
+  }
+}
+
+export const notificationManager = new NotificationManager();
+
+const NotificationContext = createContext<NotificationManager | null>(null);
 
 const { Provider } = NotificationContext;
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(notificationReducer, initialState);
+  const [state, setState] = useState(notificationManager.getState());
+
+  useEffect(() => {
+    const unsubscribe = notificationManager.subscribe((newState) => {
+      setState(newState);
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
-    <Provider value={{ state, dispatch }}>
+    <Provider value={notificationManager}>
       {children}
       <Snackbar
         open={state.open}
         autoHideDuration={3000}
-        onClose={() => dispatch({ type: "HIDE_NOTIFICATION" })}
+        onClose={() => notificationManager.hideNotification()}
         anchorOrigin={{ vertical: state.vertical ?? "top", horizontal: state.horizontal || "right" }}
       >
-        <MuiAlert variant="filled" onClose={() => dispatch({ type: "HIDE_NOTIFICATION" })} severity={state.severity}>
+        <MuiAlert variant="filled" onClose={() => notificationManager.hideNotification()} severity={state.severity}>
           {state.message}
         </MuiAlert>
       </Snackbar>
