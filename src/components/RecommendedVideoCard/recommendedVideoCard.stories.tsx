@@ -22,10 +22,6 @@ const meta: Meta<RecommendedVideoCardProps> = {
       control: "text",
       description: "The duration of the video",
     },
-    ratingValue: {
-      control: { type: "number", min: 0, max: 5, step: 1 },
-      description: "The rating value of the video (0 to 5)",
-    },
     imgUrl: {
       control: "text",
       description: "The URL of the video thumbnail image",
@@ -48,16 +44,7 @@ export const Default: Story = {
     title: "Sample Video Title",
     date: "2023-10-01",
     duration: "10:30",
-    ratingValue: 4,
     imgUrl: "/assets/images/temp-youtube-logo.webp",
-  },
-};
-
-// Story with a high rating
-export const HighRating: Story = {
-  args: {
-    ...Default.args,
-    ratingValue: 5,
   },
 };
 

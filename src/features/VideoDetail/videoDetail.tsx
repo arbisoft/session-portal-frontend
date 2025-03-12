@@ -35,7 +35,6 @@ const VideoDetail = () => {
       date: format(faker.date.past(), "MMM dd, yyyy"),
       duration: convertSecondsToFormattedTime(faker.number.int({ min: 100, max: 1000 })),
       imgUrl: "/assets/images/temp-youtube-logo.webp",
-      ratingValue: faker.number.int({ min: 1, max: 5 }),
       title: faker.lorem.words(10),
     }));
 
@@ -77,7 +76,6 @@ const VideoDetail = () => {
               duration={vid.duration}
               imgUrl={vid.imgUrl}
               key={vid.date + index}
-              ratingValue={vid.ratingValue}
               title={vid.title}
             />
           ))}

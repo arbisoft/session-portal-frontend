@@ -1,7 +1,8 @@
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import { cardContentClasses } from "@mui/material/CardContent";
 import { ratingClasses } from "@mui/material/Rating";
-import { styled, css } from "@mui/material/styles";
+import { styled, css, alpha } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
 import { shouldForwardProp } from "@/utils/styleUtils";
@@ -71,6 +72,27 @@ export const RecommendedVideoCardContainer = styled(Card, {
           color: ${theme.palette.colors.gold};
         }
       }
+    }
+  `;
+});
+
+export const ImageContainer = styled(Box, {
+  name: "ImageContainer",
+})(({ theme }) => {
+  return css`
+    position: relative;
+    display: inline-flex;
+
+    .duration {
+      background-color: ${alpha(theme.palette.common.black, 0.7)};
+      border-radius: 2px;
+      bottom: 6px;
+      color: ${theme.palette.colors.white};
+      font-size: 12px;
+      padding: 2px 4px;
+      position: absolute;
+      right: 6px;
+      z-index: 9999;
     }
   `;
 });
