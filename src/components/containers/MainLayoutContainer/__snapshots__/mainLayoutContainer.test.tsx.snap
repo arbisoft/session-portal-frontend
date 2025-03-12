@@ -41,11 +41,11 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           >
             <div
               class="MuiInputBase-root MuiInputBase-colorPrimary css-16stwic-MuiInputBase-root-StyledInputBase-root"
-              data-testid="search-query"
             >
               <input
                 aria-label="search"
                 class="MuiInputBase-input css-1943rd7-MuiInputBase-input"
+                data-testid="search-query"
                 placeholder="Search..."
                 type="text"
                 value=""
