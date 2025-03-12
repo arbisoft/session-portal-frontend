@@ -59,10 +59,10 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static" data-testid="navbar">
+    <AppBar position="sticky" data-testid="navbar">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
-          <Logo>
+          <Logo data-testid="navbar-logo" onClick={() => navigateTo("videos")}>
             <YouTube />
             <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" } }}>
               Arbisoft Sessions Portal

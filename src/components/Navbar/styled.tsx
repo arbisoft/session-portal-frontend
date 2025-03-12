@@ -5,6 +5,7 @@ import { typographyClasses } from "@mui/material/Typography";
 export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
   return css`
     align-items: center;
+    cursor: pointer;
     display: flex;
     width: 240px;
 
