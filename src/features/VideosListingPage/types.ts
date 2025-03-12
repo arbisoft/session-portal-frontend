@@ -28,3 +28,7 @@ export type TVideo = {
   title: string;
   workstream_id: string;
 };
+
+export interface ISearchEventDetail {
+  searchQuery: string;
+}

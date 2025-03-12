@@ -1,6 +1,23 @@
+import { useSearchParams } from "next/navigation";
+
 import { customRender as render, screen, waitFor } from "@/jest/utils/testUtils";
 
 import MainLayoutContainer from "./mainLayoutContainer";
+
+jest.mock("next/navigation", () => ({
+  ...jest.requireActual("next/navigation"),
+  useSearchParams: jest.fn(),
+  usePathname: jest.fn().mockReturnValue("/some-path"),
+}));
+
+const mockNavigateTo = jest.fn();
+jest.mock("@/hooks/useNavigation", () => ({
+  __esModule: true,
+  default: () => ({
+    navigateTo: mockNavigateTo,
+    getPageUrl: jest.fn((key) => key),
+  }),
+}));
 
 jest.mock("@/hooks/useSidebar", () => ({
   __esModule: true,
@@ -15,6 +32,14 @@ jest.mock("@/hooks/useSidebar", () => ({
 }));
 
 describe("MainLayoutContainer", () => {
+  beforeEach(() => {
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue("test search"),
+    });
+
+    jest.clearAllMocks();
+  });
+
   test("should renders Navbar component", () => {
     render(
       <MainLayoutContainer>

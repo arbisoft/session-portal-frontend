@@ -40,7 +40,7 @@ export const Search = styled("form", { name: "Search" })(({ theme }) => {
   `;
 });
 
-export const SearchIconButton = styled("button", { name: "SearchIconButton" })(({ theme }) => {
+export const SearchIconWrapper = styled("button", { name: "SearchIconWrapper" })(({ theme }) => {
   return css`
     align-items: center;
     border: none;
@@ -51,6 +51,15 @@ export const SearchIconButton = styled("button", { name: "SearchIconButton" })((
     height: 100%;
     justify-content: center;
     padding: ${theme.spacing(0, 2)};
+    border: none;
+    cursor: pointer;
+  `;
+});
+
+export const CancelIconWrapper = styled("div", { name: "CancelIconWrapper" })(({ theme }) => {
+  return css`
+    padding-right: ${theme.spacing(1)};
+    padding-top: ${theme.spacing(1)};
     cursor: pointer;
   `;
 });
@@ -61,7 +70,7 @@ export const StyledInputBase = styled(InputBase, { name: "StyledInputBase" })(
     width: 100%;
     & .${inputBaseClasses.input} {
       padding: ${theme.spacing(1, 1, 1, 1)};
-      padding-right: calc(1em + ${theme.spacing(4)});
+      padding-right: calc(1em + ${theme.spacing(1)});
     }
   `
 );
