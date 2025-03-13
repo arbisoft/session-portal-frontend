@@ -1,7 +1,11 @@
 {
   "title": "Videos",
   "description": "Videos of session portal!",
+  "search-title": "Search results",
   "dropdown": {
     "defaultFilter": "Sort By"
+  },
+  "search": {
+    "showing-results": "Showing search results for"
   }
 }

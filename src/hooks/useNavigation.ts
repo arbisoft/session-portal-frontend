@@ -12,6 +12,9 @@ export const ALLOWED_PAGES = {
   get videos(): string {
     return "/videos";
   },
+  get "videos/results"(): string {
+    return "/videos/results";
+  },
   videoDetail(id: string) {
     return `/videos/${id}`;
   },

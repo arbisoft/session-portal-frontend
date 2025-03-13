@@ -6,15 +6,14 @@ import { typographyClasses } from "@mui/material/Typography";
 
 import { shouldForwardProp } from "@/utils/styleUtils";
 
-export const FeaturedVideoCardContainer = styled(Card, {
-  name: "FeaturedVideoCardContainer",
+export const SearchVideoCardContainer = styled(Card, {
+  name: "SearchVideoCardContainer",
   shouldForwardProp,
 })<{ $width: string }>(({ theme, $width }) => {
   return css`
     display: flex;
-    background-color: rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 30px;
+    background-color: transparent;
+    background-image: unset;
     border-radius: ${theme.shape.borderRadius + 8}px;
     overflow: hidden;
     width: ${$width};
@@ -45,18 +44,16 @@ export const FeaturedVideoCardContainer = styled(Card, {
         gap: 7px;
 
         .${typographyClasses.h3} {
-          -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
           color: ${theme.palette.colors.white};
           display: -webkit-box;
-          font-size: 26px;
+          font-size: 28px;
           font-style: normal;
           font-weight: 500;
           letter-spacing: 0.4px;
-          line-height: 35px;
           overflow: hidden;
           text-overflow: ellipsis;
-          padding-bottom: 10px;
+          -webkit-box-orient: vertical;
         }
 
         .date-time,
@@ -65,25 +62,35 @@ export const FeaturedVideoCardContainer = styled(Card, {
           font-size: 18px;
           font-style: normal;
           font-weight: 500;
-          line-height: 17px;
           letter-spacing: 0.4px;
         }
 
         .video-description {
+          -webkit-line-clamp: 3;
+          display: -webkit-box;
           color: ${theme.palette.colors.white};
-          font-size: 18px;
+          font-size: 16px;
           font-style: normal;
           font-weight: 500;
-          line-height: 21px;
+          line-height: 29px;
           letter-spacing: 0.4px;
           padding-top: 10px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          -webkit-box-orient: vertical;
         }
       }
     }
 
     ${theme.breakpoints.down("lg")} {
+      height: 100%;
+
       .${cardContentClasses.root} {
+        flex-direction: column;
+
         .video-detail {
+          width: 100%;
+
           .${typographyClasses.h3} {
             font-size: 20px;
             line-height: 24px;
@@ -97,17 +104,6 @@ export const FeaturedVideoCardContainer = styled(Card, {
             font-size: 14px;
             line-height: 14px;
           }
-        }
-      }
-    }
-
-    ${theme.breakpoints.down("lg")} {
-      padding: ${theme.spacing(1)};
-      .${cardContentClasses.root} {
-        flex-direction: column;
-        img {
-          width: 225px;
-          height: 170px;
         }
       }
     }

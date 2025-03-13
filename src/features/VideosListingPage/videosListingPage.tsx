@@ -45,17 +45,12 @@ const VideosListingPage = () => {
 
   useEffect(() => {
     const tagId = searchParams?.get("tag") as string;
-    const search = searchParams?.get("search") as string;
 
     const tag = tags?.find((t) => String(t.id) === tagId) || defaultTag;
     setSelectedTag(tag);
     setRequestParams((prev) => {
       const apiParams = { ...prev };
       if (tag && tag.id !== 0) apiParams.tag = tag.name;
-      if (search) {
-        apiParams.tag = "";
-        apiParams.search = search;
-      }
       const updatedParams = parseNonPassedParams(apiParams) as TAllEventsPyaload;
       return updatedParams;
     });

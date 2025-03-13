@@ -51,7 +51,9 @@ function Navbar() {
 
   const handleSearch = (searchEvent: React.FormEvent) => {
     searchEvent.preventDefault();
-    navigateTo("videos", { search: searchQuery });
+    if (searchQuery.length > 0) {
+      navigateTo("videos/results", { search: searchQuery });
+    }
   };
 
   const handleClearSearch = () => {
