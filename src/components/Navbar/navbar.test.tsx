@@ -4,7 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useSearchParams } from "next/navigation";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
-import { act, fireEvent, screen, waitFor, render, RenderOptions } from "@/jest/utils/testUtils";
+import { fireEvent, screen, waitFor, render, RenderOptions, act } from "@/jest/utils/testUtils";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
@@ -110,7 +110,7 @@ describe("Navbar Component", () => {
 
   test("should focus on search input when clicked", () => {
     customRender(<Navbar />);
-    const searchInput = screen.getByPlaceholderText("Search...");
+    const searchInput = screen.getByTestId("search-query");
     act(() => {
       searchInput.focus();
     });
@@ -119,7 +119,7 @@ describe("Navbar Component", () => {
 
   test("should navigate on search submit", () => {
     customRender(<Navbar />);
-    fireEvent.submit(screen.getByPlaceholderText("Search..."));
+    fireEvent.submit(screen.getByTestId("search-query"));
     expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "" });
   });
 
@@ -136,6 +136,23 @@ describe("Navbar Component", () => {
     customRender(<Navbar />);
     fireEvent.mouseOver(screen.getByTestId("avatar-btn"));
     expect(await screen.findByText("Open settings")).toBeInTheDocument();
+  });
+
+  test("should clear search input when cancel icon is clicked", () => {
+    customRender(<Navbar />);
+    const searchInput = screen.getByTestId("search-query");
+    fireEvent.change(searchInput, { target: { value: "Test Query" } });
+    expect(searchInput).toHaveValue("Test Query");
+    fireEvent.click(screen.getByTestId("cancelIcon"));
+    expect(searchInput).toHaveValue("");
+  });
+
+  test("should navigate on search submit", () => {
+    customRender(<Navbar />);
+    const searchInput = screen.getByTestId("search-query");
+    fireEvent.change(searchInput, { target: { value: "Test Query" } });
+    fireEvent.submit(searchInput);
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "Test Query" });
   });
 
   test("should call logout and purge persistor when logout is clicked", async () => {

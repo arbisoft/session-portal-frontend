@@ -1,10 +1,15 @@
 import "@testing-library/jest-dom";
 import "whatwg-fetch";
 import { cleanup } from "@testing-library/react";
-// Run cleanup after each test
-afterEach(() => {
-  cleanup();
-});
+import { enableFetchMocks } from "jest-fetch-mock";
+
+// Mock base URL
+process.env.NEXT_PUBLIC_BASE_URL = "http://localhost:1234";
+
+enableFetchMocks();
+
+afterEach(() => cleanup());
+beforeEach(() => fetchMock.resetMocks());
 
 // @ts-ignore
 global.preloadedState = {

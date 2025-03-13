@@ -75,8 +75,7 @@ function Navbar() {
                 value={searchQuery}
                 onChange={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
                 placeholder="Search..."
-                inputProps={{ "aria-label": "search" }}
-                data-testid="search-query"
+                inputProps={{ "aria-label": "search", "data-testid": "search-query" }}
               />
 
               {searchQuery.length > 0 && (
