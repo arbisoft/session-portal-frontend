@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 
 import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -15,12 +14,11 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
-import useNavigation from "@/hooks/useNavigation";
 import { Event, Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
 import { parseNonPassedParams } from "@/utils/utils";
 
-import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
+import { FilterBox, VideoListingContainer } from "./styled";
 import { defaultParams, defaultTag } from "./types";
 
 const selectMenuItems: string[] = Array(3)
@@ -33,7 +31,6 @@ const loaderCards: string[] = Array(5)
 
 const VideosListingPage = () => {
   const searchParams = useSearchParams();
-  const { navigateTo } = useNavigation();
 
   const [selectedTag, setSelectedTag] = useState<Tag>();
   const [requestParams, setRequestParams] = useState<TAllEventsPyaload>(defaultParams);
@@ -77,23 +74,6 @@ const VideosListingPage = () => {
           </Typography>
           <Select label={"Sort by"} menuItems={selectMenuItems} handleChange={() => {}} />
         </Stack>
-        <TagsContainer>
-          <Chip
-            onClick={() => navigateTo("videos")}
-            variant={selectedTag?.id === 0 ? "filled" : "outlined"}
-            label="All"
-            size="small"
-          />
-          {tags?.map((tag) => (
-            <Chip
-              key={tag.id}
-              onClick={() => navigateTo("videos", { tag: tag.id })}
-              label={tag.name}
-              variant={selectedTag?.id === tag.id ? "filled" : "outlined"}
-              size="small"
-            />
-          ))}
-        </TagsContainer>
       </FilterBox>
 
       <FeaturedVideoCard isVisible={!!latestFeaturedVideo} {...latestFeaturedVideo} />

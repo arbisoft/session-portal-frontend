@@ -1,53 +1,81 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import Skeleton from "@mui/material/Skeleton";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 
 import useNavigation from "@/hooks/useNavigation";
 import useSidebar from "@/hooks/useSidebar";
-import { Tag } from "@/models/Events";
 
-import { MenuItem, MenuStack, SidebarContainer, Text } from "./styled";
-import { SidebarProps } from "./types";
+import { MenuItem, MenuStack, SidebarContainer, TagsContainer, Text } from "./styled";
 
-const loadingTags: string[] = Array(5)
+const loadingTags: string[] = Array(10)
   .fill("")
   .map(() => faker.lorem.words(1));
 
-const Sidebar = ({ handleSidebarToggle }: SidebarProps) => {
+const Sidebar = () => {
   const { navigateTo } = useNavigation();
-  const { sidebarItems, isDataLoading } = useSidebar();
+  const searchParams = useSearchParams();
 
-  const [selected, setSelected] = useState("");
+  const { isDataLoading, sidebarItems } = useSidebar();
 
-  const handleClick = (item: Tag) => {
-    setSelected(item.name);
-    handleSidebarToggle?.();
-    item.id === 0 ? navigateTo("videos") : navigateTo("videos", { tag: item.id });
-  };
+  const tagId = searchParams?.get("tag");
 
   return (
     <SidebarContainer data-testid="sidebar-container">
       <MenuStack>
-        {isDataLoading ? (
-          <Box data-testid="loading">
-            {loadingTags?.map((item) => (
-              <Box key={item} display="flex" justifyContent="space-between" alignItems={"center"} width="90%">
-                <Skeleton variant="rounded" width="20%" height={30} />
-                <Skeleton width="76%" height={25} />
-              </Box>
-            ))}
-          </Box>
-        ) : (
-          sidebarItems.map((item) => (
-            <MenuItem key={item.id} $isSelected={item.name === selected} onClick={() => handleClick(item)}>
-              <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
-              <Text data-testid={`sidebar-item-${item.name}`}>{item.name}</Text>
-            </MenuItem>
-          ))
-        )}
+        <Box>
+          {isDataLoading ? (
+            <Box data-testid="loading">
+              {loadingTags?.map((item) => (
+                <Box key={item} display="flex" justifyContent="space-between" alignItems={"center"} width="90%" mb={1}>
+                  <Skeleton variant="rounded" width="15%" height={20} />
+                  <Skeleton width="76%" height={25} />
+                </Box>
+              ))}
+            </Box>
+          ) : (
+            <>
+              <MenuItem $isSelected={!tagId} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
+                <Image src="/assets/images/sidebar-item-icon.svg" alt="All" width={18} height={12} />
+                <Text>All</Text>
+              </MenuItem>
+              {sidebarItems.map((item) => (
+                <MenuItem
+                  key={item.id}
+                  $isSelected={item.id.toString() === tagId}
+                  onClick={() => navigateTo("videos", { tag: item.id })}
+                  data-testid={`sidebar-item-${item.name}`}
+                >
+                  <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
+                  <Text>{item.name}</Text>
+                </MenuItem>
+              ))}
+            </>
+          )}
+        </Box>
+        <TagsContainer data-testid="sidebar-tags">
+          <Chip
+            data-testid="sidebar-tags-All"
+            onClick={() => navigateTo("videos")}
+            variant={!tagId ? "filled" : "outlined"}
+            label="All"
+            size="small"
+          />
+          {sidebarItems.map((tag) => (
+            <Chip
+              data-testid={`sidebar-tags-${tag.name}`}
+              key={tag.id}
+              onClick={() => navigateTo("videos", { tag: tag.id })}
+              label={tag.name}
+              variant={tagId === tag.id.toString() ? "filled" : "outlined"}
+              size="small"
+            />
+          ))}
+        </TagsContainer>
       </MenuStack>
     </SidebarContainer>
   );
