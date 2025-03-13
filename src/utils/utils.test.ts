@@ -75,3 +75,25 @@ describe("parseNonPassedParams", () => {
     expect(parseNonPassedParams(input)).toEqual(expectedOutput);
   });
 });
+
+describe("BASE_URL constant", () => {
+  beforeEach(() => {
+    jest.resetModules(); // Reset module cache to re-import process.env values
+    delete process.env.NEXT_PUBLIC_BASE_URL;
+  });
+
+  test("should use NEXT_PUBLIC_BASE_URL when defined", () => {
+    process.env.NEXT_PUBLIC_BASE_URL = "https://example.com";
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { BASE_URL } = require("./constants");
+
+    expect(BASE_URL).toBe("https://example.com");
+  });
+
+  test("should default to an empty string when NEXT_PUBLIC_BASE_URL is undefined", () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { BASE_URL } = require("./constants");
+
+    expect(BASE_URL).toBe("");
+  });
+});

@@ -18,7 +18,8 @@ import VideoCard from "@/components/VideoCard";
 import useNavigation from "@/hooks/useNavigation";
 import { Event, Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
-import { parseNonPassedParams } from "@/utils/utils";
+import { BASE_URL } from "@/utils/constants";
+import { convertSecondsToFormattedTime, formatDateTime, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, TagsContainer, VideoListingContainer } from "./styled";
 import { defaultParams, defaultTag } from "./types";
@@ -108,7 +109,22 @@ const VideosListingPage = () => {
                   <Skeleton width="30%" height={30} />
                 </Box>
               ))
-            : listedVideos?.map((videoCard) => <VideoCard key={videoCard.id} {...videoCard} width="100%" />)}
+            : listedVideos?.map((videoCard) => {
+                return (
+                  <VideoCard
+                    data={{
+                      event_time: formatDateTime(videoCard.event_time),
+                      organizer: videoCard.workstream_id,
+                      thumbnail: `${BASE_URL}/${videoCard.thumbnail}`,
+                      title: videoCard.title,
+                      video_duration: convertSecondsToFormattedTime(videoCard.video_duration),
+                    }}
+                    key={videoCard.id}
+                    onClick={() => navigateTo("videoDetail", { id: videoCard.id })}
+                    width="100%"
+                  />
+                );
+              })}
         </VideoListingContainer>
       </Box>
     </MainLayoutContainer>

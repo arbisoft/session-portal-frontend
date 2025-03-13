@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
 import useNavigation from "@/hooks/useNavigation";
+import { BASE_URL } from "@/utils/constants";
 import { convertSecondsToFormattedTime, formatDateTime, trimTextLength } from "@/utils/utils";
 
 import { FeaturedVideoCardContainer, ImageContainerBox } from "./styled";
@@ -23,7 +24,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
   video_duration,
   width = "100%",
 }) => {
-  const inAppThumbnail = `${process.env.NEXT_PUBLIC_BASE_URL ?? ""}/${thumbnail}`;
+  const inAppThumbnail = `${BASE_URL}/${thumbnail}`;
   const { navigateTo } = useNavigation();
 
   return isVisible ? (

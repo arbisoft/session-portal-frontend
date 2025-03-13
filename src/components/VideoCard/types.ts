@@ -1,22 +1,12 @@
 export type VideoCardProps = {
   className?: string;
-  id: number;
-  title: string;
-  description: string;
-  publisher: TPublisher;
-  event_time: string;
-  event_type: string;
-  status: string;
-  workstream_id: string;
-  is_featured: boolean;
-  video_duration: number;
-  tags: string[];
-  thumbnail: string;
+  data: {
+    event_time: string;
+    organizer: string;
+    thumbnail: string;
+    title: string;
+    video_duration: string;
+  };
+  onClick?: VoidFunction;
   width?: string;
 };
-
-interface TPublisher {
-  id: number;
-  first_name: string;
-  last_name: string;
-}

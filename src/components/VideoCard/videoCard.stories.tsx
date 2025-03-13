@@ -1,3 +1,4 @@
+import { faker } from "@faker-js/faker";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { VideoCardProps } from "./types";
@@ -8,29 +9,21 @@ const meta: Meta<VideoCardProps> = {
   component: VideoCard,
   tags: ["autodocs"],
   argTypes: {
-    title: {
+    className: {
       control: "text",
-      description: "The title of the video",
+      description: "Additional CSS class for the video card",
     },
-    workstream_id: {
-      control: "text",
-      description: "The organizer/creator of the video",
-    },
-    event_time: {
-      control: "text",
-      description: "The upload date of the video",
-    },
-    thumbnail: {
-      control: "text",
-      description: "The URL of the video thumbnail image",
-    },
-    tags: {
+    data: {
       control: "object",
-      description: "The tags available in the video",
+      description: "The video data including title, organizer, event time, thumbnail, and duration",
+    },
+    onClick: {
+      action: "clicked",
+      description: "Callback function triggered when the video card is clicked",
     },
     width: {
       control: "text",
-      description: "The width of the card (e.g., '100%', '315px')",
+      description: "The width of the video card (e.g., '315px', '100%')",
     },
   },
 };
@@ -39,20 +32,51 @@ export default meta;
 
 type Story = StoryObj<VideoCardProps>;
 
+const mockVideoData = {
+  event_time: "2023-10-01 14:30",
+  organizer: "Sample Organizer",
+  thumbnail: faker.image.urlLoremFlickr(),
+  title: "Sample Video Title",
+  video_duration: "10:30",
+};
+
 export const Default: Story = {
   args: {
-    title: "Sample Video Title",
-    workstream_id: "Arbisoft",
-    event_time: "2023-10-01",
-    thumbnail: "/assets/images/temp-youtube-logo.webp",
-    tags: ["Workshop", "Ollama", "AI"],
+    data: mockVideoData,
+    width: "315px",
+  },
+};
+
+export const CustomWidth: Story = {
+  args: {
+    ...Default.args,
+    width: "400px",
   },
 };
 
 export const LongTitle: Story = {
   args: {
     ...Default.args,
-    title: "This is a very long video title that should be truncated",
-    width: "315px",
+    data: {
+      ...mockVideoData,
+      title: "This is a very long video title that should be truncated after two lines",
+    },
+  },
+};
+
+export const NoThumbnail: Story = {
+  args: {
+    ...Default.args,
+    data: {
+      ...mockVideoData,
+      thumbnail: "",
+    },
+  },
+};
+
+export const CustomClassName: Story = {
+  args: {
+    ...Default.args,
+    className: "custom-video-card",
   },
 };
