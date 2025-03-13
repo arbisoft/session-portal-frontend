@@ -61,10 +61,10 @@ function Navbar() {
   };
 
   return (
-    <AppBar position="static" data-testid="navbar">
+    <AppBar position="sticky" data-testid="navbar">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
-          <Logo>
+          <Logo data-testid="navbar-logo" onClick={() => navigateTo("videos")}>
             <YouTube />
             <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" } }}>
               Arbisoft Sessions Portal
@@ -77,8 +77,7 @@ function Navbar() {
                 value={searchQuery}
                 onChange={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
                 placeholder="Search..."
-                inputProps={{ "aria-label": "search" }}
-                data-testid="search-query"
+                inputProps={{ "aria-label": "search", "data-testid": "search-query" }}
               />
 
               {searchQuery.length > 0 && (

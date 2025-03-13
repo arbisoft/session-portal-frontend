@@ -25,16 +25,12 @@ export const convertSecondsToFormattedTime = (seconds: number): string => {
 };
 
 export function parseNonPassedParams<T extends Record<string, unknown>>(data: T): Record<string, unknown> {
-  return Object.entries(data)
-    .filter(([, value]) => {
-      let hasLength = true;
-      if (typeof value === "string" || Array.isArray(value)) {
-        hasLength = value.length !== 0;
-      }
-      return value === false || (!!value && hasLength);
+  return Object.fromEntries(
+    Object.entries(data).filter(([, value]) => {
+      if (value === false) return true;
+      if (typeof value === "number") return true;
+      if (typeof value === "string" || Array.isArray(value)) return value.length > 0;
+      return Boolean(value);
     })
-    .reduce((acc: Record<string, unknown>, [key, value]) => {
-      acc[key] = value;
-      return acc;
-    }, {});
+  );
 }
