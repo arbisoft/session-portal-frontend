@@ -173,6 +173,12 @@ describe("Navbar Component", () => {
     expect(screen.getByRole("button", { name: /dark/i })).toBeInTheDocument();
   });
 
+  test("should navigate to the videos page when logo is clicked", () => {
+    customRender(<Navbar />);
+    fireEvent.click(screen.getByTestId("navbar-logo"));
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
+  });
+
   test("should match snapshot", () => {
     const { asFragment } = customRender(<Navbar />);
     expect(asFragment()).toMatchSnapshot();
