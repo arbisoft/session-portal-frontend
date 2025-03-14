@@ -3,5 +3,7 @@
   "videos": "Videos",
   "light": "Light",
   "system": "System",
-  "dark": "Dark"
+  "dark": "Dark",
+  "show_less": "Show Less",
+  "show_more": "Show More"
 }
