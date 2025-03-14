@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
 import { chipClasses } from "@mui/material/Chip";
-import { ratingClasses } from "@mui/material/Rating";
-import { styled, css } from "@mui/material/styles";
+import { styled, css, alpha } from "@mui/material/styles";
 
 export const StyledTitleSection = styled(Box, {
   name: "StyledTitleSection",
@@ -15,16 +14,7 @@ export const StyledTitleSection = styled(Box, {
 
     h4 {
       color: ${theme.palette.colors.white};
-      font-size: 20px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: 26px;
       text-transform: capitalize;
-      width: 50%;
-    }
-
-    .${ratingClasses.iconFilled} {
-      color: ${theme.palette.colors.gold};
     }
   `
 );
@@ -65,7 +55,7 @@ export const StyledNotesSection = styled(Box, {
     }
 
     .description {
-      background: #ffffff26;
+      background: ${alpha(theme.palette.common.white, 0.15)};
       border-radius: 12px;
       gap: 10px;
       margin-top: ${theme.spacing(2)};
@@ -93,11 +83,11 @@ export const TagsContainer = styled(Box, {
 
     .${chipClasses.root} {
       border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid ${alpha(theme.palette.common.white, 0.3)};
 
       &.${chipClasses.filled} {
         background: ${theme.palette.colors.white};
-        color: rgba(0, 0, 0, 0.7);
+        color: ${alpha(theme.palette.common.black, 0.7)};
       }
 
       .${chipClasses.icon} {
