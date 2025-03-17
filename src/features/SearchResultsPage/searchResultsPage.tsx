@@ -51,7 +51,7 @@ const SearchResultsPage = () => {
     });
   }, [searchParams]);
 
-  const renderSearchResultsUI = () => {
+  const renderResults = () => {
     if (error || isDataLoading) {
       return loaderCards.map((_) => (
         <SearchCardLoadingState key={_}>
@@ -95,7 +95,7 @@ const SearchResultsPage = () => {
       </FilterBox>
 
       <Box width="100%">
-        <SearchResultsContainer>{renderSearchResultsUI()}</SearchResultsContainer>
+        <SearchResultsContainer>{renderResults()}</SearchResultsContainer>
       </Box>
     </MainLayoutContainer>
   );
