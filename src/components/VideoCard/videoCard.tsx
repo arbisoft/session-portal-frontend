@@ -6,6 +6,8 @@ import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
+import { DEFAULT_THUMBNAIL } from "@/utils/constants";
+
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
@@ -20,7 +22,7 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
             alt={data.title}
             height={192}
             width={315}
-            src={data.thumbnail || "/assets/images/temp-youtube-logo.webp"}
+            src={data.thumbnail || DEFAULT_THUMBNAIL}
           />
           <Typography className="video-duration" component="div" data-testid="video-card-duration">
             {data.video_duration}

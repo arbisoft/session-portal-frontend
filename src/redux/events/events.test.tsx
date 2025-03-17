@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@/jest/utils/testUtils";
 
-import { eventsApi, useGetEventsQuery } from "../events/apiSlice";
+import { eventsApi, useGetEventsQuery, useRecommendationQuery } from "../events/apiSlice";
 import { store } from "../store/configureStore";
 import { Providers } from "../store/provider";
 
@@ -168,5 +168,75 @@ describe("eventsApi endpoints", () => {
       },
     ]);
     expect(result.isSuccess).toBe(true);
+  });
+
+  it("should fetch recommendation videos successfully", async () => {
+    fetchMock.mockResponseOnce(
+      JSON.stringify([
+        {
+          id: 2,
+          title: "asdf",
+          description: "asdf",
+          publisher: {
+            id: 2,
+            first_name: "",
+            last_name: "",
+          },
+          event_time: "2025-02-09T12:48:02Z",
+          event_type: "SESSION",
+          status: "PUBLISHED",
+          workstream_id: null,
+          is_featured: false,
+          tags: ["Competency"],
+          thumbnail: "/media/thumbnails/screenshot-7c8c5c09-218d-46c2-9f7c-ed4e91c2d7fb.png",
+          video_duration: 3351,
+          presenters: [
+            {
+              id: 1,
+              first_name: "Qaisar ",
+              last_name: "Irfan",
+              email: "qaisar.irfan@arbisoft.com",
+            },
+          ],
+          playlists: ["Competency"],
+        },
+      ])
+    );
+
+    const { result } = renderHook(() => useRecommendationQuery(1), {
+      wrapper: ({ children }) => <Providers>{children}</Providers>,
+    });
+    await waitFor(() => {
+      expect(result.current.data).toEqual([
+        {
+          id: 2,
+          title: "asdf",
+          description: "asdf",
+          publisher: {
+            id: 2,
+            first_name: "",
+            last_name: "",
+          },
+          event_time: "2025-02-09T12:48:02Z",
+          event_type: "SESSION",
+          status: "PUBLISHED",
+          workstream_id: null,
+          is_featured: false,
+          tags: ["Competency"],
+          thumbnail: "/media/thumbnails/screenshot-7c8c5c09-218d-46c2-9f7c-ed4e91c2d7fb.png",
+          video_duration: 3351,
+          presenters: [
+            {
+              id: 1,
+              first_name: "Qaisar ",
+              last_name: "Irfan",
+              email: "qaisar.irfan@arbisoft.com",
+            },
+          ],
+          playlists: ["Competency"],
+        },
+      ]);
+      expect(result.current.isSuccess).toBe(true);
+    });
   });
 });

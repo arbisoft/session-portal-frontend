@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
 import useNavigation from "@/hooks/useNavigation";
-import { BASE_URL } from "@/utils/constants";
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime, formatDateTime, trimTextLength } from "@/utils/utils";
 
 import { FeaturedVideoCardContainer, ImageContainerBox } from "./styled";
@@ -36,12 +36,7 @@ const FeaturedVideoCard: FC<FeaturedVideoCardProps> = ({
     >
       <CardContent>
         <ImageContainerBox>
-          <Image
-            alt={title}
-            height={192}
-            width={315}
-            src={thumbnail ? inAppThumbnail : "/assets/images/temp-youtube-logo.webp"}
-          />
+          <Image alt={title} height={192} width={315} src={thumbnail ? inAppThumbnail : DEFAULT_THUMBNAIL} />
           <Typography data-testid="video-duration" className="video-duration" component="div">
             {convertSecondsToFormattedTime(video_duration)}
           </Typography>

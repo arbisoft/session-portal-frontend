@@ -5,6 +5,8 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 
+import { DEFAULT_THUMBNAIL } from "@/utils/constants";
+
 import { ImageContainer, RecommendedVideoCardContainer } from "./styled";
 import { RecommendedVideoCardProps } from "./types";
 
@@ -13,7 +15,7 @@ const RecommendedVideoCard: FC<RecommendedVideoCardProps> = ({ className, date, 
     <RecommendedVideoCardContainer $width={width} className={className} data-testid="recommended-video-card">
       <CardContent>
         <ImageContainer className="image-container">
-          <Image alt={title} height={72} src={imgUrl ?? "/assets/images/temp-youtube-logo.webp"} width={113} />
+          <Image alt={title} height={72} src={imgUrl ?? DEFAULT_THUMBNAIL} width={113} />
           <Typography variant="bodySmall" className="duration" data-testid="duration">
             {duration}
           </Typography>

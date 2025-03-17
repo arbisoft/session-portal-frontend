@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import userEvent from "@testing-library/user-event";
 
 import { customRender as render, screen } from "@/jest/utils/testUtils";
+import { DEFAULT_THUMBNAIL } from "@/utils/constants";
 
 import FeaturedVideoCard from "./featuredVideoCard";
 import { FeaturedVideoCardProps } from "./types";
@@ -32,7 +33,7 @@ describe("FeaturedVideoCard", () => {
   test("should display default image when imgUrl is not provided", () => {
     render(<FeaturedVideoCard {...mockProps} thumbnail={undefined} />);
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain("/assets/images/temp-youtube-logo.webp");
+    expect(decodeURIComponent(imgUrl)).toContain(DEFAULT_THUMBNAIL);
   });
 
   test("should render the organizer name", () => {
