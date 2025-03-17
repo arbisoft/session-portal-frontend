@@ -139,10 +139,10 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             </div>
             <div
               class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
-              data-testid="sidebar-item-Home"
+              data-testid="sidebar-item-Test-1"
             >
               <img
-                alt="Home"
+                alt="Test-1"
                 data-nimg="1"
                 decoding="async"
                 height="12"
@@ -154,15 +154,15 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               <p
                 class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
               >
-                Home
+                Test-1
               </p>
             </div>
             <div
               class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
-              data-testid="sidebar-item-Settings"
+              data-testid="sidebar-item-Test-2"
             >
               <img
-                alt="Settings"
+                alt="Test-2"
                 data-nimg="1"
                 decoding="async"
                 height="12"
@@ -174,15 +174,15 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               <p
                 class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
               >
-                Settings
+                Test-2
               </p>
             </div>
             <div
               class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
-              data-testid="sidebar-item-Profile"
+              data-testid="sidebar-item-Test-3"
             >
               <img
-                alt="Profile"
+                alt="Test-3"
                 data-nimg="1"
                 decoding="async"
                 height="12"
@@ -194,27 +194,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               <p
                 class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
               >
-                Profile
-              </p>
-            </div>
-            <div
-              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
-              data-testid="sidebar-item-Logout"
-            >
-              <img
-                alt="Logout"
-                data-nimg="1"
-                decoding="async"
-                height="12"
-                loading="lazy"
-                src="/assets/images/sidebar-item-icon.svg"
-                style="color: transparent;"
-                width="18"
-              />
-              <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
-              >
-                Logout
+                Test-3
               </p>
             </div>
           </div>
@@ -236,50 +216,38 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             </div>
             <div
               class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
-              data-testid="sidebar-tags-Home"
+              data-testid="sidebar-tags-Test-1"
               role="button"
               tabindex="0"
             >
               <span
                 class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
               >
-                Home
+                Test-1
               </span>
             </div>
             <div
               class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
-              data-testid="sidebar-tags-Settings"
+              data-testid="sidebar-tags-Test-2"
               role="button"
               tabindex="0"
             >
               <span
                 class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
               >
-                Settings
+                Test-2
               </span>
             </div>
             <div
               class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
-              data-testid="sidebar-tags-Profile"
+              data-testid="sidebar-tags-Test-3"
               role="button"
               tabindex="0"
             >
               <span
                 class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
               >
-                Profile
-              </span>
-            </div>
-            <div
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
-              data-testid="sidebar-tags-Logout"
-              role="button"
-              tabindex="0"
-            >
-              <span
-                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
-              >
-                Logout
+                Test-3
               </span>
             </div>
           </div>

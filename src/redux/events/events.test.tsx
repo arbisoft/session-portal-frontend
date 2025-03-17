@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@/jest/utils/testUtils";
 
-import { eventsApi, useGetEventsQuery, useRecommendationQuery } from "../events/apiSlice";
+import { eventsApi, useGetEventsQuery, useRecommendationQuery, usePlaylistsQuery } from "../events/apiSlice";
 import { store } from "../store/configureStore";
 import { Providers } from "../store/provider";
 
@@ -234,6 +234,38 @@ describe("eventsApi endpoints", () => {
             },
           ],
           playlists: ["Competency"],
+        },
+      ]);
+      expect(result.current.isSuccess).toBe(true);
+    });
+  });
+
+  it("should fetch playlist successfully", async () => {
+    fetchMock.mockResponseOnce(
+      JSON.stringify([
+        {
+          id: 1,
+          name: "AMA",
+        },
+        {
+          id: 2,
+          name: "Competency",
+        },
+      ])
+    );
+
+    const { result } = renderHook(() => usePlaylistsQuery(), {
+      wrapper: ({ children }) => <Providers>{children}</Providers>,
+    });
+    await waitFor(() => {
+      expect(result.current.data).toEqual([
+        {
+          id: 1,
+          name: "AMA",
+        },
+        {
+          id: 2,
+          name: "Competency",
         },
       ]);
       expect(result.current.isSuccess).toBe(true);

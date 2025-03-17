@@ -1,9 +1,23 @@
-import { useEventTagsQuery } from "@/redux/events/apiSlice";
+import { useEventTagsQuery, usePlaylistsQuery } from "@/redux/events/apiSlice";
 
 const useSidebar = () => {
-  const { data: tags = [], isFetching, isLoading, isUninitialized } = useEventTagsQuery();
-  const isDataLoading = isFetching || isLoading || isUninitialized;
+  const {
+    data: tags = [],
+    isFetching: isTagsFetching,
+    isLoading: isTagsLoading,
+    isUninitialized: isTagsUninitialized,
+  } = useEventTagsQuery();
 
-  return { sidebarItems: tags, isDataLoading };
+  const {
+    data: playlists = [],
+    isFetching: isPlaylistsFetching,
+    isLoading: isPlaylistsLoading,
+    isUninitialized: isPlaylistsUninitialized,
+  } = usePlaylistsQuery();
+
+  const areTagsLoading = isTagsFetching || isTagsLoading || isTagsUninitialized;
+  const arePlaylistsLoading = isPlaylistsFetching || isPlaylistsLoading || isPlaylistsUninitialized;
+
+  return { tags, areTagsLoading, arePlaylistsLoading, playlists };
 };
 export default useSidebar;

@@ -28,7 +28,7 @@ jest.mock("@/hooks/useNavigation", () => ({
 }));
 
 describe("Sidebar Component", () => {
-  const mockSidebarItems = [
+  const mockItems = [
     { id: "1", name: "Test-1" },
     { id: "2", name: "Test-2" },
     { id: "3", name: "Test-3" },
@@ -37,8 +37,9 @@ describe("Sidebar Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useSidebar as jest.Mock).mockReturnValue({
-      sidebarItems: mockSidebarItems,
-      isDataLoading: false,
+      playlists: mockItems,
+      arePlaylistsLoading: false,
+      tags: mockItems,
     });
   });
 
@@ -50,7 +51,7 @@ describe("Sidebar Component", () => {
   it("should render all sidebar items", () => {
     customRender(<Sidebar />);
     expect(screen.getByTestId("sidebar-item-All")).toBeInTheDocument();
-    mockSidebarItems.forEach((item) => {
+    mockItems.forEach((item) => {
       expect(screen.getByTestId(`sidebar-item-${item.name}`)).toBeInTheDocument();
     });
   });
@@ -73,17 +74,17 @@ describe("Sidebar Component", () => {
     fireEvent.click(firstItem);
 
     await waitFor(() => {
-      expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "1" });
+      expect(mockNavigateTo).toHaveBeenCalledWith("videos", { playlist: "Test-1" });
     });
   });
 
   it("should render sidebar item icons", () => {
     customRender(<Sidebar />);
-    expect(screen.getAllByRole("img")).toHaveLength(mockSidebarItems.length + 1);
+    expect(screen.getAllByRole("img")).toHaveLength(mockItems.length + 1);
   });
 
   it("should highlight the selected tag", async () => {
-    (usePathname as jest.Mock).mockReturnValue("videos?tag=2");
+    (usePathname as jest.Mock).mockReturnValue("videos?playlist=Test-1");
     customRender(<Sidebar />);
 
     await waitFor(() => {
@@ -127,7 +128,7 @@ describe("Sidebar Component", () => {
   });
 
   it("should render loading skeleton when data is loading", async () => {
-    (useSidebar as jest.Mock).mockReturnValue({ sidebarItems: [], isDataLoading: true });
+    (useSidebar as jest.Mock).mockReturnValue({ playlists: [], arePlaylistsLoading: true, tags: [] });
 
     customRender(<Sidebar />);
 
@@ -145,7 +146,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
 
     await waitFor(() => {
-      expect(screen.getAllByRole("button")).toHaveLength(mockSidebarItems.length + 1); // "All" + 3 items
+      expect(screen.getAllByRole("button")).toHaveLength(mockItems.length + 1); // "All" + 3 items
     });
   });
 
@@ -156,14 +157,15 @@ describe("Sidebar Component", () => {
     fireEvent.click(item);
 
     await waitFor(() => {
-      expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "2" });
+      expect(mockNavigateTo).toHaveBeenCalledWith("videos", { playlist: "Test-2" });
     });
   });
 
   it("should show loading state when data is being fetched", async () => {
     (useSidebar as jest.Mock).mockReturnValue({
-      isDataLoading: true,
-      sidebarItems: [],
+      arePlaylistsLoading: true,
+      playlists: [],
+      tags: [],
     });
 
     customRender(<Sidebar />);
@@ -171,7 +173,7 @@ describe("Sidebar Component", () => {
   });
 
   it("should allow menu item click when only one item exists", () => {
-    (useSidebar as jest.Mock).mockReturnValue({ sidebarItems: [] });
+    (useSidebar as jest.Mock).mockReturnValue({ playlists: [], tags: [], arePlaylistsLoading: false });
     customRender(<Sidebar />);
     const item = screen.getByTestId("sidebar-item-All");
     fireEvent.click(item);
@@ -211,7 +213,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
     const tag = screen.getByTestId("sidebar-tags-Test-1");
     fireEvent.click(tag);
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "1" });
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "Test-1" });
   });
 
   it("should call navigateTo with correct params when clicking on 'All' tag", () => {

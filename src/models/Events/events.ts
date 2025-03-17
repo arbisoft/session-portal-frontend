@@ -13,6 +13,8 @@ export interface Tag {
   name: string;
 }
 
+export interface Playlist extends Tag {}
+
 export interface Event {
   description: string;
   event_time: string;
@@ -52,4 +54,5 @@ export type TAllEventsPyaload = {
   status: string;
   search?: string;
   tag?: string;
+  playlist?: string;
 };

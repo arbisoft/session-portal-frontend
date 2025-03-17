@@ -1,4 +1,4 @@
-import { EventDetail, Tag, AllEventResponse, TAllEventsPyaload, Recommendation } from "@/models/Events";
+import { EventDetail, Tag, AllEventResponse, TAllEventsPyaload, Recommendation, Playlist } from "@/models/Events";
 import { baseApi } from "@/redux/baseApi";
 
 export const eventsApi = baseApi.injectEndpoints({
@@ -34,6 +34,12 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    playlists: builder.query<Playlist[], void>({
+      query: () => ({
+        url: "/events/playlists/",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -46,6 +52,8 @@ export const {
   useLazyEventTagsQuery,
   useLazyEventTypesQuery,
   useLazyGetEventsQuery,
+  useLazyPlaylistsQuery,
   useLazyRecommendationQuery,
+  usePlaylistsQuery,
   useRecommendationQuery,
 } = eventsApi;
