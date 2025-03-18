@@ -2,10 +2,12 @@
 import { useEffect } from "react";
 
 import Box from "@mui/material/Box";
+import Chip from "@mui/material/Chip";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { format } from "date-fns";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
@@ -18,13 +20,13 @@ import { useTranslation } from "@/services/i18n/client";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime } from "@/utils/utils";
 
-import { StyledDetailSection, StyledNotesSection, StyledTitleSection } from "./styled";
+import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
   const { t } = useTranslation("common");
 
-  const { navigateTo } = useNavigation();
+  const { navigateTo, getPageUrl } = useNavigation();
 
   const parsedId = Number(videoId);
 
@@ -119,6 +121,20 @@ const VideoDetail = () => {
               <ReadMore text={dataEvent?.description ?? ""} showLessText={t("show_less")} showMoreText={t("show_more")} />
             </div>
           </StyledNotesSection>
+          {(data.event?.tags?.length ?? 0) > 0 && (
+            <TagsContainer>
+              {data.event?.tags?.map((tag) => (
+                <Chip
+                  component={Link}
+                  href={getPageUrl("videos", { tag })}
+                  label={tag}
+                  key={tag}
+                  variant="outlined"
+                  size="small"
+                />
+              ))}
+            </TagsContainer>
+          )}
         </>
       )}
     </MainLayoutContainer>

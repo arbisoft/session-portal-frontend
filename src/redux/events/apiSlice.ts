@@ -30,7 +30,7 @@ export const eventsApi = baseApi.injectEndpoints({
     }),
     recommendation: builder.query<Recommendation[], number>({
       query: (id) => ({
-        url: `/events/recommendation/${id}/`,
+        url: `/events/recommendations/${id}/`,
         method: "GET",
       }),
     }),
