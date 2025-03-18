@@ -2,12 +2,13 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 import { notificationManager } from "@/components/Notification";
+import { BASE_URL } from "@/utils/constants";
 
 import { selectAccessToken } from "./login/selectors";
 import { parseError } from "./parseError";
 import { ReducersState } from "./store/configureStore";
 
-const HOST_URL = (process.env.NEXT_PUBLIC_BASE_URL ?? "") + "/api/v1";
+const HOST_URL = BASE_URL + "/api/v1";
 
 interface ExtraOptions {
   showErrorToast?: boolean;

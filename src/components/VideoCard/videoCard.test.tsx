@@ -1,77 +1,61 @@
-import useNavigation from "@/hooks/useNavigation";
 import { fireEvent, customRender as render, screen } from "@/jest/utils/testUtils";
+import { BASE_URL } from "@/utils/constants";
+import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
 
 import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
 
 const mockProps: VideoCardProps = {
-  id: 1,
   className: "custom-class",
-  event_time: "2024-10-22T12:00:00Z",
-  event_type: "SESSION",
-  description: "Sample Video Description",
-  thumbnail: "assets/images/temp-youtube-logo.webp",
-  title: "Sample Video Title",
-  publisher: { id: 1, first_name: "John", last_name: "Doe" },
-  tags: ["Workshop", "Ollama", "AI"],
-  is_featured: false,
-  status: "PUBLISHED",
-  workstream_id: "Ikram Ali",
+  data: {
+    title: "Refresher & AMA Session on Competency Framework Changes - January 2025",
+    event_time: formatDateTime("2025-01-09T06:00:00Z"),
+    thumbnail: `${BASE_URL}/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png`,
+    video_duration: convertSecondsToFormattedTime(1830),
+    organizer: "John Doe",
+  },
+  onClick: jest.fn(),
   width: "300px",
-  video_duration: 1800,
 };
 
-jest.mock("@/hooks/useNavigation", () => ({
-  __esModule: true,
-  default: jest.fn(() => ({ navigateTo: jest.fn() })),
-}));
-
 describe("VideoCard", () => {
-  const mockNavigateTo = jest.fn();
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (useNavigation as jest.Mock).mockReturnValue({ navigateTo: mockNavigateTo });
-  });
-
-  test("should renders the component with provided props", () => {
+  it("should renders the component with provided props", () => {
     render(<VideoCard {...mockProps} />);
 
-    expect(screen.getByText(mockProps.title)).toBeInTheDocument();
-    expect(screen.getByTestId("video-card-date-time")).toBeInTheDocument();
-    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
-    expect(screen.getByText("30:00")).toBeInTheDocument();
+    expect(screen.getByTestId("video-card-title")).toHaveTextContent(mockProps.data.title);
+    expect(screen.getByTestId("video-card-date-time")).toHaveTextContent(mockProps.data.event_time);
+    expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.data.organizer);
+    expect(screen.getByTestId("video-card-duration")).toHaveTextContent(mockProps.data.video_duration);
+    const imgUrl = screen.getByTestId("video-card-image").getAttribute("src") ?? "";
+    expect(decodeURIComponent(imgUrl)).toContain(mockProps.data.thumbnail);
   });
 
-  test("should displays default image when imgUrl is not provided", () => {
-    render(<VideoCard {...mockProps} />);
+  it("should displays default image when thumbnail is not provided", () => {
+    render(<VideoCard {...mockProps} data={{ ...mockProps.data, thumbnail: "" }} />);
 
-    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-
+    const imgUrl = screen.getByTestId("video-card-image").getAttribute("src") ?? "";
     expect(decodeURIComponent(imgUrl)).toContain("/assets/images/temp-youtube-logo.webp");
   });
 
-  test("should renders the organizer name", () => {
+  it("should renders the organizer name", () => {
     render(<VideoCard {...mockProps} />);
-    expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-organizer")).toBeInTheDocument();
+    expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.data.organizer);
   });
 
-  test("should matches snapshot", () => {
+  it("should matches snapshot", () => {
     const { asFragment } = render(<VideoCard {...mockProps} />);
     expect(asFragment()).toMatchSnapshot();
   });
 
-  test("should calls navigateTo when clicked", () => {
+  it("should calls onClick when clicked", () => {
     render(<VideoCard {...mockProps} />);
     fireEvent.click(screen.getByTestId("video-card"));
-    expect(mockNavigateTo).toHaveBeenCalledWith("videoDetail", { id: 1 });
+    expect(mockProps.onClick).toHaveBeenCalled();
   });
 
-  test("should displays fallback thumbnail when no thumbnail is provided", () => {
-    render(<VideoCard {...mockProps} thumbnail={""} />);
-    const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
+  it("should renders skeleton loader correctly", () => {
+    render(<VideoCard {...mockProps} />);
+    expect(screen.getByTestId("video-card")).toBeInTheDocument();
   });
 });
