@@ -115,84 +115,173 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
         >
           <div
-            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+            class="MuiBox-root css-0"
           >
-            <img
-              alt="Home"
-              data-nimg="1"
-              decoding="async"
-              height="12"
-              loading="lazy"
-              src="/assets/images/sidebar-item-icon.svg"
-              style="color: transparent;"
-              width="18"
-            />
-            <p
-              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+            <div
+              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+              data-testid="sidebar-item-All"
+            >
+              <img
+                alt="All"
+                data-nimg="1"
+                decoding="async"
+                height="12"
+                loading="lazy"
+                src="/assets/images/sidebar-item-icon.svg"
+                style="color: transparent;"
+                width="18"
+              />
+              <p
+                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              >
+                All
+              </p>
+            </div>
+            <div
+              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
               data-testid="sidebar-item-Home"
             >
-              Home
-            </p>
-          </div>
-          <div
-            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
-          >
-            <img
-              alt="Settings"
-              data-nimg="1"
-              decoding="async"
-              height="12"
-              loading="lazy"
-              src="/assets/images/sidebar-item-icon.svg"
-              style="color: transparent;"
-              width="18"
-            />
-            <p
-              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              <img
+                alt="Home"
+                data-nimg="1"
+                decoding="async"
+                height="12"
+                loading="lazy"
+                src="/assets/images/sidebar-item-icon.svg"
+                style="color: transparent;"
+                width="18"
+              />
+              <p
+                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              >
+                Home
+              </p>
+            </div>
+            <div
+              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
               data-testid="sidebar-item-Settings"
             >
-              Settings
-            </p>
-          </div>
-          <div
-            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
-          >
-            <img
-              alt="Profile"
-              data-nimg="1"
-              decoding="async"
-              height="12"
-              loading="lazy"
-              src="/assets/images/sidebar-item-icon.svg"
-              style="color: transparent;"
-              width="18"
-            />
-            <p
-              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              <img
+                alt="Settings"
+                data-nimg="1"
+                decoding="async"
+                height="12"
+                loading="lazy"
+                src="/assets/images/sidebar-item-icon.svg"
+                style="color: transparent;"
+                width="18"
+              />
+              <p
+                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              >
+                Settings
+              </p>
+            </div>
+            <div
+              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
               data-testid="sidebar-item-Profile"
             >
-              Profile
-            </p>
-          </div>
-          <div
-            class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
-          >
-            <img
-              alt="Logout"
-              data-nimg="1"
-              decoding="async"
-              height="12"
-              loading="lazy"
-              src="/assets/images/sidebar-item-icon.svg"
-              style="color: transparent;"
-              width="18"
-            />
-            <p
-              class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              <img
+                alt="Profile"
+                data-nimg="1"
+                decoding="async"
+                height="12"
+                loading="lazy"
+                src="/assets/images/sidebar-item-icon.svg"
+                style="color: transparent;"
+                width="18"
+              />
+              <p
+                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              >
+                Profile
+              </p>
+            </div>
+            <div
+              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
               data-testid="sidebar-item-Logout"
             >
-              Logout
-            </p>
+              <img
+                alt="Logout"
+                data-nimg="1"
+                decoding="async"
+                height="12"
+                loading="lazy"
+                src="/assets/images/sidebar-item-icon.svg"
+                style="color: transparent;"
+                width="18"
+              />
+              <p
+                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+              >
+                Logout
+              </p>
+            </div>
+          </div>
+          <div
+            class="MuiBox-root css-sa4rw2-TagsContainer-root"
+            data-testid="sidebar-tags"
+          >
+            <div
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              data-testid="sidebar-tags-All"
+              role="button"
+              tabindex="0"
+            >
+              <span
+                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+              >
+                All
+              </span>
+            </div>
+            <div
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              data-testid="sidebar-tags-Home"
+              role="button"
+              tabindex="0"
+            >
+              <span
+                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+              >
+                Home
+              </span>
+            </div>
+            <div
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              data-testid="sidebar-tags-Settings"
+              role="button"
+              tabindex="0"
+            >
+              <span
+                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+              >
+                Settings
+              </span>
+            </div>
+            <div
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              data-testid="sidebar-tags-Profile"
+              role="button"
+              tabindex="0"
+            >
+              <span
+                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+              >
+                Profile
+              </span>
+            </div>
+            <div
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              data-testid="sidebar-tags-Logout"
+              role="button"
+              tabindex="0"
+            >
+              <span
+                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+              >
+                Logout
+              </span>
+            </div>
           </div>
         </div>
       </div>

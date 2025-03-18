@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import { chipClasses } from "@mui/material/Chip";
 import { stackClasses } from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
@@ -41,43 +40,6 @@ export const FilterBox = styled(Box, {
         text-overflow: ellipsis;
         margin-bottom: 10px;
         text-transform: capitalize;
-      }
-    }
-  `
-);
-
-export const TagsContainer = styled(Box, {
-  name: "TagsContainer",
-})(
-  ({ theme }) => css`
-    display: flex;
-    gap: 5px;
-    padding-bottom: 10px;
-    overflow-x: scroll;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    .${chipClasses.root} {
-      flex: 0 0 auto;
-      border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      text-transform: capitalize;
-      scroll-snap-align: start;
-
-      &.${chipClasses.filled} {
-        background: ${theme.palette.colors.white};
-        color: rgba(0, 0, 0, 0.7);
-      }
-
-      .${chipClasses.icon} {
-        margin: 0;
       }
     }
   `

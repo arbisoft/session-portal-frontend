@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { chipClasses } from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import { styled, css, alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
@@ -54,3 +55,30 @@ export const Text = styled(Typography, {
     letter-spacing: 0.4px;
   `;
 });
+
+export const TagsContainer = styled(Box, {
+  name: "TagsContainer",
+})(
+  ({ theme }) => css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    padding-top: 30px;
+
+    .${chipClasses.root} {
+      border-radius: 6px;
+      border: 1px solid ${alpha(theme.palette.common.white, 0.3)};
+      cursor: pointer;
+      text-transform: capitalize;
+
+      &.${chipClasses.filled} {
+        background: ${theme.palette.colors.white};
+        color: ${alpha(theme.palette.common.black, 0.7)};
+      }
+
+      .${chipClasses.icon} {
+        margin: 0;
+      }
+    }
+  `
+);
