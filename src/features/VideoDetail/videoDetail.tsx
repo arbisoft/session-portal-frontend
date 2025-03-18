@@ -1,10 +1,7 @@
 "use client";
 import { useEffect } from "react";
 
-import { faker } from "@faker-js/faker";
-import ArrowForward from "@mui/icons-material/ArrowForward";
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/query";
@@ -16,11 +13,12 @@ import ReadMore from "@/components/ReadMore";
 import RecommendedVideoCard, { RecommendedVideoCardProps } from "@/components/RecommendedVideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
 import useNavigation from "@/hooks/useNavigation";
-import { useEventDetailQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
+import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { useTranslation } from "@/services/i18n/client";
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime } from "@/utils/utils";
 
-import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
+import { StyledDetailSection, StyledNotesSection, StyledTitleSection } from "./styled";
 
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
@@ -30,20 +28,24 @@ const VideoDetail = () => {
 
   const parsedId = Number(videoId);
 
-  const recommendedVideo: RecommendedVideoCardProps[] = Array(10)
-    .fill("")
-    .map(() => ({
-      date: format(faker.date.past(), "MMM dd, yyyy"),
-      duration: convertSecondsToFormattedTime(faker.number.int({ min: 100, max: 1000 })),
-      imgUrl: "/assets/images/temp-youtube-logo.webp",
-      title: faker.lorem.words(10),
-    }));
-
   const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(isNaN(parsedId) ? skipToken : parsedId);
 
-  const { data: tags } = useEventTagsQuery();
+  const {
+    data: recommendations = [],
+    isFetching: isRecommendationsFetching,
+    isLoading: isRecommendationsLoading,
+    isUninitialized: isRecommendationsUninitialized,
+  } = useRecommendationQuery(isNaN(parsedId) ? skipToken : parsedId);
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
+  const areRecommendationsLoading = isRecommendationsFetching || isRecommendationsLoading || isRecommendationsUninitialized;
+
+  const recommendedVideo: RecommendedVideoCardProps[] = recommendations.map((video) => ({
+    date: format(new Date(video.event_time), "MMM dd, yyyy"),
+    duration: convertSecondsToFormattedTime(video.video_duration),
+    imgUrl: video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL,
+    title: video.title,
+  }));
 
   useEffect(() => {
     if (isNaN(parsedId) || error) {
@@ -59,28 +61,25 @@ const VideoDetail = () => {
       isLeftSidebarVisible={false}
       rightSidebar={
         <div>
-          <TagsContainer>
-            <Chip onClick={() => navigateTo("videos")} label="All" size="small" />
-            {tags?.map((tag) => (
-              <Chip
-                onClick={() => navigateTo("videos", { tag: tag.id })}
-                label={tag.name}
-                key={tag.id}
-                variant="outlined"
-                size="small"
+          {areRecommendationsLoading ? (
+            <Box display="flex" gap={2} flexDirection="column">
+              {Array(10)
+                .fill("")
+                .map((_, key) => (
+                  <Skeleton variant="rounded" width="100%" height={90} key={`skeleton-${key}`} />
+                ))}
+            </Box>
+          ) : (
+            recommendedVideo.map((vid, index) => (
+              <RecommendedVideoCard
+                date={vid.date}
+                duration={vid.duration}
+                imgUrl={vid.imgUrl}
+                key={vid.date + index}
+                title={vid.title}
               />
-            ))}
-            <Chip onClick={() => navigateTo("videos")} icon={<ArrowForward />} variant="outlined" size="small" className="icon" />
-          </TagsContainer>
-          {recommendedVideo.map((vid, index) => (
-            <RecommendedVideoCard
-              date={vid.date}
-              duration={vid.duration}
-              imgUrl={vid.imgUrl}
-              key={vid.date + index}
-              title={vid.title}
-            />
-          ))}
+            ))
+          )}
         </div>
       }
     >
@@ -103,7 +102,7 @@ const VideoDetail = () => {
               width: "100%",
               title: data?.title ?? "",
               videoSrc: data?.video_file ?? "",
-              posterSrc: data?.thumbnail ?? "/assets/images/temp-youtube-logo.webp",
+              posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
               posterAlt: data?.title ?? "",
             }}
           />

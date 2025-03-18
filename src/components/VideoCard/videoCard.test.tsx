@@ -1,5 +1,5 @@
 import { fireEvent, customRender as render, screen } from "@/jest/utils/testUtils";
-import { BASE_URL } from "@/utils/constants";
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
 
 import { VideoCardProps } from "./types";
@@ -34,7 +34,7 @@ describe("VideoCard", () => {
     render(<VideoCard {...mockProps} data={{ ...mockProps.data, thumbnail: "" }} />);
 
     const imgUrl = screen.getByTestId("video-card-image").getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain("/assets/images/temp-youtube-logo.webp");
+    expect(decodeURIComponent(imgUrl)).toContain(DEFAULT_THUMBNAIL);
   });
 
   it("should renders the organizer name", () => {

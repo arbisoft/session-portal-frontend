@@ -31,8 +31,7 @@ export const RecommendedVideoCardContainer = styled(Card, {
 
       img {
         width: 113px;
-        height: auto;
-        border-radius: ${theme.shape.borderRadius + 2}px;
+        height: unset;
       }
 
       .video-detail {
@@ -80,8 +79,10 @@ export const ImageContainer = styled(Box, {
   name: "ImageContainer",
 })(({ theme }) => {
   return css`
+    border-radius: ${theme.shape.borderRadius + 2}px;
+    height: 73px;
+    overflow: hidden;
     position: relative;
-    display: inline-flex;
 
     .duration {
       background-color: ${alpha(theme.palette.common.black, 0.7)};

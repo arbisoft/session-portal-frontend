@@ -18,15 +18,19 @@ export interface Event {
   event_time: string;
   event_type: string;
   id: number;
-  video_duration: number;
   is_featured: boolean;
+  playlists: string[];
+  presenters: Publisher & { email: string }[];
   publisher: Publisher;
   status: string;
   tags: string[];
   thumbnail: string;
   title: string;
+  video_duration: number;
   workstream_id: string;
 }
+
+export interface Recommendation extends Event {}
 
 interface Publisher {
   first_name: string;

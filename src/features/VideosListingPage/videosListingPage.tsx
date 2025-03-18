@@ -14,6 +14,7 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
+import useNavigation from "@/hooks/useNavigation";
 import { Event, Tag, TAllEventsPyaload } from "@/models/Events";
 import { useGetEventsQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
 import { BASE_URL } from "@/utils/constants";
@@ -32,6 +33,7 @@ const loaderCards: string[] = Array(5)
 
 const VideosListingPage = () => {
   const searchParams = useSearchParams();
+  const { navigateTo } = useNavigation();
 
   const [selectedTag, setSelectedTag] = useState<Tag>();
   const [requestParams, setRequestParams] = useState<TAllEventsPyaload>(defaultParams);

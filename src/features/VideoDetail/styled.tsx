@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import { chipClasses } from "@mui/material/Chip";
 import { styled, css, alpha } from "@mui/material/styles";
 
 export const StyledTitleSection = styled(Box, {
@@ -68,37 +67,6 @@ export const StyledNotesSection = styled(Box, {
         font-weight: 400;
         line-height: normal;
         text-transform: capitalize;
-      }
-    }
-  `
-);
-
-export const TagsContainer = styled(Box, {
-  name: "TagsContainer",
-})(
-  ({ theme }) => css`
-    display: flex;
-    gap: 5px;
-    padding-bottom: 10px;
-
-    .${chipClasses.root} {
-      border-radius: 6px;
-      border: 1px solid ${alpha(theme.palette.common.white, 0.3)};
-
-      &.${chipClasses.filled} {
-        background: ${theme.palette.colors.white};
-        color: ${alpha(theme.palette.common.black, 0.7)};
-      }
-
-      .${chipClasses.icon} {
-        margin: 0;
-      }
-
-      &.icon {
-        padding-left: ${theme.spacing()};
-        max-width: unset;
-        min-height: unset;
-        width: unset;
       }
     }
   `

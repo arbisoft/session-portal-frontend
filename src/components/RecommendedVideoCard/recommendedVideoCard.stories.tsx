@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { DEFAULT_THUMBNAIL } from "@/utils/constants";
+
 import RecommendedVideoCard from "./recommendedVideoCard";
 import { RecommendedVideoCardProps } from "./types";
 
@@ -44,7 +46,7 @@ export const Default: Story = {
     title: "Sample Video Title",
     date: "2023-10-01",
     duration: "10:30",
-    imgUrl: "/assets/images/temp-youtube-logo.webp",
+    imgUrl: DEFAULT_THUMBNAIL,
   },
 };
 
