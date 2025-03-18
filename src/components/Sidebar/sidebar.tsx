@@ -20,15 +20,16 @@ const Sidebar = () => {
   const { navigateTo } = useNavigation();
   const searchParams = useSearchParams();
 
-  const { isDataLoading, sidebarItems } = useSidebar();
+  const { arePlaylistsLoading, tags, playlists } = useSidebar();
 
-  const tagId = searchParams?.get("tag");
+  const tag = searchParams?.get("tag");
+  const playlist = searchParams?.get("playlist");
 
   return (
     <SidebarContainer data-testid="sidebar-container">
       <MenuStack>
         <Box>
-          {isDataLoading ? (
+          {arePlaylistsLoading ? (
             <Box data-testid="loading">
               {loadingTags?.map((item) => (
                 <Box key={item} display="flex" justifyContent="space-between" alignItems={"center"} width="90%" mb={1}>
@@ -39,15 +40,15 @@ const Sidebar = () => {
             </Box>
           ) : (
             <>
-              <MenuItem $isSelected={!tagId} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
+              <MenuItem $isSelected={!playlist} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
                 <Image src="/assets/images/sidebar-item-icon.svg" alt="All" width={18} height={12} />
                 <Text>All</Text>
               </MenuItem>
-              {sidebarItems.map((item) => (
+              {playlists.map((item) => (
                 <MenuItem
                   key={item.id}
-                  $isSelected={item.id.toString() === tagId}
-                  onClick={() => navigateTo("videos", { tag: item.id })}
+                  $isSelected={item.name === playlist}
+                  onClick={() => navigateTo("videos", { playlist: item.name })}
                   data-testid={`sidebar-item-${item.name}`}
                 >
                   <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
@@ -61,17 +62,17 @@ const Sidebar = () => {
           <Chip
             data-testid="sidebar-tags-All"
             onClick={() => navigateTo("videos")}
-            variant={!tagId ? "filled" : "outlined"}
+            variant={!tag ? "filled" : "outlined"}
             label="All"
             size="small"
           />
-          {sidebarItems.map((tag) => (
+          {tags.map((item) => (
             <Chip
-              data-testid={`sidebar-tags-${tag.name}`}
-              key={tag.id}
-              onClick={() => navigateTo("videos", { tag: tag.id })}
-              label={tag.name}
-              variant={tagId === tag.id.toString() ? "filled" : "outlined"}
+              data-testid={`sidebar-tags-${item.name}`}
+              key={item.id}
+              onClick={() => navigateTo("videos", { tag: item.name })}
+              label={item.name}
+              variant={tag === item.name ? "filled" : "outlined"}
               size="small"
             />
           ))}

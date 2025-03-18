@@ -19,15 +19,18 @@ jest.mock("@/hooks/useNavigation", () => ({
   }),
 }));
 
+const mockItems = [
+  { id: "1", name: "Test-1" },
+  { id: "2", name: "Test-2" },
+  { id: "3", name: "Test-3" },
+];
+
 jest.mock("@/hooks/useSidebar", () => ({
   __esModule: true,
   default: jest.fn(() => ({
-    sidebarItems: [
-      { id: 1, name: "Home" },
-      { id: 2, name: "Settings" },
-      { id: 3, name: "Profile" },
-      { id: 4, name: "Logout" },
-    ],
+    playlists: mockItems,
+    arePlaylistsLoading: false,
+    tags: mockItems,
   })),
 }));
 
