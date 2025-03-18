@@ -24,7 +24,7 @@ describe("RecommendedVideoCard", () => {
   });
 
   it("should displays default image when imgUrl is not provided", () => {
-    render(<RecommendedVideoCard {...mockProps} imgUrl={undefined} />);
+    render(<RecommendedVideoCard {...mockProps} />);
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
     expect(screen.getByRole("img", { name: mockProps.title })).toHaveAttribute("src", imgUrl);
   });

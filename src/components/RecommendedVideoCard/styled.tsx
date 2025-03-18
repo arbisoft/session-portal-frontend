@@ -12,11 +12,12 @@ export const RecommendedVideoCardContainer = styled(Card, {
   shouldForwardProp,
 })<{ $width: string }>(({ theme, $width }) => {
   return css`
-    display: inline-flex;
-    padding: 0;
     background: transparent;
-    overflow: unset;
     border-radius: unset;
+    cursor: pointer;
+    display: inline-flex;
+    overflow: unset;
+    padding: 0;
     width: ${$width};
 
     .${cardContentClasses.root} {
@@ -30,8 +31,9 @@ export const RecommendedVideoCardContainer = styled(Card, {
       }
 
       img {
-        width: 113px;
+        border-radius: ${theme.shape.borderRadius + 2}px;
         height: unset;
+        width: 113px;
       }
 
       .video-detail {

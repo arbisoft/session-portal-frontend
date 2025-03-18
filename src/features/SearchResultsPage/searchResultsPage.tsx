@@ -12,7 +12,7 @@ import { useSearchParams } from "next/navigation";
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import SearchVideoCard from "@/components/SearchVideoCard/searchVideoCard";
 import Select from "@/components/Select";
-import { TAllEventsPyaload } from "@/models/Events";
+import { EventsParams } from "@/models/Events";
 import { useGetEventsQuery } from "@/redux/events/apiSlice";
 import { parseNonPassedParams } from "@/utils/utils";
 
@@ -31,7 +31,7 @@ const SearchResultsPage = () => {
   const searchParams = useSearchParams();
 
   const [searchedQuery, setSearchedQuery] = useState<string>("");
-  const [requestParams, setRequestParams] = useState<TAllEventsPyaload>(defaultParams);
+  const [requestParams, setRequestParams] = useState<EventsParams>(defaultParams);
   const { data: videoListings, isFetching, isLoading, isUninitialized, error } = useGetEventsQuery(requestParams);
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
@@ -46,7 +46,7 @@ const SearchResultsPage = () => {
         apiParams.tag = "";
         apiParams.search = search;
       }
-      const updatedParams = parseNonPassedParams(apiParams) as TAllEventsPyaload;
+      const updatedParams = parseNonPassedParams(apiParams) as EventsParams;
       return updatedParams;
     });
   }, [searchParams]);

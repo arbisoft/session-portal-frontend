@@ -2,6 +2,8 @@
 
 import React, { isValidElement, ReactNode } from "react";
 
+import Box from "@mui/material/Box";
+
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar/sidebar";
 import useAuth from "@/hooks/useAuth";
@@ -26,7 +28,9 @@ const MainLayoutContainer = ({ children, rightSidebar, isLeftSidebarVisible = tr
             <Sidebar />
           </LeftSidebar>
         )}
-        <ContentContainer container>{children}</ContentContainer>
+        <ContentContainer container>
+          <Box width="100%">{children}</Box>
+        </ContentContainer>
         {isValidElement(rightSidebar) && (
           <RightSidebar sx={{ display: { xs: "none", md: "block" } }} data-testid="right-sidebar">
             {rightSidebar}

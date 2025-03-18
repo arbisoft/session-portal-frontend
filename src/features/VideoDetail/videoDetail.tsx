@@ -12,7 +12,7 @@ import { useParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import ReadMore from "@/components/ReadMore";
-import RecommendedVideoCard, { RecommendedVideoCardProps } from "@/components/RecommendedVideoCard";
+import RecommendedVideoCard from "@/components/RecommendedVideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
@@ -42,13 +42,6 @@ const VideoDetail = () => {
   const isDataLoading = isFetching || isLoading || isUninitialized;
   const areRecommendationsLoading = isRecommendationsFetching || isRecommendationsLoading || isRecommendationsUninitialized;
 
-  const recommendedVideo: RecommendedVideoCardProps[] = recommendations.map((video) => ({
-    date: format(new Date(video.event_time), "MMM dd, yyyy"),
-    duration: convertSecondsToFormattedTime(video.video_duration),
-    imgUrl: video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL,
-    title: video.title,
-  }));
-
   useEffect(() => {
     if (isNaN(parsedId) || error) {
       navigateTo("videos");
@@ -72,13 +65,14 @@ const VideoDetail = () => {
                 ))}
             </Box>
           ) : (
-            recommendedVideo.map((vid, index) => (
+            recommendations.map((video) => (
               <RecommendedVideoCard
-                date={vid.date}
-                duration={vid.duration}
-                imgUrl={vid.imgUrl}
-                key={vid.date + index}
-                title={vid.title}
+                date={format(new Date(video.event_time), "MMM dd, yyyy")}
+                duration={convertSecondsToFormattedTime(video.video_duration)}
+                imgUrl={video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL}
+                key={video.id}
+                title={video.title}
+                onClick={() => navigateTo("videoDetail", { id: video.id })}
               />
             ))
           )}

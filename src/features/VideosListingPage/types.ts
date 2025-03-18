@@ -1,10 +1,12 @@
+import { EventsParams } from "@/models/Events";
+
 export const defaultTag = {
   id: 0,
   name: "All",
 };
 
-export const defaultParams = {
-  event_type: "SESSION",
+export const defaultParams: EventsParams = {
+  event_type: "SESSION" as const,
   page: 1,
   status: "PUBLISHED",
 };

@@ -1,5 +1,5 @@
 export const defaultParams = {
-  event_type: "SESSION",
+  event_type: "SESSION" as const,
   page: 1,
-  status: "PUBLISHED",
+  status: "PUBLISHED" as const,
 };

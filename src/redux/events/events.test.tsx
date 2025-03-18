@@ -34,9 +34,13 @@ describe("eventsApi endpoints", () => {
       })
     );
 
-    const { result } = renderHook(() => useGetEventsQuery({ event_type: "", page: 1, status: "" }), {
-      wrapper: ({ children }) => <Providers>{children}</Providers>,
-    });
+    const { result } = renderHook(
+      () => useGetEventsQuery({ event_type: "SESSION", page: 1, status: "PUBLISHED", is_featured: true }),
+      {
+        wrapper: ({ children }) => <Providers>{children}</Providers>,
+      }
+    );
+
     await waitFor(() => {
       expect(result.current.data).toEqual({
         count: 123,
@@ -65,6 +69,69 @@ describe("eventsApi endpoints", () => {
       });
       expect(result.current.isSuccess).toBe(true);
     });
+  });
+
+  it("should merge paginated results and deduplicate events", async () => {
+    const initialResponse = {
+      count: 123,
+      next: "http://api.example.org/accounts/?page=2",
+      previous: null,
+      results: [
+        {
+          id: 1,
+          title: "Event 1",
+          description: "Description 1",
+          publisher: { id: 1, first_name: "John", last_name: "Doe" },
+          event_time: "2025-03-12T11:05:22.534Z",
+          event_type: "SESSION",
+          status: "DRAFT",
+          workstream_id: "string",
+          is_featured: true,
+          tags: "string",
+          thumbnail: "string",
+          video_duration: "string",
+        },
+      ],
+    };
+
+    fetchMock.mockResponseOnce(JSON.stringify(initialResponse));
+
+    const { result, rerender } = renderHook(
+      ({ page }) => useGetEventsQuery({ event_type: "SESSION", page, status: "PUBLISHED", is_featured: true }),
+      {
+        wrapper: ({ children }) => <Providers>{children}</Providers>,
+        initialProps: { page: 1 },
+      }
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    rerender({ page: 2 });
+  });
+
+  it("should force refetch when query args change", async () => {
+    fetchMock.mockResponse(
+      JSON.stringify({
+        count: 123,
+        next: null,
+        previous: null,
+        results: [],
+      })
+    );
+
+    const { result, rerender } = renderHook(
+      ({ is_featured }) => useGetEventsQuery({ event_type: "SESSION", page: 1, status: "PUBLISHED", is_featured }),
+      {
+        wrapper: ({ children }) => <Providers>{children}</Providers>,
+        initialProps: { is_featured: true },
+      }
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    rerender({ is_featured: false });
+
+    await waitFor(() => expect(result.current.isFetching).toBe(true));
   });
 
   it("should fetch event types successfully", async () => {
