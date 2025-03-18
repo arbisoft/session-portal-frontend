@@ -12,16 +12,19 @@ import { format } from "date-fns";
 import { useParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import ReadMore from "@/components/ReadMore";
 import RecommendedVideoCard, { RecommendedVideoCardProps } from "@/components/RecommendedVideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useEventTagsQuery } from "@/redux/events/apiSlice";
+import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime } from "@/utils/utils";
 
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
+  const { t } = useTranslation("common");
 
   const { navigateTo } = useNavigation();
 
@@ -114,9 +117,7 @@ const VideoDetail = () => {
           <StyledNotesSection>
             <Typography variant="h5">Session Notes</Typography>
             <div className="description">
-              <Typography variant="bodySmall" color="textSecondary">
-                {dataEvent?.description}
-              </Typography>
+              <ReadMore text={dataEvent?.description ?? ""} showLessText={t("show_less")} showMoreText={t("show_more")} />
             </div>
           </StyledNotesSection>
         </>
