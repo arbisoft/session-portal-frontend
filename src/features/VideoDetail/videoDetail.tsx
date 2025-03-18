@@ -55,6 +55,7 @@ const VideoDetail = () => {
 
   return (
     <MainLayoutContainer
+      isLeftSidebarVisible={false}
       rightSidebar={
         <div>
           <TagsContainer>

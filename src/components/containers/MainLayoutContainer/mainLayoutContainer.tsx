@@ -10,19 +10,22 @@ import { MainContainer, LeftSidebar, RightSidebar, ContentContainer } from "./st
 
 type TMainLayoutContainer = {
   children: React.ReactNode;
+  isLeftSidebarVisible?: boolean;
   rightSidebar?: ReactNode;
 };
 
-const MainLayoutContainer = ({ children, rightSidebar }: TMainLayoutContainer) => {
+const MainLayoutContainer = ({ children, rightSidebar, isLeftSidebarVisible = true }: TMainLayoutContainer) => {
   useAuth();
 
   return (
     <>
       <Navbar />
       <MainContainer maxWidth="xl">
-        <LeftSidebar data-testid="left-sidebar">
-          <Sidebar />
-        </LeftSidebar>
+        {isLeftSidebarVisible && (
+          <LeftSidebar data-testid="left-sidebar">
+            <Sidebar />
+          </LeftSidebar>
+        )}
         <ContentContainer container>{children}</ContentContainer>
         {isValidElement(rightSidebar) && (
           <RightSidebar sx={{ display: { xs: "none", md: "block" } }} data-testid="right-sidebar">
