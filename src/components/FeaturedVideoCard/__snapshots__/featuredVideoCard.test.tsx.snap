@@ -3,7 +3,7 @@
 exports[`FeaturedVideoCard should match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-1ahnmrs-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-jwtqct-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
     data-testid="video-card"
     style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
   >

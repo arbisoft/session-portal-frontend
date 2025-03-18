@@ -119,8 +119,10 @@ describe("Navbar Component", () => {
 
   test("should navigate on search submit", () => {
     customRender(<Navbar />);
-    fireEvent.submit(screen.getByTestId("search-query"));
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "" });
+    const searchInput = screen.getByPlaceholderText("Search...");
+    fireEvent.change(searchInput, { target: { value: "some test search" } });
+    fireEvent.submit(searchInput.closest("form")!);
+    expect(mockNavigateTo).toHaveBeenCalledWith("searchResult", { search: "some test search" });
   });
 
   test("should contain all user menu options", () => {
@@ -145,14 +147,6 @@ describe("Navbar Component", () => {
     expect(searchInput).toHaveValue("Test Query");
     fireEvent.click(screen.getByTestId("cancelIcon"));
     expect(searchInput).toHaveValue("");
-  });
-
-  test("should navigate on search submit", () => {
-    customRender(<Navbar />);
-    const searchInput = screen.getByTestId("search-query");
-    fireEvent.change(searchInput, { target: { value: "Test Query" } });
-    fireEvent.submit(searchInput);
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "Test Query" });
   });
 
   test("should call logout and purge persistor when logout is clicked", async () => {
