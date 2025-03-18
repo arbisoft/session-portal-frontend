@@ -3,10 +3,8 @@ import { useEffect } from "react";
 
 import { faker } from "@faker-js/faker";
 import ArrowForward from "@mui/icons-material/ArrowForward";
-import StarIcon from "@mui/icons-material/Star";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
-import Rating from "@mui/material/Rating";
 import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import { skipToken } from "@reduxjs/toolkit/query";
@@ -108,7 +106,6 @@ const VideoDetail = () => {
           />
           <StyledTitleSection>
             <Typography variant="h4">{data?.title}</Typography>
-            <Rating readOnly value={3} size="medium" emptyIcon={<StarIcon fontSize="inherit" />} />
           </StyledTitleSection>
           <StyledDetailSection>
             {name && <Typography variant="h6">{name}</Typography>}
