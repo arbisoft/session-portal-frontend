@@ -11,7 +11,7 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <div
-        class="MuiBox-root css-15l7p1e-ImageContainerBox-root"
+        class="MuiBox-root css-9kn4z9-ImageContainerBox-root"
       >
         <img
           alt="Sample Video Title"

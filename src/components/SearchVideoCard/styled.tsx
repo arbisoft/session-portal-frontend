@@ -17,7 +17,6 @@ export const SearchVideoCardContainer = styled(Card, {
     border-radius: ${theme.shape.borderRadius + 8}px;
     overflow: hidden;
     width: ${$width};
-    margin-top: 10px;
     cursor: pointer;
 
     .${cardContentClasses.root} {
@@ -44,16 +43,15 @@ export const SearchVideoCardContainer = styled(Card, {
         gap: 7px;
 
         .${typographyClasses.h3} {
+          -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
           color: ${theme.palette.colors.white};
           display: -webkit-box;
           font-size: 28px;
           font-style: normal;
           font-weight: 500;
-          letter-spacing: 0.4px;
           overflow: hidden;
-          text-overflow: ellipsis;
-          -webkit-box-orient: vertical;
+          width: 100%;
         }
 
         .date-time,
@@ -66,7 +64,7 @@ export const SearchVideoCardContainer = styled(Card, {
         }
 
         .video-description {
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 4;
           display: -webkit-box;
           color: ${theme.palette.colors.white};
           font-size: 16px;
@@ -127,7 +125,7 @@ export const ImageContainerBox = styled(Box, {
       padding: 2px 4px;
       position: absolute;
       right: 10px;
-      z-index: 9999;
+      z-index: 1;
     }
   `;
 });

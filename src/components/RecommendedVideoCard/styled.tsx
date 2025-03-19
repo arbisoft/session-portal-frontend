@@ -33,13 +33,14 @@ export const RecommendedVideoCardContainer = styled(Card, {
       img {
         border-radius: ${theme.shape.borderRadius + 2}px;
         height: unset;
-        width: 113px;
+        width: 100%;
       }
 
       .video-detail {
         display: flex;
         flex-direction: column;
         gap: 7px;
+        width: calc(100% - 113px);
 
         .${typographyClasses.h5} {
           -webkit-box-orient: vertical;
@@ -56,6 +57,7 @@ export const RecommendedVideoCardContainer = styled(Card, {
           width: 95%;
         }
 
+        .organizer,
         .date-time {
           color: ${theme.palette.colors.gray};
           font-size: 12px;
@@ -63,10 +65,6 @@ export const RecommendedVideoCardContainer = styled(Card, {
           font-weight: 500;
           line-height: normal;
           letter-spacing: 0.4px;
-
-          span {
-            color: ${theme.palette.colors.white};
-          }
         }
 
         .${ratingClasses.iconFilled} {
@@ -82,9 +80,11 @@ export const ImageContainer = styled(Box, {
 })(({ theme }) => {
   return css`
     border-radius: ${theme.shape.borderRadius + 2}px;
+    display: inline-flex;
     height: 73px;
     overflow: hidden;
     position: relative;
+    width: 113px;
 
     .duration {
       background-color: ${alpha(theme.palette.common.black, 0.7)};
@@ -95,7 +95,7 @@ export const ImageContainer = styled(Box, {
       padding: 2px 4px;
       position: absolute;
       right: 6px;
-      z-index: 9999;
+      z-index: 1;
     }
   `;
 });

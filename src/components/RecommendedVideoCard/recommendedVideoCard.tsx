@@ -16,6 +16,7 @@ const RecommendedVideoCard: FC<RecommendedVideoCardProps> = ({
   title,
   width = "100%",
   onClick,
+  organizer,
 }) => {
   return (
     <RecommendedVideoCardContainer $width={width} className={className} data-testid="recommended-video-card" onClick={onClick}>
@@ -32,6 +33,9 @@ const RecommendedVideoCard: FC<RecommendedVideoCardProps> = ({
           </Typography>
           <Typography variant="bodySmall" className="date-time" data-testid="date-time">
             {date}
+          </Typography>
+          <Typography variant="bodySmall" className="organizer" data-testid="organizer">
+            {organizer}
           </Typography>
         </Box>
       </CardContent>

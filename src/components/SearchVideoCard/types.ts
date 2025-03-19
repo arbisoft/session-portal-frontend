@@ -1,11 +1,11 @@
 export type SearchVideoCardProps = {
-  id: number;
   className?: string;
-  event_time: string;
-  thumbnail?: string;
-  title: string;
   description: string;
-  video_duration: number;
-  workstream_id: string;
+  event_time: string;
+  organizer?: string;
+  thumbnail: string;
+  title: string;
+  video_duration: string;
   width?: string;
+  onClick?: VoidFunction;
 };

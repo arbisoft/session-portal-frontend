@@ -18,7 +18,7 @@ import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { useTranslation } from "@/services/i18n/client";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
-import { convertSecondsToFormattedTime } from "@/utils/utils";
+import { convertSecondsToFormattedTime, fullName } from "@/utils/utils";
 
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
@@ -49,7 +49,6 @@ const VideoDetail = () => {
   }, [error]);
 
   const dataEvent = data?.event;
-  const name = [dataEvent?.publisher.first_name, dataEvent?.publisher?.last_name].filter(Boolean).join(" ");
 
   return (
     <MainLayoutContainer
@@ -71,8 +70,9 @@ const VideoDetail = () => {
                 duration={convertSecondsToFormattedTime(video.video_duration)}
                 imgUrl={video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL}
                 key={video.id}
-                title={video.title}
                 onClick={() => navigateTo("videoDetail", { id: video.id })}
+                organizer={video.presenters.map(fullName).join(", ")}
+                title={video.title}
               />
             ))
           )}
@@ -106,7 +106,7 @@ const VideoDetail = () => {
             <Typography variant="h4">{data?.title}</Typography>
           </StyledTitleSection>
           <StyledDetailSection>
-            {name && <Typography variant="h6">{name}</Typography>}
+            <Typography variant="h6">{dataEvent?.presenters.map(fullName).join(", ")}</Typography>
             <Typography>{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
           </StyledDetailSection>
           <StyledNotesSection>
