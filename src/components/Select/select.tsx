@@ -1,23 +1,31 @@
 import React from "react";
 
+import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import MuiSelect from "@mui/material/Select";
 
-import { SelectFormControl } from "./styled";
+import { SelectWrapper } from "./styled";
 import { SelectProps } from "./types";
 
-const Select: React.FC<SelectProps> = ({ handleChange, value = "", menuItems }) => {
+const Select: React.FC<SelectProps> = ({ onChange, value, menuItems, labelId, label }) => {
   return (
-    <SelectFormControl>
-      <MuiSelect value={value as string} onChange={handleChange} displayEmpty data-testid="sort-select">
-        <MenuItem value="">Sort By</MenuItem>
+    <SelectWrapper>
+      <InputLabel>{label}</InputLabel>
+      <MuiSelect
+        value={value as string}
+        onChange={onChange}
+        displayEmpty
+        data-testid="sort-select"
+        labelId={labelId}
+        size="small"
+      >
         {menuItems.map((item) => (
           <MenuItem data-testid={item.value} key={item.value} value={item.value}>
             {item.label}
           </MenuItem>
         ))}
       </MuiSelect>
-    </SelectFormControl>
+    </SelectWrapper>
   );
 };
 

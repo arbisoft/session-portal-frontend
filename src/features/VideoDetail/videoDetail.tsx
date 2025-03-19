@@ -110,25 +110,25 @@ const VideoDetail = () => {
             <Typography>{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
           </StyledDetailSection>
           <StyledNotesSection>
-            <Typography variant="h5">Session Notes</Typography>
+            <Typography variant="h5">Session Details</Typography>
             <div className="description">
               <ReadMore text={dataEvent?.description ?? ""} showLessText={t("show_less")} showMoreText={t("show_more")} />
+              {(data.event?.tags?.length ?? 0) > 0 && (
+                <TagsContainer>
+                  {data.event?.tags?.map((tag) => (
+                    <Chip
+                      component={Link}
+                      href={getPageUrl("videos", { tag })}
+                      label={`#${tag}`}
+                      key={tag}
+                      variant="outlined"
+                      size="small"
+                    />
+                  ))}
+                </TagsContainer>
+              )}
             </div>
           </StyledNotesSection>
-          {(data.event?.tags?.length ?? 0) > 0 && (
-            <TagsContainer>
-              {data.event?.tags?.map((tag) => (
-                <Chip
-                  component={Link}
-                  href={getPageUrl("videos", { tag })}
-                  label={tag}
-                  key={tag}
-                  variant="outlined"
-                  size="small"
-                />
-              ))}
-            </TagsContainer>
-          )}
         </>
       )}
     </MainLayoutContainer>

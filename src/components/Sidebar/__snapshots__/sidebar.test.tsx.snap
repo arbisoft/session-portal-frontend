@@ -98,18 +98,6 @@ exports[`Sidebar Component should match snapshot 1`] = `
         data-testid="sidebar-tags"
       >
         <div
-          class="MuiButtonBase-root MuiChip-root MuiChip-filled MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-filledDefault css-1xt245r-MuiButtonBase-root-MuiChip-root"
-          data-testid="sidebar-tags-All"
-          role="button"
-          tabindex="0"
-        >
-          <span
-            class="MuiChip-label MuiChip-labelSmall css-eccknh-MuiChip-label"
-          >
-            All
-          </span>
-        </div>
-        <div
           class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-1"
           role="button"
@@ -118,7 +106,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           <span
             class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
           >
-            Test-1
+            #Test-1
           </span>
         </div>
         <div
@@ -130,7 +118,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           <span
             class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
           >
-            Test-2
+            #Test-2
           </span>
         </div>
         <div
@@ -142,7 +130,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           <span
             class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
           >
-            Test-3
+            #Test-3
           </span>
         </div>
       </div>

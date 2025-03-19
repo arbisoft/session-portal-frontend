@@ -1,4 +1,3 @@
-import { chipClasses } from "@mui/material/Chip";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import useSidebar from "@/hooks/useSidebar";
@@ -146,7 +145,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
 
     await waitFor(() => {
-      expect(screen.getAllByRole("button")).toHaveLength(mockItems.length + 1); // "All" + 3 items
+      expect(screen.getAllByRole("button")).toHaveLength(mockItems.length);
     });
   });
 
@@ -180,26 +179,12 @@ describe("Sidebar Component", () => {
     expect(item).toBeTruthy();
   });
 
-  it("should render all tags including 'All' tag", () => {
+  it("should render all tags", () => {
     customRender(<Sidebar />);
-    const tagNames = ["All", "Test-1", "Test-2", "Test-3"];
+    const tagNames = ["Test-1", "Test-2", "Test-3"];
     tagNames.forEach((name) => {
       expect(screen.getByTestId(`sidebar-tags-${name}`)).toBeInTheDocument();
     });
-  });
-
-  it("should highlight 'All' tag when no tag is selected", () => {
-    customRender(<Sidebar />);
-    const all = screen.getByTestId("sidebar-tags-All");
-    expect(all.tagName).toBe("DIV");
-    expect(all).toHaveClass(chipClasses.filled);
-  });
-
-  it("should call navigateTo when 'All' tag is clicked", () => {
-    customRender(<Sidebar />);
-    const allTag = screen.getByTestId("sidebar-tags-All");
-    fireEvent.click(allTag);
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
   });
 
   it("should highlight the selected tag correctly", () => {
@@ -214,13 +199,5 @@ describe("Sidebar Component", () => {
     const tag = screen.getByTestId("sidebar-tags-Test-1");
     fireEvent.click(tag);
     expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "Test-1" });
-  });
-
-  it("should call navigateTo with correct params when clicking on 'All' tag", () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams("tag=2"));
-    customRender(<Sidebar />);
-    const allTag = screen.getByTestId("sidebar-tags-All");
-    fireEvent.click(allTag);
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
   });
 });

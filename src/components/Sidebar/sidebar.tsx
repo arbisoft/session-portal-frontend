@@ -40,7 +40,7 @@ const Sidebar = () => {
             </Box>
           ) : (
             <>
-              <MenuItem $isSelected={!playlist} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
+              <MenuItem $isSelected={!playlist && !tag} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
                 <Image src="/assets/images/sidebar-item-icon.svg" alt="All" width={18} height={12} />
                 <Text>All</Text>
               </MenuItem>
@@ -59,19 +59,12 @@ const Sidebar = () => {
           )}
         </Box>
         <TagsContainer data-testid="sidebar-tags">
-          <Chip
-            data-testid="sidebar-tags-All"
-            onClick={() => navigateTo("videos")}
-            variant={!tag ? "filled" : "outlined"}
-            label="All"
-            size="small"
-          />
           {tags.map((item) => (
             <Chip
               data-testid={`sidebar-tags-${item.name}`}
               key={item.id}
               onClick={() => navigateTo("videos", { tag: item.name })}
-              label={item.name}
+              label={`#${item.name}`}
               variant={tag === item.name ? "filled" : "outlined"}
               size="small"
             />

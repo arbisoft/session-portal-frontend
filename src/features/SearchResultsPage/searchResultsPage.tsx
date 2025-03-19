@@ -125,11 +125,10 @@ const SearchResultsPage = () => {
           <Select
             label={"Sort by"}
             menuItems={[
-              { value: "", label: "Most Relevant" },
-              { value: "", label: "Newest First" },
-              { value: "", label: "Most Viewed" },
+              { value: "Most Relevant", label: "Most Relevant" },
+              { value: "Newest First", label: "Newest First" },
             ]}
-            handleChange={() => {}}
+            value="Newest First"
           />
         </Stack>
       </FilterBox>
