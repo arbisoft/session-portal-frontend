@@ -14,16 +14,12 @@ import SearchVideoCard from "@/components/SearchVideoCard/searchVideoCard";
 import Select from "@/components/Select";
 import useNavigation from "@/hooks/useNavigation";
 import { EventsParams } from "@/models/Events";
-import { useGetEventsQuery } from "@/redux/events/apiSlice";
+import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, NoSearchResultsWrapper, SearchCardLoadingState, SearchResultsContainer } from "./styled";
 import { defaultParams } from "./types";
-
-const selectMenuItems: string[] = Array(3)
-  .fill("")
-  .map(() => faker.lorem.words(1));
 
 const loaderCards: string[] = Array(5)
   .fill("")
@@ -33,26 +29,47 @@ const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
 
-  const [searchedQuery, setSearchedQuery] = useState<string>("");
-  const [requestParams, setRequestParams] = useState<EventsParams>(defaultParams);
-  const { data: videoListings, isFetching, isLoading, isUninitialized, error } = useGetEventsQuery(requestParams);
+  const [page, setPage] = useState(1);
+
+  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
 
-  useEffect(() => {
-    const search = searchParams?.get("search") as string;
-    setSearchedQuery(search);
+  const search = searchParams?.get("search");
 
-    setRequestParams((prev) => {
-      const apiParams = { ...prev };
-      if (search) {
-        apiParams.tag = "";
-        apiParams.search = search;
+  useEffect(() => {
+    const params: EventsParams = {
+      ...defaultParams,
+      page,
+      search: search || undefined,
+      page_size: 10,
+    };
+    setPage(1);
+    const updatedParams = parseNonPassedParams(params) as EventsParams;
+    getEvents(updatedParams);
+  }, [search, page]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetching && videoListings?.next) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    const target = document.getElementById("load-more-trigger");
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
       }
-      const updatedParams = parseNonPassedParams(apiParams) as EventsParams;
-      return updatedParams;
-    });
-  }, [searchParams]);
+    };
+  }, [isFetching, videoListings?.next]);
 
   const renderResults = () => {
     if (error || isDataLoading) {
@@ -92,7 +109,7 @@ const SearchResultsPage = () => {
     return (
       <NoSearchResultsWrapper>
         <Typography variant="h3" component="div">
-          No videos found for &apos;{searchedQuery}&apos;
+          No videos found for &apos;{search}&apos;
         </Typography>
       </NoSearchResultsWrapper>
     );
@@ -102,16 +119,25 @@ const SearchResultsPage = () => {
     <MainLayoutContainer>
       <FilterBox>
         <Stack>
-          <Typography variant="h2" component="div" title={searchedQuery}>
-            Showing search results for &apos;{searchedQuery}&apos;
+          <Typography variant="h2" component="div">
+            Showing search results for &apos;{search}&apos;
           </Typography>
-          <Select label={"Sort by"} menuItems={selectMenuItems} handleChange={() => {}} />
+          <Select
+            label={"Sort by"}
+            menuItems={[
+              { value: "", label: "Most Relevant" },
+              { value: "", label: "Newest First" },
+              { value: "", label: "Most Viewed" },
+            ]}
+            handleChange={() => {}}
+          />
         </Stack>
       </FilterBox>
 
       <Box width="100%">
         <SearchResultsContainer>{renderResults()}</SearchResultsContainer>
       </Box>
+      <div id="load-more-trigger" style={{ height: "10px" }} />
     </MainLayoutContainer>
   );
 };

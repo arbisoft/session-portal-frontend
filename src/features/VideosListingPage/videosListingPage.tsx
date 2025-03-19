@@ -17,14 +17,10 @@ import useNavigation from "@/hooks/useNavigation";
 import { EventsParams } from "@/models/Events";
 import { useGetEventsQuery, useLazyGetEventsQuery } from "@/redux/events/apiSlice";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
-import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
+import { convertSecondsToFormattedTime, formatDateTime, fullName, generateYearList, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, VideoListingContainer } from "./styled";
 import { defaultParams } from "./types";
-
-const selectMenuItems: string[] = Array(3)
-  .fill("")
-  .map(() => faker.lorem.words(1));
 
 const loaderCards: string[] = Array(5)
   .fill("")
@@ -98,7 +94,14 @@ const VideosListingPage = () => {
           <Typography variant="h2" component="div">
             {(tag || playlist) ?? "All"}
           </Typography>
-          <Select label={"Sort by"} menuItems={selectMenuItems} handleChange={() => {}} />
+          <Select
+            label={"Sort by"}
+            menuItems={[
+              { value: "newest-to-oldest", label: "Newest to Oldest" },
+              ...generateYearList(2020).map((year) => ({ value: year, label: year })),
+            ]}
+            handleChange={() => {}}
+          />
         </Stack>
       </FilterBox>
 

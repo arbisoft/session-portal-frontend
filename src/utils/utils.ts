@@ -40,3 +40,14 @@ export const initCapital = (str: string) => str && str.toLowerCase().replace(/(?
 export const fullName = (user?: Partial<{ first_name: string; last_name: string }>) => {
   return `${initCapital(user?.first_name ?? "")} ${initCapital(user?.last_name ?? "")}`.trim();
 };
+
+export function generateYearList(startYear: number): string[] {
+  const currentYear = new Date().getFullYear();
+  const years: string[] = [];
+
+  for (let year = currentYear; year >= startYear; year--) {
+    years.push(year === currentYear ? "This Year" : year.toString());
+  }
+
+  return years;
+}

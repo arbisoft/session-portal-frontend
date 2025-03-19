@@ -12,8 +12,8 @@ const Select: React.FC<SelectProps> = ({ handleChange, value = "", menuItems }) 
       <MuiSelect value={value as string} onChange={handleChange} displayEmpty data-testid="sort-select">
         <MenuItem value="">Sort By</MenuItem>
         {menuItems.map((item) => (
-          <MenuItem data-testid={item} key={item} value={item}>
-            {item}
+          <MenuItem data-testid={item.value} key={item.value} value={item.value}>
+            {item.label}
           </MenuItem>
         ))}
       </MuiSelect>
