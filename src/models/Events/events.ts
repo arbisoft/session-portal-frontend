@@ -22,7 +22,7 @@ export interface Event {
   id: number;
   is_featured: boolean;
   playlists: string[];
-  presenters: Publisher & { email: string }[];
+  presenters: Presenter[];
   publisher: Publisher;
   status: string;
   tags: string[];
@@ -40,19 +40,27 @@ interface Publisher {
   last_name: string;
 }
 
+interface Presenter extends Publisher {
+  email: string;
+}
+
 export interface AllEventResponse {
   count: number;
-  next: number | null;
-  previous: number | null;
+  next: string | null;
+  previous: string | null;
   results: Event[];
 }
 
-export type TAllEventsPyaload = {
-  event_type: string;
+type OrderingField = "event_type" | "-event_type" | "is_featured" | "-is_featured" | "status" | "-status";
+
+export type EventsParams = {
+  event_type: "SESSION";
   is_featured?: boolean;
+  ordering?: OrderingField[];
+  page_size?: number;
   page: number;
-  status: string;
-  search?: string;
-  tag?: string;
   playlist?: string;
+  search?: string;
+  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  tag?: string;
 };

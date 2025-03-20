@@ -1,4 +1,6 @@
-import { EventDetail, Tag, AllEventResponse, TAllEventsPyaload, Recommendation, Playlist } from "@/models/Events";
+import isEqual from "lodash/isEqual";
+
+import { EventDetail, Tag, AllEventResponse, EventsParams, Recommendation, Playlist } from "@/models/Events";
 import { baseApi } from "@/redux/baseApi";
 
 export const eventsApi = baseApi.injectEndpoints({
@@ -15,12 +17,33 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
-    getEvents: builder.query<AllEventResponse, TAllEventsPyaload>({
+    getEvents: builder.query<AllEventResponse, EventsParams>({
       query: (params) => ({
         url: "/events/all/",
         method: "GET",
         params,
       }),
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return endpointName.concat(`?is_featured=${queryArgs.is_featured}`);
+      },
+      merge: (currentCache, newItems, { arg }) => {
+        if (arg.page === 1) currentCache.results = [];
+
+        currentCache.count = newItems.count;
+        currentCache.previous = newItems.previous;
+        currentCache.next = newItems.next;
+
+        const existingIds = new Set(currentCache.results.map((event) => event.id));
+        const uniqueResults = newItems.results.filter((event) => !existingIds.has(event.id));
+
+        currentCache.results.push(...uniqueResults);
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return !isEqual(currentArg, previousArg);
+      },
+      transformResponse: (response: AllEventResponse) => {
+        return response;
+      },
     }),
     eventTypes: builder.query<Tag[], void>({
       query: () => ({

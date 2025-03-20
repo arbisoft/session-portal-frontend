@@ -23,8 +23,8 @@ export const FilterBox = styled(Box, {
     .${stackClasses.root} {
       flex-direction: row;
       justify-content: space-between;
+      margin-bottom: 20px;
       width: 100%;
-      margin-bottom: 10px;
 
       .${typographyClasses.h2} {
         -webkit-box-orient: vertical;

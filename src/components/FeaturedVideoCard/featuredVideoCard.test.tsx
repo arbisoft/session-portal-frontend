@@ -3,48 +3,44 @@ import userEvent from "@testing-library/user-event";
 
 import { customRender as render, screen } from "@/jest/utils/testUtils";
 import { DEFAULT_THUMBNAIL } from "@/utils/constants";
+import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
 
 import FeaturedVideoCard from "./featuredVideoCard";
 import { FeaturedVideoCardProps } from "./types";
 
 describe("FeaturedVideoCard", () => {
   const mockProps: FeaturedVideoCardProps = {
-    id: 1,
     className: "custom-class",
-    event_time: "2024-10-22T12:00:00Z",
-    thumbnail: "assets/images/temp-youtube-logo.webp",
-    title: "Sample Video Title",
-    workstream_id: "Sample Video Organizer",
     description: "Sample video description",
-    isVisible: true,
-    video_duration: 1800,
+    event_time: formatDateTime("2024-10-22T12:00:00Z"),
+    onClick: jest.fn(),
+    organizer: "John Doe",
+    thumbnail: DEFAULT_THUMBNAIL,
+    title: "Sample Video Title",
+    video_duration: convertSecondsToFormattedTime(1800),
+    width: "100%",
   };
 
   test("should render the component with provided props", () => {
     render(<FeaturedVideoCard {...mockProps} />);
     expect(screen.getByText(mockProps.title)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-date-time")).toHaveTextContent("Oct 22, 2024");
-    expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.workstream_id);
+    expect(screen.getByTestId("video-card-organizer")).toHaveTextContent(mockProps.organizer);
     expect(screen.getByTestId("video-description")).toHaveTextContent(mockProps.description);
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
     expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
   });
 
   test("should display default image when imgUrl is not provided", () => {
-    render(<FeaturedVideoCard {...mockProps} thumbnail={undefined} />);
+    render(<FeaturedVideoCard {...mockProps} />);
     const imgUrl = screen.getByRole("img", { name: mockProps.title }).getAttribute("src") ?? "";
-    expect(decodeURIComponent(imgUrl)).toContain(DEFAULT_THUMBNAIL);
+    expect(decodeURIComponent(imgUrl)).toContain(mockProps.thumbnail);
   });
 
   test("should render the organizer name", () => {
     render(<FeaturedVideoCard {...mockProps} />);
-    expect(screen.getByText(mockProps.workstream_id)).toBeInTheDocument();
+    expect(screen.getByText(mockProps.organizer)).toBeInTheDocument();
     expect(screen.getByTestId("video-card-organizer")).toBeInTheDocument();
-  });
-
-  test("should not render when isVisible is false", () => {
-    render(<FeaturedVideoCard {...mockProps} isVisible={false} />);
-    expect(screen.queryByTestId("video-card")).not.toBeInTheDocument();
   });
 
   test("should match snapshot", () => {
@@ -116,7 +112,7 @@ describe("FeaturedVideoCard", () => {
   });
 
   test("should display correct video duration", () => {
-    render(<FeaturedVideoCard {...mockProps} video_duration={3605} />);
+    render(<FeaturedVideoCard {...mockProps} video_duration="01:00:05" />);
     expect(screen.getByTestId("video-duration")).toHaveTextContent("01:00:05");
   });
 });

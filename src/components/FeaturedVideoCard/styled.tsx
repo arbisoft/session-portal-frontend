@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import { cardContentClasses } from "@mui/material/CardContent";
-import { styled, css } from "@mui/material/styles";
+import { styled, css, alpha } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
 import { shouldForwardProp } from "@/utils/styleUtils";
@@ -11,15 +11,13 @@ export const FeaturedVideoCardContainer = styled(Card, {
   shouldForwardProp,
 })<{ $width: string }>(({ theme, $width }) => {
   return css`
-    display: flex;
-    background-color: rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
-    padding: 30px;
+    background-color: ${alpha(theme.palette.common.white, 0.06)};
     border-radius: ${theme.shape.borderRadius + 8}px;
-    overflow: hidden;
-    width: ${$width};
-    margin-top: 10px;
+    border-radius: 12px;
     cursor: pointer;
+    display: flex;
+    padding: 30px;
+    width: ${$width};
 
     .${cardContentClasses.root} {
       align-items: flex-start;
@@ -27,6 +25,8 @@ export const FeaturedVideoCardContainer = styled(Card, {
       flex-direction: row;
       gap: ${theme.spacing(2.5)};
       padding: 0;
+      width: 100%;
+
       :last-child {
         padding: 0;
       }
@@ -39,24 +39,20 @@ export const FeaturedVideoCardContainer = styled(Card, {
       }
 
       .video-detail {
-        width: calc(100% - 400px);
+        width: calc(100% - 430px);
         display: flex;
         flex-direction: column;
         gap: 7px;
 
-        .${typographyClasses.h3} {
+        .${typographyClasses.h1} {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
           color: ${theme.palette.colors.white};
           display: -webkit-box;
-          font-size: 26px;
-          font-style: normal;
           font-weight: 500;
-          letter-spacing: 0.4px;
-          line-height: 35px;
           overflow: hidden;
-          text-overflow: ellipsis;
           padding-bottom: 10px;
+          width: 100%;
         }
 
         .date-time,
@@ -70,12 +66,13 @@ export const FeaturedVideoCardContainer = styled(Card, {
         }
 
         .video-description {
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 4;
           color: ${theme.palette.colors.white};
+          display: -webkit-box;
           font-size: 18px;
-          font-style: normal;
           font-weight: 500;
-          line-height: 21px;
-          letter-spacing: 0.4px;
+          overflow: hidden;
           padding-top: 10px;
         }
       }

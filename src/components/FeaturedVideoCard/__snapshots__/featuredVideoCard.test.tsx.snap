@@ -3,7 +3,7 @@
 exports[`FeaturedVideoCard should match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-jwtqct-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-8mrihb-MuiPaper-root-MuiCard-root-FeaturedVideoCardContainer-root"
     data-testid="video-card"
     style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
   >
@@ -19,8 +19,8 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
           decoding="async"
           height="192"
           loading="lazy"
-          src="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75"
-          srcset="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=384&q=75 1x, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75 2x"
+          src="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75"
+          srcset="/_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=384&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2Ftemp-youtube-logo.webp&w=640&q=75 2x"
           style="color: transparent;"
           width="315"
         />
@@ -35,7 +35,7 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
         class="video-detail MuiBox-root css-0"
       >
         <div
-          class="MuiTypography-root MuiTypography-h3 css-1fho9p8-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h1 css-byoltx-MuiTypography-root"
           title="Sample Video Title"
         >
           Sample Video Title
@@ -44,7 +44,7 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
           class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-149i8z5-MuiTypography-root"
           data-testid="video-card-organizer"
         >
-          Sample Video Organizer
+          John Doe
         </p>
         <p
           class="MuiTypography-root MuiTypography-bodySmall date-time css-1pot96k-MuiTypography-root"
@@ -53,7 +53,7 @@ exports[`FeaturedVideoCard should match snapshot 1`] = `
           Oct 22, 2024
         </p>
         <p
-          class="MuiTypography-root MuiTypography-bodySmall video-description css-1pot96k-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodyLarge video-description css-6pvezp-MuiTypography-root"
           data-testid="video-description"
         >
           Sample video description

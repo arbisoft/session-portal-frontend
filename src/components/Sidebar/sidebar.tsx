@@ -28,7 +28,7 @@ const Sidebar = () => {
   return (
     <SidebarContainer data-testid="sidebar-container">
       <MenuStack>
-        <Box>
+        <Box display="flex" flexDirection="column" gap="2px">
           {arePlaylistsLoading ? (
             <Box data-testid="loading">
               {loadingTags?.map((item) => (

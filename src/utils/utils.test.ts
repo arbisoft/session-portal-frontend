@@ -1,4 +1,11 @@
-import { parseNonPassedParams } from "./utils";
+import {
+  parseNonPassedParams,
+  formatDateTime,
+  trimTextLength,
+  convertSecondsToFormattedTime,
+  initCapital,
+  fullName,
+} from "./utils";
 
 describe("parseNonPassedParams", () => {
   test("should remove empty strings and empty arrays but keep false values", () => {
@@ -73,6 +80,67 @@ describe("parseNonPassedParams", () => {
     };
 
     expect(parseNonPassedParams(input)).toEqual(expectedOutput);
+  });
+});
+
+describe("formatDateTime", () => {
+  test("should format ISO date string to 'MMM dd, yyyy' format", () => {
+    const date = "2023-10-05T12:00:00Z";
+    expect(formatDateTime(date)).toBe("Oct 05, 2023");
+  });
+});
+
+describe("trimTextLength", () => {
+  test("should trim text longer than specified length and add ellipsis", () => {
+    const text = "This is a long text";
+    expect(trimTextLength(text, 10)).toBe("This is a ...");
+  });
+
+  test("should return the same text if it is shorter than specified length", () => {
+    const text = "Short";
+    expect(trimTextLength(text, 10)).toBe("Short");
+  });
+});
+
+describe("convertSecondsToFormattedTime", () => {
+  test("should convert seconds to 'HH:MM:SS' format when hours are present", () => {
+    expect(convertSecondsToFormattedTime(3661)).toBe("01:01:01");
+  });
+
+  test("should convert seconds to 'MM:SS' format when hours are not present", () => {
+    expect(convertSecondsToFormattedTime(125)).toBe("02:05");
+  });
+
+  test("should handle zero seconds", () => {
+    expect(convertSecondsToFormattedTime(0)).toBe("00:00");
+  });
+});
+
+describe("initCapital", () => {
+  test("should capitalize the first letter of each word", () => {
+    expect(initCapital("hello world")).toBe("Hello World");
+  });
+
+  test("should handle empty string", () => {
+    expect(initCapital("")).toBe("");
+  });
+});
+
+describe("fullName", () => {
+  test("should return full name with capitalized first and last names", () => {
+    const user = { first_name: "john", last_name: "doe" };
+    expect(fullName(user)).toBe("John Doe");
+  });
+
+  test("should handle missing first or last name", () => {
+    const user1 = { first_name: "john" };
+    const user2 = { last_name: "doe" };
+    expect(fullName(user1)).toBe("John");
+    expect(fullName(user2)).toBe("Doe");
+  });
+
+  test("should return empty string for undefined user", () => {
+    expect(fullName()).toBe("");
   });
 });
 

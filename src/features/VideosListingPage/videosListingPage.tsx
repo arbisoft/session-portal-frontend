@@ -7,7 +7,6 @@ import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { parseISO } from "date-fns";
 import { useSearchParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
@@ -15,10 +14,10 @@ import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import useNavigation from "@/hooks/useNavigation";
-import { Event, TAllEventsPyaload } from "@/models/Events";
-import { useGetEventsQuery } from "@/redux/events/apiSlice";
-import { BASE_URL } from "@/utils/constants";
-import { convertSecondsToFormattedTime, formatDateTime, parseNonPassedParams } from "@/utils/utils";
+import { EventsParams } from "@/models/Events";
+import { useGetEventsQuery, useLazyGetEventsQuery } from "@/redux/events/apiSlice";
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
+import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, VideoListingContainer } from "./styled";
 import { defaultParams } from "./types";
@@ -35,36 +34,62 @@ const VideosListingPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
 
-  const [requestParams, setRequestParams] = useState<TAllEventsPyaload>(defaultParams);
-  const { data: videoListings, isFetching, isLoading, isUninitialized, error } = useGetEventsQuery(requestParams);
+  const [page, setPage] = useState(1);
+
+  const {
+    data: featureVideos,
+    isFetching: isFeatureFetching,
+    isLoading: isFeatureLoading,
+    isUninitialized: isFeatureUninitialized,
+  } = useGetEventsQuery({ ...defaultParams, is_featured: true, page_size: 1 });
+
+  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
+  const isFeatureVideoLoading = isFeatureFetching || isFeatureLoading || isFeatureUninitialized;
 
   const tag = searchParams?.get("tag");
   const search = searchParams?.get("search");
   const playlist = searchParams?.get("playlist");
 
   useEffect(() => {
-    setRequestParams((prev) => {
-      const apiParams = { ...prev };
-      if (search) {
-        apiParams.tag = "";
-        apiParams.playlist = "";
-        apiParams.search = search;
-      }
-      apiParams.playlist = playlist ?? "";
-      apiParams.tag = tag ?? "";
-      const updatedParams = parseNonPassedParams(apiParams) as TAllEventsPyaload;
-      return updatedParams;
-    });
-  }, [searchParams]);
+    const params: EventsParams = {
+      ...defaultParams,
+      is_featured: false,
+      page,
+      playlist: search ? "" : (playlist ?? ""),
+      search: search || undefined,
+      tag: search ? "" : (tag ?? ""),
+      page_size: 12,
+    };
+    setPage(1);
+    const updatedParams = parseNonPassedParams(params) as EventsParams;
+    getEvents(updatedParams);
+  }, [tag, search, playlist, page]);
 
-  const featuredVideos = videoListings?.results.filter((video) => video.is_featured) || [];
-  const latestFeaturedVideo =
-    featuredVideos?.sort((a, b) => parseISO(b.event_time).getTime() - parseISO(a.event_time).getTime())[0] || null;
-  const listedVideos = latestFeaturedVideo
-    ? videoListings?.results.filter((video: Event) => video.id !== latestFeaturedVideo.id)
-    : videoListings?.results;
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isFetching && videoListings?.next) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    const target = document.getElementById("load-more-trigger");
+    if (target) {
+      observer.observe(target);
+    }
+
+    return () => {
+      if (target) {
+        observer.unobserve(target);
+      }
+    };
+  }, [isFetching, videoListings?.next]);
+
+  const latestFeaturedVideo = featureVideos?.results[0];
 
   return (
     <MainLayoutContainer>
@@ -77,7 +102,23 @@ const VideosListingPage = () => {
         </Stack>
       </FilterBox>
 
-      <FeaturedVideoCard isVisible={!!latestFeaturedVideo} {...latestFeaturedVideo} />
+      {isFeatureVideoLoading ? (
+        <Skeleton width="100" height={264} variant="rounded" />
+      ) : (
+        <>
+          {latestFeaturedVideo && (
+            <FeaturedVideoCard
+              description={latestFeaturedVideo.description}
+              event_time={formatDateTime(latestFeaturedVideo.event_time)}
+              onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.id })}
+              organizer={latestFeaturedVideo.presenters.map(fullName).join(", ")}
+              thumbnail={latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL}
+              title={latestFeaturedVideo.title}
+              video_duration={convertSecondsToFormattedTime(latestFeaturedVideo.video_duration)}
+            />
+          )}
+        </>
+      )}
 
       <Box width="100%">
         <VideoListingContainer>
@@ -89,13 +130,13 @@ const VideosListingPage = () => {
                   <Skeleton width="30%" height={30} />
                 </Box>
               ))
-            : listedVideos?.map((videoCard) => {
+            : videoListings.results?.map((videoCard) => {
                 return (
                   <VideoCard
                     data={{
                       event_time: formatDateTime(videoCard.event_time),
                       organizer: videoCard.workstream_id,
-                      thumbnail: `${BASE_URL}/${videoCard.thumbnail}`,
+                      thumbnail: videoCard.thumbnail ? BASE_URL.concat(videoCard.thumbnail) : DEFAULT_THUMBNAIL,
                       title: videoCard.title,
                       video_duration: convertSecondsToFormattedTime(videoCard.video_duration),
                     }}
@@ -107,6 +148,7 @@ const VideosListingPage = () => {
               })}
         </VideoListingContainer>
       </Box>
+      <div id="load-more-trigger" style={{ height: "10px" }} />
     </MainLayoutContainer>
   );
 };

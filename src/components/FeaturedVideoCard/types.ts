@@ -1,12 +1,11 @@
 export type FeaturedVideoCardProps = {
-  id: number;
-  isVisible?: boolean;
   className?: string;
-  event_time: string;
-  thumbnail?: string;
-  title: string;
   description: string;
-  video_duration: number;
-  workstream_id: string;
+  event_time: string;
+  onClick?: VoidFunction;
+  organizer: string;
+  thumbnail: string;
+  title: string;
+  video_duration: string;
   width?: string;
 };

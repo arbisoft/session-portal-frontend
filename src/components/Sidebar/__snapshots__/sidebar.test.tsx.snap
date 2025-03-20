@@ -10,7 +10,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
       class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
     >
       <div
-        class="MuiBox-root css-0"
+        class="MuiBox-root css-3a3hw0"
       >
         <div
           class="MuiStack-root css-16x1c2h-MuiStack-root-MenuItem-root"
