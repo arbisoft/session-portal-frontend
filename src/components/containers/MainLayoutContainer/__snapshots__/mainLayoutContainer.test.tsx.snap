@@ -220,18 +220,6 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           >
             <div
               class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
-              data-testid="sidebar-tags-All"
-              role="button"
-              tabindex="0"
-            >
-              <span
-                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
-              >
-                All
-              </span>
-            </div>
-            <div
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-1"
               role="button"
               tabindex="0"
@@ -239,7 +227,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               <span
                 class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
               >
-                Test-1
+                #Test-1
               </span>
             </div>
             <div
@@ -251,7 +239,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               <span
                 class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
               >
-                Test-2
+                #Test-2
               </span>
             </div>
             <div
@@ -263,7 +251,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               <span
                 class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
               >
-                Test-3
+                #Test-3
               </span>
             </div>
           </div>

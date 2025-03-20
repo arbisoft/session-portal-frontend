@@ -3,21 +3,30 @@
 exports[`Select Component should match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiFormControl-root css-6bv9qa-MuiFormControl-root-SelectFormControl-root"
+    class="MuiBox-root css-199rwdr-SelectWrapper-root"
   >
+    <label
+      class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1qpm3yf-MuiFormLabel-root-MuiInputLabel-root"
+    >
+      Sort By
+    </label>
     <div
-      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-formControl css-8r70ge-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-sizeSmall css-8r70ge-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
       data-testid="sort-select"
     >
       <div
         aria-controls=":r5:"
         aria-expanded="false"
         aria-haspopup="listbox"
-        class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-1hhzsab-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+        class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-laj7or-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
         role="combobox"
         tabindex="0"
       >
-        Sort By
+        <span
+          class="notranslate"
+        >
+          ​
+        </span>
       </div>
       <input
         aria-hidden="true"

@@ -79,7 +79,7 @@ export const TagsContainer = styled(Box, {
   ({ theme }) => css`
     display: flex;
     gap: 5px;
-    padding-top: 10px;
+    padding-top: 20px;
 
     .${chipClasses.root} {
       border-radius: 6px;

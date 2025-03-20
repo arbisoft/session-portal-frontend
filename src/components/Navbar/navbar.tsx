@@ -63,6 +63,7 @@ function Navbar() {
 
   const handleClearSearch = () => {
     setSearchQuery("");
+    navigateTo("videos");
   };
 
   useEffect(() => {

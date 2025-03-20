@@ -92,7 +92,7 @@ const VideosListingPage = () => {
       <FilterBox>
         <Stack>
           <Typography variant="h2" component="div">
-            {(tag || playlist) ?? "All"}
+            {(tag ? `#${tag}` : playlist) ?? "All"}
           </Typography>
           <Select
             label={"Sort by"}
@@ -100,25 +100,29 @@ const VideosListingPage = () => {
               { value: "newest-to-oldest", label: "Newest to Oldest" },
               ...generateYearList(2020).map((year) => ({ value: year, label: year })),
             ]}
-            handleChange={() => {}}
+            value="newest-to-oldest"
           />
         </Stack>
       </FilterBox>
 
-      {isFeatureVideoLoading ? (
-        <Skeleton width="100" height={264} variant="rounded" />
-      ) : (
+      {!tag && !playlist && (
         <>
-          {latestFeaturedVideo && (
-            <FeaturedVideoCard
-              description={latestFeaturedVideo.description}
-              event_time={formatDateTime(latestFeaturedVideo.event_time)}
-              onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.id })}
-              organizer={latestFeaturedVideo.presenters.map(fullName).join(", ")}
-              thumbnail={latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL}
-              title={latestFeaturedVideo.title}
-              video_duration={convertSecondsToFormattedTime(latestFeaturedVideo.video_duration)}
-            />
+          {isFeatureVideoLoading ? (
+            <Skeleton width="100%" height={264} variant="rounded" />
+          ) : (
+            <>
+              {latestFeaturedVideo && (
+                <FeaturedVideoCard
+                  description={latestFeaturedVideo.description}
+                  event_time={formatDateTime(latestFeaturedVideo.event_time)}
+                  onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.id })}
+                  organizer={latestFeaturedVideo.presenters.map(fullName).join(", ")}
+                  thumbnail={latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL}
+                  title={latestFeaturedVideo.title}
+                  video_duration={convertSecondsToFormattedTime(latestFeaturedVideo.video_duration)}
+                />
+              )}
+            </>
           )}
         </>
       )}

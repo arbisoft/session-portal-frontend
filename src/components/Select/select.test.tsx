@@ -15,8 +15,9 @@ describe("Select Component", () => {
         { value: "two", label: "Option 2" },
         { value: "three", label: "Option 3" },
       ],
-      handleChange: mockHandleChange,
+      onChange: mockHandleChange,
       value: "",
+      label: "Sort By",
     };
 
     return customRender(<Select {...defaultProps} {...props} />);
