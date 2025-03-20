@@ -21,6 +21,11 @@ const meta: Meta<VideoCardProps> = {
       action: "clicked",
       description: "Callback function triggered when the video card is clicked",
     },
+    variant: {
+      control: "select",
+      options: ["normal-card", "related-card", "featured-card", "search-card"],
+      description: "The variant of the video card",
+    },
     width: {
       control: "text",
       description: "The width of the video card (e.g., '315px', '100%')",
@@ -38,25 +43,44 @@ const mockVideoData = {
   thumbnail: faker.image.urlLoremFlickr(),
   title: "Sample Video Title",
   video_duration: "10:30",
+  description: "This is a sample video description. It can be a long text that describes the video in detail.",
 };
 
-export const Default: Story = {
+export const NormalCard: Story = {
   args: {
     data: mockVideoData,
+    variant: "normal-card",
     width: "315px",
   },
 };
 
-export const CustomWidth: Story = {
+export const RelatedCard: Story = {
   args: {
-    ...Default.args,
-    width: "400px",
+    ...NormalCard.args,
+    variant: "related-card",
+    width: "100%",
+  },
+};
+
+export const FeaturedCard: Story = {
+  args: {
+    ...NormalCard.args,
+    variant: "featured-card",
+    width: "100%",
+  },
+};
+
+export const SearchCard: Story = {
+  args: {
+    ...NormalCard.args,
+    variant: "search-card",
+    width: "100%",
   },
 };
 
 export const LongTitle: Story = {
   args: {
-    ...Default.args,
+    ...NormalCard.args,
     data: {
       ...mockVideoData,
       title: "This is a very long video title that should be truncated after two lines",
@@ -66,7 +90,7 @@ export const LongTitle: Story = {
 
 export const NoThumbnail: Story = {
   args: {
-    ...Default.args,
+    ...NormalCard.args,
     data: {
       ...mockVideoData,
       thumbnail: "",
@@ -76,7 +100,7 @@ export const NoThumbnail: Story = {
 
 export const CustomClassName: Story = {
   args: {
-    ...Default.args,
+    ...NormalCard.args,
     className: "custom-video-card",
   },
 };

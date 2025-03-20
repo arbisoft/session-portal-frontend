@@ -1,7 +1,8 @@
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import { cardContentClasses } from "@mui/material/CardContent";
 import { skeletonClasses } from "@mui/material/Skeleton";
-import { styled, css } from "@mui/material/styles";
+import { styled, css, alpha } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
 import { shouldForwardProp } from "@/utils/styleUtils";
@@ -11,12 +12,12 @@ export const VideoCardContainer = styled(Card, {
   shouldForwardProp,
 })<{ $width: string }>(({ theme, $width }) => {
   return css`
-    display: grid;
     background: transparent;
-    overflow: unset;
     border-radius: unset;
-    width: ${$width};
     cursor: pointer;
+    display: grid;
+    overflow: unset;
+    width: ${$width};
 
     .${cardContentClasses.root} {
       align-items: flex-start;
@@ -24,6 +25,7 @@ export const VideoCardContainer = styled(Card, {
       flex-direction: column;
       gap: ${theme.spacing(10 / 8)};
       padding: 0;
+      width: 100%;
 
       :last-child {
         padding-bottom: 0px;
@@ -32,26 +34,32 @@ export const VideoCardContainer = styled(Card, {
       img {
         border-radius: ${theme.shape.borderRadius + 8}px;
         height: auto;
+        max-height: 192px;
+        min-height: 192px;
         object-fit: cover;
         width: 100%;
       }
 
-      .video-detail {
+      .${skeletonClasses.root} {
+        border-radius: ${theme.shape.borderRadius + 8}px;
+        position: absolute;
+        top: 0;
+        z-index: -1;
         width: 100%;
+        height: 100%;
+      }
+
+      .video-detail {
         display: flex;
         flex-direction: column;
         gap: 7px;
+        width: 100%;
 
-        .${typographyClasses.h3} {
+        .${typographyClasses.h1}, .${typographyClasses.h5}, .${typographyClasses.h3} {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
           color: ${theme.palette.colors.white};
           display: -webkit-box;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 600;
-          letter-spacing: 0.4px;
-          line-height: 18.75px;
           overflow: hidden;
           text-overflow: ellipsis;
         }
@@ -60,43 +68,182 @@ export const VideoCardContainer = styled(Card, {
         .organizer-name {
           color: ${theme.palette.colors.gray};
           font-size: 14px;
-          font-style: normal;
           font-weight: 500;
-          line-height: 17px;
-          letter-spacing: 0.4px;
+        }
+
+        .video-description {
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 4;
+          color: ${theme.palette.colors.white};
+          display: -webkit-box;
+          font-size: 18px;
+          font-weight: 500;
+          overflow: hidden;
+        }
+      }
+    }
+
+    &.normal-card {
+      .${cardContentClasses.root} {
+        .video-detail {
+          .${typographyClasses.h3} {
+            font-size: 16px;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    &.related-card {
+      display: flex;
+      margin-bottom: 10px;
+      width: 100%;
+
+      .${cardContentClasses.root} {
+        flex-direction: row;
+        gap: 10px;
+
+        .image-wrapper {
+          border-radius: ${theme.shape.borderRadius + 2}px;
+          overflow: hidden;
+          width: 113px;
+
+          img {
+            border-radius: ${theme.shape.borderRadius + 2}px;
+            height: unset;
+            max-height: unset;
+            min-height: unset;
+          }
+
+          .${skeletonClasses.root} {
+            border-radius: ${theme.shape.borderRadius + 2}px;
+          }
+        }
+
+        .video-detail {
+          gap: 4px;
+          width: calc(100% - 113px);
+
+          .${typographyClasses.h5} {
+            font-size: 12px;
+            font-weight: 500;
+          }
+
+          .organizer-name,
+          .date-time {
+            color: ${theme.palette.colors.gray};
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    &.featured-card {
+      background-color: ${alpha(theme.palette.common.white, 0.06)};
+      border-radius: 12px;
+      display: flex;
+      padding: 30px;
+
+      .${cardContentClasses.root} {
+        flex-direction: row;
+        gap: ${theme.spacing(2.5)};
+
+        .image-wrapper {
+          border-radius: ${theme.shape.borderRadius + 8}px;
+          height: auto;
+          object-fit: cover;
+          width: 400px;
+
+          img {
+            border-radius: ${theme.shape.borderRadius + 8}px;
+            height: unset;
+            max-height: unset;
+            min-height: unset;
+          }
+
+          .${skeletonClasses.root} {
+            border-radius: ${theme.shape.borderRadius + 8}px;
+          }
+        }
+
+        .video-detail {
+          width: calc(100% - 430px);
+          gap: 10px;
+
+          .${typographyClasses.h1} {
+            font-weight: 500;
+          }
+
+          .organizer-name,
+          .date-time {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    &.search-card {
+      display: flex;
+
+      .${cardContentClasses.root} {
+        flex-direction: row;
+        gap: ${theme.spacing(2.5)};
+
+        .image-wrapper {
+          border-radius: ${theme.shape.borderRadius + 8}px;
+          width: 400px;
+
+          img {
+            border-radius: ${theme.shape.borderRadius + 8}px;
+            height: unset;
+            max-height: unset;
+            min-height: unset;
+          }
+
+          .${skeletonClasses.root} {
+            border-radius: ${theme.shape.borderRadius + 8}px;
+          }
+        }
+
+        .video-detail {
+          width: calc(100% - 430px);
+          gap: 10px;
+
+          .${typographyClasses.h1} {
+            font-weight: 500;
+          }
+
+          .organizer-name,
+          .date-time {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    // for storybook
+    &.custom-video-card {
+      .${cardContentClasses.root} {
+        .video-detail {
+          * {
+            color: ${theme.palette.secondary.main};
+          }
         }
       }
     }
   `;
 });
 
-export const ImageWrapper = styled(Card, {
+export const ImageWrapper = styled(Box, {
   name: "ImageWrapper",
-  shouldForwardProp,
 })(({ theme }) => {
   return css`
-    background: transparent;
     display: inline-flex;
     position: relative;
     width: 100%;
 
-    .${skeletonClasses.root} {
-      border-radius: ${theme.shape.borderRadius + 8}px;
-      position: absolute;
-      top: 0;
-      z-index: -1;
-    }
-
-    img {
-      border-radius: ${theme.shape.borderRadius + 8}px;
-      height: auto;
-      max-height: 192px;
-      min-height: 192px;
-      width: 100%;
-    }
-
     .video-duration {
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: ${alpha(theme.palette.common.black, 0.7)};
       border-radius: 2px;
       bottom: 10px;
       color: ${theme.palette.colors.white};

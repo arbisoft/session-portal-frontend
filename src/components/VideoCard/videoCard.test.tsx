@@ -13,9 +13,11 @@ const mockProps: VideoCardProps = {
     thumbnail: `${BASE_URL}/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png`,
     video_duration: convertSecondsToFormattedTime(1830),
     organizer: "John Doe",
+    description: "This is a detailed description of the video content.",
   },
   onClick: jest.fn(),
   width: "300px",
+  variant: "normal-card",
 };
 
 describe("VideoCard", () => {
@@ -57,5 +59,37 @@ describe("VideoCard", () => {
   it("should renders skeleton loader correctly", () => {
     render(<VideoCard {...mockProps} />);
     expect(screen.getByTestId("video-card")).toBeInTheDocument();
+  });
+
+  it("should render description for featured-card variant", () => {
+    const featuredProps = { ...mockProps, variant: "featured-card" as const };
+    const { getByTestId } = render(<VideoCard {...featuredProps} />);
+    expect(getByTestId("video-description")).toHaveTextContent(mockProps.data.description!);
+  });
+
+  it("should render description for search-card variant", () => {
+    const searchProps = { ...mockProps, variant: "search-card" as const };
+    const { getByTestId } = render(<VideoCard {...searchProps} />);
+    expect(getByTestId("video-description")).toHaveTextContent(mockProps.data.description!);
+  });
+
+  it("should not render description for normal-card and related-card variants", () => {
+    const normalProps = { ...mockProps, variant: "normal-card" as const };
+    render(<VideoCard {...normalProps} />);
+    expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
+
+    const relatedProps = { ...mockProps, variant: "related-card" as const };
+    render(<VideoCard {...relatedProps} />);
+    expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
+  });
+
+  it("should not render description for normal-card and related-card variants", () => {
+    const normalProps = { ...mockProps, variant: "normal-card" as const };
+    render(<VideoCard {...normalProps} />);
+    expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
+
+    const relatedProps = { ...mockProps, variant: "related-card" as const };
+    render(<VideoCard {...relatedProps} />);
+    expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
   });
 });

@@ -10,7 +10,6 @@ import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
-import FeaturedVideoCard from "@/components/FeaturedVideoCard";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import useNavigation from "@/hooks/useNavigation";
@@ -112,14 +111,18 @@ const VideosListingPage = () => {
           ) : (
             <>
               {latestFeaturedVideo && (
-                <FeaturedVideoCard
-                  description={latestFeaturedVideo.description}
-                  event_time={formatDateTime(latestFeaturedVideo.event_time)}
+                <VideoCard
+                  data={{
+                    description: latestFeaturedVideo.description,
+                    event_time: formatDateTime(latestFeaturedVideo.event_time),
+                    organizer: latestFeaturedVideo.presenters.map(fullName).join(", "),
+                    thumbnail: latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL,
+                    title: latestFeaturedVideo.title,
+                    video_duration: convertSecondsToFormattedTime(latestFeaturedVideo.video_duration),
+                  }}
                   onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.id })}
-                  organizer={latestFeaturedVideo.presenters.map(fullName).join(", ")}
-                  thumbnail={latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL}
-                  title={latestFeaturedVideo.title}
-                  video_duration={convertSecondsToFormattedTime(latestFeaturedVideo.video_duration)}
+                  variant="featured-card"
+                  width="100%"
                 />
               )}
             </>

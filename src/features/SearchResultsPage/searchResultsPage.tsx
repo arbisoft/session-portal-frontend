@@ -10,8 +10,8 @@ import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
-import SearchVideoCard from "@/components/SearchVideoCard/searchVideoCard";
 import Select from "@/components/Select";
+import VideoCard from "@/components/VideoCard";
 import useNavigation from "@/hooks/useNavigation";
 import { EventsParams } from "@/models/Events";
 import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
@@ -92,16 +92,19 @@ const SearchResultsPage = () => {
 
     if (videoListings?.results?.length) {
       return videoListings?.results?.map((videoCard) => (
-        <SearchVideoCard
+        <VideoCard
           key={videoCard.id}
+          data={{
+            description: videoCard.description,
+            event_time: formatDateTime(videoCard.event_time),
+            organizer: videoCard.presenters.map(fullName).join(", "),
+            thumbnail: videoCard.thumbnail ? BASE_URL.concat(videoCard.thumbnail) : DEFAULT_THUMBNAIL,
+            title: videoCard.title,
+            video_duration: convertSecondsToFormattedTime(videoCard.video_duration),
+          }}
           width="100%"
-          description={videoCard.description}
-          event_time={formatDateTime(videoCard.event_time)}
           onClick={() => navigateTo("videoDetail", { id: videoCard.id })}
-          organizer={videoCard.presenters.map(fullName).join(", ")}
-          thumbnail={videoCard.thumbnail ? BASE_URL.concat(videoCard.thumbnail) : DEFAULT_THUMBNAIL}
-          title={videoCard.title}
-          video_duration={convertSecondsToFormattedTime(videoCard.video_duration)}
+          variant="search-card"
         />
       ));
     }
