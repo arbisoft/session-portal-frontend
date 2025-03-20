@@ -10,7 +10,11 @@ describe("Select Component", () => {
 
   const setup = (props?: Partial<SelectProps>) => {
     const defaultProps: SelectProps = {
-      menuItems: ["Option 1", "Option 2", "Option 3"],
+      menuItems: [
+        { value: "one", label: "Option 1" },
+        { value: "two", label: "Option 2" },
+        { value: "three", label: "Option 3" },
+      ],
       handleChange: mockHandleChange,
       value: "",
     };
@@ -27,9 +31,9 @@ describe("Select Component", () => {
     const { getByRole, getByTestId } = setup();
     fireEvent.mouseDown(getByRole("combobox"));
     await act(async () => {
-      expect(getByTestId("Option 1")).toBeInTheDocument();
-      expect(getByTestId("Option 2")).toBeInTheDocument();
-      expect(getByTestId("Option 3")).toBeInTheDocument();
+      expect(getByTestId("one")).toBeInTheDocument();
+      expect(getByTestId("two")).toBeInTheDocument();
+      expect(getByTestId("three")).toBeInTheDocument();
     });
   });
 
@@ -37,13 +41,13 @@ describe("Select Component", () => {
     const { getByTestId, getByRole } = setup();
     fireEvent.mouseDown(getByRole("combobox"));
     await act(async () => {
-      getByTestId("Option 1").click();
+      getByTestId("one").click();
     });
     expect(mockHandleChange).toHaveBeenCalledTimes(1);
   });
 
   it("should display the selected value correctly", () => {
-    const { getByRole } = setup({ value: "Option 3" });
+    const { getByRole } = setup({ value: "three" });
     expect(getByRole("combobox")).toHaveTextContent("Option 3");
   });
 

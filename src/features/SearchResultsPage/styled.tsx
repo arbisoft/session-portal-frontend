@@ -1,4 +1,4 @@
-import Box, { boxClasses } from "@mui/material/Box";
+import Box from "@mui/material/Box";
 import { stackClasses } from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
@@ -6,12 +6,11 @@ import { typographyClasses } from "@mui/material/Typography";
 export const SearchResultsContainer = styled("div", {
   name: "SearchResultsContainer",
 })(
-  ({ theme }) => css`
+  () => css`
     display: flex;
-    padding-top: ${theme.spacing(3)};
-    width: 100%;
     flex-direction: column;
     gap: 30px;
+    width: 100%;
   `
 );
 
@@ -20,11 +19,12 @@ export const FilterBox = styled(Box, {
 })(
   ({ theme }) => css`
     width: 100%;
+    margin-bottom: 20px;
+
     .${stackClasses.root} {
       flex-direction: row;
       justify-content: space-between;
       width: 100%;
-      margin-bottom: 10px;
 
       .${typographyClasses.h2} {
         -webkit-box-orient: vertical;
@@ -36,9 +36,9 @@ export const FilterBox = styled(Box, {
         font-weight: 500;
         letter-spacing: 0.4px;
         line-height: 28px;
+        margin-bottom: 10px;
         overflow: hidden;
         text-overflow: ellipsis;
-        margin-bottom: 10px;
         text-transform: capitalize;
       }
     }
@@ -49,13 +49,11 @@ export const SearchCardLoadingState = styled(Box, {
   name: "SearchCardLoadingState",
 })(
   () => css`
-    width: 100%;
+    align-items: flex-start;
     display: flex;
     flex-direction: row;
     gap: 1rem;
-    align-items: flex-start;
-    .${boxClasses.root} {
-    }
+    width: 100%;
   `
 );
 

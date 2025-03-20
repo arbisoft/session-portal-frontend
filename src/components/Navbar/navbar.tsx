@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
@@ -13,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
 import useNavigation from "@/hooks/useNavigation";
@@ -28,11 +29,15 @@ const settings = ["Profile", "Account", "Dashboard"];
 
 function Navbar() {
   const dispatch = useDispatch();
-  const userInfo = useSelector(selectUserInfo);
   const { navigateTo } = useNavigation();
+  const searchParams = useSearchParams();
+
+  const userInfo = useSelector(selectUserInfo);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  const search = searchParams?.get("search");
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -59,6 +64,10 @@ function Navbar() {
   const handleClearSearch = () => {
     setSearchQuery("");
   };
+
+  useEffect(() => {
+    setSearchQuery(search ?? "");
+  }, [search]);
 
   return (
     <AppBar position="sticky" data-testid="navbar">

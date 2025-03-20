@@ -13,14 +13,20 @@ export default {
 export const Default: StoryFn<SelectProps> = (args) => <Select {...args} />;
 Default.args = {
   label: "Sort By",
-  menuItems: ["Newest", "Oldest"],
+  menuItems: [
+    { value: "Newest", label: "Newest" },
+    { value: "Oldest", label: "Oldest" },
+  ],
   value: "",
 };
 
 export const DisabledState: StoryFn<SelectProps> = (args) => <Select {...args} />;
 DisabledState.args = {
   label: "Sort By",
-  menuItems: ["Newest", "Oldest"],
+  menuItems: [
+    { value: "Newest", label: "Newest" },
+    { value: "Oldest", label: "Oldest" },
+  ],
   value: "",
   disabled: true,
 };
@@ -28,6 +34,10 @@ DisabledState.args = {
 export const CustomValue: StoryFn<SelectProps> = (args) => <Select {...args} />;
 CustomValue.args = {
   label: "Sort By",
-  menuItems: ["Newest", "Oldest", "Most Popular"],
+  menuItems: [
+    { value: "Newest", label: "Newest" },
+    { value: "Oldest", label: "Oldest" },
+    { value: "Most Popular", label: "Most Popular" },
+  ],
   value: "Newest",
 };

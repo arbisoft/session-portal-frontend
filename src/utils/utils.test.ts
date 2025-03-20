@@ -5,10 +5,11 @@ import {
   convertSecondsToFormattedTime,
   initCapital,
   fullName,
+  generateYearList,
 } from "./utils";
 
 describe("parseNonPassedParams", () => {
-  test("should remove empty strings and empty arrays but keep false values", () => {
+  it("should remove empty strings and empty arrays but keep false values", () => {
     const input = {
       name: "John",
       age: 30,
@@ -30,7 +31,7 @@ describe("parseNonPassedParams", () => {
     expect(parseNonPassedParams(input)).toEqual(expectedOutput);
   });
 
-  test("should remove null and undefined values", () => {
+  it("should remove null and undefined values", () => {
     const input = {
       key1: null,
       key2: undefined,
@@ -48,7 +49,7 @@ describe("parseNonPassedParams", () => {
     expect(parseNonPassedParams(input)).toEqual(expectedOutput);
   });
 
-  test("should keep boolean false values but remove empty strings and arrays", () => {
+  it("should keep boolean false values but remove empty strings and arrays", () => {
     const input = {
       foo: "",
       bar: [],
@@ -62,7 +63,7 @@ describe("parseNonPassedParams", () => {
     expect(parseNonPassedParams(input)).toEqual(expectedOutput);
   });
 
-  test("should keep numbers and truthy values", () => {
+  it("should keep numbers and truthy values", () => {
     const input = {
       a: 0,
       b: 1,
@@ -84,62 +85,62 @@ describe("parseNonPassedParams", () => {
 });
 
 describe("formatDateTime", () => {
-  test("should format ISO date string to 'MMM dd, yyyy' format", () => {
+  it("should format ISO date string to 'MMM dd, yyyy' format", () => {
     const date = "2023-10-05T12:00:00Z";
     expect(formatDateTime(date)).toBe("Oct 05, 2023");
   });
 });
 
 describe("trimTextLength", () => {
-  test("should trim text longer than specified length and add ellipsis", () => {
+  it("should trim text longer than specified length and add ellipsis", () => {
     const text = "This is a long text";
     expect(trimTextLength(text, 10)).toBe("This is a ...");
   });
 
-  test("should return the same text if it is shorter than specified length", () => {
+  it("should return the same text if it is shorter than specified length", () => {
     const text = "Short";
     expect(trimTextLength(text, 10)).toBe("Short");
   });
 });
 
 describe("convertSecondsToFormattedTime", () => {
-  test("should convert seconds to 'HH:MM:SS' format when hours are present", () => {
+  it("should convert seconds to 'HH:MM:SS' format when hours are present", () => {
     expect(convertSecondsToFormattedTime(3661)).toBe("01:01:01");
   });
 
-  test("should convert seconds to 'MM:SS' format when hours are not present", () => {
+  it("should convert seconds to 'MM:SS' format when hours are not present", () => {
     expect(convertSecondsToFormattedTime(125)).toBe("02:05");
   });
 
-  test("should handle zero seconds", () => {
+  it("should handle zero seconds", () => {
     expect(convertSecondsToFormattedTime(0)).toBe("00:00");
   });
 });
 
 describe("initCapital", () => {
-  test("should capitalize the first letter of each word", () => {
+  it("should capitalize the first letter of each word", () => {
     expect(initCapital("hello world")).toBe("Hello World");
   });
 
-  test("should handle empty string", () => {
+  it("should handle empty string", () => {
     expect(initCapital("")).toBe("");
   });
 });
 
 describe("fullName", () => {
-  test("should return full name with capitalized first and last names", () => {
+  it("should return full name with capitalized first and last names", () => {
     const user = { first_name: "john", last_name: "doe" };
     expect(fullName(user)).toBe("John Doe");
   });
 
-  test("should handle missing first or last name", () => {
+  it("should handle missing first or last name", () => {
     const user1 = { first_name: "john" };
     const user2 = { last_name: "doe" };
     expect(fullName(user1)).toBe("John");
     expect(fullName(user2)).toBe("Doe");
   });
 
-  test("should return empty string for undefined user", () => {
+  it("should return empty string for undefined user", () => {
     expect(fullName()).toBe("");
   });
 });
@@ -150,7 +151,7 @@ describe("BASE_URL constant", () => {
     delete process.env.NEXT_PUBLIC_BASE_URL;
   });
 
-  test("should use NEXT_PUBLIC_BASE_URL when defined", () => {
+  it("should use NEXT_PUBLIC_BASE_URL when defined", () => {
     process.env.NEXT_PUBLIC_BASE_URL = "https://example.com";
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { BASE_URL } = require("./constants");
@@ -158,10 +159,41 @@ describe("BASE_URL constant", () => {
     expect(BASE_URL).toBe("https://example.com");
   });
 
-  test("should default to an empty string when NEXT_PUBLIC_BASE_URL is undefined", () => {
+  it("should default to an empty string when NEXT_PUBLIC_BASE_URL is undefined", () => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { BASE_URL } = require("./constants");
 
     expect(BASE_URL).toBe("");
+  });
+});
+
+describe("generateYearList", () => {
+  beforeEach(() => {
+    jest.spyOn(Date.prototype, "getFullYear").mockReturnValue(2023);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it("should generate a list of years starting from the current year to the start year", () => {
+    const startYear = 2020;
+    const expectedOutput = ["This Year", "2022", "2021", "2020"];
+    const result = generateYearList(startYear);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should return an array with 'This Year' only if startYear is the current year", () => {
+    const startYear = 2023;
+    const expectedOutput = ["This Year"];
+    const result = generateYearList(startYear);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should return an empty array if startYear is greater than the current year", () => {
+    const startYear = 2024;
+    const expectedOutput: string[] = [];
+    const result = generateYearList(startYear);
+    expect(result).toEqual(expectedOutput);
   });
 });
