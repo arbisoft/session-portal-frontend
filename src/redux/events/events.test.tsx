@@ -120,7 +120,8 @@ describe("eventsApi endpoints", () => {
     );
 
     const { result, rerender } = renderHook(
-      ({ is_featured }) => useGetEventsQuery({ event_type: "SESSION", page: 1, status: "PUBLISHED", is_featured }),
+      ({ is_featured }) =>
+        useGetEventsQuery({ event_type: "SESSION", page: 1, status: "PUBLISHED", is_featured, search: "test" }),
       {
         wrapper: ({ children }) => <Providers>{children}</Providers>,
         initialProps: { is_featured: true },

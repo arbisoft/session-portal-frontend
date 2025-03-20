@@ -4,6 +4,7 @@ export interface RecommendedVideoCardProps {
   duration: string;
   imgUrl: string;
   onClick?: VoidFunction;
+  organizer?: string;
   title: string;
   width?: string;
 }

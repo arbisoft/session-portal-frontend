@@ -128,7 +128,7 @@ export const ImageContainerBox = styled(Box, {
       padding: 2px 4px;
       position: absolute;
       right: 10px;
-      z-index: 9999;
+      z-index: 1;
     }
   `;
 });

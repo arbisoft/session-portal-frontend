@@ -3,7 +3,7 @@
 exports[`RecommendedVideoCard should matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-u8mf2e-MuiPaper-root-MuiCard-root-RecommendedVideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class css-1bhsefp-MuiPaper-root-MuiCard-root-RecommendedVideoCardContainer-root"
     data-testid="recommended-video-card"
     style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
   >
@@ -11,7 +11,7 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <div
-        class="image-container MuiBox-root css-1vrfzzy-ImageContainer-root"
+        class="image-container MuiBox-root css-11i4y0o-ImageContainer-root"
       >
         <img
           alt="Sample Video Title"
@@ -45,6 +45,12 @@ exports[`RecommendedVideoCard should matches snapshot 1`] = `
           data-testid="date-time"
         >
           Jan 01, 2024
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-bodySmall organizer css-1pot96k-MuiTypography-root"
+          data-testid="organizer"
+        >
+          John Doe
         </p>
       </div>
     </div>

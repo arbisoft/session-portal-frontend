@@ -135,7 +135,7 @@ const VideosListingPage = () => {
                   <VideoCard
                     data={{
                       event_time: formatDateTime(videoCard.event_time),
-                      organizer: videoCard.workstream_id,
+                      organizer: videoCard.presenters.map(fullName).join(", "),
                       thumbnail: videoCard.thumbnail ? BASE_URL.concat(videoCard.thumbnail) : DEFAULT_THUMBNAIL,
                       title: videoCard.title,
                       video_duration: convertSecondsToFormattedTime(videoCard.video_duration),

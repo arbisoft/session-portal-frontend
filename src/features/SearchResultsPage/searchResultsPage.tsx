@@ -12,9 +12,11 @@ import { useSearchParams } from "next/navigation";
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import SearchVideoCard from "@/components/SearchVideoCard/searchVideoCard";
 import Select from "@/components/Select";
+import useNavigation from "@/hooks/useNavigation";
 import { EventsParams } from "@/models/Events";
 import { useGetEventsQuery } from "@/redux/events/apiSlice";
-import { parseNonPassedParams } from "@/utils/utils";
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
+import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, NoSearchResultsWrapper, SearchCardLoadingState, SearchResultsContainer } from "./styled";
 import { defaultParams } from "./types";
@@ -29,6 +31,7 @@ const loaderCards: string[] = Array(5)
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
+  const { navigateTo } = useNavigation();
 
   const [searchedQuery, setSearchedQuery] = useState<string>("");
   const [requestParams, setRequestParams] = useState<EventsParams>(defaultParams);
@@ -71,7 +74,19 @@ const SearchResultsPage = () => {
     }
 
     if (videoListings?.results?.length) {
-      return videoListings?.results?.map((videoCard) => <SearchVideoCard key={videoCard.id} {...videoCard} width="100%" />);
+      return videoListings?.results?.map((videoCard) => (
+        <SearchVideoCard
+          key={videoCard.id}
+          width="100%"
+          description={videoCard.description}
+          event_time={formatDateTime(videoCard.event_time)}
+          onClick={() => navigateTo("videoDetail", { id: videoCard.id })}
+          organizer={videoCard.presenters.map(fullName).join(", ")}
+          thumbnail={videoCard.thumbnail ? BASE_URL.concat(videoCard.thumbnail) : DEFAULT_THUMBNAIL}
+          title={videoCard.title}
+          video_duration={convertSecondsToFormattedTime(videoCard.video_duration)}
+        />
+      ));
     }
 
     return (

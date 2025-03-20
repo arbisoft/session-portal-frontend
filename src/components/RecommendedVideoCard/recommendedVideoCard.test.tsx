@@ -8,6 +8,8 @@ const mockProps: RecommendedVideoCardProps = {
   date: "Jan 01, 2024",
   duration: "10:15",
   imgUrl: "https://example.com/sample.jpg",
+  onClick: jest.fn(),
+  organizer: "John Doe",
   title: "Sample Video Title",
   width: "300px",
 };

@@ -24,6 +24,9 @@ export const eventsApi = baseApi.injectEndpoints({
         params,
       }),
       serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        if (queryArgs.search) {
+          return endpointName.concat(`?is_featured=${queryArgs.is_featured}&search=${queryArgs.search}`);
+        }
         return endpointName.concat(`?is_featured=${queryArgs.is_featured}`);
       },
       merge: (currentCache, newItems, { arg }) => {
