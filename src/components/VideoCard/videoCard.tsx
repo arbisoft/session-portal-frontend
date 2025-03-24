@@ -7,7 +7,7 @@ import Typography, { TypographyProps } from "@mui/material/Typography";
 import clsx from "clsx";
 import Image from "next/image";
 
-import { DEFAULT_THUMBNAIL } from "@/utils/constants";
+import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";

@@ -154,14 +154,14 @@ describe("BASE_URL constant", () => {
   it("should use NEXT_PUBLIC_BASE_URL when defined", () => {
     process.env.NEXT_PUBLIC_BASE_URL = "https://example.com";
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { BASE_URL } = require("./constants");
+    const { BASE_URL } = require("../constants/constants");
 
     expect(BASE_URL).toBe("https://example.com");
   });
 
   it("should default to an empty string when NEXT_PUBLIC_BASE_URL is undefined", () => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const { BASE_URL } = require("./constants");
+    const { BASE_URL } = require("../constants/constants");
 
     expect(BASE_URL).toBe("");
   });

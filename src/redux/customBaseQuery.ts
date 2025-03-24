@@ -2,7 +2,7 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 import { notificationManager } from "@/components/Notification";
-import { BASE_URL } from "@/utils/constants";
+import { BASE_URL } from "@/constants/constants";
 
 import { selectAccessToken } from "./login/selectors";
 import { parseError } from "./parseError";

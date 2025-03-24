@@ -12,10 +12,10 @@ import { useSearchParams } from "next/navigation";
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { EventsParams } from "@/models/Events";
 import { useGetEventsQuery, useLazyGetEventsQuery } from "@/redux/events/apiSlice";
-import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, generateYearList, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, VideoListingContainer } from "./styled";

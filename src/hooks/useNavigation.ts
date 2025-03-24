@@ -18,6 +18,9 @@ export const ALLOWED_PAGES = {
   videoDetail(id: string) {
     return `/videos/${id}`;
   },
+  get uploadVideo(): string {
+    return "/upload-video";
+  },
 } as const;
 
 type Page = keyof typeof ALLOWED_PAGES;

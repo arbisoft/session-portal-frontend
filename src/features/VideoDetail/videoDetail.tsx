@@ -14,10 +14,10 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import ReadMore from "@/components/ReadMore";
 import VideoCard from "@/components/VideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { useTranslation } from "@/services/i18n/client";
-import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime, fullName } from "@/utils/utils";
 
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";

@@ -1,5 +1,5 @@
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import { fireEvent, customRender as render, screen } from "@/jest/utils/testUtils";
-import { BASE_URL, DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
 
 import { VideoCardProps } from "./types";
