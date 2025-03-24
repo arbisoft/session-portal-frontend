@@ -12,7 +12,7 @@ import { useParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import ReadMore from "@/components/ReadMore";
-import RecommendedVideoCard from "@/components/RecommendedVideoCard";
+import VideoCard from "@/components/VideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
@@ -65,14 +65,17 @@ const VideoDetail = () => {
             </Box>
           ) : (
             recommendations.map((video) => (
-              <RecommendedVideoCard
-                date={format(new Date(video.event_time), "MMM dd, yyyy")}
-                duration={convertSecondsToFormattedTime(video.video_duration)}
-                imgUrl={video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL}
-                key={video.id}
+              <VideoCard
+                data={{
+                  event_time: format(new Date(video.event_time), "MMM dd, yyyy"),
+                  organizer: video.presenters.map(fullName).join(", "),
+                  thumbnail: video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL,
+                  title: video.title,
+                  video_duration: convertSecondsToFormattedTime(video.video_duration),
+                }}
+                key={`recommendation-${video.id}`}
                 onClick={() => navigateTo("videoDetail", { id: video.id })}
-                organizer={video.presenters.map(fullName).join(", ")}
-                title={video.title}
+                variant="related-card"
               />
             ))
           )}

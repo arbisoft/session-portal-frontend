@@ -3,7 +3,8 @@ import React, { FC } from "react";
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import Skeleton from "@mui/material/Skeleton";
-import Typography from "@mui/material/Typography";
+import Typography, { TypographyProps } from "@mui/material/Typography";
+import clsx from "clsx";
 import Image from "next/image";
 
 import { DEFAULT_THUMBNAIL } from "@/utils/constants";
@@ -11,12 +12,26 @@ import { DEFAULT_THUMBNAIL } from "@/utils/constants";
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
-const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315px" }) => {
+const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315px", variant = "normal-card" }) => {
+  const headingVariant: Record<typeof variant, TypographyProps["variant"]> = {
+    "featured-card": "h1",
+    "normal-card": "h3",
+    "related-card": "h5",
+    "search-card": "h1",
+  };
+
+  const displayDescription = variant === "featured-card" || variant === "search-card";
+
   return (
-    <VideoCardContainer $width={width} className={className} data-testid="video-card" onClick={onClick}>
+    <VideoCardContainer
+      $width={width}
+      className={clsx(className, { [variant]: true })}
+      data-testid="video-card"
+      onClick={onClick}
+    >
       <CardContent>
-        <ImageWrapper>
-          <Skeleton width="100%" height={192} variant="rounded" animation="wave" />
+        <ImageWrapper className="image-wrapper">
+          <Skeleton width="100%" variant="rounded" animation="wave" />
           <Image
             data-testid="video-card-image"
             alt={data.title}
@@ -29,7 +44,7 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
           </Typography>
         </ImageWrapper>
         <Box className="video-detail">
-          <Typography data-testid="video-card-title" variant="h3" component="div" title={data.title}>
+          <Typography data-testid="video-card-title" variant={headingVariant[variant]} title={data.title}>
             {data.title}
           </Typography>
           <Typography variant="bodyMedium" className="organizer-name" data-testid="video-card-organizer">
@@ -38,6 +53,11 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
           <Typography variant="bodyMedium" className="date-time" data-testid="video-card-date-time">
             {data.event_time}
           </Typography>
+          {displayDescription && data.description && (
+            <Typography variant="bodyLarge" className="video-description" data-testid="video-description">
+              {data.description}
+            </Typography>
+          )}
         </Box>
       </CardContent>
     </VideoCardContainer>
