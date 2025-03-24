@@ -53,6 +53,7 @@ const VideoDetail = () => {
   return (
     <MainLayoutContainer
       isLeftSidebarVisible={false}
+      shouldShowDrawer
       rightSidebar={
         <div>
           {areRecommendationsLoading ? (

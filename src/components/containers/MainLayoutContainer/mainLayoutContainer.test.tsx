@@ -1,7 +1,7 @@
 import { useSearchParams } from "next/navigation";
 
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
-import { customRender as render, screen, waitFor } from "@/jest/utils/testUtils";
+import { act, fireEvent, customRender as render, screen, waitFor } from "@/jest/utils/testUtils";
 
 import MainLayoutContainer from "./mainLayoutContainer";
 
@@ -149,5 +149,30 @@ describe("MainLayoutContainer", () => {
       </MainLayoutContainer>
     );
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  test("should handle drawer open and close correctly when shouldShowDrawer is true", async () => {
+    render(
+      <MainLayoutContainer shouldShowDrawer>
+        <div>Test Content</div>
+      </MainLayoutContainer>
+    );
+
+    const menuButton = screen.getByTestId("open-drawer");
+    act(() => {
+      fireEvent.click(menuButton);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("drawer")).toBeInTheDocument();
+    });
+
+    act(() => {
+      fireEvent.click(screen.getByTestId("drawer"));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("drawer").firstChild).toHaveAttribute("aria-hidden", "true");
+    });
   });
 });

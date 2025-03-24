@@ -1,6 +1,6 @@
 "use client";
 
-import React, { isValidElement, ReactNode } from "react";
+import React, { isValidElement, ReactNode, useState } from "react";
 
 import Box from "@mui/material/Box";
 
@@ -8,21 +8,39 @@ import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar/sidebar";
 import useAuth from "@/hooks/useAuth";
 
-import { MainContainer, LeftSidebar, RightSidebar, ContentContainer } from "./styled";
+import { MainContainer, LeftSidebar, RightSidebar, ContentContainer, StyledDrawer } from "./styled";
 
 type TMainLayoutContainer = {
   children: React.ReactNode;
   isLeftSidebarVisible?: boolean;
   rightSidebar?: ReactNode;
+  shouldShowDrawer?: boolean;
 };
 
-const MainLayoutContainer = ({ children, rightSidebar, isLeftSidebarVisible = true }: TMainLayoutContainer) => {
+const MainLayoutContainer = ({
+  children,
+  rightSidebar,
+  isLeftSidebarVisible = true,
+  shouldShowDrawer = false,
+}: TMainLayoutContainer) => {
   useAuth();
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
 
   return (
     <>
-      <Navbar />
+      <Navbar onDrawerToggle={toggleDrawer(!open)} shouldShowDrawer={shouldShowDrawer} />
       <MainContainer maxWidth="xl">
+        {shouldShowDrawer && (
+          <StyledDrawer open={open} onClose={toggleDrawer(false)} data-testid="drawer">
+            <Box sx={{ width: 250, p: 1 }} role="presentation" onClick={toggleDrawer(false)}>
+              <Sidebar />
+            </Box>
+          </StyledDrawer>
+        )}
         {isLeftSidebarVisible && (
           <LeftSidebar data-testid="left-sidebar">
             <Sidebar />

@@ -1,5 +1,7 @@
+import { backdropClasses } from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import Drawer, { drawerClasses } from "@mui/material/Drawer";
 import Grid2 from "@mui/material/Grid2";
 import { styled, css } from "@mui/material/styles";
 
@@ -38,5 +40,19 @@ export const RightSidebar = styled(Box, {
   return css`
     flex-shrink: 0;
     width: 280px;
+  `;
+});
+
+export const StyledDrawer = styled(Drawer, {
+  name: "StyledDrawer",
+})(() => {
+  return css`
+    &,
+    .${backdropClasses.root}, .${drawerClasses.paper} {
+      top: 64px;
+    }
+    .${backdropClasses.root} {
+      background-color: transparent;
+    }
   `;
 });

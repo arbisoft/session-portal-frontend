@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import CancelIcon from "@mui/icons-material/Cancel";
+import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import YouTube from "@mui/icons-material/YouTube";
 import AppBar from "@mui/material/AppBar";
@@ -10,6 +11,7 @@ import Container from "@mui/material/Container";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
@@ -26,11 +28,12 @@ import ThemeToggle from "../ThemeToggle";
 
 import { CancelIconWrapper, Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
-function Navbar() {
+function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?: VoidFunction; shouldShowDrawer?: boolean }) {
   const dispatch = useDispatch();
   const { navigateTo } = useNavigation();
   const searchParams = useSearchParams();
   const { isFeatureEnabled } = useFeatureFlags();
+  const theme = useTheme();
 
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
   const isUploadVideoVisible = isFeatureEnabled("uploadVideo");
@@ -77,6 +80,18 @@ function Navbar() {
     <AppBar position="sticky" data-testid="navbar">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
+          {shouldShowDrawer && (
+            <IconButton
+              color="inherit"
+              data-testid="open-drawer"
+              sx={{ marginRight: theme.spacing() }}
+              aria-label="open drawer"
+              edge="start"
+              onClick={onDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Logo data-testid="navbar-logo" onClick={() => navigateTo("videos")}>
             <YouTube />
             <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" } }}>
