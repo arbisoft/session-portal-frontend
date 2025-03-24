@@ -16,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
@@ -25,12 +26,14 @@ import ThemeToggle from "../ThemeToggle";
 
 import { CancelIconWrapper, Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
-const settings = ["Profile", "Account", "Dashboard"];
-
 function Navbar() {
   const dispatch = useDispatch();
   const { navigateTo } = useNavigation();
   const searchParams = useSearchParams();
+  const { isFeatureEnabled } = useFeatureFlags();
+
+  const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
+  const isUploadVideoVisible = isFeatureEnabled("uploadVideo");
 
   const userInfo = useSelector(selectUserInfo);
 
@@ -108,6 +111,7 @@ function Navbar() {
               </IconButton>
             </Tooltip>
             <Menu
+              data-testid="profile-menu"
               anchorEl={anchorElUser}
               anchorOrigin={{
                 vertical: "bottom",
@@ -121,17 +125,19 @@ function Navbar() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem data-testid={setting} key={setting} onClick={handleCloseUserMenu}>
-                  <Typography>{setting}</Typography>
+              {isUploadVideoVisible && (
+                <MenuItem onClick={() => navigateTo("uploadVideo")}>
+                  <Typography>Upload Video</Typography>
                 </MenuItem>
-              ))}
-              <MenuItem onClick={handleLogout}>
+              )}
+              <MenuItem data-testid="Logout" onClick={handleLogout}>
                 <Typography>Logout</Typography>
               </MenuItem>
-              <MenuItem disableRipple disableTouchRipple>
-                <ThemeToggle />
-              </MenuItem>
+              {isDarkModeVisible && (
+                <MenuItem disableRipple disableTouchRipple>
+                  <ThemeToggle />
+                </MenuItem>
+              )}
             </Menu>
           </Box>
         </Toolbar>

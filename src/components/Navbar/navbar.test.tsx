@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useSearchParams } from "next/navigation";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { fireEvent, screen, waitFor, render, RenderOptions, act } from "@/jest/utils/testUtils";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
@@ -76,6 +77,10 @@ describe("Navbar Component", () => {
       get: jest.fn().mockReturnValue("test search"),
     });
 
+    (useFeatureFlags as jest.Mock).mockReturnValue({
+      isFeatureEnabled: (feature: string) => feature === "test",
+    });
+
     jest.clearAllMocks();
   });
 
@@ -98,14 +103,17 @@ describe("Navbar Component", () => {
   test("should open user menu when avatar is clicked", () => {
     customRender(<Navbar />);
     fireEvent.click(screen.getByTestId("avatar-btn"));
-    expect(screen.getByText("Profile")).toBeInTheDocument();
+    expect(screen.getByText("Logout")).toBeInTheDocument();
   });
 
-  test("should close user menu when menu item is clicked", () => {
+  test("should close user menu when menu item is clicked", async () => {
     customRender(<Navbar />);
     fireEvent.click(screen.getByTestId("avatar-btn"));
-    fireEvent.click(screen.getByTestId("Profile"));
-    expect(screen.queryByText("Profile")).not.toBeVisible();
+    fireEvent.click(screen.getByTestId("Logout"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("profile-menu")).toHaveAttribute("aria-hidden", "true");
+    });
   });
 
   test("should focus on search input when clicked", () => {
@@ -125,18 +133,13 @@ describe("Navbar Component", () => {
     expect(mockNavigateTo).toHaveBeenCalledWith("searchResult", { search: "some test search" });
   });
 
-  test("should contain all user menu options", () => {
-    customRender(<Navbar />);
-    fireEvent.click(screen.getByTestId("avatar-btn"));
-    const settings = ["Profile", "Account", "Dashboard", "Logout"];
-    settings.forEach((setting) => {
-      expect(screen.getByText(setting)).toBeInTheDocument();
-    });
-  });
-
   test("should display tooltip on avatar button hover", async () => {
     customRender(<Navbar />);
-    fireEvent.mouseOver(screen.getByTestId("avatar-btn"));
+
+    await act(async () => {
+      fireEvent.mouseOver(screen.getByTestId("avatar-btn"));
+    });
+
     expect(await screen.findByText("Open settings")).toBeInTheDocument();
   });
 
@@ -160,6 +163,9 @@ describe("Navbar Component", () => {
   });
 
   test("should render ThemeToggle in the user menu", () => {
+    (useFeatureFlags as jest.Mock).mockReturnValue({
+      isFeatureEnabled: (feature: string) => feature === "darkModeSwitcher",
+    });
     customRender(<Navbar />);
     fireEvent.click(screen.getByTestId("avatar-btn"));
     expect(screen.getByRole("button", { name: /light/i })).toBeInTheDocument();
@@ -176,5 +182,25 @@ describe("Navbar Component", () => {
   test("should match snapshot", () => {
     const { asFragment } = customRender(<Navbar />);
     expect(asFragment()).toMatchSnapshot();
+  });
+
+  it("hides Upload Video button when feature flag is disabled", () => {
+    (useFeatureFlags as jest.Mock).mockReturnValue({
+      isFeatureEnabled: () => false,
+    });
+
+    customRender(<Navbar />);
+
+    expect(screen.queryByText("Upload Video")).not.toBeInTheDocument();
+  });
+
+  it("shows Upload Video button when feature flag is enabled", () => {
+    (useFeatureFlags as jest.Mock).mockReturnValue({
+      isFeatureEnabled: (feature: string) => feature === "uploadVideo",
+    });
+
+    customRender(<Navbar />);
+
+    expect(screen.getByText("Upload Video")).toBeInTheDocument();
   });
 });

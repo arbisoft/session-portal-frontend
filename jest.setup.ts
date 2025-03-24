@@ -8,6 +8,11 @@ process.env.NEXT_PUBLIC_BASE_URL = "http://localhost:1234";
 
 enableFetchMocks();
 
+jest.mock("@/hooks/useFeatureFlags", () => ({
+  __esModule: true,
+  useFeatureFlags: jest.fn(),
+}));
+
 afterEach(() => cleanup());
 beforeEach(() => fetchMock.resetMocks());
 

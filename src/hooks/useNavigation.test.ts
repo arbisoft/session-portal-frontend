@@ -19,49 +19,57 @@ describe("useNavigation", () => {
     (useLanguage as jest.Mock).mockReturnValue("en");
   });
 
-  test("should return correct URL for home page", () => {
+  it("should return the correct URL for static pages", () => {
+    const { result } = renderHook(() => useNavigation());
+    expect(result.current.getPageUrl("home")).toBe("/en/");
+    expect(result.current.getPageUrl("login")).toBe("/en/login");
+    expect(result.current.getPageUrl("videos")).toBe("/en/videos");
+    expect(result.current.getPageUrl("uploadVideo")).toBe("/en/upload-video");
+  });
+
+  it("should return correct URL for home page", () => {
     const { result } = renderHook(() => useNavigation());
     expect(result.current.getPageUrl("home")).toBe("/en/");
   });
 
-  test("should return correct URL for login page", () => {
+  it("should return correct URL for login page", () => {
     const { result } = renderHook(() => useNavigation());
     expect(result.current.getPageUrl("login")).toBe("/en/login");
   });
 
-  test("should return correct URL for videos page", () => {
+  it("should return correct URL for videos page", () => {
     const { result } = renderHook(() => useNavigation());
     expect(result.current.getPageUrl("videos")).toBe("/en/videos");
   });
 
-  test("should return correct URL for videoDetail with ID", () => {
+  it("should return correct URL for videoDetail with ID", () => {
     const { result } = renderHook(() => useNavigation());
     expect(result.current.getPageUrl("videoDetail", { id: "123" })).toBe("/en/videos/123");
   });
 
-  test("should return correct URL with query parameters", () => {
+  it("should return correct URL with query parameters", () => {
     const { result } = renderHook(() => useNavigation());
     expect(result.current.getPageUrl("videos", { search: "test", page: 2 })).toBe("/en/videos?search=test&page=2");
+    expect(result.current.getPageUrl("searchResult", { q: "test" })).toBe("/en/videos/results?q=test");
   });
 
-  test("should call router.push with correct URL", () => {
+  it("should call router.push with correct URL", () => {
     const { result } = renderHook(() => useNavigation());
     result.current.navigateTo("videos");
 
     expect(mockPush).toHaveBeenCalledWith("/en/videos");
   });
 
-  test("should call router.push with correct URL for videoDetail with ID", () => {
+  it("should call router.push with correct URL for videoDetail with ID", () => {
     const { result } = renderHook(() => useNavigation());
     result.current.navigateTo("videoDetail", { id: "456" });
 
     expect(mockPush).toHaveBeenCalledWith("/en/videos/456");
   });
 
-  test("should call router.push with query parameters", () => {
+  it("should call router.push with query parameters", () => {
     const { result } = renderHook(() => useNavigation());
-    result.current.navigateTo("login", { ref: "email", lang: "es" });
-
-    expect(mockPush).toHaveBeenCalledWith("/en/login?ref=email&lang=es");
+    result.current.navigateTo("searchResult", { q: "example" });
+    expect(mockPush).toHaveBeenCalledWith("/en/videos/results?q=example");
   });
 });

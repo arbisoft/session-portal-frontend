@@ -1,5 +1,6 @@
 import { useSearchParams } from "next/navigation";
 
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { customRender as render, screen, waitFor } from "@/jest/utils/testUtils";
 
 import MainLayoutContainer from "./mainLayoutContainer";
@@ -38,6 +39,10 @@ describe("MainLayoutContainer", () => {
   beforeEach(() => {
     (useSearchParams as jest.Mock).mockReturnValue({
       get: jest.fn().mockReturnValue("test search"),
+    });
+
+    (useFeatureFlags as jest.Mock).mockReturnValue({
+      isFeatureEnabled: (feature: string) => feature === "test",
     });
 
     jest.clearAllMocks();
