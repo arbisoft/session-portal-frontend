@@ -48,12 +48,14 @@ describe("MainLayoutContainer", () => {
     jest.clearAllMocks();
   });
 
-  test("should renders Navbar component", () => {
-    render(
-      <MainLayoutContainer>
-        <div>Test Content</div>
-      </MainLayoutContainer>
-    );
+  test("should renders Navbar component", async () => {
+    await waitFor(async () => {
+      render(
+        <MainLayoutContainer>
+          <div>Test Content</div>
+        </MainLayoutContainer>
+      );
+    });
 
     expect(screen.getByTestId("navbar")).toBeInTheDocument();
   });

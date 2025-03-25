@@ -178,14 +178,19 @@ describe("generateYearList", () => {
 
   it("should generate a list of years starting from the current year to the start year", () => {
     const startYear = 2020;
-    const expectedOutput = ["This Year", "2022", "2021", "2020"];
+    const expectedOutput = [
+      { value: "2023", label: "This Year" },
+      { value: "2022", label: "2022" },
+      { value: "2021", label: "2021" },
+      { value: "2020", label: "2020" },
+    ];
     const result = generateYearList(startYear);
     expect(result).toEqual(expectedOutput);
   });
 
   it("should return an array with 'This Year' only if startYear is the current year", () => {
     const startYear = 2023;
-    const expectedOutput = ["This Year"];
+    const expectedOutput = [{ value: "2023", label: "This Year" }];
     const result = generateYearList(startYear);
     expect(result).toEqual(expectedOutput);
   });

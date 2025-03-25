@@ -5,5 +5,8 @@
   "system": "System",
   "dark": "Dark",
   "show_less": "Show Less",
-  "show_more": "Show More"
+  "show_more": "Show More",
+  "search": "Search",
+  "logout": "Logout",
+  "upload_video": "Upload Video"
 }

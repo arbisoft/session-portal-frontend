@@ -6,7 +6,9 @@ import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import { format, startOfYear, endOfYear } from "date-fns";
 import { useSearchParams } from "next/navigation";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
@@ -14,11 +16,12 @@ import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
-import { EventsParams } from "@/models/Events";
+import { EventsParams, OrderingField } from "@/models/Events";
 import { useGetEventsQuery, useLazyGetEventsQuery } from "@/redux/events/apiSlice";
+import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, generateYearList, parseNonPassedParams } from "@/utils/utils";
 
-import { FilterBox, VideoListingContainer } from "./styled";
+import { FilterBox, NoSearchResultsWrapper, VideoListingContainer } from "./styled";
 import { defaultParams } from "./types";
 
 const loaderCards: string[] = Array(5)
@@ -28,6 +31,8 @@ const loaderCards: string[] = Array(5)
 const VideosListingPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
+  const { t } = useTranslation("videos");
+  const theme = useTheme();
 
   const [page, setPage] = useState(1);
 
@@ -46,21 +51,36 @@ const VideosListingPage = () => {
   const tag = searchParams?.get("tag");
   const search = searchParams?.get("search");
   const playlist = searchParams?.get("playlist");
+  const order = searchParams?.get("order") as OrderingField;
+  const year = searchParams?.get("year");
+
+  const sortingOption = order || year;
 
   useEffect(() => {
     const params: EventsParams = {
       ...defaultParams,
+      event_time_after: year ? format(startOfYear(new Date(year)), "yyyy-MM-dd") : undefined,
+      event_time_before: year ? format(endOfYear(new Date(year)), "yyyy-MM-dd") : undefined,
       is_featured: false,
+      ordering: [order || "-event_time"],
+      page_size: 12,
       page,
       playlist: search ? "" : (playlist ?? ""),
       search: search || undefined,
       tag: search ? "" : (tag ?? ""),
-      page_size: 12,
     };
     setPage(1);
     const updatedParams = parseNonPassedParams(params) as EventsParams;
     getEvents(updatedParams);
-  }, [tag, search, playlist, page]);
+  }, [tag, search, playlist, page, order, year]);
+
+  const onSortingHandler = (val: unknown) => {
+    if (val === "-event_time") {
+      navigateTo("videos", { order: val });
+    } else if (typeof val === "string") {
+      navigateTo("videos", { year: val });
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -91,20 +111,18 @@ const VideosListingPage = () => {
       <FilterBox>
         <Stack>
           <Typography variant="h2" component="div">
-            {(tag ? `#${tag}` : playlist) ?? "All"}
+            {(tag ? `#${tag}` : playlist) ?? t("all")}
           </Typography>
           <Select
-            label={"Sort by"}
-            menuItems={[
-              { value: "newest-to-oldest", label: "Newest to Oldest" },
-              ...generateYearList(2020).map((year) => ({ value: year, label: year })),
-            ]}
-            value="newest-to-oldest"
+            label={t("sort_by")}
+            menuItems={[{ value: "-event_time", label: t("newest_to_oldest") }, ...generateYearList(2020)]}
+            onChange={({ target }) => onSortingHandler(target.value)}
+            value={sortingOption || "-event_time"}
           />
         </Stack>
       </FilterBox>
 
-      {!tag && !playlist && (
+      {!tag && !playlist && !sortingOption && (
         <>
           {isFeatureVideoLoading ? (
             <Skeleton width="100%" height={264} variant="rounded" />
@@ -157,6 +175,16 @@ const VideosListingPage = () => {
                 );
               })}
         </VideoListingContainer>
+        {videoListings?.results.length === 0 && (
+          <NoSearchResultsWrapper>
+            <Typography variant="h3">
+              {t("no_videos_found")}{" "}
+              <Box component="span" color={theme.palette.secondary.main}>
+                {sortingOption}
+              </Box>
+            </Typography>
+          </NoSearchResultsWrapper>
+        )}
       </Box>
       <div id="load-more-trigger" style={{ height: "10px" }} />
     </MainLayoutContainer>
