@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
@@ -9,6 +9,7 @@ import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
+import { Virtuoso } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import Select from "@/components/Select";
@@ -23,9 +24,25 @@ import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassed
 import { FilterBox, NoSearchResultsWrapper, SearchCardLoadingState, SearchResultsContainer } from "./styled";
 import { defaultParams } from "./types";
 
-const loaderCards: string[] = Array(5)
-  .fill("")
-  .map(() => faker.lorem.words(1));
+const loaderCards: string[] = Array.from({ length: 5 }, () => faker.lorem.word());
+
+const LoaderSkeleton = () => (
+  <SearchCardLoadingState>
+    <Skeleton width={400} height={242} variant="rounded" />
+    <Box width="calc( 100% - 400px )">
+      <Skeleton width="100%" height={30} />
+      <Skeleton width={250} height={30} />
+      <br />
+      <Skeleton width={100} height={20} />
+      <Skeleton width={100} height={20} />
+      <br />
+      <Skeleton width="100%" height={20} />
+      <Skeleton width="100%" height={20} />
+      <Skeleton width="100%" height={20} />
+      <Skeleton width="100%" height={20} />
+    </Box>
+  </SearchCardLoadingState>
+);
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
@@ -34,18 +51,21 @@ const SearchResultsPage = () => {
   const { t } = useTranslation("videos");
 
   const [page, setPage] = useState(1);
+  const search = searchParams?.get("search") ?? "";
+  const order = (searchParams?.get("order") as OrderingField) || "event_time";
 
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
 
-  const search = searchParams?.get("search");
-  const order = (searchParams?.get("order") || "event_time") as OrderingField;
-
-  const onSortingHandler = (val: unknown) => {
-    const params = parseNonPassedParams({ order: val, search: search }) as Record<string, string>;
-    navigateTo("searchResult", params);
-  };
+  const onSortingHandler = useCallback(
+    (val: unknown) => {
+      setPage(1);
+      const params = parseNonPassedParams({ order: val, search }) as Record<string, string>;
+      navigateTo("searchResult", params);
+    },
+    [search]
+  );
 
   useEffect(() => {
     const params: EventsParams = {
@@ -55,87 +75,69 @@ const SearchResultsPage = () => {
       page,
       search: search || undefined,
     };
-    setPage(1);
+
     const updatedParams = parseNonPassedParams(params) as EventsParams;
     getEvents(updatedParams);
   }, [search, page, order]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isFetching && videoListings?.next) {
+  const renderSkeletons = () => loaderCards.map((key) => <LoaderSkeleton key={key} />);
+
+  const renderVideoResults = () => (
+    <Virtuoso
+      useWindowScroll
+      style={{ height: "100%" }}
+      data={videoListings?.results ?? []}
+      increaseViewportBy={200}
+      endReached={() => {
+        if (!isFetching && videoListings?.next) {
           setPage((prevPage) => prevPage + 1);
         }
-      },
-      { threshold: 1.0 }
-    );
+      }}
+      itemContent={(_, event) => (
+        <Box pb={4}>
+          <VideoCard
+            data={{
+              description: event.description,
+              event_time: formatDateTime(event.event_time),
+              organizer: event.presenters.map(fullName).join(", "),
+              thumbnail: event.thumbnail ? BASE_URL.concat(event.thumbnail) : DEFAULT_THUMBNAIL,
+              title: event.title,
+              video_duration: convertSecondsToFormattedTime(event.video_duration),
+            }}
+            width="100%"
+            onClick={() => navigateTo("videoDetail", { id: event.id })}
+            variant="search-card"
+          />
+        </Box>
+      )}
+      components={{
+        Footer: () => (isFetching ? <LoaderSkeleton /> : null),
+      }}
+    />
+  );
 
-    const target = document.getElementById("load-more-trigger");
-    if (target) {
-      observer.observe(target);
-    }
-
-    return () => {
-      if (target) {
-        observer.unobserve(target);
-      }
-    };
-  }, [isFetching, videoListings?.next]);
+  const renderNoResults = () => (
+    <NoSearchResultsWrapper>
+      <Typography variant="h3">
+        {t("no_videos_found")}{" "}
+        <Box component="span" color={theme.palette.secondary.main}>
+          {search}
+        </Box>
+      </Typography>
+    </NoSearchResultsWrapper>
+  );
 
   const renderResults = () => {
-    if (error || isDataLoading) {
-      return loaderCards.map((_) => (
-        <SearchCardLoadingState key={_}>
-          <Skeleton width={350} height={208} variant="rounded" animation="wave" />
-          <Box>
-            <Skeleton width={250} height={30} />
-            <br />
-            <Skeleton width={100} height={20} />
-            <Skeleton width={100} height={20} />
-            <br />
-            <Skeleton width={250} height={20} />
-            <Skeleton width={250} height={20} />
-            <Skeleton width={250} height={20} />
-          </Box>
-        </SearchCardLoadingState>
-      ));
-    }
-
-    if (videoListings?.results?.length) {
-      return videoListings?.results?.map((videoCard) => (
-        <VideoCard
-          key={videoCard.id}
-          data={{
-            description: videoCard.description,
-            event_time: formatDateTime(videoCard.event_time),
-            organizer: videoCard.presenters.map(fullName).join(", "),
-            thumbnail: videoCard.thumbnail ? BASE_URL.concat(videoCard.thumbnail) : DEFAULT_THUMBNAIL,
-            title: videoCard.title,
-            video_duration: convertSecondsToFormattedTime(videoCard.video_duration),
-          }}
-          width="100%"
-          onClick={() => navigateTo("videoDetail", { id: videoCard.id })}
-          variant="search-card"
-        />
-      ));
-    }
-
-    return (
-      <NoSearchResultsWrapper>
-        <Typography variant="h3">
-          {t("no_videos_found")}{" "}
-          <Box component="span" color={theme.palette.secondary.main}>
-            {search}
-          </Box>
-        </Typography>
-      </NoSearchResultsWrapper>
-    );
+    if (error) return renderNoResults();
+    if (isDataLoading) return renderSkeletons();
+    if (videoListings?.results?.length) return renderVideoResults();
+    return renderNoResults();
   };
 
   return (
     <MainLayoutContainer>
-      <FilterBox>
-        {(videoListings?.results.length ?? 0) > 0 && (
+      {(videoListings?.results.length ?? 0) > 0 && (
+        <FilterBox>
           <Stack>
             <Typography variant="h2">
               {`${t("search_results")} - `}
@@ -153,13 +155,12 @@ const SearchResultsPage = () => {
               value={order}
             />
           </Stack>
-        )}
-      </FilterBox>
+        </FilterBox>
+      )}
 
-      <Box width="100%">
+      <Box width="100%" height="100%">
         <SearchResultsContainer>{renderResults()}</SearchResultsContainer>
       </Box>
-      <div id="load-more-trigger" style={{ height: "10px" }} />
     </MainLayoutContainer>
   );
 };
