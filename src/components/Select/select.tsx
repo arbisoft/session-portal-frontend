@@ -11,14 +11,7 @@ const Select: React.FC<SelectProps> = ({ onChange, value, menuItems, labelId, la
   return (
     <SelectWrapper>
       <InputLabel>{label}</InputLabel>
-      <MuiSelect
-        value={value as string}
-        onChange={onChange}
-        displayEmpty
-        data-testid="sort-select"
-        labelId={labelId}
-        size="small"
-      >
+      <MuiSelect value={value} onChange={onChange} displayEmpty data-testid="sort-select" labelId={labelId} size="small">
         {menuItems.map((item) => (
           <MenuItem data-testid={item.value} key={item.value} value={item.value}>
             {item.label}

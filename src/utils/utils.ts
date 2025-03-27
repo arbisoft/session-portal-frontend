@@ -41,12 +41,12 @@ export const fullName = (user?: Partial<{ first_name: string; last_name: string 
   return `${initCapital(user?.first_name ?? "")} ${initCapital(user?.last_name ?? "")}`.trim();
 };
 
-export function generateYearList(startYear: number): string[] {
+export function generateYearList(startYear: number) {
   const currentYear = new Date().getFullYear();
-  const years: string[] = [];
+  const years = [];
 
   for (let year = currentYear; year >= startYear; year--) {
-    years.push(year === currentYear ? "This Year" : year.toString());
+    years.push({ value: year.toString(), label: year === currentYear ? "This Year" : year.toString() });
   }
 
   return years;

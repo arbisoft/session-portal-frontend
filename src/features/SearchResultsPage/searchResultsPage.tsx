@@ -6,6 +6,7 @@ import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useSearchParams } from "next/navigation";
 
@@ -14,8 +15,9 @@ import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
-import { EventsParams } from "@/models/Events";
+import { EventsParams, OrderingField } from "@/models/Events";
 import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
+import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, NoSearchResultsWrapper, SearchCardLoadingState, SearchResultsContainer } from "./styled";
@@ -28,6 +30,8 @@ const loaderCards: string[] = Array(5)
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
+  const theme = useTheme();
+  const { t } = useTranslation("videos");
 
   const [page, setPage] = useState(1);
 
@@ -36,18 +40,25 @@ const SearchResultsPage = () => {
   const isDataLoading = isFetching || isLoading || isUninitialized;
 
   const search = searchParams?.get("search");
+  const order = (searchParams?.get("order") || "event_time") as OrderingField;
+
+  const onSortingHandler = (val: unknown) => {
+    const params = parseNonPassedParams({ order: val, search: search }) as Record<string, string>;
+    navigateTo("searchResult", params);
+  };
 
   useEffect(() => {
     const params: EventsParams = {
       ...defaultParams,
+      ordering: [order],
+      page_size: 10,
       page,
       search: search || undefined,
-      page_size: 10,
     };
     setPage(1);
     const updatedParams = parseNonPassedParams(params) as EventsParams;
     getEvents(updatedParams);
-  }, [search, page]);
+  }, [search, page, order]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -111,8 +122,11 @@ const SearchResultsPage = () => {
 
     return (
       <NoSearchResultsWrapper>
-        <Typography variant="h3" component="div">
-          No videos found for &apos;{search}&apos;
+        <Typography variant="h3">
+          {t("no_videos_found")}{" "}
+          <Box component="span" color={theme.palette.secondary.main}>
+            {search}
+          </Box>
         </Typography>
       </NoSearchResultsWrapper>
     );
@@ -121,19 +135,25 @@ const SearchResultsPage = () => {
   return (
     <MainLayoutContainer>
       <FilterBox>
-        <Stack>
-          <Typography variant="h2" component="div">
-            Showing search results for &apos;{search}&apos;
-          </Typography>
-          <Select
-            label={"Sort by"}
-            menuItems={[
-              { value: "Most Relevant", label: "Most Relevant" },
-              { value: "Newest First", label: "Newest First" },
-            ]}
-            value="Newest First"
-          />
-        </Stack>
+        {(videoListings?.results.length ?? 0) > 0 && (
+          <Stack>
+            <Typography variant="h2">
+              {`${t("search_results")} - `}
+              <Box component="span" color={theme.palette.secondary.main}>
+                {search}
+              </Box>
+            </Typography>
+            <Select
+              label={t("sort_by")}
+              menuItems={[
+                { value: "-event_time", label: "Newest First" },
+                { value: "event_time", label: "Oldest First" },
+              ]}
+              onChange={({ target }) => onSortingHandler(target.value)}
+              value={order}
+            />
+          </Stack>
+        )}
       </FilterBox>
 
       <Box width="100%">

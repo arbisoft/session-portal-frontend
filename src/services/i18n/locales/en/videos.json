@@ -1,11 +1,10 @@
 {
   "title": "Videos",
   "description": "Videos of session portal!",
-  "search-title": "Search results",
-  "dropdown": {
-    "defaultFilter": "Sort By"
-  },
-  "search": {
-    "showing-results": "Showing search results for"
-  }
+  "search_title": "Search results",
+  "search_results": "Showing search results for",
+  "sort_by": "Sort By",
+  "all": "All",
+  "newest_to_oldest": "Newest to Oldest",
+  "no_videos_found": "No videos found for"
 }

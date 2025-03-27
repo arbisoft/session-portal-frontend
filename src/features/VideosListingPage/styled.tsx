@@ -44,3 +44,21 @@ export const FilterBox = styled(Box, {
     }
   `
 );
+
+export const NoSearchResultsWrapper = styled("div", {
+  name: "NoSearchResultsWrapper",
+})(
+  ({ theme }) => css`
+    margin-top: 10rem;
+
+    .${typographyClasses.h3} {
+      color: ${theme.palette.colors.white};
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 400;
+      letter-spacing: 0.4px;
+      line-height: 28px;
+      text-align: center;
+    }
+  `
+);

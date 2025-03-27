@@ -15,6 +15,7 @@ import ThemeProvider from "../theme/theme-provider";
 import Navbar from "./navbar";
 
 jest.mock("next/navigation", () => ({
+  ...jest.requireActual("next/navigation"),
   useSearchParams: jest.fn(),
 }));
 
@@ -84,26 +85,34 @@ describe("Navbar Component", () => {
     jest.clearAllMocks();
   });
 
-  test("should render Navbar without crashing", () => {
+  test("should render Navbar without crashing", async () => {
     customRender(<Navbar />);
-    expect(screen.getByTestId("navbar")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("navbar")).toBeInTheDocument();
+    });
   });
 
-  test("should render logo with YouTube icon and text", () => {
+  test("should render logo with YouTube icon and text", async () => {
     customRender(<Navbar />);
-    expect(screen.getByText("Arbisoft Sessions Portal")).toBeInTheDocument();
-    expect(screen.getByTestId("YouTubeIcon")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Arbisoft Sessions Portal")).toBeInTheDocument();
+      expect(screen.getByTestId("YouTubeIcon")).toBeInTheDocument();
+    });
   });
 
-  test("should render avatar button", () => {
+  test("should render avatar button", async () => {
     customRender(<Navbar />);
-    expect(screen.getByTestId("avatar-btn")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("avatar-btn")).toBeInTheDocument();
+    });
   });
 
-  test("should open user menu when avatar is clicked", () => {
+  test("should open user menu when avatar is clicked", async () => {
     customRender(<Navbar />);
     fireEvent.click(screen.getByTestId("avatar-btn"));
-    expect(screen.getByText("Logout")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText("Logout")).toBeInTheDocument();
+    });
   });
 
   test("should close user menu when menu item is clicked", async () => {
