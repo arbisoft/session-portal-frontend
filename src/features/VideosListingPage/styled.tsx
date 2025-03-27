@@ -7,11 +7,14 @@ export const VideoListingContainer = styled("div", {
   name: "VideoListingContainer",
 })(
   ({ theme }) => css`
-    display: grid;
-    gap: ${theme.spacing(3)};
-    grid-template-columns: repeat(auto-fill, minmax(287px, 1fr));
-    padding-top: ${theme.spacing(3)};
-    width: 100%;
+    .skeleton-loader,
+    .virtuoso-grid-list {
+      display: grid;
+      gap: ${theme.spacing(3)};
+      grid-template-columns: repeat(auto-fill, minmax(287px, 1fr));
+      padding-top: ${theme.spacing(3)};
+      width: 100%;
+    }
   `
 );
 

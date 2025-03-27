@@ -7,10 +7,8 @@ export const SearchResultsContainer = styled("div", {
   name: "SearchResultsContainer",
 })(
   () => css`
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
     width: 100%;
+    padding-bottom: 30px;
   `
 );
 
