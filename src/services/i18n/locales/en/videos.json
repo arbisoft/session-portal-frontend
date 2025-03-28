@@ -6,5 +6,8 @@
   "sort_by": "Sort By",
   "all": "All",
   "newest_to_oldest": "Newest to Oldest",
-  "no_videos_found": "No videos found for"
+  "no_videos_found": "No videos found for",
+  "filter_by": "Filter by",
+  "select": "Select",
+  "oldest_to_newest": "Oldest to Newest"
 }

@@ -2,12 +2,15 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 
+import ClearIcon from "@mui/icons-material/Clear";
 import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { format, startOfYear, endOfYear } from "date-fns";
+import omit from "lodash/omit";
 import { useSearchParams } from "next/navigation";
 import { VirtuosoGrid } from "react-virtuoso";
 
@@ -63,7 +66,8 @@ const VideosListingPage = () => {
     [searchParams]
   );
 
-  const sortingOption = queryParams.order || queryParams.year;
+  const sortingOption = queryParams.order;
+  const filterOption = queryParams.year;
 
   const fetchEvents = useCallback(() => {
     const params: EventsParams = parseNonPassedParams({
@@ -86,18 +90,29 @@ const VideosListingPage = () => {
     fetchEvents();
   }, [queryParams, fetchEvents]);
 
-  const onSortingHandler = useCallback(
-    (val: unknown) => {
+  const onQueryParamChange = useCallback(
+    (key: "order" | "year", val: unknown) => {
       setPage(1);
-      const params = parseNonPassedParams({
-        ...(val === "-event_time" ? { order: "-event_time" } : { year: val }),
-        playlist: queryParams.playlist,
-        tag: queryParams.tag,
-      }) as Record<string, string>;
-      navigateTo("videos", params);
+      navigateTo(
+        "videos",
+        parseNonPassedParams({
+          ...queryParams,
+          [key]: val,
+        }) as Record<string, string>
+      );
     },
     [queryParams]
   );
+
+  const onClearFilterHandler = useCallback(() => {
+    setPage(1);
+    navigateTo(
+      "videos",
+      parseNonPassedParams({
+        ...omit(queryParams, ["order", "year"]),
+      }) as Record<string, string>
+    );
+  }, [queryParams]);
 
   const latestFeaturedVideo = featureVideos?.results[0];
   const isDataLoading = isLoading || isUninitialized || !videoListings;
@@ -107,18 +122,35 @@ const VideosListingPage = () => {
       <FilterBox>
         <Stack>
           <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? t("all"))}</Typography>
-          <Select
-            label={t("sort_by")}
-            menuItems={[{ value: "-event_time", label: t("newest_to_oldest") }, ...generateYearList(2020)]}
-            onChange={({ target }) => onSortingHandler(target.value)}
-            value={sortingOption || "-event_time"}
-          />
+          <Box display="flex" gap={2}>
+            <Select
+              label={t("sort_by")}
+              menuItems={[
+                { value: "-event_time", label: t("newest_to_oldest") },
+                { value: "event_time", label: t("oldest_to_newest") },
+              ]}
+              onChange={({ target }) => onQueryParamChange("order", target.value)}
+              value={sortingOption || "-event_time"}
+            />
+            <Select
+              label={t("filter_by")}
+              menuItems={[{ label: t("select"), value: "" }, ...generateYearList(2020)]}
+              onChange={({ target }) => onQueryParamChange("year", target.value)}
+              value={filterOption || ""}
+            />
+            {(queryParams.order || queryParams.year) && (
+              <IconButton color="error" onClick={onClearFilterHandler}>
+                <ClearIcon />
+              </IconButton>
+            )}
+          </Box>
         </Stack>
       </FilterBox>
 
       {!queryParams.tag &&
         !queryParams.playlist &&
         !sortingOption &&
+        !filterOption &&
         latestFeaturedVideo &&
         (isFeatureFetching ? (
           <Skeleton width="100%" height={264} variant="rounded" />
@@ -175,7 +207,7 @@ const VideosListingPage = () => {
             <Typography variant="h3">
               {t("no_videos_found")}{" "}
               <Box component="span" color={theme.palette.secondary.main}>
-                {sortingOption || queryParams.playlist || queryParams.tag}
+                {filterOption || queryParams.playlist || queryParams.tag}
               </Box>
             </Typography>
           </NoSearchResultsWrapper>
