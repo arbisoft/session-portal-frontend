@@ -45,11 +45,15 @@ export const RightSidebar = styled(Box, {
 
 export const StyledDrawer = styled(Drawer, {
   name: "StyledDrawer",
-})(() => {
+})(({ theme }) => {
   return css`
     &,
     .${backdropClasses.root}, .${drawerClasses.paper} {
       top: 64px;
+
+      ${theme.breakpoints.down("lg")} {
+        top: 56px;
+      }
     }
     .${backdropClasses.root} {
       background-color: transparent;

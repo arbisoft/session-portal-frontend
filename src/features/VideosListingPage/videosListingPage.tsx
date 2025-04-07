@@ -7,6 +7,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { format, startOfYear, endOfYear } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import { VirtuosoGrid } from "react-virtuoso";
@@ -43,6 +44,8 @@ const VideosListingPage = () => {
   const { navigateTo } = useNavigation();
   const { t } = useTranslation("videos");
   const theme = useTheme();
+
+  const matches = useMediaQuery(theme.breakpoints.down("lg"));
 
   const [page, setPage] = useState(1);
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
@@ -103,7 +106,7 @@ const VideosListingPage = () => {
   const isDataLoading = isLoading || isUninitialized || !videoListings;
 
   return (
-    <MainLayoutContainer>
+    <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
       <FilterBox>
         <Stack>
           <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? t("all"))}</Typography>

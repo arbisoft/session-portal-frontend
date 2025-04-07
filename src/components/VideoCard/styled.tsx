@@ -79,6 +79,10 @@ export const VideoCardContainer = styled(Card, {
           font-size: 18px;
           font-weight: 500;
           overflow: hidden;
+
+          ${theme.breakpoints.down("md")} {
+            -webkit-line-clamp: 2;
+          }
         }
       }
     }
@@ -148,11 +152,23 @@ export const VideoCardContainer = styled(Card, {
         flex-direction: row;
         gap: ${theme.spacing(2.5)};
 
+        ${theme.breakpoints.down("sm")} {
+          flex-direction: column;
+        }
+
         .image-wrapper {
           border-radius: ${theme.shape.borderRadius + 8}px;
           height: auto;
           object-fit: cover;
           width: 400px;
+
+          ${theme.breakpoints.down("md")} {
+            width: 300px;
+          }
+
+          ${theme.breakpoints.down("sm")} {
+            width: 100%;
+          }
 
           img {
             border-radius: ${theme.shape.borderRadius + 8}px;
@@ -169,6 +185,14 @@ export const VideoCardContainer = styled(Card, {
         .video-detail {
           width: calc(100% - 430px);
           gap: 10px;
+
+          ${theme.breakpoints.down("md")} {
+            width: calc(100% - 320px);
+          }
+
+          ${theme.breakpoints.down("sm")} {
+            width: 100%;
+          }
 
           .${typographyClasses.h1} {
             font-weight: 500;

@@ -1,3 +1,4 @@
+import Box from "@mui/material/Box";
 import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
 import { alpha, css, styled } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
@@ -8,6 +9,10 @@ export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
     cursor: pointer;
     display: flex;
     width: 240px;
+
+    ${theme.breakpoints.down("lg")} {
+      width: unset;
+    }
 
     svg {
       color: red;
@@ -37,6 +42,10 @@ export const Search = styled("form", { name: "Search" })(({ theme }) => {
 
     &:hover {
       background-color: ${alpha(theme.palette.common.white, 0.25)};
+    }
+
+    ${theme.breakpoints.down("lg")} {
+      width: 200px;
     }
   `;
 });
@@ -72,6 +81,19 @@ export const StyledInputBase = styled(InputBase, { name: "StyledInputBase" })(
     & .${inputBaseClasses.input} {
       padding: ${theme.spacing(1, 1, 1, 1)};
       padding-right: calc(1em + ${theme.spacing(1)});
+    }
+  `
+);
+
+export const NavbarRightArea = styled(Box, { name: "NavbarRightArea" })(
+  ({ theme }) => css`
+    display: flex;
+    flex-grow: 0;
+    justify-content: flex-end;
+    width: 240px;
+
+    ${theme.breakpoints.down("lg")} {
+      width: unset;
     }
   `
 );
