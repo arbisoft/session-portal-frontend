@@ -3,15 +3,18 @@ import { CssBaseline } from "@mui/material";
 import type { Preview } from "@storybook/react";
 import { themes } from "@storybook/theming";
 import ThemeProvider from "../src/components/theme/theme-provider";
+import {Providers} from "../src/redux/store/provider";
 
 const preview: Preview = {
   decorators: [
     (Story) => {
       return (
-        <ThemeProvider>
-          <CssBaseline />
-          <Story />
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider>
+            <CssBaseline />
+            <Story />
+          </ThemeProvider>
+        </Providers>
       );
     },
   ],
@@ -24,6 +27,9 @@ const preview: Preview = {
     },
     docs: {
       theme: themes.dark,
+    },
+    nextjs: {
+      appDirectory: true,
     },
   },
 };
