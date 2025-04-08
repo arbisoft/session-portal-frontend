@@ -14,7 +14,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
         class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
       >
         <div
-          class="css-1gf1e7j-Logo-root"
+          class="css-12uvfj0-Logo-root"
           data-testid="navbar-logo"
         >
           <svg
@@ -38,7 +38,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           class="MuiBox-root css-1rqqp05"
         >
           <form
-            class="css-1yzrppa-Search-root"
+            class="css-tdacmr-Search-root"
           >
             <div
               class="MuiInputBase-root MuiInputBase-colorPrimary css-16stwic-MuiInputBase-root-StyledInputBase-root"
@@ -86,7 +86,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           </form>
         </div>
         <div
-          class="MuiBox-root css-1v32olg"
+          class="MuiBox-root css-1i6c8yb-NavbarRightArea-root"
         >
           <button
             aria-label="Open settings"

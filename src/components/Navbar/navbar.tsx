@@ -27,7 +27,7 @@ import { useTranslation } from "@/services/i18n/client";
 
 import ThemeToggle from "../ThemeToggle";
 
-import { CancelIconWrapper, Logo, Search, SearchIconWrapper, StyledInputBase } from "./styled";
+import { CancelIconWrapper, Logo, NavbarRightArea, Search, SearchIconWrapper, StyledInputBase } from "./styled";
 
 function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?: VoidFunction; shouldShowDrawer?: boolean }) {
   const dispatch = useDispatch();
@@ -121,7 +121,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               </SearchIconWrapper>
             </Search>
           </Box>
-          <Box sx={{ flexGrow: 0, width: 240, display: "flex", justifyContent: "flex-end" }}>
+          <NavbarRightArea>
             <Tooltip title="Open settings">
               <IconButton data-testid="avatar-btn" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar variant="rounded" alt={userInfo.full_name ?? ""} src={userInfo.avatar ?? ""} />
@@ -156,7 +156,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
                 </MenuItem>
               )}
             </Menu>
-          </Box>
+          </NavbarRightArea>
         </Toolbar>
       </Container>
     </AppBar>
