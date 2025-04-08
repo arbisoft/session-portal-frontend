@@ -8,6 +8,7 @@ import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import { useSearchParams } from "next/navigation";
 import { Virtuoso } from "react-virtuoso";
 
@@ -49,6 +50,8 @@ const SearchResultsPage = () => {
   const { navigateTo } = useNavigation();
   const theme = useTheme();
   const { t } = useTranslation("videos");
+
+  const matches = useMediaQuery(theme.breakpoints.down("lg"));
 
   const [page, setPage] = useState(1);
   const search = searchParams?.get("search") ?? "";
@@ -135,7 +138,7 @@ const SearchResultsPage = () => {
   };
 
   return (
-    <MainLayoutContainer>
+    <MainLayoutContainer isLeftSidebarVisible={!matches} shouldShowDrawer={matches}>
       {(videoListings?.results.length ?? 0) > 0 && (
         <FilterBox>
           <Stack>

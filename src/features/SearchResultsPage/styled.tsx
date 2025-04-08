@@ -25,19 +25,15 @@ export const FilterBox = styled(Box, {
       width: 100%;
 
       .${typographyClasses.h2} {
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
         color: ${theme.palette.colors.white};
-        display: -webkit-box;
         font-size: 24px;
-        font-style: normal;
         font-weight: 500;
-        letter-spacing: 0.4px;
-        line-height: 28px;
-        margin-bottom: 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
         text-transform: capitalize;
+
+        ${theme.breakpoints.down("sm")} {
+          font-size: 20px;
+          width: 50%;
+        }
       }
     }
   `
