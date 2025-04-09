@@ -100,7 +100,7 @@ export const VideoCardContainer = styled(Card, {
 
     &.related-card {
       display: flex;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       width: 100%;
 
       .${cardContentClasses.root} {
@@ -111,6 +111,10 @@ export const VideoCardContainer = styled(Card, {
           border-radius: ${theme.shape.borderRadius + 2}px;
           overflow: hidden;
           width: 113px;
+
+          .video-player {
+            border-radius: ${theme.shape.borderRadius + 2}px;
+          }
 
           img {
             border-radius: ${theme.shape.borderRadius + 2}px;
@@ -285,6 +289,17 @@ export const ImageWrapper = styled(Box, {
     display: inline-flex;
     position: relative;
     width: 100%;
+
+    .video-player {
+      border-radius: ${theme.shape.borderRadius + 8}px;
+      height: 100%;
+      left: 0;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 2;
+    }
 
     .video-duration {
       background-color: ${alpha(theme.palette.common.black, 0.7)};

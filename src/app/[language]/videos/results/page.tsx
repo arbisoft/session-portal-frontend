@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { t } = await getServerTranslation(params.language, "videos");
 
   return {
-    title: t("search-title"),
+    title: t("search_title"),
   };
 }
 

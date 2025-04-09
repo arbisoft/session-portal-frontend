@@ -166,6 +166,7 @@ const VideosListingPage = () => {
               thumbnail: latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL,
               title: latestFeaturedVideo.title,
               video_duration: convertSecondsToFormattedTime(latestFeaturedVideo.video_duration),
+              video_file: latestFeaturedVideo.video_file ? BASE_URL.concat(latestFeaturedVideo.video_file) : undefined,
             }}
             onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.id })}
             variant="featured-card"
@@ -173,7 +174,7 @@ const VideosListingPage = () => {
           />
         ))}
 
-      <Box width="100%" paddingBlock={4}>
+      <Box width="100%" paddingBlock={3}>
         {error || isDataLoading ? (
           <SkeletonLoader />
         ) : (
@@ -196,6 +197,7 @@ const VideosListingPage = () => {
                     thumbnail: videoCard.thumbnail ? BASE_URL.concat(videoCard.thumbnail) : DEFAULT_THUMBNAIL,
                     title: videoCard.title,
                     video_duration: convertSecondsToFormattedTime(videoCard.video_duration),
+                    video_file: videoCard.video_file ? BASE_URL.concat(videoCard.video_file) : undefined,
                   }}
                   key={videoCard.id}
                   onClick={() => navigateTo("videoDetail", { id: videoCard.id })}

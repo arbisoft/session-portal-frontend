@@ -30,6 +30,7 @@ export interface Event {
   title: string;
   video_duration: number;
   workstream_id: string;
+  video_file: string;
 }
 
 export interface Recommendation extends Event {}

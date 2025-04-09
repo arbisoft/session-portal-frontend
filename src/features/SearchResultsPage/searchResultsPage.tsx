@@ -106,6 +106,7 @@ const SearchResultsPage = () => {
               thumbnail: event.thumbnail ? BASE_URL.concat(event.thumbnail) : DEFAULT_THUMBNAIL,
               title: event.title,
               video_duration: convertSecondsToFormattedTime(event.video_duration),
+              video_file: event.video_file ? BASE_URL.concat(event.video_file) : undefined,
             }}
             width="100%"
             onClick={() => navigateTo("videoDetail", { id: event.id })}

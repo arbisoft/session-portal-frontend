@@ -73,6 +73,7 @@ const VideoDetail = () => {
                   thumbnail: video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL,
                   title: video.title,
                   video_duration: convertSecondsToFormattedTime(video.video_duration),
+                  video_file: video.video_file ? BASE_URL.concat(video.video_file) : undefined,
                 }}
                 key={`recommendation-${video.id}`}
                 onClick={() => navigateTo("videoDetail", { id: video.id })}

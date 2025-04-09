@@ -10,6 +10,7 @@ export const MainContainer = styled(Container, {
 })(({ theme }) => {
   return css`
     display: flex;
+    gap: 30px;
     min-height: 100vh;
     padding: ${theme.spacing(4, 0)};
   `;
@@ -30,7 +31,9 @@ export const ContentContainer = styled(Grid2, {
   return css`
     align-content: flex-start;
     flex: 1;
-    padding: ${theme.spacing(0, 2)};
+    ${theme.breakpoints.down("sm")} {
+      padding: ${theme.spacing(0, 2)};
+    }
   `;
 });
 

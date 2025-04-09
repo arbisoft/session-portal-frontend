@@ -117,7 +117,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
     </div>
   </header>
   <div
-    class="MuiContainer-root MuiContainer-maxWidthXl css-18is7ce-MuiContainer-root-MainContainer-root"
+    class="MuiContainer-root MuiContainer-maxWidthXl css-19eb2nq-MuiContainer-root-MainContainer-root"
   >
     <div
       class="MuiBox-root css-1i3wj7r-LeftSidebar-root"
@@ -259,7 +259,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
       </div>
     </div>
     <div
-      class="MuiGrid2-root MuiGrid2-container MuiGrid2-direction-xs-row css-1zhuio-MuiGrid2-root-ContentContainer-root"
+      class="MuiGrid2-root MuiGrid2-container MuiGrid2-direction-xs-row css-m63fai-MuiGrid2-root-ContentContainer-root"
     >
       <div
         class="MuiBox-root css-uwwqev"
