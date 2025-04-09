@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
+import { buttonClasses } from "@mui/material/Button";
 import { stackClasses } from "@mui/material/Stack";
-import { styled, css } from "@mui/material/styles";
+import { styled, css, alpha } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
 export const VideoListingContainer = styled("div", {
@@ -12,7 +13,7 @@ export const VideoListingContainer = styled("div", {
       display: grid;
       gap: ${theme.spacing(3)};
       grid-template-columns: repeat(auto-fill, minmax(287px, 1fr));
-      padding-top: ${theme.spacing(3)};
+      padding-bottom: ${theme.spacing(3)};
       width: 100%;
     }
   `
@@ -54,6 +55,29 @@ export const NoSearchResultsWrapper = styled("div", {
       letter-spacing: 0.4px;
       line-height: 28px;
       text-align: center;
+    }
+  `
+);
+
+export const DropdownContainer = styled(Box, {
+  name: "DropdownContainer",
+})(
+  ({ theme }) => css`
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    color: ${theme.palette.secondary.contrastText};
+
+    .${buttonClasses.root} {
+      background-color: ${alpha(theme.palette.colors.white, 0.2)};
+      border-color: ${alpha(theme.palette.colors.white, 0.3)};
+      color: ${theme.palette.common.white};
+      font-size: 14px;
+      font-weight: 600;
+
+      &:hover {
+        border-color: ${alpha(theme.palette.colors.white, 0.5)};
+      }
     }
   `
 );
