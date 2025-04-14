@@ -8,12 +8,13 @@ import VideoCard from "./videoCard";
 const mockProps: VideoCardProps = {
   className: "custom-class",
   data: {
-    title: "Refresher & AMA Session on Competency Framework Changes - January 2025",
-    event_time: formatDateTime("2025-01-09T06:00:00Z"),
-    thumbnail: `${BASE_URL}/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png`,
-    video_duration: convertSecondsToFormattedTime(1830),
-    organizer: "John Doe",
     description: "This is a detailed description of the video content.",
+    event_time: formatDateTime("2025-01-09T06:00:00Z"),
+    organizer: "John Doe",
+    thumbnail: `${BASE_URL}/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png`,
+    title: "Refresher & AMA Session on Competency Framework Changes - January 2025",
+    video_duration: convertSecondsToFormattedTime(1830),
+    video_file: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
   },
   onClick: jest.fn(),
   width: "300px",
@@ -91,5 +92,21 @@ describe("VideoCard", () => {
     const relatedProps = { ...mockProps, variant: "related-card" as const };
     render(<VideoCard {...relatedProps} />);
     expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
+  });
+
+  it("should plays video on hover and resets on leave (if not on mobile)", () => {
+    const { container } = render(<VideoCard data={mockProps.data} variant="normal-card" />);
+    const wrapper = container.querySelector(".image-wrapper")!;
+
+    const video = container.querySelector(".video-player") as HTMLVideoElement;
+    const playSpy = jest.spyOn(video, "play").mockImplementation(() => Promise.resolve());
+    const pauseSpy = jest.spyOn(video, "pause").mockImplementation(() => {});
+
+    fireEvent.mouseEnter(wrapper);
+    expect(playSpy).toHaveBeenCalled();
+
+    fireEvent.mouseLeave(wrapper);
+    expect(pauseSpy).toHaveBeenCalled();
+    expect(video.currentTime).toBe(0);
   });
 });

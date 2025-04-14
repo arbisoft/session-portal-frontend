@@ -20,6 +20,7 @@ export const FilterBox = styled(Box, {
     margin-bottom: 20px;
 
     .${stackClasses.root} {
+      align-items: center;
       flex-direction: row;
       justify-content: space-between;
       width: 100%;

@@ -104,3 +104,13 @@ export const CustomClassName: Story = {
     className: "custom-video-card",
   },
 };
+
+export const VideoPreview: Story = {
+  args: {
+    ...NormalCard.args,
+    data: {
+      ...mockVideoData,
+      video_file: "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    },
+  },
+};
