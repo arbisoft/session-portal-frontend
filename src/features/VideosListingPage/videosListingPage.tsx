@@ -2,9 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 
-import ClearIcon from "@mui/icons-material/Clear";
 import Box from "@mui/material/Box";
-import IconButton from "@mui/material/IconButton";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
@@ -16,7 +14,6 @@ import { useSearchParams } from "next/navigation";
 import { VirtuosoGrid } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
-import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
@@ -25,6 +22,7 @@ import { useGetEventsQuery, useLazyGetEventsQuery } from "@/redux/events/apiSlic
 import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, generateYearList, parseNonPassedParams } from "@/utils/utils";
 
+import DateFilterDropdown from "./DateFilterDropdown";
 import { FilterBox, NoSearchResultsWrapper, VideoListingContainer } from "./styled";
 import { defaultParams } from "./types";
 
@@ -32,13 +30,15 @@ const loaderCards = Array.from({ length: 5 });
 
 const SkeletonLoader = () => (
   <VideoListingContainer>
-    {loaderCards.map((_, index) => (
-      <Box key={index} className="skeleton-loader">
-        <Skeleton width="100%" height={192} variant="rounded" animation="wave" />
-        <Skeleton width="50%" height={30} />
-        <Skeleton width="30%" height={30} />
-      </Box>
-    ))}
+    <Box className="skeleton-loader">
+      {loaderCards.map((_, index) => (
+        <Box key={index}>
+          <Skeleton width="100%" height={192} variant="rounded" animation="wave" />
+          <Skeleton width="50%" height={30} />
+          <Skeleton width="30%" height={30} />
+        </Box>
+      ))}
+    </Box>
   </VideoListingContainer>
 );
 
@@ -125,28 +125,14 @@ const VideosListingPage = () => {
       <FilterBox>
         <Stack>
           <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? t("all"))}</Typography>
-          <Box display="flex" gap={2}>
-            <Select
-              label={t("sort_by")}
-              menuItems={[
-                { value: "-event_time", label: t("newest_to_oldest") },
-                { value: "event_time", label: t("oldest_to_newest") },
-              ]}
-              onChange={({ target }) => onQueryParamChange("order", target.value)}
-              value={sortingOption || "-event_time"}
-            />
-            <Select
-              label={t("filter_by")}
-              menuItems={[{ label: t("select"), value: "" }, ...generateYearList(2020)]}
-              onChange={({ target }) => onQueryParamChange("year", target.value)}
-              value={filterOption || ""}
-            />
-            {(queryParams.order || queryParams.year) && (
-              <IconButton color="error" onClick={onClearFilterHandler}>
-                <ClearIcon />
-              </IconButton>
-            )}
-          </Box>
+          <DateFilterDropdown
+            availableYears={generateYearList(2020)}
+            initialSort={(sortingOption?.startsWith("-") ?? "-") ? "newest" : "oldest"}
+            initialYear={filterOption || undefined}
+            onSortChange={(val) => onQueryParamChange("order", val === "newest" ? "-event_time" : "event_time")}
+            onYearChange={(val) => onQueryParamChange("year", val)}
+            onClear={onClearFilterHandler}
+          />
         </Stack>
       </FilterBox>
 

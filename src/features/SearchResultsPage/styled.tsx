@@ -49,6 +49,7 @@ export const SearchCardLoadingState = styled(Box, {
     flex-direction: row;
     gap: 1rem;
     width: 100%;
+    margin-bottom: 1rem;
   `
 );
 
