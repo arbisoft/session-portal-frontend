@@ -13,7 +13,6 @@ export const StyledTitleSection = styled(Box, {
     width: 100%;
 
     h4 {
-      color: ${theme.palette.colors.white};
       text-transform: capitalize;
     }
   `
@@ -28,7 +27,6 @@ export const StyledDetailSection = styled(Box, {
 
     h6,
     p {
-      color: ${theme.palette.colors.gray};
       font-size: 16px;
       font-style: normal;
       font-weight: 500;
@@ -46,7 +44,6 @@ export const StyledNotesSection = styled(Box, {
     width: 100%;
 
     h5 {
-      color: ${theme.palette.colors.white};
       font-size: 22px;
       font-style: normal;
       font-weight: 400;
@@ -62,7 +59,6 @@ export const StyledNotesSection = styled(Box, {
       padding: 20px;
 
       p {
-        color: ${theme.palette.colors.white};
         font-size: 12px;
         font-style: normal;
         font-weight: 400;
@@ -87,7 +83,7 @@ export const TagsContainer = styled(Box, {
       cursor: pointer;
 
       &:hover {
-        background: ${theme.palette.colors.white};
+        background: ${theme.palette.common.white};
         color: ${alpha(theme.palette.common.black, 0.7)};
       }
     }

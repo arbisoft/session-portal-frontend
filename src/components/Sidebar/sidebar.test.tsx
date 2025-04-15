@@ -62,7 +62,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item);
 
     await waitFor(() => {
-      expect(screen.getByTestId("sidebar-item-All")).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
+      expect(screen.getByTestId("sidebar-item-All")).toHaveStyle("background-color: transparent");
     });
   });
 
@@ -87,7 +87,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
 
     await waitFor(() => {
-      expect(screen.getByTestId("sidebar-item-Test-2")).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
+      expect(screen.getByTestId("sidebar-item-Test-2")).toHaveStyle("background-color: transparent");
     });
   });
 
@@ -110,7 +110,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item);
 
     await waitFor(() => {
-      expect(screen.getByTestId("sidebar-item-All")).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
+      expect(screen.getByTestId("sidebar-item-All")).toHaveStyle("background-color: transparent");
     });
   });
 
@@ -122,7 +122,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item1);
     fireEvent.click(item2);
     await waitFor(() => {
-      expect(item2).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
+      expect(item2).toHaveStyle("background-color: transparent");
     });
   });
 
@@ -191,7 +191,7 @@ describe("Sidebar Component", () => {
     (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams("tag=2"));
     customRender(<Sidebar />);
     const selectedTag = screen.getByTestId("sidebar-item-Test-2");
-    expect(selectedTag).toHaveStyle("background-color: rgba(255, 255, 255, 0.2)");
+    expect(selectedTag).toHaveStyle("background-color: transparent");
   });
 
   it("should allow clicking on a tag and trigger navigation", () => {

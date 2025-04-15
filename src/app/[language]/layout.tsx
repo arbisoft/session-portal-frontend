@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -44,11 +43,11 @@ export default function RootLayout({
   return (
     <html lang={language} dir={dir(language)}>
       <body>
-        <CssBaseline />
-        <InitColorSchemeScript />
         <GoogleOAuthProvider clientId={clientId}>
           <Providers>
             <ThemeProvider>
+              <InitColorSchemeScript />
+              <CssBaseline />
               <NotificationProvider>
                 <StoreLanguageProvider>{children}</StoreLanguageProvider>
               </NotificationProvider>

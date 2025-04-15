@@ -3,7 +3,7 @@
 import { useMemo, PropsWithChildren } from "react";
 
 import GlobalStyles from "@mui/material/GlobalStyles";
-import { createTheme, ThemeProvider as MuiThemeProvider, Shadows, Theme, useTheme } from "@mui/material/styles";
+import { createTheme, ThemeProvider as MuiThemeProvider, Theme, useTheme } from "@mui/material/styles";
 import { Roboto_Condensed, Inter } from "next/font/google";
 
 import { colors } from "./colors";
@@ -48,21 +48,36 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
           light: {
             palette: {
               mode: "light",
-              colors,
+              primary: {
+                main: "#E3E3E3",
+              },
+              secondary: {
+                main: "#A5A5A5",
+              },
+              background: {
+                default: "#F2F2F2",
+                paper: "#F3F3F3",
+              },
+              text: {
+                primary: "#000000",
+                secondary: "#7f7f7f",
+              },
             },
           },
           dark: {
             palette: {
               mode: "dark",
-              colors,
+              primary: {
+                main: "#3c3e42",
+              },
+              secondary: {
+                main: "#51555c",
+              },
+              text: {
+                primary: "#fff",
+                secondary: "#908e8e",
+              },
             },
-          },
-        },
-        shadows: [...defaultTheme.shadows].map(() => "none") as Shadows,
-        palette: {
-          ...defaultTheme.palette,
-          colors: {
-            ...colors,
           },
         },
         typography: {
@@ -88,6 +103,23 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
               },
             },
           },
+          MuiCssBaseline: {
+            /* c8 ignore next 14 */
+            styleOverrides: (val) => ({
+              body: {
+                backgroundColor: colors.light.background,
+                color: colors.light.text.primary,
+                ...(val.palette.mode === "dark" && {
+                  backgroundAttachment: "fixed",
+                  backgroundColor: colors.dark.background,
+                  backgroundImage: "url(/assets/svgs/background.svg)",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                  color: colors.dark.text.primary,
+                }),
+              },
+            }),
+          },
         },
       }),
     [defaultTheme.shadows]
@@ -98,9 +130,9 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
       <GlobalStyles
         styles={{
           "html,body,#__next": {
-            backgroundColor: "unset",
-            fontFamily,
             height: "100%",
+            margin: 0,
+            minHeight: "100%",
             width: "100%",
           },
         }}
