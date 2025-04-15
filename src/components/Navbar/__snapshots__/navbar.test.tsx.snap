@@ -38,10 +38,10 @@ exports[`Navbar Component should match snapshot 1`] = `
           class="MuiBox-root css-1rqqp05"
         >
           <form
-            class="css-tdacmr-Search-root"
+            class="css-15t2c4j-Search-root"
           >
             <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-16stwic-MuiInputBase-root-StyledInputBase-root"
+              class="MuiInputBase-root MuiInputBase-colorPrimary css-1kssppa-MuiInputBase-root-StyledInputBase-root"
             >
               <input
                 aria-label="search"
@@ -69,7 +69,9 @@ exports[`Navbar Component should match snapshot 1`] = `
               </svg>
             </div>
             <button
-              class="css-ejiypo-SearchIconWrapper-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1cdkzx6-MuiButtonBase-root-MuiButton-root-SearchIconWrapper-root"
+              tabindex="0"
+              type="button"
             >
               <svg
                 aria-hidden="true"
@@ -86,11 +88,11 @@ exports[`Navbar Component should match snapshot 1`] = `
           </form>
         </div>
         <div
-          class="MuiBox-root css-1i6c8yb-NavbarRightArea-root"
+          class="MuiBox-root css-si7qf5-NavbarRightArea-root"
         >
           <button
             aria-label="Open settings"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1j2eanh-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
             data-testid="avatar-btn"
             tabindex="0"

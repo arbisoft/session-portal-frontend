@@ -3,14 +3,15 @@ import { useState } from "react";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import Image from "next/image";
 
 import { useNotification } from "@/components/Notification";
+import ThemeToggle from "@/components/ThemeToggle";
 import useAuth from "@/hooks/useAuth";
+import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
 import { useLoginMutation } from "@/redux/login/apiSlice";
 
@@ -20,9 +21,10 @@ export default function LoginPage() {
   useAuth();
 
   const { navigateTo } = useNavigation();
-
-  const theme = useTheme();
   const { showNotification } = useNotification();
+  const { isFeatureEnabled } = useFeatureFlags();
+
+  const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -70,6 +72,9 @@ export default function LoginPage() {
 
   return (
     <LoginContainer>
+      <Box position="fixed" top={8} right={8}>
+        {isDarkModeVisible && <ThemeToggle />}
+      </Box>
       <LoginSubContainer>
         <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />
         <LoginButtonContainer>
@@ -81,10 +86,11 @@ export default function LoginPage() {
               setIsLoading(true);
               googleLoginHandler();
             }}
+            variant="outlined"
           >
             <Box className="button-content">
               <Image height={20} width={20} src="/assets/svgs/google.svg" alt="google-logo" />
-              <Typography color={theme.palette.colors.gray}>{isLoading ? "Loading..." : "Sign in with Google"}</Typography>
+              <Typography color="textSecondary">{isLoading ? "Loading..." : "Sign in with Google"}</Typography>
             </Box>
           </Button>
         </LoginButtonContainer>
