@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VideoCard should matches snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class normal-card css-1uck83k-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
+    data-testid="video-card"
+    style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
+  >
+    <div
+      class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
+    >
+      <div
+        class="image-wrapper MuiBox-root css-mddgh6-ImageWrapper-root"
+      >
+        <span
+          class="MuiSkeleton-root MuiSkeleton-rounded MuiSkeleton-wave css-116i1gn-MuiSkeleton-root"
+          style="width: 100%; height: 100%;"
+        />
+        <img
+          alt="Refresher & AMA Session on Competency Framework Changes - January 2025"
+          data-nimg="1"
+          data-testid="video-card-image"
+          decoding="async"
+          height="192"
+          loading="lazy"
+          src="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=640&q=75"
+          srcset="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=384&q=75 1x, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=640&q=75 2x"
+          style="color: transparent;"
+          width="315"
+        />
+        <video
+          class="video-player"
+          loop=""
+          playsinline=""
+          src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          style="visibility: hidden;"
+        />
+        <div
+          class="MuiTypography-root MuiTypography-bodyMedium video-duration css-149i8z5-MuiTypography-root"
+          data-testid="video-card-duration"
+        >
+          30:30
+        </div>
+      </div>
+      <div
+        class="video-detail MuiBox-root css-0"
+      >
+        <h3
+          class="MuiTypography-root MuiTypography-h3 css-1fho9p8-MuiTypography-root"
+          data-testid="video-card-title"
+          title="Refresher & AMA Session on Competency Framework Changes - January 2025"
+        >
+          Refresher & AMA Session on Competency Framework Changes - January 2025
+        </h3>
+        <p
+          class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-149i8z5-MuiTypography-root"
+          data-testid="video-card-organizer"
+        >
+          John Doe
+        </p>
+        <p
+          class="MuiTypography-root MuiTypography-bodyMedium date-time css-149i8z5-MuiTypography-root"
+          data-testid="video-card-date-time"
+        >
+          Jan 09, 2025
+        </p>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

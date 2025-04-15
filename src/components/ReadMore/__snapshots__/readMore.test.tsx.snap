@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReadMore Component should match snapshot 1`] = `
+<DocumentFragment>
+  <p
+    class="MuiTypography-root MuiTypography-bodySmall css-cbjig5-MuiTypography-root-Logo-root"
+  >
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
+    <span>
+      ... 
+    </span>
+    <span
+      aria-hidden="true"
+      class="hidden"
+      data-testid="hidden-text"
+    >
+       accumsan arcu in nunc pharetra, ac consectetur nulla bibendum.
+    </span>
+    <span
+      aria-expanded="false"
+      class="show-more-button"
+      data-testid="show-more-button"
+      role="button"
+      tabindex="0"
+    >
+      Read more
+    </span>
+  </p>
+</DocumentFragment>
+`;

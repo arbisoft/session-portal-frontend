@@ -1,0 +1,11 @@
+example.env.local
+.github
+.husky
+.hygen
+.storybook
+.vscode
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
