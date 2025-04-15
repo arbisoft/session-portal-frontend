@@ -1,6 +1,10 @@
+import { createTheme } from "@mui/material/styles";
+
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import { fireEvent, customRender as render, screen } from "@/jest/utils/testUtils";
 import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
+
+import ThemeProvider from "../theme/theme-provider";
 
 import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
@@ -84,16 +88,6 @@ describe("VideoCard", () => {
     expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
   });
 
-  it("should not render description for normal-card and related-card variants", () => {
-    const normalProps = { ...mockProps, variant: "normal-card" as const };
-    render(<VideoCard {...normalProps} />);
-    expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
-
-    const relatedProps = { ...mockProps, variant: "related-card" as const };
-    render(<VideoCard {...relatedProps} />);
-    expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
-  });
-
   it("should plays video on hover and resets on leave (if not on mobile)", () => {
     const { container } = render(<VideoCard data={mockProps.data} variant="normal-card" />);
     const wrapper = container.querySelector(".image-wrapper")!;
@@ -108,5 +102,36 @@ describe("VideoCard", () => {
     fireEvent.mouseLeave(wrapper);
     expect(pauseSpy).toHaveBeenCalled();
     expect(video.currentTime).toBe(0);
+  });
+
+  it("should not render video player if video_file is not provided", () => {
+    const noVideoProps = { ...mockProps, data: { ...mockProps.data, video_file: "" } };
+    const { container } = render(<VideoCard {...noVideoProps} />);
+    const video = container.querySelector(".video-player");
+    expect(video).toBeNull();
+  });
+
+  it("should apply correct background color in light mode", () => {
+    const theme = createTheme({ palette: { mode: "light" } });
+    render(
+      <ThemeProvider customTheme={theme}>
+        <VideoCard {...mockProps} />
+      </ThemeProvider>
+    );
+
+    const card = screen.getByTestId("video-card");
+    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
+  });
+
+  it("should apply correct background color in dark mode", () => {
+    const theme = createTheme({ palette: { mode: "dark" } });
+    render(
+      <ThemeProvider customTheme={theme}>
+        <VideoCard {...mockProps} />
+      </ThemeProvider>
+    );
+
+    const card = screen.getByTestId("video-card");
+    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
   });
 });

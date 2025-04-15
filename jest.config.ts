@@ -23,6 +23,7 @@ const config: Config = {
   },
   coverageDirectory: "./coverage/",
   coveragePathIgnorePatterns: ["<rootDir>/.next/", "<rootDir>/node_modules/", "<rootDir>/src/components/Notification"],
+  coverageReporters: ["clover", "json", "lcov", ["text", { skipFull: true }]],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

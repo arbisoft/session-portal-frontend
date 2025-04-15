@@ -18,7 +18,7 @@ export const LoginSubContainer = styled(Box, {
 })(
   ({ theme }) => css`
     align-items: center;
-    background-color: ${theme.palette.colors.white};
+    background-color: ${theme.palette.common.white};
     border-radius: 12px;
     display: flex;
     flex-direction: column;
@@ -31,9 +31,8 @@ export const LoginSubContainer = styled(Box, {
 export const LoginButtonContainer = styled(Box, {
   name: "LoginButtonContainer",
 })(
-  ({ theme }) => css`
+  () => css`
     border-radius: 6px;
-    border: 1px solid ${theme.palette.colors.gray};
     width: 100%;
 
     .login-button {

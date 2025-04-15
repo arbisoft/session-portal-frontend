@@ -26,7 +26,7 @@ export const FilterBox = styled(Box, {
       width: 100%;
 
       .${typographyClasses.h2} {
-        color: ${theme.palette.colors.white};
+        color: ${theme.palette.common.white};
         font-size: 24px;
         font-weight: 500;
         text-transform: capitalize;
@@ -60,7 +60,7 @@ export const NoSearchResultsWrapper = styled("div", {
     margin-top: 10rem;
 
     .${typographyClasses.h3} {
-      color: ${theme.palette.colors.white};
+      color: ${theme.palette.common.white};
       font-size: 24px;
       font-style: normal;
       font-weight: 400;

@@ -3,7 +3,7 @@ import React, { FC, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import Skeleton from "@mui/material/Skeleton";
-import { useTheme } from "@mui/material/styles";
+import { useColorScheme, useTheme } from "@mui/material/styles";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import clsx from "clsx";
@@ -18,6 +18,7 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const theme = useTheme();
+  const { mode } = useColorScheme();
 
   const matches = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -51,6 +52,8 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
       className={clsx(className, { [variant]: true })}
       data-testid="video-card"
       onClick={onClick}
+      variant={mode === "light" && variant === "featured-card" ? "outlined" : undefined}
+      elevation={0}
     >
       <CardContent>
         <ImageWrapper
@@ -87,10 +90,10 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
           <Typography data-testid="video-card-title" variant={headingVariant[variant]} title={data.title}>
             {data.title}
           </Typography>
-          <Typography variant="bodyMedium" className="organizer-name" data-testid="video-card-organizer">
+          <Typography variant="bodyMedium" color="textSecondary" className="organizer-name" data-testid="video-card-organizer">
             {data.organizer}
           </Typography>
-          <Typography variant="bodyMedium" className="date-time" data-testid="video-card-date-time">
+          <Typography variant="bodyMedium" color="textSecondary" className="date-time" data-testid="video-card-date-time">
             {data.event_time}
           </Typography>
           {displayDescription && data.description && (

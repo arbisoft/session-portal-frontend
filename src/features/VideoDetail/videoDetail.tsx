@@ -111,8 +111,10 @@ const VideoDetail = () => {
             <Typography variant="h4">{data?.title}</Typography>
           </StyledTitleSection>
           <StyledDetailSection>
-            <Typography variant="h6">{dataEvent?.presenters.map(fullName).join(", ")}</Typography>
-            <Typography>{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
+            <Typography color="textSecondary" variant="h6">
+              {dataEvent?.presenters.map(fullName).join(", ")}
+            </Typography>
+            <Typography color="textSecondary">{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
           </StyledDetailSection>
           <StyledNotesSection>
             <Typography variant="h5">Session Details</Typography>

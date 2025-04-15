@@ -22,7 +22,7 @@ export const VideoListingContainer = styled("div", {
 export const FilterBox = styled(Box, {
   name: "FilterBox",
 })(
-  ({ theme }) => css`
+  () => css`
     width: 100%;
     .${stackClasses.root} {
       align-items: center;
@@ -32,7 +32,6 @@ export const FilterBox = styled(Box, {
       width: 100%;
 
       .${typographyClasses.h2} {
-        color: ${theme.palette.colors.white};
         font-size: 24px;
         font-weight: 500;
         text-transform: capitalize;
@@ -44,11 +43,10 @@ export const FilterBox = styled(Box, {
 export const NoSearchResultsWrapper = styled("div", {
   name: "NoSearchResultsWrapper",
 })(
-  ({ theme }) => css`
+  () => css`
     margin-top: 10rem;
 
     .${typographyClasses.h3} {
-      color: ${theme.palette.colors.white};
       font-size: 24px;
       font-style: normal;
       font-weight: 400;
@@ -66,17 +64,17 @@ export const DropdownContainer = styled(Box, {
     align-items: center;
     display: flex;
     gap: 12px;
-    color: ${theme.palette.secondary.contrastText};
 
     .${buttonClasses.root} {
-      background-color: ${alpha(theme.palette.colors.white, 0.2)};
-      border-color: ${alpha(theme.palette.colors.white, 0.3)};
-      color: ${theme.palette.common.white};
+      background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.2) : theme.palette.primary.main};
+      border-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.3) : theme.palette.secondary.main};
+      color: ${theme.palette.secondary.contrastText};
+
       font-size: 14px;
       font-weight: 600;
 
       &:hover {
-        border-color: ${alpha(theme.palette.colors.white, 0.5)};
+        border-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.5) : theme.palette.secondary.main};
       }
     }
   `
