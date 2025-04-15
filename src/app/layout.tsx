@@ -1,4 +1,3 @@
-import "@/app/globals.css";
 import CssBaseline from "@mui/material/CssBaseline";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import type { Metadata } from "next";
@@ -24,11 +23,11 @@ export default function RootLayout({ children }: { children: React.ReactNode; pa
         <meta name="apple-mobile-web-app-title" content="Arbisoft Session Portal" />
       </head>
       <body>
-        <CssBaseline />
-        <InitColorSchemeScript />
         <GoogleOAuthProvider clientId={clientId}>
           <Providers>
             <ThemeProvider>
+              <InitColorSchemeScript />
+              <CssBaseline />
               <NotificationProvider>{children}</NotificationProvider>
             </ThemeProvider>
           </Providers>

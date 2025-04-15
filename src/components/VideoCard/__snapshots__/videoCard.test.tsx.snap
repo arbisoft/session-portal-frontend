@@ -3,9 +3,9 @@
 exports[`VideoCard should matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root custom-class normal-card css-1yhvm1c-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root custom-class normal-card css-fa3yf9-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
     data-testid="video-card"
-    style="--Paper-shadow: var(--mui-shadows-1); --Paper-overlay: var(--mui-overlays-1);"
+    style="--Paper-shadow: var(--mui-shadows-0); --Paper-overlay: var(--mui-overlays-0);"
   >
     <div
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
@@ -42,13 +42,13 @@ exports[`VideoCard should matches snapshot 1`] = `
           Refresher & AMA Session on Competency Framework Changes - January 2025
         </h3>
         <p
-          class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-sj15px-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-18jqlo7-MuiTypography-root"
           data-testid="video-card-organizer"
         >
           John Doe
         </p>
         <p
-          class="MuiTypography-root MuiTypography-bodyMedium date-time css-sj15px-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-bodyMedium date-time css-18jqlo7-MuiTypography-root"
           data-testid="video-card-date-time"
         >
           Jan 09, 2025

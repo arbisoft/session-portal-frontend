@@ -120,8 +120,9 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
             </Search>
           </Box>
           <NavbarRightArea>
+            {isDarkModeVisible && <ThemeToggle />}
             <Tooltip title="Open settings">
-              <IconButton data-testid="avatar-btn" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton size="large" data-testid="avatar-btn" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar variant="rounded" alt={userInfo.full_name ?? ""} src={userInfo.avatar ?? ""} />
               </IconButton>
             </Tooltip>
@@ -148,11 +149,6 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               <MenuItem data-testid="Logout" onClick={handleLogout}>
                 <Typography>Logout</Typography>
               </MenuItem>
-              {isDarkModeVisible && (
-                <MenuItem disableRipple disableTouchRipple>
-                  <ThemeToggle />
-                </MenuItem>
-              )}
             </Menu>
           </NavbarRightArea>
         </Toolbar>
