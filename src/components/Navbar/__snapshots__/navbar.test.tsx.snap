@@ -90,7 +90,7 @@ exports[`Navbar Component should match snapshot 1`] = `
         >
           <button
             aria-label="Open settings"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1j2eanh-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-16ybsem-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
             data-testid="avatar-btn"
             tabindex="0"

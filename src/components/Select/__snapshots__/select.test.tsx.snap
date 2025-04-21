@@ -11,11 +11,10 @@ exports[`Select Component should match snapshot 1`] = `
       Sort By
     </label>
     <div
-      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-sizeSmall css-8r70ge-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-sizeSmall MuiSelect-root css-8r70ge-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
       data-testid="sort-select"
     >
       <div
-        aria-controls=":r5:"
         aria-expanded="false"
         aria-haspopup="listbox"
         class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-laj7or-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
@@ -23,6 +22,7 @@ exports[`Select Component should match snapshot 1`] = `
         tabindex="0"
       >
         <span
+          aria-hidden="true"
           class="notranslate"
         >
           ​
@@ -54,6 +54,7 @@ exports[`Select Component should match snapshot 1`] = `
           class="css-w4cd9x"
         >
           <span
+            aria-hidden="true"
             class="notranslate"
           >
             ​
