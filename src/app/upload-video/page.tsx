@@ -1,6 +1,7 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
+
+import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import FileUpload from "@/features/UploadVideo/uploadVideo";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -10,10 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function UploadVideo() {
   return (
-    <Box width="100vw" height="100vh" display="flex" alignItems="center" justifyContent="center">
-      <Typography variant="h1" color="textSecondary">
-        UNDER CONSTRUCTION
-      </Typography>
-    </Box>
+    <MainLayoutContainer isLeftSidebarVisible={false}>
+      <FileUpload />
+    </MainLayoutContainer>
   );
 }
