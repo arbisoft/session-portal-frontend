@@ -1,10 +1,9 @@
 import React from "react";
 
-import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { ButtonProps } from "./buttonTypes";
-import { IconButton } from "./styled";
+import { IconButton, StyledButton } from "./styled";
 
 const ButtonComponent: React.FC<ButtonProps> = ({
   buttonType = "normal",
@@ -26,7 +25,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   }
 
   return (
-    <Button
+    <StyledButton
       {...rest}
       color={color}
       disabled={loading || disabled}
@@ -35,7 +34,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
       })}
     >
       {loading ? "Loading" : children}
-    </Button>
+    </StyledButton>
   );
 };
 
