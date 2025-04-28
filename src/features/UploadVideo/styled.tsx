@@ -1,8 +1,10 @@
 import Box from "@mui/material/Box";
+import { buttonClasses } from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import { cardActionsClasses } from "@mui/material/CardActions";
 import { cardContentClasses } from "@mui/material/CardContent";
 import { cardHeaderClasses } from "@mui/material/CardHeader";
+import { formLabelClasses } from "@mui/material/FormLabel";
 import { styled, css, alpha } from "@mui/material/styles";
 
 export const StyledCard = styled(Card, {
@@ -12,15 +14,15 @@ export const StyledCard = styled(Card, {
     background-color: ${alpha(theme.palette.common.white, 0.1)};
     border-radius: 12px;
     width: 700px;
-    text-align: center;
 
-    .${cardContentClasses.root} {
+    .first-step.${cardContentClasses.root} {
       align-items: center;
       display: flex;
       flex-direction: column;
       gap: 20px;
       height: 400px;
       justify-content: center;
+      text-align: center;
     }
 
     .${cardHeaderClasses.root} {
@@ -59,5 +61,50 @@ export const StyledIconContainer = styled(Box, {
     height: 50px;
     justify-content: center;
     width: 50px;
+  `
+);
+
+export const ImportContainer = styled(Box, {
+  name: "ImportContainer",
+})(
+  () => css`
+    align-items: center;
+    display: flex;
+    gap: 20px;
+    width: 60%;
+    margin-bottom: 20px;
+  `
+);
+
+export const InputContainer = styled(Box, {
+  name: "InputContainer",
+})(
+  () => css`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+
+    .${formLabelClasses.root} {
+      font-size: 14px;
+      font-weight: 400;
+    }
+  `
+);
+
+export const ThumbnailUploaderButtons = styled(Box, {
+  name: "ThumbnailUploaderButtons",
+})(
+  ({ theme }) => css`
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+
+    .${buttonClasses.root} {
+      border-radius: 12px;
+      color: ${theme.palette.common.white};
+      padding: 20px 30px;
+      width: 50%;
+    }
   `
 );
