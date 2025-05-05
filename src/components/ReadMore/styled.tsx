@@ -3,6 +3,8 @@ import Typography from "@mui/material/Typography";
 
 export const StyledReadMore = styled(Typography, { name: "Logo" })(() => {
   return css`
+    white-space: pre-line;
+
     .hidden {
       display: none;
     }

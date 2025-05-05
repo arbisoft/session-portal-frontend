@@ -43,6 +43,10 @@ const VideoDetail = () => {
   const areRecommendationsLoading = isRecommendationsFetching || isRecommendationsLoading || isRecommendationsUninitialized;
 
   useEffect(() => {
+    document.title = `${data?.event?.title ?? ""}  - Sessions Portal`;
+  }, [data?.event?.title]);
+
+  useEffect(() => {
     if (isNaN(parsedId) || error) {
       navigateTo("videos");
     }
@@ -101,14 +105,14 @@ const VideoDetail = () => {
               crossOrigin: true,
               playsInline: true,
               width: "100%",
-              title: data?.title ?? "",
+              title: data?.event?.title ?? "",
               videoSrc: data?.video_file ?? "",
               posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
-              posterAlt: data?.title ?? "",
+              posterAlt: data?.event?.title ?? "",
             }}
           />
           <StyledTitleSection>
-            <Typography variant="h4">{data?.title}</Typography>
+            <Typography variant="h4">{data?.event?.title}</Typography>
           </StyledTitleSection>
           <StyledDetailSection>
             <Typography variant="h6">{dataEvent?.presenters.map(fullName).join(", ")}</Typography>

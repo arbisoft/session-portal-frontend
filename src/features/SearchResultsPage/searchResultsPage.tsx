@@ -144,7 +144,7 @@ const SearchResultsPage = () => {
         <FilterBox>
           <Stack>
             <Typography variant="h2">
-              {`${t("search_results")} - `}
+              {`${t("search_results")} `}
               <Box component="span" color={theme.palette.secondary.main}>
                 {search}
               </Box>
