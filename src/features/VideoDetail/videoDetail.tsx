@@ -43,10 +43,6 @@ const VideoDetail = () => {
   }, [data?.event?.title]);
 
   useEffect(() => {
-    document.title = `${data?.event?.title ?? ""}  - Sessions Portal`;
-  }, [data?.event?.title]);
-
-  useEffect(() => {
     if (!videoId || error) {
       navigateTo("videos");
     }
