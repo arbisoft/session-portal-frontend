@@ -5,6 +5,7 @@ import React, { FC, useEffect, useRef } from "react";
 import { MediaPlayer, MediaProvider } from "@vidstack/react";
 import { Poster, type MediaPlayerInstance } from "@vidstack/react";
 import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
+import clsx from "clsx";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 
@@ -37,7 +38,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   return (
     <div style={{ width, height }}>
       <MediaPlayer
-        className={["player", className ?? ""].join()}
+        className={clsx("player", className)}
         crossOrigin={crossOrigin}
         playsInline={playsInline}
         ref={player}

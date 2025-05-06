@@ -101,7 +101,7 @@ const VideoDetail = () => {
               crossOrigin: true,
               playsInline: true,
               width: "100%",
-              title: data?.title ?? "",
+              title: "",
               videoSrc: data?.video_file ?? "",
               posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
               posterAlt: data?.title ?? "",
