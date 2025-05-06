@@ -56,7 +56,7 @@ const useNavigation = () => {
    */
   const navigateTo = (page: Page, params?: Record<string, string | number>) => {
     const url = getPageUrl(page, params);
-    router.push(url);
+    router.push(url, { scroll: true });
   };
 
   return { getPageUrl, navigateTo, language };
