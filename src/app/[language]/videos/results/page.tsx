@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 
 import SearchResultsPage from "@/features/SearchResultsPage";
-import { getServerTranslation } from "@/services/i18n";
 
 type Props = {
-  params: { language: string };
+  params: { language: string; search: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { t } = await getServerTranslation(params.language, "videos");
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { search } = searchParams;
+
+  const title = "Sessions Portal";
 
   return {
-    title: t("search_title"),
+    title: search ? `${search} - ${title}` : title,
   };
 }
 
