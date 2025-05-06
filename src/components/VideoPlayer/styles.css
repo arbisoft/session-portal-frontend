@@ -19,4 +19,8 @@
   [data-view-type="video"] {
     aspect-ratio: 16 /9;
   }
+
+  .vds-google-cast-button{
+    display: none;
+  }
 }

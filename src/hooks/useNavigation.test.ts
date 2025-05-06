@@ -57,19 +57,19 @@ describe("useNavigation", () => {
     const { result } = renderHook(() => useNavigation());
     result.current.navigateTo("videos");
 
-    expect(mockPush).toHaveBeenCalledWith("/en/videos");
+    expect(mockPush).toHaveBeenCalledWith("/en/videos", { scroll: true });
   });
 
   it("should call router.push with correct URL for videoDetail with ID", () => {
     const { result } = renderHook(() => useNavigation());
     result.current.navigateTo("videoDetail", { id: "456" });
 
-    expect(mockPush).toHaveBeenCalledWith("/en/videos/456");
+    expect(mockPush).toHaveBeenCalledWith("/en/videos/456", { scroll: true });
   });
 
   it("should call router.push with query parameters", () => {
     const { result } = renderHook(() => useNavigation());
     result.current.navigateTo("searchResult", { q: "example" });
-    expect(mockPush).toHaveBeenCalledWith("/en/videos/results?q=example");
+    expect(mockPush).toHaveBeenCalledWith("/en/videos/results?q=example", { scroll: true });
   });
 });
