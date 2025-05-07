@@ -23,9 +23,9 @@ export function middleware(req: NextRequest) {
   if (!language) language = fallbackLanguage;
 
   // Redirect if language in path is not supported
-  if (!languages.some((loc) => req.nextUrl.pathname.startsWith(`/${loc}`))) {
-    return NextResponse.redirect(new URL(`/${language}${req.nextUrl.pathname}${req.nextUrl.search}`, req.url));
-  }
+  // if (!languages.some((loc) => req.nextUrl.pathname.startsWith(`/${loc}`))) {
+  //   return NextResponse.redirect(new URL(`/${language}${req.nextUrl.pathname}${req.nextUrl.search}`, req.url));
+  // }
 
   if (req.headers.has("referer")) {
     const refererUrl = new URL(req.headers.get("referer") ?? "");

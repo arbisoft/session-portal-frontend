@@ -46,7 +46,7 @@ const useNavigation = () => {
     const queryString =
       params && Object.keys(params).length ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
 
-    return `/${language}${pageUrl}${queryString}`;
+    return `${pageUrl}${queryString}`;
   };
 
   /**
