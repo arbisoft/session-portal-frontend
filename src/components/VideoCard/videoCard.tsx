@@ -5,7 +5,6 @@ import CardContent from "@mui/material/CardContent";
 import Skeleton from "@mui/material/Skeleton";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import clsx from "clsx";
-import Image from "next/image";
 
 import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 
@@ -32,7 +31,7 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
       <CardContent>
         <ImageWrapper className="image-wrapper">
           <Skeleton width="100%" height="100%" variant="rounded" animation="wave" />
-          <Image
+          <img
             data-testid="video-card-image"
             alt={data.title}
             height={192}
