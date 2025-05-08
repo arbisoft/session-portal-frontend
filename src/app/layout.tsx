@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import { NotificationProvider } from "@/components/Notification";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 import ThemeProvider from "@/components/theme/theme-provider";
+import { DEFAULT_LANGUAGE, DEFAULT_LANGUAGE_DIR } from "@/constants/constants";
 import { Providers } from "@/redux/store/provider";
 import { getServerTranslation } from "@/services/i18n";
 import { languages } from "@/services/i18n/config";
@@ -42,7 +43,10 @@ export default function RootLayout({
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID ?? "";
 
   return (
-    <html lang={language} dir={dir(language)}>
+    <html lang={language || DEFAULT_LANGUAGE} dir={dir(language || DEFAULT_LANGUAGE_DIR)}>
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Arbisoft Session Portal" />
+      </head>
       <body>
         <CssBaseline />
         <InitColorSchemeScript />
