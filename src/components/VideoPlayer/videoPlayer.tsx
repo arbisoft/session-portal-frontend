@@ -2,8 +2,8 @@
 
 import React, { FC, useEffect, useRef } from "react";
 
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
-import { Poster, type MediaPlayerInstance } from "@vidstack/react";
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import { MediaPlayer, MediaProvider, useMediaState, Poster, type MediaPlayerInstance, PlayButton } from "@vidstack/react";
 import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
 import clsx from "clsx";
 import "@vidstack/react/player/styles/default/theme.css";
@@ -35,6 +35,8 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
     });
   }, [onVideoEnded]);
 
+  const isPaused = useMediaState("paused", player);
+
   return (
     <div style={{ width, height }}>
       <MediaPlayer
@@ -48,6 +50,12 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         <MediaProvider>
           <Poster className="vds-poster" src={posterSrc} alt={posterAlt} />
         </MediaProvider>
+
+        {isPaused && (
+          <PlayButton className="vds-main-play-button">
+            <PlayCircleIcon className="play-icon" />
+          </PlayButton>
+        )}
 
         {/* Layouts */}
         <DefaultVideoLayout icons={defaultLayoutIcons} />

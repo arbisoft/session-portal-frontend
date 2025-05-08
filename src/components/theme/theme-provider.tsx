@@ -44,26 +44,10 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
         cssVariables: {
           colorSchemeSelector: "class",
         },
-        colorSchemes: {
-          light: {
-            palette: {
-              mode: "light",
-              colors,
-            },
-          },
-          dark: {
-            palette: {
-              mode: "dark",
-              colors,
-            },
-          },
-        },
         shadows: [...defaultTheme.shadows].map(() => "none") as Shadows,
         palette: {
-          ...defaultTheme.palette,
-          colors: {
-            ...colors,
-          },
+          mode: "dark",
+          colors,
         },
         typography: {
           fontFamily: fontFamily,

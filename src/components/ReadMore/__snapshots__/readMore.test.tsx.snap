@@ -3,7 +3,7 @@
 exports[`ReadMore Component should match snapshot 1`] = `
 <DocumentFragment>
   <p
-    class="MuiTypography-root MuiTypography-bodySmall css-cbjig5-MuiTypography-root-Logo-root"
+    class="MuiTypography-root MuiTypography-bodySmall css-1vt6mdr-MuiTypography-root-Logo-root"
   >
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
     <span>
