@@ -194,7 +194,7 @@ const VideosListingPage = () => {
             />
           </VideoListingContainer>
         )}
-        {videoListings?.results.length === 0 && (
+        {!isDataLoading && !isFetching && videoListings?.results.length === 0 && (
           <NoSearchResultsWrapper>
             <Typography variant="h3">
               {t("no_videos_found")}{" "}
