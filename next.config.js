@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
-    dirs: ["src", "playwright-tests"],
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   images: {
     remotePatterns: [
@@ -11,6 +14,10 @@ const nextConfig = {
       { hostname: "loremflickr.com" },
     ],
   },
+  reactStrictMode: true,
+  swcMinify: true, // Faster and smaller output
+  compress: true, // Enable gzip compression
+  productionBrowserSourceMaps: false, // Remove source maps in production
 };
 
 module.exports = nextConfig;

@@ -8,4 +8,13 @@ example.env.local
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-
+.dockerignore
+Dockerfile
+.git
+.gitignore
+*.log
+README.md
+*.test.*
+*.spec.*
+*.ts
+*.tsx
