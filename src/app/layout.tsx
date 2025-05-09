@@ -1,11 +1,6 @@
 import "@/app/globals.css";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
 import CssBaseline from "@mui/material/CssBaseline";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { dir } from "i18next";
 import type { Metadata } from "next";
 
 import { NotificationProvider } from "@/components/Notification";
@@ -13,37 +8,18 @@ import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 import ThemeProvider from "@/components/theme/theme-provider";
 import { DEFAULT_LANGUAGE, DEFAULT_LANGUAGE_DIR } from "@/constants/constants";
 import { Providers } from "@/redux/store/provider";
-import { getServerTranslation } from "@/services/i18n";
-import { languages } from "@/services/i18n/config";
-import StoreLanguageProvider from "@/services/i18n/store-language-provider";
 
-type Props = {
-  params: { language: string };
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { t } = await getServerTranslation(params.language, "common");
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: t("title"),
+    title: "Sessions Portal",
   };
 }
 
-export function generateStaticParams() {
-  return languages.map((language) => ({ language }));
-}
-
-export default function RootLayout({
-  children,
-  params: { language },
-}: {
-  children: React.ReactNode;
-  params: { language: string };
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode; params: { language: string } }) {
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID ?? "";
 
   return (
-    <html lang={language || DEFAULT_LANGUAGE} dir={dir(language || DEFAULT_LANGUAGE_DIR)}>
+    <html lang={DEFAULT_LANGUAGE} dir={DEFAULT_LANGUAGE_DIR}>
       <head>
         <meta name="apple-mobile-web-app-title" content="Arbisoft Session Portal" />
       </head>
@@ -53,9 +29,7 @@ export default function RootLayout({
         <GoogleOAuthProvider clientId={clientId}>
           <Providers>
             <ThemeProvider>
-              <NotificationProvider>
-                <StoreLanguageProvider>{children}</StoreLanguageProvider>
-              </NotificationProvider>
+              <NotificationProvider>{children}</NotificationProvider>
             </ThemeProvider>
           </Providers>
         </GoogleOAuthProvider>

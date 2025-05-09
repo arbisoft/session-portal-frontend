@@ -19,14 +19,9 @@ exports[`VideoCard should matches snapshot 1`] = `
         />
         <img
           alt="Refresher & AMA Session on Competency Framework Changes - January 2025"
-          data-nimg="1"
           data-testid="video-card-image"
-          decoding="async"
           height="192"
-          loading="lazy"
-          src="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=640&q=75"
-          srcset="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=384&q=75 1x, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=640&q=75 2x"
-          style="color: transparent;"
+          src="http://localhost:1234/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png"
           width="315"
         />
         <div

@@ -4,12 +4,10 @@ import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 
 import { selectAccessToken } from "@/redux/login/selectors";
-import useLanguage from "@/services/i18n/use-language";
 
 import useNavigation from "./useNavigation";
 
 const useAuth = () => {
-  const language = useLanguage();
   const pathname = usePathname();
   const token = useSelector(selectAccessToken);
   const { navigateTo, getPageUrl } = useNavigation();
@@ -22,7 +20,7 @@ const useAuth = () => {
     } else if (!token) {
       navigateTo("login");
     }
-  }, [language, token, pathname]);
+  }, [token, pathname]);
 };
 
 export default useAuth;

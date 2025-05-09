@@ -17,14 +17,12 @@ import VideoPlayer from "@/components/VideoPlayer";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
-import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, fullName } from "@/utils/utils";
 
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
-  const { t } = useTranslation("common");
 
   const { navigateTo, getPageUrl } = useNavigation();
 
@@ -121,7 +119,7 @@ const VideoDetail = () => {
           <StyledNotesSection>
             <Typography variant="h5">Session Details</Typography>
             <div className="description">
-              <ReadMore text={dataEvent?.description ?? ""} showLessText={t("show_less")} showMoreText={t("show_more")} />
+              <ReadMore text={dataEvent?.description ?? ""} showLessText="Show Less" showMoreText="Show More" />
               {(data.event?.tags?.length ?? 0) > 0 && (
                 <TagsContainer>
                   {data.event?.tags?.map((tag) => (
