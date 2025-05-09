@@ -19,7 +19,6 @@ import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { EventsParams, OrderingField } from "@/models/Events";
 import { useGetEventsQuery, useLazyGetEventsQuery } from "@/redux/events/apiSlice";
-import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, generateYearList, parseNonPassedParams } from "@/utils/utils";
 
 import DateFilterDropdown from "./DateFilterDropdown";
@@ -45,7 +44,6 @@ const SkeletonLoader = () => (
 const VideosListingPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
-  const { t } = useTranslation("videos");
   const theme = useTheme();
 
   const matches = useMediaQuery(theme.breakpoints.down("lg"));
@@ -125,7 +123,7 @@ const VideosListingPage = () => {
     <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
       <FilterBox>
         <Stack>
-          <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? t("all"))}</Typography>
+          <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? "All")}</Typography>
           <DateFilterDropdown
             availableYears={generateYearList(2020)}
             initialSort={(sortingOption?.startsWith("-") ?? "-") ? "newest" : "oldest"}
@@ -197,7 +195,7 @@ const VideosListingPage = () => {
         {!isDataLoading && !isFetching && videoListings?.results.length === 0 && (
           <NoSearchResultsWrapper>
             <Typography variant="h3">
-              {t("no_videos_found")}{" "}
+              No videos found for{" "}
               <Box component="span" color={theme.palette.secondary.main}>
                 {filterOption || queryParams.playlist || queryParams.tag}
               </Box>

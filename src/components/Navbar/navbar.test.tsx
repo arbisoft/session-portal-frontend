@@ -210,6 +210,6 @@ describe("Navbar Component", () => {
 
     customRender(<Navbar />);
 
-    expect(screen.getByText("Upload Video")).toBeInTheDocument();
+    expect(screen.getByText("Upload a video")).toBeInTheDocument();
   });
 });

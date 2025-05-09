@@ -4,12 +4,9 @@ import SettingsBrightnessIcon from "@mui/icons-material/SettingsBrightness";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { useColorScheme } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
 
 const ThemeToggle = () => {
   const { mode, setMode } = useColorScheme();
-
-  const { t } = useTranslation("common");
 
   return (
     <>
@@ -19,17 +16,17 @@ const ThemeToggle = () => {
           onClick={() => setMode("light")}
           startIcon={<LightModeIcon />}
         >
-          {t("light")}
+          Light
         </Button>
         <Button
           variant={mode === "system" ? "contained" : undefined}
           onClick={() => setMode("system")}
           startIcon={<SettingsBrightnessIcon />}
         >
-          {t("system")}
+          System
         </Button>
         <Button variant={mode === "dark" ? "contained" : undefined} onClick={() => setMode("dark")} startIcon={<DarkModeIcon />}>
-          {t("dark")}
+          Dark
         </Button>
       </ButtonGroup>
     </>
