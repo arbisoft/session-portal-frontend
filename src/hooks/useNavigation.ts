@@ -1,7 +1,5 @@
 import { useRouter } from "next/navigation";
 
-import useLanguage from "@/services/i18n/use-language";
-
 export const ALLOWED_PAGES = {
   get home(): string {
     return "/";
@@ -27,7 +25,6 @@ type Page = keyof typeof ALLOWED_PAGES;
 
 const useNavigation = () => {
   const router = useRouter();
-  const language = useLanguage();
 
   /**
    * Generate a dynamic URL based on the page and optional params.
@@ -59,7 +56,7 @@ const useNavigation = () => {
     router.push(url, { scroll: true });
   };
 
-  return { getPageUrl, navigateTo, language };
+  return { getPageUrl, navigateTo };
 };
 
 export default useNavigation;

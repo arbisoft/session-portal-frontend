@@ -3,7 +3,6 @@ import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 
 import { selectAccessToken } from "@/redux/login/selectors";
-import useLanguage from "@/services/i18n/use-language";
 
 import useAuth from "./useAuth";
 import useNavigation from "./useNavigation";
@@ -16,7 +15,6 @@ jest.mock("next/navigation", () => ({
   usePathname: jest.fn(),
 }));
 
-jest.mock("@/services/i18n/use-language", () => jest.fn());
 jest.mock("./useNavigation", () => ({
   __esModule: true,
   default: jest.fn(),
@@ -33,8 +31,6 @@ describe("useAuth hook", () => {
       navigateTo: navigateToMock,
       getPageUrl: getPageUrlMock,
     });
-
-    (useLanguage as jest.Mock).mockReturnValue("en");
   });
 
   test("should redirects to 'videos' if user is authenticated and on home or login page", () => {
