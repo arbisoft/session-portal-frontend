@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import { styled, css, alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
-import { shouldForwardProp } from "@/utils/styleUtils";
+import { pxToRem, shouldForwardProp } from "@/utils/styleUtils";
 
 export const SidebarContainer = styled(Box, {
   name: "SidebarContainer",
@@ -49,7 +49,7 @@ export const Text = styled(Typography, {
   name: "Text",
 })(() => {
   return css`
-    font-size: 14px;
+    font-size: ${pxToRem(14)};
     line-height: 12px;
     font-weight: 500;
     letter-spacing: 0.4px;

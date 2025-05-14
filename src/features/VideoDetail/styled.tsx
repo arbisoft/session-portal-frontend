@@ -2,6 +2,8 @@ import Box from "@mui/material/Box";
 import { chipClasses } from "@mui/material/Chip";
 import { styled, css, alpha } from "@mui/material/styles";
 
+import { pxToRem } from "@/utils/styleUtils";
+
 export const StyledTitleSection = styled(Box, {
   name: "StyledTitleSection",
 })(
@@ -29,7 +31,7 @@ export const StyledDetailSection = styled(Box, {
     h6,
     p {
       color: ${theme.palette.colors.gray};
-      font-size: 16px;
+      font-size: ${pxToRem(16)};
       font-style: normal;
       font-weight: 500;
       line-height: normal;
@@ -47,7 +49,7 @@ export const StyledNotesSection = styled(Box, {
 
     h5 {
       color: ${theme.palette.colors.white};
-      font-size: 22px;
+      font-size: ${pxToRem(22)};
       font-style: normal;
       font-weight: 400;
       line-height: normal;
@@ -63,11 +65,10 @@ export const StyledNotesSection = styled(Box, {
 
       p {
         color: ${theme.palette.colors.white};
-        font-size: 12px;
+        font-size: ${pxToRem(12)};
         font-style: normal;
         font-weight: 400;
         line-height: normal;
-        text-transform: capitalize;
       }
     }
   `

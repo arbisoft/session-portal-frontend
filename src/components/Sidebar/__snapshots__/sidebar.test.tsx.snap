@@ -27,7 +27,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
           >
             All
           </p>
@@ -47,7 +47,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
           >
             Test-1
           </p>
@@ -67,7 +67,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
           >
             Test-2
           </p>
@@ -87,7 +87,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
           >
             Test-3
           </p>
