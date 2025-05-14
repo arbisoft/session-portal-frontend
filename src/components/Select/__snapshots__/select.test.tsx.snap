@@ -3,7 +3,7 @@
 exports[`Select Component should match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiBox-root css-199rwdr-SelectWrapper-root"
+    class="MuiBox-root css-94eo9s-SelectWrapper-root"
   >
     <label
       class="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-animated MuiFormLabel-colorPrimary MuiInputLabel-root MuiInputLabel-animated css-1qpm3yf-MuiFormLabel-root-MuiInputLabel-root"
