@@ -5,7 +5,7 @@ import { skeletonClasses } from "@mui/material/Skeleton";
 import { styled, css, alpha } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
-import { shouldForwardProp } from "@/utils/styleUtils";
+import { pxToRem, shouldForwardProp } from "@/utils/styleUtils";
 
 export const VideoCardContainer = styled(Card, {
   name: "VideoCardContainer",
@@ -67,7 +67,7 @@ export const VideoCardContainer = styled(Card, {
         .date-time,
         .organizer-name {
           color: ${theme.palette.colors.gray};
-          font-size: 14px;
+          font-size: ${pxToRem(14)};
           font-weight: 500;
         }
 
@@ -76,7 +76,7 @@ export const VideoCardContainer = styled(Card, {
           -webkit-line-clamp: 4;
           color: ${theme.palette.colors.white};
           display: -webkit-box;
-          font-size: 18px;
+          font-size: ${pxToRem(18)};
           font-weight: 500;
           overflow: hidden;
 
@@ -91,7 +91,7 @@ export const VideoCardContainer = styled(Card, {
       .${cardContentClasses.root} {
         .video-detail {
           .${typographyClasses.h3} {
-            font-size: 16px;
+            font-size: ${pxToRem(16)};
             font-weight: 600;
           }
         }
@@ -133,14 +133,14 @@ export const VideoCardContainer = styled(Card, {
           width: calc(100% - 113px);
 
           .${typographyClasses.h5} {
-            font-size: 12px;
+            font-size: ${pxToRem(12)};
             font-weight: 500;
           }
 
           .organizer-name,
           .date-time {
             color: ${theme.palette.colors.gray};
-            font-size: 12px;
+            font-size: ${pxToRem(12)};
           }
         }
       }
@@ -204,7 +204,7 @@ export const VideoCardContainer = styled(Card, {
 
           .organizer-name,
           .date-time {
-            font-size: 18px;
+            font-size: ${pxToRem(18)};
           }
         }
       }
@@ -263,7 +263,7 @@ export const VideoCardContainer = styled(Card, {
 
           .organizer-name,
           .date-time {
-            font-size: 18px;
+            font-size: ${pxToRem(18)};
           }
         }
       }
@@ -306,7 +306,7 @@ export const ImageWrapper = styled(Box, {
       border-radius: 2px;
       bottom: 10px;
       color: ${theme.palette.colors.white};
-      font-size: 12px;
+      font-size: ${pxToRem(12)};
       padding: 2px 4px;
       position: absolute;
       right: 10px;

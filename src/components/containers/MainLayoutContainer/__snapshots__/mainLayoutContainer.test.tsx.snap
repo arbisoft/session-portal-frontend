@@ -14,7 +14,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
         class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
       >
         <div
-          class="css-12uvfj0-Logo-root"
+          class="css-1j69kd3-Logo-root"
           data-testid="navbar-logo"
         >
           <svg
@@ -29,7 +29,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             />
           </svg>
           <h6
-            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1c6flzx-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-qcz5nl-MuiTypography-root"
           >
             Arbisoft Sessions Portal
           </h6>
@@ -148,7 +148,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
               >
                 All
               </p>
@@ -168,7 +168,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
               >
                 Test-1
               </p>
@@ -188,7 +188,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
               >
                 Test-2
               </p>
@@ -208,7 +208,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-rudw3m-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
               >
                 Test-3
               </p>

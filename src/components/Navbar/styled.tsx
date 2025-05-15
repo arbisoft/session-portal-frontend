@@ -3,6 +3,8 @@ import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
 import { alpha, css, styled } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
+import { pxToRem } from "@/utils/styleUtils";
+
 export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
   return css`
     align-items: center;
@@ -21,7 +23,7 @@ export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
 
     .${typographyClasses.h6} {
       color: ${theme.palette.common.white};
-      font-size: 16px;
+      font-size: ${pxToRem(16)};
       font-style: normal;
       font-weight: 700;
       line-height: normal;

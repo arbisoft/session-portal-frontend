@@ -4,6 +4,8 @@ import { stackClasses } from "@mui/material/Stack";
 import { styled, css, alpha } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
+import { pxToRem } from "@/utils/styleUtils";
+
 export const VideoListingContainer = styled("div", {
   name: "VideoListingContainer",
 })(
@@ -33,7 +35,7 @@ export const FilterBox = styled(Box, {
 
       .${typographyClasses.h2} {
         color: ${theme.palette.colors.white};
-        font-size: 24px;
+        font-size: ${pxToRem(24)};
         font-weight: 500;
         text-transform: capitalize;
       }
@@ -49,7 +51,7 @@ export const NoSearchResultsWrapper = styled("div", {
 
     .${typographyClasses.h3} {
       color: ${theme.palette.colors.white};
-      font-size: 24px;
+      font-size: ${pxToRem(24)};
       font-style: normal;
       font-weight: 400;
       letter-spacing: 0.4px;
@@ -72,7 +74,7 @@ export const DropdownContainer = styled(Box, {
       background-color: ${alpha(theme.palette.colors.white, 0.2)};
       border-color: ${alpha(theme.palette.colors.white, 0.3)};
       color: ${theme.palette.common.white};
-      font-size: 14px;
+      font-size: ${pxToRem(14)};
       font-weight: 600;
 
       &:hover {
