@@ -23,7 +23,6 @@ import useNavigation from "@/hooks/useNavigation";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
-import { useTranslation } from "@/services/i18n/client";
 
 import ThemeToggle from "../ThemeToggle";
 
@@ -35,7 +34,6 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
   const searchParams = useSearchParams();
   const { isFeatureEnabled } = useFeatureFlags();
   const theme = useTheme();
-  const { t } = useTranslation("common");
 
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
   const isUploadVideoVisible = isFeatureEnabled("uploadVideo");
@@ -106,7 +104,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               <StyledInputBase
                 value={searchQuery}
                 onChange={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
-                placeholder={t("search") + "..."}
+                placeholder={"Search..."}
                 inputProps={{ "aria-label": "search", "data-testid": "search-query" }}
               />
 
@@ -144,11 +142,11 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
             >
               {isUploadVideoVisible && (
                 <MenuItem onClick={() => navigateTo("uploadVideo")}>
-                  <Typography>{t("upload_video")}</Typography>
+                  <Typography>Upload a video</Typography>
                 </MenuItem>
               )}
               <MenuItem data-testid="Logout" onClick={handleLogout}>
-                <Typography>{t("logout")}</Typography>
+                <Typography>Logout</Typography>
               </MenuItem>
               {isDarkModeVisible && (
                 <MenuItem disableRipple disableTouchRipple>

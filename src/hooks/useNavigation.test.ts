@@ -2,13 +2,10 @@ import { renderHook } from "@testing-library/react";
 import { useRouter } from "next/navigation";
 
 import useNavigation from "@/hooks/useNavigation";
-import useLanguage from "@/services/i18n/use-language";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
-
-jest.mock("@/services/i18n/use-language", () => jest.fn());
 
 describe("useNavigation", () => {
   const mockPush = jest.fn();
@@ -16,7 +13,6 @@ describe("useNavigation", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
-    (useLanguage as jest.Mock).mockReturnValue("en");
   });
 
   it("should return the correct URL for static pages", () => {
