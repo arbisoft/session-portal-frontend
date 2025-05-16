@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
 import { alpha, css, styled } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
@@ -35,12 +36,15 @@ export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
 export const Search = styled("form", { name: "Search" })(({ theme }) => {
   return css`
     align-items: center;
-    background-color: ${alpha(theme.palette.common.white, 0.15)};
+    background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.15) : "#e3e3e3"};
     border-radius: ${theme.shape.borderRadius * 2}px;
     display: flex;
     justify-content: space-between;
     margin-left: 0;
     width: 450px;
+    overflow: hidden;
+
+    border: ${theme.palette.mode === "light" ? "1px solid #A5A5A5" : "unset"};
 
     &:hover {
       background-color: ${alpha(theme.palette.common.white, 0.25)};
@@ -52,19 +56,19 @@ export const Search = styled("form", { name: "Search" })(({ theme }) => {
   `;
 });
 
-export const SearchIconWrapper = styled("button", { name: "SearchIconWrapper" })(({ theme }) => {
+export const SearchIconWrapper = styled(Button, { name: "SearchIconWrapper" })(({ theme }) => {
   return css`
     align-items: center;
-    border: none;
-    background-color: ${alpha(theme.palette.common.white, 0.25)};
+    background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.25) : "#cccccc"};
     border-bottom-right-radius: ${theme.shape.borderRadius * 2}px;
+    border-radius: 0;
     border-top-right-radius: ${theme.shape.borderRadius * 2}px;
+    border: none;
+    color: inherit;
     display: flex;
     height: 100%;
     justify-content: center;
     padding: ${theme.spacing(0, 2)};
-    border: none;
-    cursor: pointer;
   `;
 });
 
@@ -83,6 +87,7 @@ export const StyledInputBase = styled(InputBase, { name: "StyledInputBase" })(
     & .${inputBaseClasses.input} {
       padding: ${theme.spacing(1, 1, 1, 1)};
       padding-right: calc(1em + ${theme.spacing(1)});
+      background-color: transparent;
     }
   `
 );
@@ -91,6 +96,7 @@ export const NavbarRightArea = styled(Box, { name: "NavbarRightArea" })(
   ({ theme }) => css`
     display: flex;
     flex-grow: 0;
+    gap: ${theme.spacing(2)};
     justify-content: flex-end;
     width: 240px;
 

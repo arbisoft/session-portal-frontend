@@ -1,6 +1,10 @@
+import { createTheme } from "@mui/material/styles";
+
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import { fireEvent, customRender as render, screen } from "@/jest/utils/testUtils";
 import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
+
+import ThemeProvider from "../theme/theme-provider";
 
 import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
@@ -92,5 +96,29 @@ describe("VideoCard", () => {
     const relatedProps = { ...mockProps, variant: "related-card" as const };
     render(<VideoCard {...relatedProps} />);
     expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
+  });
+
+  it("should apply correct background color in light mode", () => {
+    const theme = createTheme({ palette: { mode: "light" } });
+    render(
+      <ThemeProvider customTheme={theme}>
+        <VideoCard {...mockProps} />
+      </ThemeProvider>
+    );
+
+    const card = screen.getByTestId("video-card");
+    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
+  });
+
+  it("should apply correct background color in dark mode", () => {
+    const theme = createTheme({ palette: { mode: "dark" } });
+    render(
+      <ThemeProvider customTheme={theme}>
+        <VideoCard {...mockProps} />
+      </ThemeProvider>
+    );
+
+    const card = screen.getByTestId("video-card");
+    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
   });
 });

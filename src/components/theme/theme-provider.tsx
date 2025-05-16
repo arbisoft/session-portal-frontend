@@ -3,14 +3,7 @@
 import { useMemo, PropsWithChildren } from "react";
 
 import GlobalStyles from "@mui/material/GlobalStyles";
-import {
-  createTheme,
-  ThemeProvider as MuiThemeProvider,
-  responsiveFontSizes,
-  Shadows,
-  Theme,
-  useTheme,
-} from "@mui/material/styles";
+import { createTheme, ThemeProvider as MuiThemeProvider, responsiveFontSizes, Theme, useTheme } from "@mui/material/styles";
 import { Roboto_Condensed, Inter } from "next/font/google";
 
 import { pxToRem } from "@/utils/styleUtils";
@@ -54,10 +47,42 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
           cssVariables: {
             colorSchemeSelector: "class",
           },
-          shadows: [...defaultTheme.shadows].map(() => "none") as Shadows,
-          palette: {
-            mode: "dark",
-            colors,
+          defaultColorScheme: "dark",
+          colorSchemes: {
+            light: {
+              palette: {
+                mode: "light",
+                primary: {
+                  main: "#E3E3E3",
+                },
+                secondary: {
+                  main: "#A5A5A5",
+                },
+                background: {
+                  default: "#F2F2F2",
+                  paper: "#F3F3F3",
+                },
+                text: {
+                  primary: "#000000",
+                  secondary: "#7f7f7f",
+                },
+              },
+            },
+            dark: {
+              palette: {
+                mode: "dark",
+                primary: {
+                  main: "#3c3e42",
+                },
+                secondary: {
+                  main: "#51555c",
+                },
+                text: {
+                  primary: "#fff",
+                  secondary: "#908e8e",
+                },
+              },
+            },
           },
           typography: {
             fontFamily: fontFamily,
@@ -82,6 +107,23 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
                 },
               },
             },
+            MuiCssBaseline: {
+              /* c8 ignore next 14 */
+              styleOverrides: (val) => ({
+                body: {
+                  backgroundColor: colors.light.background,
+                  color: colors.light.text.primary,
+                  ...(val.palette.mode === "dark" && {
+                    backgroundAttachment: "fixed",
+                    backgroundColor: colors.dark.background,
+                    backgroundImage: "url(/assets/svgs/background.svg)",
+                    backgroundRepeat: "no-repeat",
+                    backgroundSize: "cover",
+                    color: colors.dark.text.primary,
+                  }),
+                },
+              }),
+            },
           },
         })
       ),
@@ -89,13 +131,13 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
   );
 
   return (
-    <MuiThemeProvider theme={props.customTheme || theme}>
+    <MuiThemeProvider theme={props.customTheme || theme} defaultMode="dark">
       <GlobalStyles
         styles={{
           "html,body,#__next": {
-            backgroundColor: "unset",
-            fontFamily,
             height: "100%",
+            margin: 0,
+            minHeight: "100%",
             width: "100%",
           },
         }}

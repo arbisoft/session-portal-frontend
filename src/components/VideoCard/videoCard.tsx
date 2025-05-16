@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import Skeleton from "@mui/material/Skeleton";
+import { useColorScheme } from "@mui/material/styles";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import clsx from "clsx";
 
@@ -12,6 +13,7 @@ import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
 const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315px", variant = "normal-card" }) => {
+  const { mode } = useColorScheme();
   const headingVariant: Record<typeof variant, TypographyProps["variant"]> = {
     "featured-card": "h1",
     "normal-card": "h3",
@@ -27,6 +29,8 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
       className={clsx(className, { [variant]: true })}
       data-testid="video-card"
       onClick={onClick}
+      variant={mode === "light" && variant === "featured-card" ? "outlined" : undefined}
+      elevation={0}
     >
       <CardContent>
         <ImageWrapper className="image-wrapper">
@@ -46,10 +50,10 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
           <Typography data-testid="video-card-title" variant={headingVariant[variant]} title={data.title}>
             {data.title}
           </Typography>
-          <Typography variant="bodyMedium" className="organizer-name" data-testid="video-card-organizer">
+          <Typography variant="bodyMedium" color="textSecondary" className="organizer-name" data-testid="video-card-organizer">
             {data.organizer}
           </Typography>
-          <Typography variant="bodyMedium" className="date-time" data-testid="video-card-date-time">
+          <Typography variant="bodyMedium" color="textSecondary" className="date-time" data-testid="video-card-date-time">
             {data.event_time}
           </Typography>
           {displayDescription && data.description && (
