@@ -11,7 +11,7 @@ exports[`VideoCard should matches snapshot 1`] = `
       class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
     >
       <div
-        class="image-wrapper MuiBox-root css-6judcc-ImageWrapper-root"
+        class="image-wrapper MuiBox-root css-yow5a2-ImageWrapper-root"
       >
         <span
           class="MuiSkeleton-root MuiSkeleton-rounded MuiSkeleton-wave css-116i1gn-MuiSkeleton-root"
