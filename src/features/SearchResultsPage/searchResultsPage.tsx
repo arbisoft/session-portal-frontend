@@ -122,7 +122,7 @@ const SearchResultsPage = () => {
     <NoSearchResultsWrapper>
       <Typography variant="h3">
         No videos found for{" "}
-        <Box component="span" color={theme.palette.secondary.main}>
+        <Box component="span" color={theme.palette.text.primary}>
           {search}
         </Box>
       </Typography>
@@ -142,8 +142,8 @@ const SearchResultsPage = () => {
         <FilterBox>
           <Stack>
             <Typography variant="h2">
-              Showing search results for
-              <Box component="span" color={theme.palette.secondary.main}>
+              Showing search results for&nbsp;
+              <Box component="span" color={theme.palette.text.primary}>
                 {search}
               </Box>
             </Typography>
