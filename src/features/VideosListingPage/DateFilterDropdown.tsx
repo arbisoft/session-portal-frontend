@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
 import { DropdownContainer } from "./styled";
@@ -28,6 +29,8 @@ const DateFilterDropdown = ({
   onSortChange,
   onYearChange,
 }: Props) => {
+  const theme = useTheme();
+
   const [sortBy, setSortBy] = useState(initialSort);
   const [yearFilter, setYearFilter] = useState<string | undefined>(initialYear);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -107,7 +110,7 @@ const DateFilterDropdown = ({
         <Divider sx={{ my: 1 }} />
 
         <MenuItem onClick={clearFilters}>
-          <Typography color="primary">Clear All Filters</Typography>
+          <Typography color={theme.palette.text.primary}>Clear All Filters</Typography>
         </MenuItem>
       </Menu>
     </DropdownContainer>
