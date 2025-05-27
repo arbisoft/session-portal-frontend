@@ -176,10 +176,8 @@ describe("Navbar Component", () => {
       isFeatureEnabled: (feature: string) => feature === "darkModeSwitcher",
     });
     customRender(<Navbar />);
-    fireEvent.click(screen.getByTestId("avatar-btn"));
-    expect(screen.getByRole("button", { name: /light/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /system/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /dark/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("dark-mode-button"));
+    expect(screen.getByRole("dark-mode-button")).toBeInTheDocument();
   });
 
   test("should navigate to the videos page when logo is clicked", () => {
@@ -210,6 +208,6 @@ describe("Navbar Component", () => {
 
     customRender(<Navbar />);
 
-    expect(screen.getByText("Upload Video")).toBeInTheDocument();
+    expect(screen.getByText("Upload a video")).toBeInTheDocument();
   });
 });

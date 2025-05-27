@@ -19,7 +19,6 @@ import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { EventsParams, OrderingField } from "@/models/Events";
 import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
-import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, NoSearchResultsWrapper, SearchCardLoadingState, SearchResultsContainer } from "./styled";
@@ -49,7 +48,6 @@ const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
   const theme = useTheme();
-  const { t } = useTranslation("videos");
 
   const matches = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -123,8 +121,8 @@ const SearchResultsPage = () => {
   const renderNoResults = () => (
     <NoSearchResultsWrapper>
       <Typography variant="h3">
-        {t("no_videos_found")}{" "}
-        <Box component="span" color={theme.palette.secondary.main}>
+        No videos found for{" "}
+        <Box component="span" color={theme.palette.text.primary}>
           {search}
         </Box>
       </Typography>
@@ -144,13 +142,13 @@ const SearchResultsPage = () => {
         <FilterBox>
           <Stack>
             <Typography variant="h2">
-              {`${t("search_results")} `}
-              <Box component="span" color={theme.palette.secondary.main}>
+              Showing search results for&nbsp;
+              <Box component="span" color={theme.palette.text.primary}>
                 {search}
               </Box>
             </Typography>
             <Select
-              label={t("sort_by")}
+              label="Sort By"
               menuItems={[
                 { value: "-event_time", label: "Newest First" },
                 { value: "event_time", label: "Oldest First" },

@@ -58,7 +58,6 @@ export const VideoCardContainer = styled(Card, {
         .${typographyClasses.h1}, .${typographyClasses.h5}, .${typographyClasses.h3} {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
-          color: ${theme.palette.colors.white};
           display: -webkit-box;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -66,7 +65,6 @@ export const VideoCardContainer = styled(Card, {
 
         .date-time,
         .organizer-name {
-          color: ${theme.palette.colors.gray};
           font-size: ${pxToRem(14)};
           font-weight: 500;
         }
@@ -74,7 +72,6 @@ export const VideoCardContainer = styled(Card, {
         .video-description {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 4;
-          color: ${theme.palette.colors.white};
           display: -webkit-box;
           font-size: ${pxToRem(18)};
           font-weight: 500;
@@ -139,7 +136,6 @@ export const VideoCardContainer = styled(Card, {
 
           .organizer-name,
           .date-time {
-            color: ${theme.palette.colors.gray};
             font-size: ${pxToRem(12)};
           }
         }
@@ -147,7 +143,7 @@ export const VideoCardContainer = styled(Card, {
     }
 
     &.featured-card {
-      background-color: ${alpha(theme.palette.common.white, 0.06)};
+      background-color: ${alpha(theme.palette.common.white, theme.palette.mode === "dark" ? 0.06 : 0.7)};
       border-radius: 12px;
       display: flex;
       padding: 30px;
@@ -304,12 +300,12 @@ export const ImageWrapper = styled(Box, {
     .video-duration {
       background-color: ${alpha(theme.palette.common.black, 0.7)};
       border-radius: 2px;
-      bottom: 10px;
-      color: ${theme.palette.colors.white};
+      color: ${theme.palette.common.white};
       font-size: ${pxToRem(12)};
       padding: 2px 4px;
       position: absolute;
-      right: 10px;
+      bottom: 5px;
+      right: 5px;
       z-index: 1;
     }
   `;

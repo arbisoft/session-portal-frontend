@@ -14,7 +14,7 @@ export const SelectWrapper = styled(Box, {
     min-width: 124px;
 
     .${selectClasses.select} {
-      background-color: ${alpha(theme.palette.colors.white, 0.2)};
+      background-color: ${alpha(theme.palette.common.white, 0.2)};
       font-size: ${pxToRem(14)};
       font-weight: 600;
     }

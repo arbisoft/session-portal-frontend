@@ -9,12 +9,16 @@ exports[`Sidebar Component should match snapshot 1`] = `
     <div
       class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
     >
-      <div
-        class="MuiBox-root css-3a3hw0"
+      <ul
+        class="MuiList-root MuiList-padding css-b7dj7n-MuiList-root"
+        role="menu"
+        tabindex="-1"
       >
-        <div
-          class="MuiStack-root css-16x1c2h-MuiStack-root-MenuItem-root"
+        <li
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
           data-testid="sidebar-item-All"
+          role="menuitem"
+          tabindex="0"
         >
           <img
             alt="All"
@@ -31,10 +35,12 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             All
           </p>
-        </div>
-        <div
-          class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+        </li>
+        <li
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
           data-testid="sidebar-item-Test-1"
+          role="menuitem"
+          tabindex="-1"
         >
           <img
             alt="Test-1"
@@ -51,10 +57,12 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             Test-1
           </p>
-        </div>
-        <div
-          class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+        </li>
+        <li
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
           data-testid="sidebar-item-Test-2"
+          role="menuitem"
+          tabindex="-1"
         >
           <img
             alt="Test-2"
@@ -71,10 +79,12 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             Test-2
           </p>
-        </div>
-        <div
-          class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+        </li>
+        <li
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
           data-testid="sidebar-item-Test-3"
+          role="menuitem"
+          tabindex="-1"
         >
           <img
             alt="Test-3"
@@ -91,10 +101,10 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             Test-3
           </p>
-        </div>
-      </div>
+        </li>
+      </ul>
       <div
-        class="MuiBox-root css-sa4rw2-TagsContainer-root"
+        class="MuiBox-root css-1do1o5k-TagsContainer-root"
         data-testid="sidebar-tags"
       >
         <div

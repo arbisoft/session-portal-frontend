@@ -1,27 +1,18 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import type { Metadata } from "next";
 
-import { getServerTranslation } from "@/services/i18n";
+import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import FileUpload from "@/features/UploadVideo/uploadVideo";
 
-type Props = {
-  params: { language: string };
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { t } = await getServerTranslation(params.language, "upload-video");
-
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: t("title"),
+    title: "Upload a video - Sessions Portal",
   };
 }
 
 export default function UploadVideo() {
   return (
-    <Box width="100vw" height="100vh" display="flex" alignItems="center" justifyContent="center">
-      <Typography variant="h1" color="textSecondary">
-        UNDER CONSTRUCTION
-      </Typography>
-    </Box>
+    <MainLayoutContainer isLeftSidebarVisible={false}>
+      <FileUpload />
+    </MainLayoutContainer>
   );
 }

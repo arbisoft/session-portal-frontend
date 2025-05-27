@@ -38,10 +38,10 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           class="MuiBox-root css-1rqqp05"
         >
           <form
-            class="css-tdacmr-Search-root"
+            class="css-asd7gd-Search-root"
           >
             <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-16stwic-MuiInputBase-root-StyledInputBase-root"
+              class="MuiInputBase-root MuiInputBase-colorPrimary css-1kssppa-MuiInputBase-root-StyledInputBase-root"
             >
               <input
                 aria-label="search"
@@ -69,7 +69,9 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </svg>
             </div>
             <button
-              class="css-ejiypo-SearchIconWrapper-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-vih3tv-MuiButtonBase-root-MuiButton-root-SearchIconWrapper-root"
+              tabindex="0"
+              type="button"
             >
               <svg
                 aria-hidden="true"
@@ -86,11 +88,11 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           </form>
         </div>
         <div
-          class="MuiBox-root css-1i6c8yb-NavbarRightArea-root"
+          class="MuiBox-root css-si7qf5-NavbarRightArea-root"
         >
           <button
             aria-label="Open settings"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1j2eanh-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
             data-testid="avatar-btn"
             tabindex="0"
@@ -130,12 +132,16 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
         <div
           class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
         >
-          <div
-            class="MuiBox-root css-3a3hw0"
+          <ul
+            class="MuiList-root MuiList-padding css-b7dj7n-MuiList-root"
+            role="menu"
+            tabindex="-1"
           >
-            <div
-              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
               data-testid="sidebar-item-All"
+              role="menuitem"
+              tabindex="0"
             >
               <img
                 alt="All"
@@ -152,10 +158,12 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 All
               </p>
-            </div>
-            <div
-              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+            </li>
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
               data-testid="sidebar-item-Test-1"
+              role="menuitem"
+              tabindex="-1"
             >
               <img
                 alt="Test-1"
@@ -172,10 +180,12 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 Test-1
               </p>
-            </div>
-            <div
-              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+            </li>
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
               data-testid="sidebar-item-Test-2"
+              role="menuitem"
+              tabindex="-1"
             >
               <img
                 alt="Test-2"
@@ -192,10 +202,12 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 Test-2
               </p>
-            </div>
-            <div
-              class="MuiStack-root css-okam97-MuiStack-root-MenuItem-root"
+            </li>
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
               data-testid="sidebar-item-Test-3"
+              role="menuitem"
+              tabindex="-1"
             >
               <img
                 alt="Test-3"
@@ -212,10 +224,10 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 Test-3
               </p>
-            </div>
-          </div>
+            </li>
+          </ul>
           <div
-            class="MuiBox-root css-sa4rw2-TagsContainer-root"
+            class="MuiBox-root css-1do1o5k-TagsContainer-root"
             data-testid="sidebar-tags"
           >
             <div
