@@ -300,12 +300,12 @@ export const ImageWrapper = styled(Box, {
     .video-duration {
       background-color: ${alpha(theme.palette.common.black, 0.7)};
       border-radius: 2px;
-      bottom: 10px;
       color: ${theme.palette.common.white};
       font-size: ${pxToRem(12)};
       padding: 2px 4px;
       position: absolute;
-      right: 10px;
+      bottom: 5px;
+      right: 5px;
       z-index: 1;
     }
   `;
