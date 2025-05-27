@@ -88,7 +88,6 @@ const VideosListingPage = () => {
   }, [queryParams, page]);
 
   useEffect(() => {
-    setPage(1);
     fetchEvents();
   }, [queryParams, fetchEvents]);
 
