@@ -92,11 +92,11 @@ describe("Navbar Component", () => {
     });
   });
 
-  test("should render logo with YouTube icon and text", async () => {
+  test("should render arbisoft logo and text", async () => {
     customRender(<Navbar />);
     await waitFor(() => {
       expect(screen.getByText("Arbisoft Sessions Portal")).toBeInTheDocument();
-      expect(screen.getByTestId("YouTubeIcon")).toBeInTheDocument();
+      expect(screen.getByTestId("arbisoftLogo")).toBeInTheDocument();
     });
   });
 
