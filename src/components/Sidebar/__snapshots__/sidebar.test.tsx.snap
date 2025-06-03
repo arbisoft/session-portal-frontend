@@ -21,7 +21,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           tabindex="0"
         >
           <img
-            alt="All"
+            alt="All videos"
             data-nimg="1"
             decoding="async"
             height="12"
@@ -31,9 +31,9 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
           >
-            All
+            All videos
           </p>
         </li>
         <li
@@ -53,7 +53,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
           >
             Test-1
           </p>
@@ -75,7 +75,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
           >
             Test-2
           </p>
@@ -97,7 +97,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-2u8xl4-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
           >
             Test-3
           </p>

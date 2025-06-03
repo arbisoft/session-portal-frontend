@@ -122,7 +122,7 @@ const VideosListingPage = () => {
     <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
       <FilterBox>
         <Stack>
-          <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? "All")}</Typography>
+          <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? "All videos")}</Typography>
           <DateFilterDropdown
             availableYears={generateYearList(2020)}
             initialSort={(sortingOption?.startsWith("-") ?? "-") ? "newest" : "oldest"}
@@ -195,7 +195,7 @@ const VideosListingPage = () => {
           <NoSearchResultsWrapper>
             <Typography variant="h3">
               No videos found for{" "}
-              <Box component="span" color={theme.palette.secondary.main}>
+              <Box component="span" color={theme.palette.text.primary}>
                 {filterOption || queryParams.playlist || queryParams.tag}
               </Box>
             </Typography>
