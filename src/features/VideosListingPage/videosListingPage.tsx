@@ -70,6 +70,7 @@ const VideosListingPage = () => {
   else delete defaultEventParams.is_featured;
 
   const [page, setPage] = useState(1);
+  const [currentPlaylist, setCurrentPlaylist] = useState<string | null>(null);
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
   const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery(defaultEventParams);
 
@@ -176,7 +177,11 @@ const VideosListingPage = () => {
               data={videoListings?.results ?? []}
               useWindowScroll
               endReached={() => {
-                !isFetching && videoListings?.next && setPage((prev) => prev + 1);
+                if (!isFetching && videoListings?.next && currentPlaylist === queryParams.playlist) setPage((prev) => prev + 1);
+                else {
+                  setCurrentPlaylist(queryParams.playlist || "");
+                  setPage(1);
+                }
               }}
               increaseViewportBy={0}
               components={{
