@@ -44,8 +44,8 @@ const Sidebar = () => {
         ) : (
           <MenuList>
             <StyledMenuItem selected={!playlist && !tag} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
-              <Image src="/assets/images/sidebar-item-icon.svg" alt="All" width={18} height={12} />
-              <Text>All</Text>
+              <Image src="/assets/images/sidebar-item-icon.svg" alt="All videos" width={18} height={12} />
+              <Text>All videos</Text>
             </StyledMenuItem>
             {playlists.map((item) => (
               <StyledMenuItem

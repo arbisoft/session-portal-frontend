@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { styled, css } from "@mui/material/styles";
+import { typographyClasses } from "@mui/material/Typography";
 
 export const LoginContainer = styled(Box, {
   name: "LoginContainer",
@@ -25,6 +26,12 @@ export const LoginSubContainer = styled(Box, {
     gap: 30px;
     padding: 50px;
     width: 450px;
+
+    .${typographyClasses.h4} {
+      line-height: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
   `
 );
 

@@ -48,14 +48,12 @@ const VideosListingPage = () => {
 
   const matches = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const [page, setPage] = useState(1);
-  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
-  const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery({
+  const defaultEventParams: EventsParams = {
     ...defaultParams,
     is_featured: true,
     page_size: 1,
     ordering: ["-event_time"],
-  });
+  };
 
   const queryParams = useMemo(
     () => ({
@@ -67,6 +65,14 @@ const VideosListingPage = () => {
     }),
     [searchParams]
   );
+
+  if (!queryParams.tag && !queryParams.playlist) defaultEventParams.is_featured = true;
+  else delete defaultEventParams.is_featured;
+
+  const [page, setPage] = useState(1);
+  const [currentPlaylist, setCurrentPlaylist] = useState<string | null>(null);
+  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
+  const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery(defaultEventParams);
 
   const sortingOption = queryParams.order;
   const filterOption = queryParams.year;
@@ -84,6 +90,10 @@ const VideosListingPage = () => {
       search: queryParams.search || undefined,
       tag: queryParams.search ? "" : (queryParams.tag ?? ""),
     }) as EventsParams;
+
+    if (!queryParams.tag && !queryParams.playlist) params.is_featured = false;
+    else delete params.is_featured;
+
     getEvents(params);
   }, [queryParams, page]);
 
@@ -122,7 +132,7 @@ const VideosListingPage = () => {
     <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
       <FilterBox>
         <Stack>
-          <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? "All")}</Typography>
+          <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? "All videos")}</Typography>
           <DateFilterDropdown
             availableYears={generateYearList(2020)}
             initialSort={(sortingOption?.startsWith("-") ?? "-") ? "newest" : "oldest"}
@@ -167,7 +177,11 @@ const VideosListingPage = () => {
               data={videoListings?.results ?? []}
               useWindowScroll
               endReached={() => {
-                !isFetching && videoListings?.next && setPage((prev) => prev + 1);
+                if (!isFetching && videoListings?.next && currentPlaylist === queryParams.playlist) setPage((prev) => prev + 1);
+                else {
+                  setCurrentPlaylist(queryParams.playlist || "");
+                  setPage(1);
+                }
               }}
               increaseViewportBy={0}
               components={{
@@ -195,7 +209,7 @@ const VideosListingPage = () => {
           <NoSearchResultsWrapper>
             <Typography variant="h3">
               No videos found for{" "}
-              <Box component="span" color={theme.palette.secondary.main}>
+              <Box component="span" color={theme.palette.text.primary}>
                 {filterOption || queryParams.playlist || queryParams.tag}
               </Box>
             </Typography>

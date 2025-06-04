@@ -2,7 +2,7 @@ import { EventsParams } from "@/models/Events";
 
 export const defaultTag = {
   id: 0,
-  name: "All",
+  name: "All videos",
 };
 
 export const defaultParams: EventsParams = {
