@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import useTheme from "@mui/material/styles/useTheme";
 import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
@@ -19,6 +20,7 @@ import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./style
 
 export default function LoginPage() {
   useAuth();
+  const theme = useTheme();
 
   const { navigateTo } = useNavigation();
   const { showNotification } = useNotification();
@@ -77,6 +79,9 @@ export default function LoginPage() {
       </Box>
       <LoginSubContainer>
         <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />
+        <Typography variant="h4" color={theme.palette.text.secondary}>
+          Sessions Portal
+        </Typography>
         <LoginButtonContainer>
           <Button
             data-testid="login-button"

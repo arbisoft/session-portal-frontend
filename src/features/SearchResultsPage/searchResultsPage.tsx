@@ -57,7 +57,7 @@ const SearchResultsPage = () => {
 
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
 
-  const isDataLoading = isFetching || isLoading || isUninitialized;
+  const isDataLoading = isLoading || isUninitialized;
 
   const onSortingHandler = useCallback(
     (val: unknown) => {

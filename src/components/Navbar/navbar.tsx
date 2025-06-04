@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import YouTube from "@mui/icons-material/YouTube";
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -15,6 +14,7 @@ import { useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -93,8 +93,8 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
             </IconButton>
           )}
           <Logo data-testid="navbar-logo" onClick={() => navigateTo("videos")}>
-            <YouTube />
-            <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" } }}>
+            <Image src={"/assets/images/apple-icon.png"} width={24} height={24} alt="Arbisoft Icon" data-testid="arbisoftLogo" />
+            <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" }, marginLeft: theme.spacing(1) }}>
               Arbisoft Sessions Portal
             </Typography>
           </Logo>
