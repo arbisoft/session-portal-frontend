@@ -48,14 +48,12 @@ const VideosListingPage = () => {
 
   const matches = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const [page, setPage] = useState(1);
-  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
-  const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery({
+  const defaultEventParams: EventsParams = {
     ...defaultParams,
     is_featured: true,
     page_size: 1,
     ordering: ["-event_time"],
-  });
+  };
 
   const queryParams = useMemo(
     () => ({
@@ -67,6 +65,13 @@ const VideosListingPage = () => {
     }),
     [searchParams]
   );
+
+  if (!queryParams.tag && !queryParams.playlist) defaultEventParams.is_featured = true;
+  else delete defaultEventParams.is_featured;
+
+  const [page, setPage] = useState(1);
+  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
+  const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery(defaultEventParams);
 
   const sortingOption = queryParams.order;
   const filterOption = queryParams.year;
@@ -84,6 +89,10 @@ const VideosListingPage = () => {
       search: queryParams.search || undefined,
       tag: queryParams.search ? "" : (queryParams.tag ?? ""),
     }) as EventsParams;
+
+    if (!queryParams.tag && !queryParams.playlist) params.is_featured = false;
+    else delete params.is_featured;
+
     getEvents(params);
   }, [queryParams, page]);
 
