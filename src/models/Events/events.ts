@@ -31,6 +31,7 @@ export interface Event {
   video_duration: number;
   workstream_id: string;
   video_file: string;
+  slug: string;
 }
 
 export interface Recommendation extends Event {}
@@ -74,4 +75,5 @@ export type EventsParams = {
   search?: string;
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   tag?: string;
+  linked_to_events?: "True" | "False";
 };

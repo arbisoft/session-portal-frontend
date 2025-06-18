@@ -187,7 +187,7 @@ describe("eventsApi endpoints", () => {
       { status: 200 }
     );
 
-    const result = await store.dispatch(eventsApi.endpoints.eventDetail.initiate(1));
+    const result = await store.dispatch(eventsApi.endpoints.eventDetail.initiate("test-event"));
 
     expect(result.data).toEqual({
       title: "string",
@@ -271,7 +271,7 @@ describe("eventsApi endpoints", () => {
       ])
     );
 
-    const { result } = renderHook(() => useRecommendationQuery(1), {
+    const { result } = renderHook(() => useRecommendationQuery("test-event"), {
       wrapper: ({ children }) => <Providers>{children}</Providers>,
     });
     await waitFor(() => {

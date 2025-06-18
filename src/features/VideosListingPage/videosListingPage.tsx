@@ -51,7 +51,7 @@ const VideosListingPage = () => {
   const defaultEventParams: EventsParams = {
     ...defaultParams,
     is_featured: true,
-    page_size: 1,
+    page_size: 12,
     ordering: ["-event_time"],
   };
 
@@ -69,6 +69,7 @@ const VideosListingPage = () => {
   if (!queryParams.tag && !queryParams.playlist) defaultEventParams.is_featured = true;
   else delete defaultEventParams.is_featured;
 
+  const [isLoadingEvents, setIsLoadingEvents] = useState(false);
   const [page, setPage] = useState(1);
   const [currentPlaylist, setCurrentPlaylist] = useState<string | null>(null);
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
@@ -78,6 +79,7 @@ const VideosListingPage = () => {
   const filterOption = queryParams.year;
 
   const fetchEvents = useCallback(() => {
+    setIsLoadingEvents(true);
     const params: EventsParams = parseNonPassedParams({
       ...defaultParams,
       event_time_after: queryParams.year ? format(startOfYear(new Date(queryParams.year)), "yyyy-MM-dd") : undefined,
@@ -94,12 +96,30 @@ const VideosListingPage = () => {
     if (!queryParams.tag && !queryParams.playlist) params.is_featured = false;
     else delete params.is_featured;
 
-    getEvents(params);
+    const timer = setTimeout(() => {
+      getEvents(params);
+      clearTimeout(timer);
+      setIsLoadingEvents(false);
+    }, 500);
   }, [queryParams, page]);
 
   useEffect(() => {
     fetchEvents();
   }, [queryParams, fetchEvents]);
+
+  useEffect(() => {
+    const handler = () => {
+      parseNonPassedParams({
+        ...omit(queryParams, ["order", "year"]),
+      });
+    };
+
+    window.addEventListener("reset-filter", handler);
+
+    return () => {
+      window.removeEventListener("reset-filter", handler);
+    };
+  }, []);
 
   const onQueryParamChange = useCallback(
     (key: "order" | "year", val: unknown) => {
@@ -126,7 +146,7 @@ const VideosListingPage = () => {
   }, [queryParams]);
 
   const latestFeaturedVideo = featureVideos?.results[0];
-  const isDataLoading = isLoading || isUninitialized || !videoListings;
+  const isDataLoading = isLoadingEvents || isLoading || isUninitialized || !videoListings;
 
   return (
     <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
@@ -162,7 +182,7 @@ const VideosListingPage = () => {
               video_duration: convertSecondsToFormattedTime(latestFeaturedVideo.video_duration),
               video_file: latestFeaturedVideo.video_file ? BASE_URL.concat(latestFeaturedVideo.video_file) : undefined,
             }}
-            onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.id })}
+            onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.slug })}
             variant="featured-card"
             width="100%"
           />
@@ -198,7 +218,7 @@ const VideosListingPage = () => {
                     video_file: videoCard.video_file ? BASE_URL.concat(videoCard.video_file) : undefined,
                   }}
                   key={videoCard.id}
-                  onClick={() => navigateTo("videoDetail", { id: videoCard.id })}
+                  onClick={() => navigateTo("videoDetail", { id: videoCard.slug })}
                   width="100%"
                 />
               )}
