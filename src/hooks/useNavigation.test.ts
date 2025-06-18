@@ -40,7 +40,7 @@ describe("useNavigation", () => {
 
   it("should return correct URL for videoDetail with ID", () => {
     const { result } = renderHook(() => useNavigation());
-    expect(result.current.getPageUrl("videoDetail", { id: "123" })).toBe("/videos/123");
+    expect(result.current.getPageUrl("videoDetail", { id: "test-video-slug" })).toBe("/videos/test-video-slug");
   });
 
   it("should return correct URL with query parameters", () => {
@@ -58,9 +58,9 @@ describe("useNavigation", () => {
 
   it("should call router.push with correct URL for videoDetail with ID", () => {
     const { result } = renderHook(() => useNavigation());
-    result.current.navigateTo("videoDetail", { id: "456" });
+    result.current.navigateTo("videoDetail", { id: "test-video-slug" });
 
-    expect(mockPush).toHaveBeenCalledWith("/videos/456", { scroll: true });
+    expect(mockPush).toHaveBeenCalledWith("/videos/test-video-slug", { scroll: true });
   });
 
   it("should call router.push with query parameters", () => {

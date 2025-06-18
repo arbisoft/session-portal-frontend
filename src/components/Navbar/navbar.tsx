@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -26,7 +25,7 @@ import { persistor } from "@/redux/store/configureStore";
 
 import ThemeToggle from "../ThemeToggle";
 
-import { CancelIconWrapper, Logo, NavbarRightArea, Search, SearchIconWrapper, StyledInputBase } from "./styled";
+import { CancelIconWrapper, Logo, NavbarRightArea, Search, SearchIconWrapper, StyledAppBar, StyledInputBase } from "./styled";
 
 function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?: VoidFunction; shouldShowDrawer?: boolean }) {
   const dispatch = useDispatch();
@@ -77,7 +76,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
   }, [search]);
 
   return (
-    <AppBar position="sticky" data-testid="navbar">
+    <StyledAppBar data-testid="navbar">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
           {shouldShowDrawer && (
@@ -153,7 +152,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
           </NavbarRightArea>
         </Toolbar>
       </Container>
-    </AppBar>
+    </StyledAppBar>
   );
 }
 
