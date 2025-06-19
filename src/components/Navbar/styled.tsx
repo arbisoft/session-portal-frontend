@@ -7,7 +7,7 @@ import { typographyClasses } from "@mui/material/Typography";
 
 import { pxToRem } from "@/utils/styleUtils";
 
-export const StyledAppBar = styled(AppBar, { name: "Logo" })(() => {
+export const StyledAppBar = styled(AppBar, { name: "StyledAppBar" })(() => {
   return css`
     position: fixed;
   `;
