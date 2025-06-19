@@ -1,6 +1,4 @@
 "use client";
-import { useState } from "react";
-
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import useTheme from "@mui/material/styles/useTheme";
@@ -28,12 +26,9 @@ export default function LoginPage() {
 
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
 
-  const [isLoading, setIsLoading] = useState(false);
-
   const [login] = useLoginMutation();
 
   const onSuccess = async (credentialResponse: CredentialResponse) => {
-    setIsLoading(false);
     if ("access_token" in credentialResponse) {
       const response = await login({
         auth_token: credentialResponse.access_token as string,
@@ -83,19 +78,10 @@ export default function LoginPage() {
           Sessions Portal
         </Typography>
         <LoginButtonContainer>
-          <Button
-            data-testid="login-button"
-            disabled={isLoading}
-            className="login-button"
-            onClick={() => {
-              setIsLoading(true);
-              googleLoginHandler();
-            }}
-            variant="outlined"
-          >
+          <Button data-testid="login-button" className="login-button" onClick={() => googleLoginHandler()} variant="outlined">
             <Box className="button-content">
               <Image height={20} width={20} src="/assets/svgs/google.svg" alt="google-logo" />
-              <Typography color="textSecondary">{isLoading ? "Loading..." : "Sign in with Google"}</Typography>
+              <Typography color="textSecondary">Sign in with Google</Typography>
             </Box>
           </Button>
         </LoginButtonContainer>
