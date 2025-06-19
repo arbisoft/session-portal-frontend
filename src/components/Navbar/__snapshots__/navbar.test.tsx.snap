@@ -3,7 +3,7 @@
 exports[`Navbar Component should match snapshot 1`] = `
 <DocumentFragment>
   <header
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionSticky css-191u2xt-MuiPaper-root-MuiAppBar-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-b4hu5c-MuiPaper-root-MuiAppBar-root-StyledAppBar-root"
     data-testid="navbar"
     style="--Paper-shadow: var(--mui-shadows-4); --Paper-overlay: var(--mui-overlays-4);"
   >

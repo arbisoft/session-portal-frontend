@@ -3,7 +3,7 @@
 exports[`VideoCard should matches snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root custom-class normal-card css-fhz18d-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root custom-class normal-card css-184go0y-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
     data-testid="video-card"
     style="--Paper-shadow: var(--mui-shadows-0); --Paper-overlay: var(--mui-overlays-0);"
   >
@@ -20,7 +20,7 @@ exports[`VideoCard should matches snapshot 1`] = `
         <img
           alt="Refresher & AMA Session on Competency Framework Changes - January 2025"
           data-testid="video-card-image"
-          height="192"
+          height="196"
           src="http://localhost:1234/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png"
           width="315"
         />
@@ -41,18 +41,22 @@ exports[`VideoCard should matches snapshot 1`] = `
         >
           Refresher & AMA Session on Competency Framework Changes - January 2025
         </h3>
-        <p
-          class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-l4hfz4-MuiTypography-root"
-          data-testid="video-card-organizer"
+        <div
+          class="MuiBox-root css-0"
         >
-          John Doe
-        </p>
-        <p
-          class="MuiTypography-root MuiTypography-bodyMedium date-time css-l4hfz4-MuiTypography-root"
-          data-testid="video-card-date-time"
-        >
-          Jan 09, 2025
-        </p>
+          <p
+            class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-l4hfz4-MuiTypography-root"
+            data-testid="video-card-organizer"
+          >
+            John Doe
+          </p>
+          <p
+            class="MuiTypography-root MuiTypography-bodyMedium date-time css-l4hfz4-MuiTypography-root"
+            data-testid="video-card-date-time"
+          >
+            Jan 09, 2025
+          </p>
+        </div>
       </div>
     </div>
   </div>

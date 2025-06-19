@@ -65,7 +65,7 @@ export const VideoCardContainer = styled(Card, {
 
         .date-time,
         .organizer-name {
-          font-size: ${pxToRem(14)};
+          font-size: ${pxToRem(12)};
           font-weight: 500;
         }
 
@@ -73,7 +73,7 @@ export const VideoCardContainer = styled(Card, {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 4;
           display: -webkit-box;
-          font-size: ${pxToRem(18)};
+          font-size: ${pxToRem(14)};
           font-weight: 500;
           overflow: hidden;
 
@@ -160,7 +160,7 @@ export const VideoCardContainer = styled(Card, {
           border-radius: ${theme.shape.borderRadius + 8}px;
           height: auto;
           object-fit: cover;
-          width: 400px;
+          width: 420px;
 
           ${theme.breakpoints.down("md")} {
             width: 300px;
@@ -184,7 +184,7 @@ export const VideoCardContainer = styled(Card, {
 
         .video-detail {
           width: calc(100% - 430px);
-          gap: 10px;
+          gap: 5px;
 
           ${theme.breakpoints.down("md")} {
             width: calc(100% - 320px);
@@ -200,7 +200,7 @@ export const VideoCardContainer = styled(Card, {
 
           .organizer-name,
           .date-time {
-            font-size: ${pxToRem(18)};
+            font-size: ${pxToRem(14)};
           }
         }
       }
@@ -255,11 +255,12 @@ export const VideoCardContainer = styled(Card, {
 
           .${typographyClasses.h1} {
             font-weight: 500;
+            font-size: ${pxToRem(20)};
           }
 
           .organizer-name,
           .date-time {
-            font-size: ${pxToRem(18)};
+            font-size: ${pxToRem(14)};
           }
         }
       }

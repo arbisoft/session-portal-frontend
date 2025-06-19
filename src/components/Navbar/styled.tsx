@@ -1,3 +1,4 @@
+import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
@@ -5,6 +6,12 @@ import { alpha, css, styled } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
 import { pxToRem } from "@/utils/styleUtils";
+
+export const StyledAppBar = styled(AppBar, { name: "StyledAppBar" })(() => {
+  return css`
+    position: fixed;
+  `;
+});
 
 export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
   return css`

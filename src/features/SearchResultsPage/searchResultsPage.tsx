@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
@@ -13,7 +13,6 @@ import { useSearchParams } from "next/navigation";
 import { Virtuoso } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
-import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
@@ -59,15 +58,6 @@ const SearchResultsPage = () => {
 
   const isDataLoading = isLoading || isUninitialized;
 
-  const onSortingHandler = useCallback(
-    (val: unknown) => {
-      setPage(1);
-      const params = parseNonPassedParams({ order: val, search }) as Record<string, string>;
-      navigateTo("searchResult", params);
-    },
-    [search]
-  );
-
   useEffect(() => {
     const params: EventsParams = {
       ...defaultParams,
@@ -107,7 +97,7 @@ const SearchResultsPage = () => {
               video_file: event.video_file ? BASE_URL.concat(event.video_file) : undefined,
             }}
             width="100%"
-            onClick={() => navigateTo("videoDetail", { id: event.id })}
+            onClick={() => navigateTo("videoDetail", { id: event.slug })}
             variant="search-card"
           />
         </Box>
@@ -147,15 +137,6 @@ const SearchResultsPage = () => {
                 {search}
               </Box>
             </Typography>
-            <Select
-              label="Sort By"
-              menuItems={[
-                { value: "-event_time", label: "Newest First" },
-                { value: "event_time", label: "Oldest First" },
-              ]}
-              onChange={({ target }) => onSortingHandler(target.value)}
-              value={order}
-            />
           </Stack>
         </FilterBox>
       )}
