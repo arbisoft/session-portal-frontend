@@ -26,16 +26,14 @@ const VideoDetail = () => {
 
   const { navigateTo, getPageUrl } = useNavigation();
 
-  const parsedId = Number(videoId);
-
-  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(isNaN(parsedId) ? skipToken : parsedId);
+  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(videoId || skipToken);
 
   const {
     data: recommendations = [],
     isFetching: isRecommendationsFetching,
     isLoading: isRecommendationsLoading,
     isUninitialized: isRecommendationsUninitialized,
-  } = useRecommendationQuery(isNaN(parsedId) ? skipToken : parsedId);
+  } = useRecommendationQuery(videoId || skipToken);
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
   const areRecommendationsLoading = isRecommendationsFetching || isRecommendationsLoading || isRecommendationsUninitialized;
@@ -45,7 +43,7 @@ const VideoDetail = () => {
   }, [data?.event?.title]);
 
   useEffect(() => {
-    if (isNaN(parsedId) || error) {
+    if (!videoId || error) {
       navigateTo("videos");
     }
   }, [error]);
@@ -78,7 +76,7 @@ const VideoDetail = () => {
                   video_file: video.video_file ? BASE_URL.concat(video.video_file) : undefined,
                 }}
                 key={`recommendation-${video.id}`}
-                onClick={() => navigateTo("videoDetail", { id: video.id })}
+                onClick={() => navigateTo("videoDetail", { id: video.slug })}
                 variant="related-card"
               />
             ))

@@ -5,7 +5,7 @@ import { baseApi } from "@/redux/baseApi";
 
 export const eventsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    eventDetail: builder.query<Partial<EventDetail>, number>({
+    eventDetail: builder.query<Partial<EventDetail>, string>({
       query: (id) => ({
         url: `/events/videoasset/${id}/`,
         method: "GET",
@@ -54,7 +54,7 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
-    recommendation: builder.query<Recommendation[], number>({
+    recommendation: builder.query<Recommendation[], string>({
       query: (id) => ({
         url: `/events/recommendations/${id}/`,
         method: "GET",
@@ -62,7 +62,7 @@ export const eventsApi = baseApi.injectEndpoints({
     }),
     playlists: builder.query<Playlist[], void>({
       query: () => ({
-        url: "/events/playlists/",
+        url: "/events/playlists/?linked_to_events=True",
         method: "GET",
       }),
     }),

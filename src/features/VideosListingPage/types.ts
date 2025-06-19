@@ -9,6 +9,7 @@ export const defaultParams: EventsParams = {
   event_type: "SESSION" as const,
   page: 1,
   status: "PUBLISHED",
+  linked_to_events: "True",
 };
 
 type Publisher = {

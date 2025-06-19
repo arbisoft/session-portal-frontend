@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 
 import useNavigation from "@/hooks/useNavigation";
 import useSidebar from "@/hooks/useSidebar";
+import { runsOnServerSide } from "@/services/runs-on-server-side/runs-on-server-side";
 
 import { StyledMenuItem, MenuStack, SidebarContainer, TagsContainer, Text } from "./styled";
 
@@ -26,6 +27,10 @@ const Sidebar = () => {
 
   const tag = searchParams?.get("tag");
   const playlist = searchParams?.get("playlist");
+
+  const onResetFilters = () => {
+    if (!runsOnServerSide) window.dispatchEvent(new Event("reset-filter"));
+  };
 
   return (
     <SidebarContainer data-testid="sidebar-container">
@@ -51,7 +56,10 @@ const Sidebar = () => {
               <StyledMenuItem
                 key={item.id}
                 selected={item.name === playlist}
-                onClick={() => navigateTo("videos", { playlist: item.name })}
+                onClick={() => {
+                  onResetFilters();
+                  navigateTo("videos", { playlist: item.name });
+                }}
                 data-testid={`sidebar-item-${item.name}`}
               >
                 <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
@@ -65,7 +73,10 @@ const Sidebar = () => {
             <Chip
               data-testid={`sidebar-tags-${item.name}`}
               key={item.id}
-              onClick={() => navigateTo("videos", { tag: item.name })}
+              onClick={() => {
+                onResetFilters();
+                navigateTo("videos", { tag: item.name });
+              }}
               label={`#${item.name}`}
               variant={tag === item.name ? "filled" : "outlined"}
               size="small"

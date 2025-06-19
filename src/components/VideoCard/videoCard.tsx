@@ -38,7 +38,7 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
           <img
             data-testid="video-card-image"
             alt={data.title}
-            height={192}
+            height={196}
             width={315}
             src={data.thumbnail || DEFAULT_THUMBNAIL}
           />
@@ -50,12 +50,14 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
           <Typography data-testid="video-card-title" variant={headingVariant[variant]} title={data.title}>
             {data.title}
           </Typography>
-          <Typography variant="bodyMedium" color="textSecondary" className="organizer-name" data-testid="video-card-organizer">
-            {data.organizer}
-          </Typography>
-          <Typography variant="bodyMedium" color="textSecondary" className="date-time" data-testid="video-card-date-time">
-            {data.event_time}
-          </Typography>
+          <Box>
+            <Typography variant="bodyMedium" color="textSecondary" className="organizer-name" data-testid="video-card-organizer">
+              {data.organizer}
+            </Typography>
+            <Typography variant="bodyMedium" color="textSecondary" className="date-time" data-testid="video-card-date-time">
+              {data.event_time}
+            </Typography>
+          </Box>
           {displayDescription && data.description && (
             <Typography variant="bodyLarge" className="video-description" data-testid="video-description">
               {data.description}

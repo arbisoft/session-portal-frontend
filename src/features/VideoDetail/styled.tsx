@@ -61,6 +61,7 @@ export const StyledNotesSection = styled(Box, {
       padding: 20px;
 
       p {
+        color: #fff;
         font-size: ${pxToRem(12)};
         font-style: normal;
         font-weight: 400;

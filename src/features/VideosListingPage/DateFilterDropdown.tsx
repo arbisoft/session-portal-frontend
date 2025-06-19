@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useState } from "react";
+import React, { MouseEventHandler, useEffect, useState } from "react";
 
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUp from "@mui/icons-material/ArrowDropUp";
@@ -32,9 +32,22 @@ const DateFilterDropdown = ({
   const theme = useTheme();
 
   const [sortBy, setSortBy] = useState(initialSort);
+  const [sortByText, setSortByText] = useState(initialSort);
   const [yearFilter, setYearFilter] = useState<string | undefined>(initialYear);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    const sortText = initialSort === "newest" ? "Newest first" : "Oldest first";
+    setSortByText(sortText);
+  }, [initialSort]);
+
+  useEffect(() => {
+    if (!initialYear) {
+      setYearFilter(undefined);
+      onYearChange(null);
+    }
+  }, [initialYear]);
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
     setAnchorEl(event.currentTarget);
@@ -64,8 +77,6 @@ const DateFilterDropdown = ({
     handleClose();
     onClear();
   };
-
-  const sortByText = sortBy === "newest" ? "Newest first" : "Oldest first";
 
   return (
     <DropdownContainer>
