@@ -36,15 +36,15 @@ const Sidebar = () => {
     <SidebarContainer data-testid="sidebar-container">
       <MenuStack>
         {arePlaylistsLoading ? (
-          <MenuList>
-            <MenuItem data-testid="loading">
-              {loadingTags?.map((item) => (
+          <MenuList data-testid="loading">
+            {loadingTags?.map((item) => (
+              <MenuItem key={item}>
                 <Box key={item} display="flex" justifyContent="space-between" alignItems={"center"} width="90%" mb={1}>
                   <Skeleton variant="rounded" width="15%" height={20} />
                   <Skeleton width="76%" height={25} />
                 </Box>
-              ))}
-            </MenuItem>
+              </MenuItem>
+            ))}
           </MenuList>
         ) : (
           <MenuList>
