@@ -99,17 +99,26 @@ const VideosListingPage = () => {
       getEvents(params);
       clearTimeout(timer);
     }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [queryParams, page]);
 
   useEffect(() => {
     fetchEvents();
+    let loaderTimer: NodeJS.Timeout;
     if (queryParams.playlist && currentPlaylist !== queryParams.playlist) {
       setIsPageLoaderActive(true);
-      const loaderTimer = setTimeout(() => {
+      loaderTimer = setTimeout(() => {
         clearTimeout(loaderTimer);
         setIsPageLoaderActive(false);
       }, 1500);
     }
+
+    return () => {
+      clearTimeout(loaderTimer);
+    };
   }, [queryParams, fetchEvents]);
 
   useEffect(() => {
