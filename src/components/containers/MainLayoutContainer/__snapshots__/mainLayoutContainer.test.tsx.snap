@@ -283,7 +283,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
       </div>
     </div>
     <div
-      class="MuiBox-root css-xqrfby-RightSidebar-root"
+      class="MuiBox-root css-1n4qjh3-RightSidebar-root"
       data-testid="right-sidebar"
     >
       <div>
