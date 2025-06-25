@@ -13,7 +13,7 @@ export const eventsApi = baseApi.injectEndpoints({
     }),
     eventTags: builder.query<Tag[], void>({
       query: () => ({
-        url: "/events/tags/",
+        url: "/events/tags/?linked_to_events=True",
         method: "GET",
       }),
     }),

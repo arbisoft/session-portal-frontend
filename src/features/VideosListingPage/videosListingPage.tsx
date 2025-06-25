@@ -70,6 +70,7 @@ const VideosListingPage = () => {
   else delete defaultEventParams.is_featured;
 
   const [page, setPage] = useState(1);
+  const [isPageLoaderActive, setIsPageLoaderActive] = useState<boolean>(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string | null>(null);
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
   const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery(defaultEventParams);
@@ -102,6 +103,13 @@ const VideosListingPage = () => {
 
   useEffect(() => {
     fetchEvents();
+    if (queryParams.playlist && currentPlaylist !== queryParams.playlist) {
+      setIsPageLoaderActive(true);
+      const loaderTimer = setTimeout(() => {
+        clearTimeout(loaderTimer);
+        setIsPageLoaderActive(false);
+      }, 1500);
+    }
   }, [queryParams, fetchEvents]);
 
   useEffect(() => {
@@ -143,7 +151,8 @@ const VideosListingPage = () => {
   }, [queryParams]);
 
   const latestFeaturedVideo = featureVideos?.results[0];
-  const isDataLoading = isLoading || isUninitialized || !videoListings;
+
+  const isDataLoading = isLoading || isUninitialized || !videoListings?.results || isPageLoaderActive || isFeatureFetching;
 
   return (
     <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>

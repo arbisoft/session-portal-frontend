@@ -43,9 +43,7 @@ export const RightSidebar = styled(Box, {
 })(() => {
   return css`
     flex-shrink: 0;
-    width: 280px;
-    max-height: 600px;
-    overflow-y: auto;
+    width: 300px;
   `;
 });
 
