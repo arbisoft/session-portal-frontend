@@ -69,8 +69,8 @@ const VideosListingPage = () => {
   if (!queryParams.tag && !queryParams.playlist) defaultEventParams.is_featured = true;
   else delete defaultEventParams.is_featured;
 
-  const [isLoadingEvents, setIsLoadingEvents] = useState(false);
   const [page, setPage] = useState(1);
+  const [isPageLoaderActive, setIsPageLoaderActive] = useState<boolean>(false);
   const [currentPlaylist, setCurrentPlaylist] = useState<string | null>(null);
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
   const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery(defaultEventParams);
@@ -79,7 +79,6 @@ const VideosListingPage = () => {
   const filterOption = queryParams.year;
 
   const fetchEvents = useCallback(() => {
-    setIsLoadingEvents(true);
     const params: EventsParams = parseNonPassedParams({
       ...defaultParams,
       event_time_after: queryParams.year ? format(startOfYear(new Date(queryParams.year)), "yyyy-MM-dd") : undefined,
@@ -99,12 +98,27 @@ const VideosListingPage = () => {
     const timer = setTimeout(() => {
       getEvents(params);
       clearTimeout(timer);
-      setIsLoadingEvents(false);
     }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [queryParams, page]);
 
   useEffect(() => {
     fetchEvents();
+    let loaderTimer: NodeJS.Timeout;
+    if (queryParams.playlist && currentPlaylist !== queryParams.playlist) {
+      setIsPageLoaderActive(true);
+      loaderTimer = setTimeout(() => {
+        clearTimeout(loaderTimer);
+        setIsPageLoaderActive(false);
+      }, 1500);
+    }
+
+    return () => {
+      clearTimeout(loaderTimer);
+    };
   }, [queryParams, fetchEvents]);
 
   useEffect(() => {
@@ -146,7 +160,8 @@ const VideosListingPage = () => {
   }, [queryParams]);
 
   const latestFeaturedVideo = featureVideos?.results[0];
-  const isDataLoading = isLoadingEvents || isLoading || isUninitialized || !videoListings;
+
+  const isDataLoading = isLoading || isUninitialized || !videoListings?.results || isPageLoaderActive || isFeatureFetching;
 
   return (
     <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
