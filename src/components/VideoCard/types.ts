@@ -12,4 +12,5 @@ export type VideoCardProps = {
   onClick?: VoidFunction;
   variant?: "featured-card" | "search-card" | "related-card" | "normal-card";
   width?: string;
+  height?: string;
 };

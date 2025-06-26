@@ -200,6 +200,7 @@ const VideosListingPage = () => {
             onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.slug })}
             variant="featured-card"
             width="100%"
+            height="auto"
           />
         ))}
 
