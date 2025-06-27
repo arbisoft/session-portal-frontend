@@ -1,4 +1,5 @@
 import CssBaseline from "@mui/material/CssBaseline";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import type { Metadata } from "next";
 
@@ -16,11 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode; params: { language: string } }) {
   const clientId = process.env.NEXT_PUBLIC_CLIENT_ID ?? "";
-
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID ?? "";
   return (
     <html lang={DEFAULT_LANGUAGE} dir={DEFAULT_LANGUAGE_DIR}>
       <head>
         <meta name="apple-mobile-web-app-title" content="Arbisoft Session Portal" />
+        <GoogleTagManager gtmId={gtmId} />
       </head>
       <body>
         <GoogleOAuthProvider clientId={clientId}>
