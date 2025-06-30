@@ -216,7 +216,6 @@ const VideosListingPage = () => {
                 if (!isFetching && videoListings?.next && currentPlaylist === queryParams.playlist) setPage((prev) => prev + 1);
                 else {
                   setCurrentPlaylist(queryParams.playlist || "");
-                  setPage(1);
                 }
               }}
               increaseViewportBy={0}
