@@ -35,3 +35,7 @@ export type TVideo = {
 export interface ISearchEventDetail {
   searchQuery: string;
 }
+
+export type SkeletonLoaderProps = {
+  count?: number;
+};

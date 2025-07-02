@@ -11,7 +11,6 @@ import { useSearchParams } from "next/navigation";
 
 import useNavigation from "@/hooks/useNavigation";
 import useSidebar from "@/hooks/useSidebar";
-import { runsOnServerSide } from "@/services/runs-on-server-side/runs-on-server-side";
 
 import { StyledMenuItem, MenuStack, SidebarContainer, TagsContainer, Text } from "./styled";
 
@@ -27,10 +26,6 @@ const Sidebar = () => {
 
   const tag = searchParams?.get("tag");
   const playlist = searchParams?.get("playlist");
-
-  const onResetFilters = () => {
-    if (!runsOnServerSide) window.dispatchEvent(new Event("reset-filter"));
-  };
 
   return (
     <SidebarContainer data-testid="sidebar-container">
@@ -57,7 +52,6 @@ const Sidebar = () => {
                 key={item.id}
                 selected={item.name === playlist}
                 onClick={() => {
-                  onResetFilters();
                   navigateTo("videos", { playlist: item.name });
                 }}
                 data-testid={`sidebar-item-${item.name}`}
@@ -74,7 +68,6 @@ const Sidebar = () => {
               data-testid={`sidebar-tags-${item.name}`}
               key={item.id}
               onClick={() => {
-                onResetFilters();
                 navigateTo("videos", { tag: item.name });
               }}
               label={`#${item.name}`}
