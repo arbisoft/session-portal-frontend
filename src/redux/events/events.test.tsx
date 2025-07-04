@@ -271,7 +271,7 @@ describe("eventsApi endpoints", () => {
       ])
     );
 
-    const { result } = renderHook(() => useRecommendationQuery("test-event"), {
+    const { result } = renderHook(() => useRecommendationQuery({ id: "test-event", page: 1 }), {
       wrapper: ({ children }) => <Providers>{children}</Providers>,
     });
     await waitFor(() => {

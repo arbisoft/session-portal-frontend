@@ -34,8 +34,6 @@ export interface Event {
   slug: string;
 }
 
-export interface Recommendation extends Event {}
-
 interface Publisher {
   first_name: string;
   id: number;
@@ -76,4 +74,12 @@ export type EventsParams = {
   status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
   tag?: string;
   linked_to_events?: "True" | "False";
+};
+
+export interface Recommendation extends AllEventResponse {}
+
+export type RecommendationParam = {
+  id: string;
+  page: number;
+  page_size?: number;
 };
