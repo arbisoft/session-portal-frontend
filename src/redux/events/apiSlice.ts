@@ -1,6 +1,6 @@
 import isEqual from "lodash/isEqual";
 
-import { EventDetail, Tag, AllEventResponse, EventsParams, Recommendation, Playlist } from "@/models/Events";
+import { EventDetail, Tag, AllEventResponse, EventsParams, Recommendation, Playlist, RecommendationParam } from "@/models/Events";
 import { baseApi } from "@/redux/baseApi";
 
 export const eventsApi = baseApi.injectEndpoints({
@@ -54,10 +54,11 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
-    recommendation: builder.query<Recommendation[], string>({
-      query: (id) => ({
+    recommendation: builder.query<Recommendation, RecommendationParam>({
+      query: ({ id, page, page_size = 10 }) => ({
         url: `/events/recommendations/${id}/`,
         method: "GET",
+        params: { page, page_size },
       }),
     }),
     playlists: builder.query<Playlist[], void>({
