@@ -12,7 +12,14 @@ import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
-const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315px", variant = "normal-card" }) => {
+const VideoCard: FC<VideoCardProps> = ({
+  className,
+  data,
+  onClick,
+  width = "315px",
+  height = "310px",
+  variant = "normal-card",
+}) => {
   const { mode } = useColorScheme();
   const headingVariant: Record<typeof variant, TypographyProps["variant"]> = {
     "featured-card": "h1",
@@ -26,6 +33,7 @@ const VideoCard: FC<VideoCardProps> = ({ className, data, onClick, width = "315p
   return (
     <VideoCardContainer
       $width={width}
+      $height={height}
       className={clsx(className, { [variant]: true })}
       data-testid="video-card"
       onClick={onClick}

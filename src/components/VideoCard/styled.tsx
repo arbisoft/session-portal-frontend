@@ -10,7 +10,7 @@ import { pxToRem, shouldForwardProp } from "@/utils/styleUtils";
 export const VideoCardContainer = styled(Card, {
   name: "VideoCardContainer",
   shouldForwardProp,
-})<{ $width: string }>(({ theme, $width }) => {
+})<{ $width: string; $height: string }>(({ theme, $width, $height }) => {
   return css`
     background: transparent;
     border-radius: unset;
@@ -18,6 +18,7 @@ export const VideoCardContainer = styled(Card, {
     display: grid;
     overflow: unset;
     width: ${$width};
+    height: ${$height};
 
     .${cardContentClasses.root} {
       align-items: flex-start;

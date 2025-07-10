@@ -2,7 +2,7 @@
 name: Build and Push Container Image
 on:
   push:
-    branches: 
+    branches:
       - main
 
 jobs:
@@ -32,5 +32,6 @@ jobs:
             GID=${{ secrets.APP_USER_GID }}
             NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_CLIENT_ID=${{ secrets.NEXT_PUBLIC_CLIENT_ID }}
+            NEXT_PUBLIC_GTM_ID=${{ secrets.NEXT_PUBLIC_GTM_ID }}
           push: true
           tags: ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:${{ github.sha }}, ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:latest
