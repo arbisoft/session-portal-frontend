@@ -59,7 +59,13 @@ const VideoCard: FC<VideoCardProps> = ({
             {data.title}
           </Typography>
           <Box>
-            <Typography variant="bodyMedium" color="textSecondary" className="organizer-name" data-testid="video-card-organizer">
+            <Typography
+              variant="bodyMedium"
+              color="textSecondary"
+              className="organizer-name"
+              data-testid="video-card-organizer"
+              title={data.organizer}
+            >
               {data.organizer}
             </Typography>
             <Typography variant="bodyMedium" color="textSecondary" className="date-time" data-testid="video-card-date-time">
