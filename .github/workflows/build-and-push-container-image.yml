@@ -1,9 +1,9 @@
 ---
 name: Build and Push Container Image
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   build-and-push:
@@ -34,4 +34,4 @@ jobs:
             NEXT_PUBLIC_CLIENT_ID=${{ secrets.NEXT_PUBLIC_CLIENT_ID }}
             NEXT_PUBLIC_GTM_ID=${{ secrets.NEXT_PUBLIC_GTM_ID }}
           push: true
-          tags: ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:${{ github.sha }}, ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:latest
+          tags: ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:${{ github.ref_name }}, ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:latest
