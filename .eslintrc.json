@@ -93,6 +93,7 @@
       "error",
       "always",
       {
+        "css": "never",
         "js": "never",
         "jsx": "never",
         "ts": "never",
