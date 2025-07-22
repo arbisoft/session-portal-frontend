@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { VirtuosoGrid } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import { FeaturedSlider } from "@/components/FeaturedSlider/featuredSlider";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
@@ -90,7 +91,7 @@ const VideosListingPage = () => {
     );
   };
 
-  const latestFeaturedVideo = featureVideos?.results[0];
+  const featuredVideos = featureVideos?.results;
 
   const isDataLoading = isLoading || isUninitialized || !videoListings?.results || isFeatureFetching;
 
@@ -116,25 +117,34 @@ const VideosListingPage = () => {
         !parsedParams.playlist &&
         !parsedParams.order &&
         !parsedParams.year &&
-        latestFeaturedVideo &&
+        featuredVideos &&
         (isFeatureFetching ? (
           <Skeleton width="100%" height={264} variant="rounded" />
         ) : (
-          <VideoCard
-            data={{
-              description: latestFeaturedVideo.description,
-              event_time: formatDateTime(latestFeaturedVideo.event_time),
-              organizer: latestFeaturedVideo.presenters.map(fullName).join(", "),
-              thumbnail: latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL,
-              title: latestFeaturedVideo.title,
-              video_duration: convertSecondsToFormattedTime(latestFeaturedVideo.video_duration),
-              video_file: latestFeaturedVideo.video_file ? BASE_URL.concat(latestFeaturedVideo.video_file) : undefined,
-            }}
-            onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.slug })}
-            variant="featured-card"
-            width="100%"
-            height="auto"
-          />
+          <>
+            <FeaturedSlider
+              slides={featuredVideos.map((feaetuedVideo, idx) => {
+                return (
+                  <VideoCard
+                    key={idx}
+                    data={{
+                      description: feaetuedVideo.description,
+                      event_time: formatDateTime(feaetuedVideo.event_time),
+                      organizer: feaetuedVideo.presenters.map(fullName).join(", "),
+                      thumbnail: feaetuedVideo.thumbnail ? BASE_URL.concat(feaetuedVideo.thumbnail) : DEFAULT_THUMBNAIL,
+                      title: feaetuedVideo.title,
+                      video_duration: convertSecondsToFormattedTime(feaetuedVideo.video_duration),
+                      video_file: feaetuedVideo.video_file ? BASE_URL.concat(feaetuedVideo.video_file) : undefined,
+                    }}
+                    onClick={() => navigateTo("videoDetail", { id: feaetuedVideo.slug })}
+                    variant="featured-card"
+                    width="auto"
+                    height="auto"
+                  />
+                );
+              })}
+            />
+          </>
         ))}
 
       <Box width="100%" paddingBlock={3}>
