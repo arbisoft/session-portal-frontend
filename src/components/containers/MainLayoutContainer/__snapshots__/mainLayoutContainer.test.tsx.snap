@@ -72,7 +72,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             <button
               class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-vih3tv-MuiButtonBase-root-MuiButton-root-SearchIconWrapper-root"
               tabindex="0"
-              type="button"
+              type="submit"
             >
               <svg
                 aria-hidden="true"
