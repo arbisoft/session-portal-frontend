@@ -29,7 +29,6 @@ export function useVideoQueryManager(searchParams: URLSearchParams) {
       ...defaultParams,
       page,
       page_size: 12,
-      is_featured: false,
       ordering: parsedParams.order ? [parsedParams.order] : ["-event_time"],
       search: parsedParams.search ?? undefined,
       tag: parsedParams.search ? "" : (parsedParams.tag ?? ""),
