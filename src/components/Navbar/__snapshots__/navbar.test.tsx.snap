@@ -72,7 +72,7 @@ exports[`Navbar Component should match snapshot 1`] = `
             <button
               class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1cdkzx6-MuiButtonBase-root-MuiButton-root-SearchIconWrapper-root"
               tabindex="0"
-              type="button"
+              type="submit"
             >
               <svg
                 aria-hidden="true"
