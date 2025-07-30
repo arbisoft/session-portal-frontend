@@ -21,6 +21,7 @@ import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { convertSecondsToFormattedTime, fullName } from "@/utils/utils";
 
+import SkeletonLoader from "./skeletonLoader";
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
 const VideoDetail = () => {
@@ -43,10 +44,6 @@ const VideoDetail = () => {
   }, [data?.event?.title]);
 
   useEffect(() => {
-    document.title = `${data?.event?.title ?? ""}  - Sessions Portal`;
-  }, [data?.event?.title]);
-
-  useEffect(() => {
     if (!videoId || error) {
       navigateTo("videos");
     }
@@ -60,7 +57,7 @@ const VideoDetail = () => {
       isLeftSidebarVisible={false}
       shouldShowDrawer
       rightSidebar={
-        <Box pr={1}>
+        <Box pr={1} data-testid="recommendation-card">
           <Virtuoso
             data={allRecommendations}
             useWindowScroll
@@ -100,15 +97,7 @@ const VideoDetail = () => {
       }
     >
       {error || isDataLoading ? (
-        <>
-          <Skeleton width="100%" height={400} variant="rounded" animation="wave" />
-          <Box display="flex" justifyContent="space-between" width="100%">
-            <Skeleton width="50%" height={70} />
-            <Skeleton width="30%" height={70} />
-          </Box>
-          <Skeleton width="30%" height={50} />
-          <Skeleton width="100%" height={200} />
-        </>
+        <SkeletonLoader />
       ) : (
         <>
           <VideoPlayer

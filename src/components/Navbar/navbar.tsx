@@ -113,7 +113,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
                 </CancelIconWrapper>
               )}
 
-              <SearchIconWrapper>
+              <SearchIconWrapper type="submit">
                 <SearchIcon data-testid="SearchIcon" />
               </SearchIconWrapper>
             </Search>
