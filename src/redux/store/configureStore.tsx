@@ -1,14 +1,13 @@
 "use client";
 
-import { configureStore } from "@reduxjs/toolkit";
-import type { Action, Reducer } from "redux";
-import { persistStore, REHYDRATE, FLUSH, PAUSE, PERSIST, PURGE, REGISTER, persistCombineReducers } from "redux-persist";
-import { PersistPartial } from "redux-persist/es/persistReducer";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import type { Reducer } from "redux";
+import { persistStore, REHYDRATE, FLUSH, PAUSE, PERSIST, PURGE, REGISTER, persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import createFilter from "redux-persist-transform-filter";
 
 import { baseApi, REDUCER_PATH } from "@/redux/baseApi";
-import loginReducer, { loginActions, LoginState } from "@/redux/login/slice";
+import loginReducer, { LoginState } from "@/redux/login/slice";
 
 export const createNoopStorage = () => {
   return {
@@ -40,18 +39,11 @@ const persistConfig = {
   whitelist: ["login"],
 };
 
-const combinedReducers = persistCombineReducers<ReducersState, Action>(persistConfig, {
+const rootReducer = combineReducers({
   login: loginReducer,
   [baseApi?.reducerPath]: baseApi?.reducer,
 });
-
-const rootReducer = (state: (ReducersState & PersistPartial) | undefined, action: Action) => {
-  if (action.type === loginActions.logout.type) {
-    return combinedReducers(undefined, action);
-  }
-  return combinedReducers(state, action);
-};
-
+const persistedReducer = persistReducer<ReturnType<typeof rootReducer>>(persistConfig, rootReducer);
 const store = configureStore({
   devTools: process.env.NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
@@ -60,7 +52,7 @@ const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat([baseApi.middleware]),
-  reducer: rootReducer,
+  reducer: persistedReducer,
   // @ts-ignore
   preloadedState: global.preloadedState,
 });

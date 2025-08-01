@@ -40,4 +40,9 @@ describe("Redux Store", () => {
       isLoading: false,
     });
   });
+
+  it("should initialize the store with default state", () => {
+    const state = store.getState();
+    expect(state).toBeDefined();
+  });
 });
