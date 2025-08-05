@@ -135,7 +135,13 @@ export const VideoCardContainer = styled(Card, {
             font-weight: 500;
           }
 
-          .organizer-name,
+          .organizer-name {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
           .date-time {
             font-size: ${pxToRem(12)};
           }
