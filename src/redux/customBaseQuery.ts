@@ -34,7 +34,6 @@ const customBaseQuery: BaseQueryFn<FetchArgs, unknown, FetchBaseQueryError, Extr
   if (result.error) {
     if (result.error.status === 401) {
       api.dispatch({ type: "login/logout" });
-      localStorage.removeItem("persist:session-portal");
     }
 
     if (options.showErrorToast) {
