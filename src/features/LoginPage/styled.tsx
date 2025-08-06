@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { styled, css } from "@mui/material/styles";
+import { typographyClasses } from "@mui/material/Typography";
 
 export const LoginContainer = styled(Box, {
   name: "LoginContainer",
@@ -18,22 +19,27 @@ export const LoginSubContainer = styled(Box, {
 })(
   ({ theme }) => css`
     align-items: center;
-    background-color: ${theme.palette.colors.white};
+    background-color: ${theme.palette.common.white};
     border-radius: 12px;
     display: flex;
     flex-direction: column;
     gap: 30px;
     padding: 50px;
     width: 450px;
+
+    .${typographyClasses.h4} {
+      line-height: 0;
+      font-size: 24px;
+      font-weight: 500;
+    }
   `
 );
 
 export const LoginButtonContainer = styled(Box, {
   name: "LoginButtonContainer",
 })(
-  ({ theme }) => css`
+  () => css`
     border-radius: 6px;
-    border: 1px solid ${theme.palette.colors.gray};
     width: 100%;
 
     .login-button {

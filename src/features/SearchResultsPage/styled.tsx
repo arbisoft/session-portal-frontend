@@ -3,6 +3,8 @@ import { stackClasses } from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
+import { pxToRem } from "@/utils/styleUtils";
+
 export const SearchResultsContainer = styled("div", {
   name: "SearchResultsContainer",
 })(
@@ -26,13 +28,13 @@ export const FilterBox = styled(Box, {
       width: 100%;
 
       .${typographyClasses.h2} {
-        color: ${theme.palette.colors.white};
-        font-size: 24px;
+        color: ${theme.palette.common.white};
+        font-size: ${pxToRem(24)};
         font-weight: 500;
         text-transform: capitalize;
 
         ${theme.breakpoints.down("sm")} {
-          font-size: 20px;
+          font-size: ${pxToRem(20)};
           width: 50%;
         }
       }
@@ -60,8 +62,8 @@ export const NoSearchResultsWrapper = styled("div", {
     margin-top: 10rem;
 
     .${typographyClasses.h3} {
-      color: ${theme.palette.colors.white};
-      font-size: 24px;
+      color: ${theme.palette.common.white};
+      font-size: ${pxToRem(24)};
       font-style: normal;
       font-weight: 400;
       letter-spacing: 0.4px;

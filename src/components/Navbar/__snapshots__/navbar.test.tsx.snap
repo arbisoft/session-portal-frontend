@@ -3,7 +3,7 @@
 exports[`Navbar Component should match snapshot 1`] = `
 <DocumentFragment>
   <header
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionSticky css-191u2xt-MuiPaper-root-MuiAppBar-root"
+    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-b4hu5c-MuiPaper-root-MuiAppBar-root-StyledAppBar-root"
     data-testid="navbar"
     style="--Paper-shadow: var(--mui-shadows-4); --Paper-overlay: var(--mui-overlays-4);"
   >
@@ -14,22 +14,23 @@ exports[`Navbar Component should match snapshot 1`] = `
         class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
       >
         <div
-          class="css-12uvfj0-Logo-root"
+          class="css-1vbiuhu-Logo-root"
           data-testid="navbar-logo"
         >
-          <svg
-            aria-hidden="true"
-            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
-            data-testid="YouTubeIcon"
-            focusable="false"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z"
-            />
-          </svg>
+          <img
+            alt="Arbisoft Icon"
+            data-nimg="1"
+            data-testid="arbisoftLogo"
+            decoding="async"
+            height="24"
+            loading="lazy"
+            src="/_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=48&q=75"
+            srcset="/_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=32&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=48&q=75 2x"
+            style="color: transparent;"
+            width="24"
+          />
           <h6
-            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1c6flzx-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1k6p2lw-MuiTypography-root"
           >
             Arbisoft Sessions Portal
           </h6>
@@ -38,10 +39,10 @@ exports[`Navbar Component should match snapshot 1`] = `
           class="MuiBox-root css-1rqqp05"
         >
           <form
-            class="css-tdacmr-Search-root"
+            class="css-15t2c4j-Search-root"
           >
             <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-16stwic-MuiInputBase-root-StyledInputBase-root"
+              class="MuiInputBase-root MuiInputBase-colorPrimary css-1kssppa-MuiInputBase-root-StyledInputBase-root"
             >
               <input
                 aria-label="search"
@@ -69,7 +70,9 @@ exports[`Navbar Component should match snapshot 1`] = `
               </svg>
             </div>
             <button
-              class="css-ejiypo-SearchIconWrapper-root"
+              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-1cdkzx6-MuiButtonBase-root-MuiButton-root-SearchIconWrapper-root"
+              tabindex="0"
+              type="submit"
             >
               <svg
                 aria-hidden="true"
@@ -86,11 +89,11 @@ exports[`Navbar Component should match snapshot 1`] = `
           </form>
         </div>
         <div
-          class="MuiBox-root css-1i6c8yb-NavbarRightArea-root"
+          class="MuiBox-root css-si7qf5-NavbarRightArea-root"
         >
           <button
             aria-label="Open settings"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1j2eanh-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
             data-testid="avatar-btn"
             tabindex="0"

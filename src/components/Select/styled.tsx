@@ -2,6 +2,8 @@ import Box from "@mui/material/Box";
 import { selectClasses } from "@mui/material/Select";
 import { styled, css, alpha } from "@mui/material/styles";
 
+import { pxToRem } from "@/utils/styleUtils";
+
 export const SelectWrapper = styled(Box, {
   name: "SelectWrapper",
 })(
@@ -12,8 +14,8 @@ export const SelectWrapper = styled(Box, {
     min-width: 124px;
 
     .${selectClasses.select} {
-      background-color: ${alpha(theme.palette.colors.white, 0.2)};
-      font-size: 14px;
+      background-color: ${alpha(theme.palette.common.white, 0.2)};
+      font-size: ${pxToRem(14)};
       font-weight: 600;
     }
   `

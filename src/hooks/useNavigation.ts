@@ -1,7 +1,5 @@
 import { useRouter } from "next/navigation";
 
-import useLanguage from "@/services/i18n/use-language";
-
 export const ALLOWED_PAGES = {
   get home(): string {
     return "/";
@@ -27,7 +25,6 @@ type Page = keyof typeof ALLOWED_PAGES;
 
 const useNavigation = () => {
   const router = useRouter();
-  const language = useLanguage();
 
   /**
    * Generate a dynamic URL based on the page and optional params.
@@ -46,7 +43,7 @@ const useNavigation = () => {
     const queryString =
       params && Object.keys(params).length ? `?${new URLSearchParams(params as Record<string, string>).toString()}` : "";
 
-    return `/${language}${pageUrl}${queryString}`;
+    return `${pageUrl}${queryString}`;
   };
 
   /**
@@ -56,10 +53,10 @@ const useNavigation = () => {
    */
   const navigateTo = (page: Page, params?: Record<string, string | number>) => {
     const url = getPageUrl(page, params);
-    router.push(url);
+    router.push(url, { scroll: true });
   };
 
-  return { getPageUrl, navigateTo, language };
+  return { getPageUrl, navigateTo };
 };
 
 export default useNavigation;

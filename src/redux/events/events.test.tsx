@@ -187,7 +187,7 @@ describe("eventsApi endpoints", () => {
       { status: 200 }
     );
 
-    const result = await store.dispatch(eventsApi.endpoints.eventDetail.initiate(1));
+    const result = await store.dispatch(eventsApi.endpoints.eventDetail.initiate("test-event"));
 
     expect(result.data).toEqual({
       title: "string",
@@ -271,7 +271,7 @@ describe("eventsApi endpoints", () => {
       ])
     );
 
-    const { result } = renderHook(() => useRecommendationQuery(1), {
+    const { result } = renderHook(() => useRecommendationQuery({ id: "test-event", page: 1 }), {
       wrapper: ({ children }) => <Providers>{children}</Providers>,
     });
     await waitFor(() => {
@@ -306,6 +306,91 @@ describe("eventsApi endpoints", () => {
       ]);
       expect(result.current.isSuccess).toBe(true);
     });
+  });
+
+  it("should merge paginated results and deduplicate recommendation videos", async () => {
+    const page1Response = {
+      count: 123,
+      next: "http://api.example.org/recommendation/?page=2",
+      previous: null,
+      results: [
+        {
+          id: 1,
+          title: "Event 1",
+          description: "Description 1",
+          publisher: { id: 1, first_name: "John", last_name: "Doe" },
+          event_time: "2025-03-12T11:05:22.534Z",
+          event_type: "SESSION",
+          status: "PUBLISHED",
+          workstream_id: null,
+          is_featured: false,
+          tags: ["Competency"],
+          thumbnail: "/media/thumbnails/screenshot-7c8c5c09-218d-46c2-9f7c-ed4e91c2d7fb.png",
+          video_duration: 3351,
+          presenters: [
+            {
+              id: 1,
+              first_name: "Qaisar ",
+              last_name: "Irfan",
+              email: "qaisar.irfan@arbisoft.com",
+            },
+            {
+              id: 2,
+              first_name: "Shaheer",
+              last_name: "Alam",
+              email: "shaheer.alam@arbisoft.com",
+            },
+          ],
+          playlists: ["Competency"],
+        },
+      ],
+    };
+
+    const page2Response = {
+      count: 123,
+      next: null,
+      previous: "http://api.example.org/recommendation/?page=1",
+      results: [
+        {
+          id: 2,
+          title: "Event 2",
+          description: "Description 2",
+          publisher: { id: 2, first_name: "Jane", last_name: "Smith" },
+          event_time: "2025-03-13T11:05:22.534Z",
+          event_type: "SESSION",
+          status: "PUBLISHED",
+          workstream_id: null,
+          is_featured: false,
+          tags: ["Competency"],
+          thumbnail: "/media/thumbnails/screenshot-7c8c5c09-218d-46c2-9f7c-ed4e91c2d7fb.png",
+          video_duration: 3351,
+          presenters: [
+            {
+              id: 1,
+              first_name: "Shaheer",
+              last_name: "Alam",
+              email: "shaheer.alam@arbisoft.com",
+            },
+          ],
+          playlists: ["Competency"],
+        },
+      ],
+    };
+
+    fetchMock.mockResponseOnce(JSON.stringify(page1Response));
+    fetchMock.mockResponseOnce(JSON.stringify(page2Response));
+
+    const { result, rerender } = renderHook(({ page }) => useRecommendationQuery({ id: "1", page, page_size: 12 }), {
+      wrapper: ({ children }) => <Providers>{children}</Providers>,
+      initialProps: { page: 1 },
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.results.length).toBe(1);
+
+    rerender({ page: 2 });
+
+    await waitFor(() => expect(result.current.data?.results.length).toBe(2));
   });
 
   it("should fetch playlist successfully", async () => {

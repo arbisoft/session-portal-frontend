@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
@@ -8,127 +8,104 @@ import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { format, startOfYear, endOfYear } from "date-fns";
-import omit from "lodash/omit";
 import { useSearchParams } from "next/navigation";
 import { VirtuosoGrid } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import { FeaturedSlider } from "@/components/FeaturedSlider/featuredSlider";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
-import { EventsParams, OrderingField } from "@/models/Events";
+import { useVideoQueryManager } from "@/hooks/useVideoQueryManager";
+import { OrderingField, Event } from "@/models/Events";
 import { useGetEventsQuery, useLazyGetEventsQuery } from "@/redux/events/apiSlice";
-import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, generateYearList, parseNonPassedParams } from "@/utils/utils";
 
 import DateFilterDropdown from "./DateFilterDropdown";
+import SkeletonLoader from "./skeletonLoader";
 import { FilterBox, NoSearchResultsWrapper, VideoListingContainer } from "./styled";
 import { defaultParams } from "./types";
 
-const loaderCards = Array.from({ length: 5 });
-
-const SkeletonLoader = () => (
-  <VideoListingContainer>
-    <Box className="skeleton-loader">
-      {loaderCards.map((_, index) => (
-        <Box key={index}>
-          <Skeleton width="100%" height={192} variant="rounded" animation="wave" />
-          <Skeleton width="50%" height={30} />
-          <Skeleton width="30%" height={30} />
-        </Box>
-      ))}
-    </Box>
-  </VideoListingContainer>
-);
-
 const VideosListingPage = () => {
+  const [isPageLoaderActive, setIsPageLoaderActive] = useState<boolean>(false);
+  const [videoData, setVideoData] = useState<Event[]>([]);
+
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
-  const { t } = useTranslation("videos");
   const theme = useTheme();
 
   const matches = useMediaQuery(theme.breakpoints.down("lg"));
 
-  const [page, setPage] = useState(1);
+  const { setPage, parsedParams, apiParams } = useVideoQueryManager(searchParams);
+
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
-  const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery({
+
+  const defaultEventParams = {
     ...defaultParams,
     is_featured: true,
-    page_size: 1,
+    page_size: 12,
+    ordering: ["-event_time"] as OrderingField[],
+  };
+
+  const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery(defaultEventParams, {
+    skip: !!(parsedParams.tag || parsedParams.playlist || parsedParams.search || parsedParams.year),
   });
 
-  const queryParams = useMemo(
-    () => ({
-      tag: searchParams?.get("tag"),
-      search: searchParams?.get("search"),
-      playlist: searchParams?.get("playlist"),
-      order: searchParams?.get("order") as OrderingField,
-      year: searchParams?.get("year"),
-    }),
-    [searchParams]
-  );
+  useEffect(() => {
+    if (apiParams.page === 1) {
+      setVideoData([]);
+      setIsPageLoaderActive(true);
+    }
 
-  const sortingOption = queryParams.order;
-  const filterOption = queryParams.year;
-
-  const fetchEvents = useCallback(() => {
-    const params: EventsParams = parseNonPassedParams({
-      ...defaultParams,
-      event_time_after: queryParams.year ? format(startOfYear(new Date(queryParams.year)), "yyyy-MM-dd") : undefined,
-      event_time_before: queryParams.year ? format(endOfYear(new Date(queryParams.year)), "yyyy-MM-dd") : undefined,
-      is_featured: false,
-      ordering: [queryParams.order || "-event_time"],
-      page_size: 12,
-      page,
-      playlist: queryParams.search ? "" : (queryParams.playlist ?? ""),
-      search: queryParams.search || undefined,
-      tag: queryParams.search ? "" : (queryParams.tag ?? ""),
-    }) as EventsParams;
-    getEvents(params);
-  }, [queryParams, page]);
+    const timer = setTimeout(() => {
+      getEvents(apiParams);
+      setIsPageLoaderActive(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [apiParams]);
 
   useEffect(() => {
-    setPage(1);
-    fetchEvents();
-  }, [queryParams, fetchEvents]);
+    if (videoListings?.results) {
+      setVideoData(videoListings.results);
+    }
+  }, [videoListings]);
 
-  const onQueryParamChange = useCallback(
-    (key: "order" | "year", val: unknown) => {
-      setPage(1);
-      navigateTo(
-        "videos",
-        parseNonPassedParams({
-          ...queryParams,
-          [key]: val,
-        }) as Record<string, string>
-      );
-    },
-    [queryParams]
-  );
-
-  const onClearFilterHandler = useCallback(() => {
-    setPage(1);
+  const onQueryParamChange = (key: "order" | "year", val: unknown) => {
     navigateTo(
       "videos",
       parseNonPassedParams({
-        ...omit(queryParams, ["order", "year"]),
+        ...parsedParams,
+        [key]: val,
       }) as Record<string, string>
     );
-  }, [queryParams]);
+  };
 
-  const latestFeaturedVideo = featureVideos?.results[0];
-  const isDataLoading = isLoading || isUninitialized || !videoListings;
+  const onClearFilterHandler = () => {
+    navigateTo(
+      "videos",
+      parseNonPassedParams({
+        tag: parsedParams.tag ?? undefined,
+        playlist: parsedParams.playlist ?? undefined,
+        search: parsedParams.search ?? undefined,
+      }) as Record<string, string>
+    );
+  };
+
+  const featuredVideos = featureVideos?.results;
+
+  const isDataLoading = isLoading || isUninitialized || !videoListings?.results || isFeatureFetching;
 
   return (
     <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
       <FilterBox>
         <Stack>
-          <Typography variant="h2">{queryParams.tag ? `#${queryParams.tag}` : (queryParams.playlist ?? t("all"))}</Typography>
+          <Typography variant="h2">
+            {parsedParams.tag ? `#${parsedParams.tag}` : (parsedParams.playlist ?? "All videos")}
+          </Typography>
           <DateFilterDropdown
             availableYears={generateYearList(2020)}
-            initialSort={(sortingOption?.startsWith("-") ?? "-") ? "newest" : "oldest"}
-            initialYear={filterOption || undefined}
+            initialSort={(parsedParams.order?.startsWith("-") ?? "-") ? "newest" : "oldest"}
+            initialYear={parsedParams.year || undefined}
             onSortChange={(val) => onQueryParamChange("order", val === "newest" ? "-event_time" : "event_time")}
             onYearChange={(val) => onQueryParamChange("year", val)}
             onClear={onClearFilterHandler}
@@ -136,40 +113,52 @@ const VideosListingPage = () => {
         </Stack>
       </FilterBox>
 
-      {!queryParams.tag &&
-        !queryParams.playlist &&
-        !sortingOption &&
-        !filterOption &&
-        latestFeaturedVideo &&
+      {!parsedParams.tag &&
+        !parsedParams.playlist &&
+        !parsedParams.order &&
+        !parsedParams.year &&
+        featuredVideos &&
         (isFeatureFetching ? (
           <Skeleton width="100%" height={264} variant="rounded" />
         ) : (
-          <VideoCard
-            data={{
-              description: latestFeaturedVideo.description,
-              event_time: formatDateTime(latestFeaturedVideo.event_time),
-              organizer: latestFeaturedVideo.presenters.map(fullName).join(", "),
-              thumbnail: latestFeaturedVideo.thumbnail ? BASE_URL.concat(latestFeaturedVideo.thumbnail) : DEFAULT_THUMBNAIL,
-              title: latestFeaturedVideo.title,
-              video_duration: convertSecondsToFormattedTime(latestFeaturedVideo.video_duration),
-              video_file: latestFeaturedVideo.video_file ? BASE_URL.concat(latestFeaturedVideo.video_file) : undefined,
-            }}
-            onClick={() => navigateTo("videoDetail", { id: latestFeaturedVideo.id })}
-            variant="featured-card"
-            width="100%"
-          />
+          <>
+            <FeaturedSlider
+              slides={featuredVideos.map((feaetuedVideo, idx) => {
+                return (
+                  <VideoCard
+                    key={idx}
+                    data={{
+                      description: feaetuedVideo.description,
+                      event_time: formatDateTime(feaetuedVideo.event_time),
+                      organizer: feaetuedVideo.presenters.map(fullName).join(", "),
+                      thumbnail: feaetuedVideo.thumbnail ? BASE_URL.concat(feaetuedVideo.thumbnail) : DEFAULT_THUMBNAIL,
+                      title: feaetuedVideo.title,
+                      video_duration: convertSecondsToFormattedTime(feaetuedVideo.video_duration),
+                      video_file: feaetuedVideo.video_file ? BASE_URL.concat(feaetuedVideo.video_file) : undefined,
+                    }}
+                    onClick={() => navigateTo("videoDetail", { id: feaetuedVideo.slug })}
+                    variant="featured-card"
+                    width="auto"
+                    height="auto"
+                  />
+                );
+              })}
+            />
+          </>
         ))}
 
       <Box width="100%" paddingBlock={3}>
-        {error || isDataLoading ? (
+        {error || isDataLoading || isPageLoaderActive ? (
           <SkeletonLoader />
         ) : (
           <VideoListingContainer>
             <VirtuosoGrid
-              data={videoListings?.results ?? []}
+              data={videoData}
               useWindowScroll
               endReached={() => {
-                !isFetching && videoListings?.next && setPage((prev) => prev + 1);
+                if (!isFetching && videoListings?.next) {
+                  setPage((prev) => prev + 1);
+                }
               }}
               increaseViewportBy={0}
               components={{
@@ -186,19 +175,19 @@ const VideosListingPage = () => {
                     video_file: videoCard.video_file ? BASE_URL.concat(videoCard.video_file) : undefined,
                   }}
                   key={videoCard.id}
-                  onClick={() => navigateTo("videoDetail", { id: videoCard.id })}
+                  onClick={() => navigateTo("videoDetail", { id: videoCard.slug })}
                   width="100%"
                 />
               )}
             />
           </VideoListingContainer>
         )}
-        {videoListings?.results.length === 0 && (
+        {!isDataLoading && !isFetching && videoListings?.results.length === 0 && (
           <NoSearchResultsWrapper>
             <Typography variant="h3">
-              {t("no_videos_found")}{" "}
-              <Box component="span" color={theme.palette.secondary.main}>
-                {filterOption || queryParams.playlist || queryParams.tag}
+              No videos found for{" "}
+              <Box component="span" color={theme.palette.text.primary}>
+                {parsedParams.year || parsedParams.playlist || parsedParams.tag}
               </Box>
             </Typography>
           </NoSearchResultsWrapper>

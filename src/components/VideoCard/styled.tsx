@@ -5,12 +5,12 @@ import { skeletonClasses } from "@mui/material/Skeleton";
 import { styled, css, alpha } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
-import { shouldForwardProp } from "@/utils/styleUtils";
+import { pxToRem, shouldForwardProp } from "@/utils/styleUtils";
 
 export const VideoCardContainer = styled(Card, {
   name: "VideoCardContainer",
   shouldForwardProp,
-})<{ $width: string }>(({ theme, $width }) => {
+})<{ $width: string; $height: string }>(({ theme, $width, $height }) => {
   return css`
     background: transparent;
     border-radius: unset;
@@ -18,6 +18,7 @@ export const VideoCardContainer = styled(Card, {
     display: grid;
     overflow: unset;
     width: ${$width};
+    height: ${$height};
 
     .${cardContentClasses.root} {
       align-items: flex-start;
@@ -58,7 +59,6 @@ export const VideoCardContainer = styled(Card, {
         .${typographyClasses.h1}, .${typographyClasses.h5}, .${typographyClasses.h3} {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 2;
-          color: ${theme.palette.colors.white};
           display: -webkit-box;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -66,17 +66,15 @@ export const VideoCardContainer = styled(Card, {
 
         .date-time,
         .organizer-name {
-          color: ${theme.palette.colors.gray};
-          font-size: 14px;
+          font-size: ${pxToRem(12)};
           font-weight: 500;
         }
 
         .video-description {
           -webkit-box-orient: vertical;
           -webkit-line-clamp: 4;
-          color: ${theme.palette.colors.white};
           display: -webkit-box;
-          font-size: 18px;
+          font-size: ${pxToRem(14)};
           font-weight: 500;
           overflow: hidden;
 
@@ -91,7 +89,7 @@ export const VideoCardContainer = styled(Card, {
       .${cardContentClasses.root} {
         .video-detail {
           .${typographyClasses.h3} {
-            font-size: 16px;
+            font-size: ${pxToRem(16)};
             font-weight: 600;
           }
         }
@@ -133,21 +131,26 @@ export const VideoCardContainer = styled(Card, {
           width: calc(100% - 113px);
 
           .${typographyClasses.h5} {
-            font-size: 12px;
+            font-size: ${pxToRem(12)};
             font-weight: 500;
           }
 
-          .organizer-name,
+          .organizer-name {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
           .date-time {
-            color: ${theme.palette.colors.gray};
-            font-size: 12px;
+            font-size: ${pxToRem(12)};
           }
         }
       }
     }
 
     &.featured-card {
-      background-color: ${alpha(theme.palette.common.white, 0.06)};
+      background-color: ${alpha(theme.palette.common.white, theme.palette.mode === "dark" ? 0.06 : 0.7)};
       border-radius: 12px;
       display: flex;
       padding: 30px;
@@ -164,7 +167,7 @@ export const VideoCardContainer = styled(Card, {
           border-radius: ${theme.shape.borderRadius + 8}px;
           height: auto;
           object-fit: cover;
-          width: 400px;
+          width: 420px;
 
           ${theme.breakpoints.down("md")} {
             width: 300px;
@@ -188,7 +191,7 @@ export const VideoCardContainer = styled(Card, {
 
         .video-detail {
           width: calc(100% - 430px);
-          gap: 10px;
+          gap: 5px;
 
           ${theme.breakpoints.down("md")} {
             width: calc(100% - 320px);
@@ -204,7 +207,7 @@ export const VideoCardContainer = styled(Card, {
 
           .organizer-name,
           .date-time {
-            font-size: 18px;
+            font-size: ${pxToRem(14)};
           }
         }
       }
@@ -259,11 +262,12 @@ export const VideoCardContainer = styled(Card, {
 
           .${typographyClasses.h1} {
             font-weight: 500;
+            font-size: ${pxToRem(20)};
           }
 
           .organizer-name,
           .date-time {
-            font-size: 18px;
+            font-size: ${pxToRem(14)};
           }
         }
       }
@@ -304,12 +308,12 @@ export const ImageWrapper = styled(Box, {
     .video-duration {
       background-color: ${alpha(theme.palette.common.black, 0.7)};
       border-radius: 2px;
-      bottom: 10px;
-      color: ${theme.palette.colors.white};
-      font-size: 12px;
+      color: ${theme.palette.common.white};
+      font-size: ${pxToRem(12)};
       padding: 2px 4px;
       position: absolute;
-      right: 10px;
+      bottom: 5px;
+      right: 5px;
       z-index: 1;
     }
   `;

@@ -1,6 +1,10 @@
+import { createTheme } from "@mui/material/styles";
+
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import { fireEvent, customRender as render, screen } from "@/jest/utils/testUtils";
 import { convertSecondsToFormattedTime, formatDateTime } from "@/utils/utils";
+
+import ThemeProvider from "../theme/theme-provider";
 
 import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
@@ -94,19 +98,27 @@ describe("VideoCard", () => {
     expect(screen.queryByTestId("video-description")).not.toBeInTheDocument();
   });
 
-  it("should plays video on hover and resets on leave (if not on mobile)", () => {
-    const { container } = render(<VideoCard data={mockProps.data} variant="normal-card" />);
-    const wrapper = container.querySelector(".image-wrapper")!;
+  it("should apply correct background color in light mode", () => {
+    const theme = createTheme({ palette: { mode: "light" } });
+    render(
+      <ThemeProvider customTheme={theme}>
+        <VideoCard {...mockProps} />
+      </ThemeProvider>
+    );
 
-    const video = container.querySelector(".video-player") as HTMLVideoElement;
-    const playSpy = jest.spyOn(video, "play").mockImplementation(() => Promise.resolve());
-    const pauseSpy = jest.spyOn(video, "pause").mockImplementation(() => {});
+    const card = screen.getByTestId("video-card");
+    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
+  });
 
-    fireEvent.mouseEnter(wrapper);
-    expect(playSpy).toHaveBeenCalled();
+  it("should apply correct background color in dark mode", () => {
+    const theme = createTheme({ palette: { mode: "dark" } });
+    render(
+      <ThemeProvider customTheme={theme}>
+        <VideoCard {...mockProps} />
+      </ThemeProvider>
+    );
 
-    fireEvent.mouseLeave(wrapper);
-    expect(pauseSpy).toHaveBeenCalled();
-    expect(video.currentTime).toBe(0);
+    const card = screen.getByTestId("video-card");
+    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
   });
 });

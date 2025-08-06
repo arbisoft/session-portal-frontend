@@ -1,5 +1,6 @@
 "use client";
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -9,6 +10,7 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Virtuoso } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import ReadMore from "@/components/ReadMore";
@@ -17,56 +19,52 @@ import VideoPlayer from "@/components/VideoPlayer";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
-import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, fullName } from "@/utils/utils";
 
+import SkeletonLoader from "./skeletonLoader";
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
-  const { t } = useTranslation("common");
 
   const { navigateTo, getPageUrl } = useNavigation();
 
-  const parsedId = Number(videoId);
+  const [page, setPage] = useState(1);
 
-  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(isNaN(parsedId) ? skipToken : parsedId);
+  const { data: recommendationsData, isFetching: isRecommendationsFetching } = useRecommendationQuery(
+    videoId ? { id: videoId, page } : skipToken
+  );
 
-  const {
-    data: recommendations = [],
-    isFetching: isRecommendationsFetching,
-    isLoading: isRecommendationsLoading,
-    isUninitialized: isRecommendationsUninitialized,
-  } = useRecommendationQuery(isNaN(parsedId) ? skipToken : parsedId);
+  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(videoId || skipToken);
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
-  const areRecommendationsLoading = isRecommendationsFetching || isRecommendationsLoading || isRecommendationsUninitialized;
 
   useEffect(() => {
-    if (isNaN(parsedId) || error) {
+    document.title = `${data?.event?.title ?? ""}  - Sessions Portal`;
+  }, [data?.event?.title]);
+
+  useEffect(() => {
+    if (!videoId || error) {
       navigateTo("videos");
     }
   }, [error]);
 
   const dataEvent = data?.event;
+  const allRecommendations = recommendationsData?.results ?? [];
 
   return (
     <MainLayoutContainer
       isLeftSidebarVisible={false}
       shouldShowDrawer
       rightSidebar={
-        <div>
-          {areRecommendationsLoading ? (
-            <Box display="flex" gap={2} flexDirection="column">
-              {Array(10)
-                .fill("")
-                .map((_, key) => (
-                  <Skeleton variant="rounded" width="100%" height={90} key={`skeleton-${key}`} />
-                ))}
-            </Box>
-          ) : (
-            recommendations.map((video) => (
+        <Box pr={1} data-testid="recommendation-card">
+          <Virtuoso
+            data={allRecommendations}
+            useWindowScroll
+            itemContent={(_, video) => (
               <VideoCard
+                height="100px"
+                key={`recommendation-${video.id}`}
                 data={{
                   event_time: format(new Date(video.event_time), "MMM dd, yyyy"),
                   organizer: video.presenters.map(fullName).join(", "),
@@ -75,25 +73,31 @@ const VideoDetail = () => {
                   video_duration: convertSecondsToFormattedTime(video.video_duration),
                   video_file: video.video_file ? BASE_URL.concat(video.video_file) : undefined,
                 }}
-                key={`recommendation-${video.id}`}
-                onClick={() => navigateTo("videoDetail", { id: video.id })}
+                onClick={() => navigateTo("videoDetail", { id: video.slug })}
                 variant="related-card"
               />
-            ))
-          )}
-        </div>
+            )}
+            endReached={() => {
+              if (!isRecommendationsFetching && recommendationsData?.next) {
+                setPage((prev) => prev + 1);
+              }
+            }}
+            components={{
+              Footer: () =>
+                isRecommendationsFetching ? (
+                  <Box mt={2} sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                    {Array.from({ length: 3 }).map((_, idx) => (
+                      <Skeleton key={idx} variant="rounded" width="100%" height={90} />
+                    ))}
+                  </Box>
+                ) : null,
+            }}
+          />
+        </Box>
       }
     >
       {error || isDataLoading ? (
-        <>
-          <Skeleton width="100%" height={400} variant="rounded" animation="wave" />
-          <Box display="flex" justifyContent="space-between" width="100%">
-            <Skeleton width="50%" height={70} />
-            <Skeleton width="30%" height={70} />
-          </Box>
-          <Skeleton width="30%" height={50} />
-          <Skeleton width="100%" height={200} />
-        </>
+        <SkeletonLoader />
       ) : (
         <>
           <VideoPlayer
@@ -101,26 +105,28 @@ const VideoDetail = () => {
               crossOrigin: true,
               playsInline: true,
               width: "100%",
-              title: data?.title ?? "",
+              title: "",
               videoSrc: data?.video_file ?? "",
               posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
-              posterAlt: data?.title ?? "",
+              posterAlt: data?.event?.title ?? "",
             }}
           />
           <StyledTitleSection>
-            <Typography variant="h4">{data?.title}</Typography>
+            <Typography variant="h4">{data?.event?.title}</Typography>
           </StyledTitleSection>
           <StyledDetailSection>
-            <Typography variant="h6">{dataEvent?.presenters.map(fullName).join(", ")}</Typography>
-            <Typography>{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
+            <Typography color="textSecondary" variant="h6">
+              {dataEvent?.presenters.map(fullName).join(", ")}
+            </Typography>
+            <Typography color="textSecondary">{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
           </StyledDetailSection>
           <StyledNotesSection>
             <Typography variant="h5">Session Details</Typography>
             <div className="description">
-              <ReadMore text={dataEvent?.description ?? ""} showLessText={t("show_less")} showMoreText={t("show_more")} />
-              {(data.event?.tags?.length ?? 0) > 0 && (
+              <ReadMore text={dataEvent?.description ?? ""} showLessText="Show Less" showMoreText="Show More" />
+              {(dataEvent?.tags?.length ?? 0) > 0 && (
                 <TagsContainer>
-                  {data.event?.tags?.map((tag) => (
+                  {dataEvent?.tags?.map((tag) => (
                     <Chip
                       component={Link}
                       href={getPageUrl("videos", { tag })}

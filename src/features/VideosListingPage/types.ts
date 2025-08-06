@@ -2,13 +2,14 @@ import { EventsParams } from "@/models/Events";
 
 export const defaultTag = {
   id: 0,
-  name: "All",
+  name: "All videos",
 };
 
 export const defaultParams: EventsParams = {
   event_type: "SESSION" as const,
   page: 1,
   status: "PUBLISHED",
+  linked_to_events: "True",
 };
 
 type Publisher = {
@@ -34,3 +35,7 @@ export type TVideo = {
 export interface ISearchEventDetail {
   searchQuery: string;
 }
+
+export type SkeletonLoaderProps = {
+  count?: number;
+};

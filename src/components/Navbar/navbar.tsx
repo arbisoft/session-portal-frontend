@@ -3,8 +3,6 @@ import React, { useEffect, useState } from "react";
 import CancelIcon from "@mui/icons-material/Cancel";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import YouTube from "@mui/icons-material/YouTube";
-import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
@@ -15,6 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -23,11 +22,10 @@ import useNavigation from "@/hooks/useNavigation";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
-import { useTranslation } from "@/services/i18n/client";
 
 import ThemeToggle from "../ThemeToggle";
 
-import { CancelIconWrapper, Logo, NavbarRightArea, Search, SearchIconWrapper, StyledInputBase } from "./styled";
+import { CancelIconWrapper, Logo, NavbarRightArea, Search, SearchIconWrapper, StyledAppBar, StyledInputBase } from "./styled";
 
 function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?: VoidFunction; shouldShowDrawer?: boolean }) {
   const dispatch = useDispatch();
@@ -35,7 +33,6 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
   const searchParams = useSearchParams();
   const { isFeatureEnabled } = useFeatureFlags();
   const theme = useTheme();
-  const { t } = useTranslation("common");
 
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
   const isUploadVideoVisible = isFeatureEnabled("uploadVideo");
@@ -79,7 +76,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
   }, [search]);
 
   return (
-    <AppBar position="sticky" data-testid="navbar">
+    <StyledAppBar data-testid="navbar">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
           {shouldShowDrawer && (
@@ -95,8 +92,8 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
             </IconButton>
           )}
           <Logo data-testid="navbar-logo" onClick={() => navigateTo("videos")}>
-            <YouTube />
-            <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" } }}>
+            <Image src={"/assets/images/apple-icon.png"} width={24} height={24} alt="Arbisoft Icon" data-testid="arbisoftLogo" />
+            <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" }, marginLeft: theme.spacing(1) }}>
               Arbisoft Sessions Portal
             </Typography>
           </Logo>
@@ -106,7 +103,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               <StyledInputBase
                 value={searchQuery}
                 onChange={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
-                placeholder={t("search") + "..."}
+                placeholder={"Search..."}
                 inputProps={{ "aria-label": "search", "data-testid": "search-query" }}
               />
 
@@ -116,14 +113,15 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
                 </CancelIconWrapper>
               )}
 
-              <SearchIconWrapper>
+              <SearchIconWrapper type="submit">
                 <SearchIcon data-testid="SearchIcon" />
               </SearchIconWrapper>
             </Search>
           </Box>
           <NavbarRightArea>
+            {isDarkModeVisible && <ThemeToggle />}
             <Tooltip title="Open settings">
-              <IconButton data-testid="avatar-btn" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton size="large" data-testid="avatar-btn" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar variant="rounded" alt={userInfo.full_name ?? ""} src={userInfo.avatar ?? ""} />
               </IconButton>
             </Tooltip>
@@ -144,22 +142,17 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
             >
               {isUploadVideoVisible && (
                 <MenuItem onClick={() => navigateTo("uploadVideo")}>
-                  <Typography>{t("upload_video")}</Typography>
+                  <Typography>Upload a video</Typography>
                 </MenuItem>
               )}
               <MenuItem data-testid="Logout" onClick={handleLogout}>
-                <Typography>{t("logout")}</Typography>
+                <Typography>Logout</Typography>
               </MenuItem>
-              {isDarkModeVisible && (
-                <MenuItem disableRipple disableTouchRipple>
-                  <ThemeToggle />
-                </MenuItem>
-              )}
             </Menu>
           </NavbarRightArea>
         </Toolbar>
       </Container>
-    </AppBar>
+    </StyledAppBar>
   );
 }
 

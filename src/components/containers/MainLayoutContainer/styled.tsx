@@ -13,6 +13,7 @@ export const MainContainer = styled(Container, {
     gap: 30px;
     min-height: 100vh;
     padding: ${theme.spacing(4, 0)};
+    padding-top: ${theme.spacing(12)};
   `;
 });
 
@@ -42,7 +43,7 @@ export const RightSidebar = styled(Box, {
 })(() => {
   return css`
     flex-shrink: 0;
-    width: 280px;
+    width: 300px;
   `;
 });
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { faker } from "@faker-js/faker";
 import Box from "@mui/material/Box";
@@ -13,13 +13,11 @@ import { useSearchParams } from "next/navigation";
 import { Virtuoso } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
-import Select from "@/components/Select";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
-import { EventsParams, OrderingField } from "@/models/Events";
+import { EventsParams } from "@/models/Events";
 import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
-import { useTranslation } from "@/services/i18n/client";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, NoSearchResultsWrapper, SearchCardLoadingState, SearchResultsContainer } from "./styled";
@@ -49,31 +47,19 @@ const SearchResultsPage = () => {
   const searchParams = useSearchParams();
   const { navigateTo } = useNavigation();
   const theme = useTheme();
-  const { t } = useTranslation("videos");
 
   const matches = useMediaQuery(theme.breakpoints.down("lg"));
 
   const [page, setPage] = useState(1);
   const search = searchParams?.get("search") ?? "";
-  const order = (searchParams?.get("order") as OrderingField) || "event_time";
 
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
 
-  const isDataLoading = isFetching || isLoading || isUninitialized;
-
-  const onSortingHandler = useCallback(
-    (val: unknown) => {
-      setPage(1);
-      const params = parseNonPassedParams({ order: val, search }) as Record<string, string>;
-      navigateTo("searchResult", params);
-    },
-    [search]
-  );
+  const isDataLoading = isLoading || isUninitialized;
 
   useEffect(() => {
     const params: EventsParams = {
       ...defaultParams,
-      ordering: [order],
       page_size: 10,
       page,
       search: search || undefined,
@@ -81,7 +67,7 @@ const SearchResultsPage = () => {
 
     const updatedParams = parseNonPassedParams(params) as EventsParams;
     getEvents(updatedParams);
-  }, [search, page, order]);
+  }, [search, page]);
 
   const renderSkeletons = () => loaderCards.map((key) => <LoaderSkeleton key={key} />);
 
@@ -109,7 +95,7 @@ const SearchResultsPage = () => {
               video_file: event.video_file ? BASE_URL.concat(event.video_file) : undefined,
             }}
             width="100%"
-            onClick={() => navigateTo("videoDetail", { id: event.id })}
+            onClick={() => navigateTo("videoDetail", { id: event.slug })}
             variant="search-card"
           />
         </Box>
@@ -123,8 +109,8 @@ const SearchResultsPage = () => {
   const renderNoResults = () => (
     <NoSearchResultsWrapper>
       <Typography variant="h3">
-        {t("no_videos_found")}{" "}
-        <Box component="span" color={theme.palette.secondary.main}>
+        No videos found for{" "}
+        <Box component="span" color={theme.palette.text.primary}>
           {search}
         </Box>
       </Typography>
@@ -144,20 +130,11 @@ const SearchResultsPage = () => {
         <FilterBox>
           <Stack>
             <Typography variant="h2">
-              {`${t("search_results")} - `}
-              <Box component="span" color={theme.palette.secondary.main}>
+              Showing search results for&nbsp;
+              <Box component="span" color={theme.palette.text.primary}>
                 {search}
               </Box>
             </Typography>
-            <Select
-              label={t("sort_by")}
-              menuItems={[
-                { value: "-event_time", label: "Newest First" },
-                { value: "event_time", label: "Oldest First" },
-              ]}
-              onChange={({ target }) => onSortingHandler(target.value)}
-              value={order}
-            />
           </Stack>
         </FilterBox>
       )}
