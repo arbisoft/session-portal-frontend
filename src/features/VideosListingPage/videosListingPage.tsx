@@ -34,7 +34,7 @@ const VideosListingPage = () => {
   const { navigateTo } = useNavigation();
   const theme = useTheme();
 
-  const matches = useMediaQuery(theme.breakpoints.down("lg"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const { setPage, parsedParams, apiParams } = useVideoQueryManager(searchParams);
 
@@ -96,7 +96,7 @@ const VideosListingPage = () => {
   const isDataLoading = isLoading || isUninitialized || !videoListings?.results || isFeatureFetching;
 
   return (
-    <MainLayoutContainer shouldShowDrawer={matches} isLeftSidebarVisible={!matches}>
+    <MainLayoutContainer shouldShowDrawer={!isLargeScreen} isLeftSidebarVisible={isLargeScreen}>
       <FilterBox>
         <Stack>
           <Typography variant="h2">
