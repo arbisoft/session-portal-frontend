@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar/sidebar";
 import useAuth from "@/hooks/useAuth";
 
-import { MainContainer, LeftSidebar, RightSidebar, ContentContainer, StyledDrawer } from "./styled";
+import { MainContainer, SidebarWidth, LeftSidebar, RightSidebar, ContentContainer, StyledDrawer } from "./styled";
 
 type TMainLayoutContainer = {
   children: React.ReactNode;
@@ -31,22 +31,23 @@ const MainLayoutContainer = ({
   };
 
   return (
-    <>
+    <Box sx={{ overflow: "auto", height: "100vh" }}>
       <Navbar onDrawerToggle={toggleDrawer(!open)} shouldShowDrawer={shouldShowDrawer} />
-      <MainContainer maxWidth="xl">
+      {isLeftSidebarVisible && (
+        <LeftSidebar data-testid="left-sidebar">
+          <Sidebar />
+        </LeftSidebar>
+      )}
+      <MainContainer maxWidth="xl" isSidebarAvailable={isLeftSidebarVisible}>
         {shouldShowDrawer && (
           <StyledDrawer open={open} onClose={toggleDrawer(false)} data-testid="drawer">
-            <Box sx={{ width: 250, p: 1 }} role="presentation" onClick={toggleDrawer(false)}>
+            <Box sx={{ width: SidebarWidth, p: 1 }} role="presentation" onClick={toggleDrawer(false)}>
               <Sidebar />
             </Box>
           </StyledDrawer>
         )}
-        {isLeftSidebarVisible && (
-          <LeftSidebar data-testid="left-sidebar">
-            <Sidebar />
-          </LeftSidebar>
-        )}
-        <ContentContainer container>
+
+        <ContentContainer>
           <Box width="100%" height="100%">
             {children}
           </Box>
@@ -57,7 +58,7 @@ const MainLayoutContainer = ({
           </RightSidebar>
         )}
       </MainContainer>
-    </>
+    </Box>
   );
 };
 

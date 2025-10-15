@@ -48,7 +48,7 @@ const SearchResultsPage = () => {
   const { navigateTo } = useNavigation();
   const theme = useTheme();
 
-  const matches = useMediaQuery(theme.breakpoints.down("lg"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const [page, setPage] = useState(1);
   const search = searchParams?.get("search") ?? "";
@@ -125,7 +125,7 @@ const SearchResultsPage = () => {
   };
 
   return (
-    <MainLayoutContainer isLeftSidebarVisible={!matches} shouldShowDrawer={matches}>
+    <MainLayoutContainer isLeftSidebarVisible={isLargeScreen} shouldShowDrawer={!isLargeScreen}>
       {(videoListings?.results.length ?? 0) > 0 && (
         <FilterBox>
           <Stack>
