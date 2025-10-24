@@ -31,7 +31,7 @@ const MainLayoutContainer = ({
   };
 
   return (
-    <Box sx={{ overflow: "auto", height: "100vh" }}>
+    <Box sx={{ height: "100vh" }}>
       <Navbar onDrawerToggle={toggleDrawer(!open)} shouldShowDrawer={shouldShowDrawer} />
       {isLeftSidebarVisible && (
         <LeftSidebar data-testid="left-sidebar">

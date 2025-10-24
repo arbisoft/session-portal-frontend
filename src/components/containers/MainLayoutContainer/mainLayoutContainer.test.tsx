@@ -73,7 +73,7 @@ describe("MainLayoutContainer", () => {
     expect(globalThis.innerWidth).toBe(500);
 
     waitFor(() => {
-      expect(screen.queryByTestId("right-sidebar")).toHaveStyle("display:none");
+      expect(screen.queryByTestId("right-sidebar")).toBeNull();
     });
   });
 

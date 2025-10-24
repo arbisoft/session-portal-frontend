@@ -33,7 +33,7 @@ export const MainContainer = styled(Container, {
 export const LeftSidebar = styled(Box)(({ theme }) => ({
   flexShrink: 0,
   width: SidebarWidth,
-  position: "absolute",
+  position: "fixed",
   top: theme.spacing(containerTopSpacing),
   left: 0,
   zIndex: 2,
