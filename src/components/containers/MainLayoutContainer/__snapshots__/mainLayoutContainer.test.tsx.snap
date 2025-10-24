@@ -3,7 +3,7 @@
 exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
 <DocumentFragment>
   <div
-    class="MuiBox-root css-1gcoj0z"
+    class="MuiBox-root css-m8dnq0"
   >
     <header
       class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-b4hu5c-MuiPaper-root-MuiAppBar-root-StyledAppBar-root"
@@ -127,7 +127,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
       </div>
     </header>
     <div
-      class="MuiBox-root css-6en9ya"
+      class="MuiBox-root css-1ylnd6d"
       data-testid="left-sidebar"
     >
       <div
