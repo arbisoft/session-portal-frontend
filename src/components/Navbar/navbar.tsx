@@ -108,12 +108,12 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               />
 
               {searchQuery.length > 0 && (
-                <CancelIconWrapper data-testid="cancelIcon" onClick={handleClearSearch}>
+                <CancelIconWrapper data-testid="cancelIcon" onClick={handleClearSearch} aria-label="cancel" size="small">
                   <CancelIcon />
                 </CancelIconWrapper>
               )}
 
-              <SearchIconWrapper type="submit">
+              <SearchIconWrapper type="submit" aria-label="search">
                 <SearchIcon data-testid="SearchIcon" />
               </SearchIconWrapper>
             </Search>

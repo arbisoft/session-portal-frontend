@@ -2,144 +2,148 @@
 
 exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
 <DocumentFragment>
-  <header
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-b4hu5c-MuiPaper-root-MuiAppBar-root-StyledAppBar-root"
-    data-testid="navbar"
-    style="--Paper-shadow: var(--mui-shadows-4); --Paper-overlay: var(--mui-overlays-4);"
+  <div
+    class="MuiBox-root css-m8dnq0"
   >
-    <div
-      class="MuiContainer-root css-12f197v-MuiContainer-root"
+    <header
+      class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-b4hu5c-MuiPaper-root-MuiAppBar-root-StyledAppBar-root"
+      data-testid="navbar"
+      style="--Paper-shadow: var(--mui-shadows-4); --Paper-overlay: var(--mui-overlays-4);"
     >
       <div
-        class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
+        class="MuiContainer-root css-12f197v-MuiContainer-root"
       >
         <div
-          class="css-1vbiuhu-Logo-root"
-          data-testid="navbar-logo"
+          class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
         >
-          <img
-            alt="Arbisoft Icon"
-            data-nimg="1"
-            data-testid="arbisoftLogo"
-            decoding="async"
-            height="24"
-            loading="lazy"
-            src="/_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=48&q=75"
-            srcset="/_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=32&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=48&q=75 2x"
-            style="color: transparent;"
-            width="24"
-          />
-          <h6
-            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1k6p2lw-MuiTypography-root"
+          <div
+            class="css-1vbiuhu-Logo-root"
+            data-testid="navbar-logo"
           >
-            Arbisoft Sessions Portal
-          </h6>
-        </div>
-        <div
-          class="MuiBox-root css-1rqqp05"
-        >
-          <form
-            class="css-asd7gd-Search-root"
-          >
-            <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-1kssppa-MuiInputBase-root-StyledInputBase-root"
+            <img
+              alt="Arbisoft Icon"
+              data-nimg="1"
+              data-testid="arbisoftLogo"
+              decoding="async"
+              height="24"
+              loading="lazy"
+              src="/_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=48&q=75"
+              srcset="/_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=32&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2Fapple-icon.png&w=48&q=75 2x"
+              style="color: transparent;"
+              width="24"
+            />
+            <h6
+              class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1k6p2lw-MuiTypography-root"
             >
-              <input
+              Arbisoft Sessions Portal
+            </h6>
+          </div>
+          <div
+            class="MuiBox-root css-1rqqp05"
+          >
+            <form
+              class="css-asd7gd-Search-root"
+            >
+              <div
+                class="MuiInputBase-root MuiInputBase-colorPrimary css-1mhii58-MuiInputBase-root-StyledInputBase-root"
+              >
+                <input
+                  aria-label="search"
+                  class="MuiInputBase-input css-1943rd7-MuiInputBase-input"
+                  data-testid="search-query"
+                  placeholder="Search..."
+                  type="text"
+                  value="test search"
+                />
+              </div>
+              <button
+                aria-label="cancel"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1bf1yfo-MuiButtonBase-root-MuiIconButton-root"
+                data-testid="cancelIcon"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
+                  data-testid="CancelIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z"
+                  />
+                </svg>
+              </button>
+              <button
                 aria-label="search"
-                class="MuiInputBase-input css-1943rd7-MuiInputBase-input"
-                data-testid="search-query"
-                placeholder="Search..."
-                type="text"
-                value="test search"
-              />
-            </div>
-            <div
-              class="css-8brctg-CancelIconWrapper-root"
-              data-testid="cancelIcon"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
-                data-testid="CancelIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-ndsf0k-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
+                tabindex="0"
+                type="submit"
               >
-                <path
-                  d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2m5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12z"
-                />
-              </svg>
-            </div>
-            <button
-              class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary css-vih3tv-MuiButtonBase-root-MuiButton-root-SearchIconWrapper-root"
-              tabindex="0"
-              type="submit"
-            >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
-                data-testid="SearchIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"
-                />
-              </svg>
-            </button>
-          </form>
-        </div>
-        <div
-          class="MuiBox-root css-si7qf5-NavbarRightArea-root"
-        >
-          <button
-            aria-label="Open settings"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
-            data-mui-internal-clone-element="true"
-            data-testid="avatar-btn"
-            tabindex="0"
-            type="button"
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
+                  data-testid="SearchIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"
+                  />
+                </svg>
+              </button>
+            </form>
+          </div>
+          <div
+            class="MuiBox-root css-si7qf5-NavbarRightArea-root"
           >
-            <div
-              class="MuiAvatar-root MuiAvatar-rounded MuiAvatar-colorDefault css-5ta4e5-MuiAvatar-root"
+            <button
+              aria-label="Open settings"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
+              data-mui-internal-clone-element="true"
+              data-testid="avatar-btn"
+              tabindex="0"
+              type="button"
             >
-              <svg
-                aria-hidden="true"
-                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiAvatar-fallback css-pamvpt-MuiSvgIcon-root-MuiAvatar-fallback"
-                data-testid="PersonIcon"
-                focusable="false"
-                viewBox="0 0 24 24"
+              <div
+                class="MuiAvatar-root MuiAvatar-rounded MuiAvatar-colorDefault css-5ta4e5-MuiAvatar-root"
               >
-                <path
-                  d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-                />
-              </svg>
-            </div>
-          </button>
+                <svg
+                  aria-hidden="true"
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiAvatar-fallback css-pamvpt-MuiSvgIcon-root-MuiAvatar-fallback"
+                  data-testid="PersonIcon"
+                  focusable="false"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                  />
+                </svg>
+              </div>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
-  <div
-    class="MuiContainer-root MuiContainer-maxWidthXl css-n6sbso-MuiContainer-root-MainContainer-root"
-  >
+    </header>
     <div
-      class="MuiBox-root css-1i3wj7r-LeftSidebar-root"
+      class="MuiBox-root css-1ylnd6d"
       data-testid="left-sidebar"
     >
       <div
-        class="MuiBox-root css-cd9kc0-SidebarContainer-root"
+        class="MuiBox-root css-ekmg7i"
         data-testid="sidebar-container"
       >
         <div
           class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
         >
           <ul
-            class="MuiList-root MuiList-padding css-b7dj7n-MuiList-root"
+            class="MuiList-root MuiList-padding css-18jbpcj-MuiList-root"
             role="menu"
             tabindex="-1"
           >
             <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-All"
               role="menuitem"
               tabindex="0"
@@ -155,13 +159,14 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+                title="All videos"
               >
                 All videos
               </p>
             </li>
             <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-1"
               role="menuitem"
               tabindex="-1"
@@ -177,13 +182,14 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+                title="Test-1"
               >
                 Test-1
               </p>
             </li>
             <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-2"
               role="menuitem"
               tabindex="-1"
@@ -199,13 +205,14 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+                title="Test-2"
               >
                 Test-2
               </p>
             </li>
             <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-3"
               role="menuitem"
               tabindex="-1"
@@ -221,7 +228,8 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 width="18"
               />
               <p
-                class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+                class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+                title="Test-3"
               >
                 Test-3
               </p>
@@ -272,22 +280,26 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
       </div>
     </div>
     <div
-      class="MuiGrid2-root MuiGrid2-container MuiGrid2-direction-xs-row css-m63fai-MuiGrid2-root-ContentContainer-root"
+      class="MuiContainer-root MuiContainer-maxWidthXl css-11shws3-MuiContainer-root"
     >
       <div
-        class="MuiBox-root css-uwwqev"
+        class="MuiBox-root css-17i13ng"
       >
-        <div>
-          Test Content
+        <div
+          class="MuiBox-root css-uwwqev"
+        >
+          <div>
+            Test Content
+          </div>
         </div>
       </div>
-    </div>
-    <div
-      class="MuiBox-root css-1n4qjh3-RightSidebar-root"
-      data-testid="right-sidebar"
-    >
-      <div>
-        Right Content
+      <div
+        class="MuiBox-root css-1b115a6"
+        data-testid="right-sidebar"
+      >
+        <div>
+          Right Content
+        </div>
       </div>
     </div>
   </div>
