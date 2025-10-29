@@ -18,6 +18,7 @@ const nextConfig = {
   swcMinify: true, // Faster and smaller output
   compress: true, // Enable gzip compression
   productionBrowserSourceMaps: false, // Remove source maps in production
+  output: "standalone",
 };
 
 module.exports = nextConfig;
