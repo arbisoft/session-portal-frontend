@@ -13,9 +13,10 @@ exports[`Navbar Component should match snapshot 1`] = `
       <div
         class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
       >
-        <div
-          class="css-1vbiuhu-Logo-root"
+        <a
+          class="css-jiztmo-Logo-root"
           data-testid="navbar-logo"
+          href="/videos"
         >
           <img
             alt="Arbisoft Icon"
@@ -34,12 +35,12 @@ exports[`Navbar Component should match snapshot 1`] = `
           >
             Arbisoft Sessions Portal
           </h6>
-        </div>
+        </a>
         <div
           class="MuiBox-root css-1rqqp05"
         >
           <form
-            class="css-15t2c4j-Search-root"
+            class="css-asd7gd-Search-root"
           >
             <div
               class="MuiInputBase-root MuiInputBase-colorPrimary css-1mhii58-MuiInputBase-root-StyledInputBase-root"
@@ -74,7 +75,7 @@ exports[`Navbar Component should match snapshot 1`] = `
             </button>
             <button
               aria-label="search"
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1wvdlgz-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-ndsf0k-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
               tabindex="0"
               type="submit"
             >

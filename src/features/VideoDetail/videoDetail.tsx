@@ -75,6 +75,7 @@ const VideoDetail = () => {
                 }}
                 onClick={() => navigateTo("videoDetail", { id: video.slug })}
                 variant="related-card"
+                href={`/videos/${video.slug}`}
               />
             )}
             endReached={() => {

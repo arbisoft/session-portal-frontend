@@ -73,13 +73,13 @@ describe("Sidebar Component", () => {
     fireEvent.click(firstItem);
 
     await waitFor(() => {
-      expect(mockNavigateTo).toHaveBeenCalledWith("videos", { playlist: "Test-1" });
+      expect(firstItem).toHaveAttribute("href", "/videos?playlist=Test-1");
     });
   });
 
   it("should render sidebar item icons", () => {
     customRender(<Sidebar />);
-    expect(screen.getAllByRole("img")).toHaveLength(mockItems.length + 1);
+    expect(screen.getAllByAltText("sidebar item icon")).toHaveLength(mockItems.length + 1);
   });
 
   it("should highlight the selected tag", async () => {
@@ -98,7 +98,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item);
 
     await waitFor(() => {
-      expect(mockNavigateTo).toHaveBeenCalledWith("videos");
+      expect(item).toHaveAttribute("href", "/videos");
     });
   });
 
@@ -156,7 +156,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item);
 
     await waitFor(() => {
-      expect(mockNavigateTo).toHaveBeenCalledWith("videos", { playlist: "Test-2" });
+      expect(item).toHaveAttribute("href", "/videos?playlist=Test-2");
     });
   });
 
@@ -190,7 +190,7 @@ describe("Sidebar Component", () => {
   it("should highlight the selected tag correctly", () => {
     (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams("tag=2"));
     customRender(<Sidebar />);
-    const selectedTag = screen.getByTestId("sidebar-item-Test-2");
+    const selectedTag = screen.getByTestId("sidebar-tags-Test-2");
     expect(selectedTag).toHaveStyle("background-color: transparent");
   });
 
@@ -198,6 +198,6 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
     const tag = screen.getByTestId("sidebar-tags-Test-1");
     fireEvent.click(tag);
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "Test-1" });
+    expect(tag).toHaveAttribute("href", "/videos?tag=Test-1");
   });
 });
