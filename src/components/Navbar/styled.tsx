@@ -1,6 +1,6 @@
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
 import { alpha, css, styled } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
@@ -63,7 +63,9 @@ export const Search = styled("form", { name: "Search" })(({ theme }) => {
   `;
 });
 
-export const SearchIconWrapper = styled(Button, { name: "SearchIconWrapper" })(({ theme }) => {
+export const SearchIconWrapper = styled(IconButton, {
+  name: "SearchIconWrapper",
+})(({ theme }) => {
   return css`
     align-items: center;
     background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.25) : "#cccccc"};
@@ -79,21 +81,17 @@ export const SearchIconWrapper = styled(Button, { name: "SearchIconWrapper" })((
   `;
 });
 
-export const CancelIconWrapper = styled("div", { name: "CancelIconWrapper" })(({ theme }) => {
-  return css`
-    padding-right: ${theme.spacing(1)};
-    padding-top: ${theme.spacing(1)};
-    cursor: pointer;
-  `;
-});
+export const CancelIconWrapper = styled(IconButton)(({ theme }) => ({
+  marginInlineEnd: theme.spacing(0.5),
+}));
 
 export const StyledInputBase = styled(InputBase, { name: "StyledInputBase" })(
   ({ theme }) => css`
     color: inherit;
     width: 100%;
     & .${inputBaseClasses.input} {
-      padding: ${theme.spacing(1, 1, 1, 1)};
-      padding-right: calc(1em + ${theme.spacing(1)});
+      padding: ${theme.spacing(1)};
+      padding-inline-end: calc(1em + ${theme.spacing(1)});
       background-color: transparent;
     }
   `

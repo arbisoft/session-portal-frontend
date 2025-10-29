@@ -3,19 +3,19 @@
 exports[`Sidebar Component should match snapshot 1`] = `
 <DocumentFragment>
   <div
-    class="MuiBox-root css-cd9kc0-SidebarContainer-root"
+    class="MuiBox-root css-ekmg7i"
     data-testid="sidebar-container"
   >
     <div
       class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
     >
       <ul
-        class="MuiList-root MuiList-padding css-b7dj7n-MuiList-root"
+        class="MuiList-root MuiList-padding css-18jbpcj-MuiList-root"
         role="menu"
         tabindex="-1"
       >
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-All"
           role="menuitem"
           tabindex="0"
@@ -31,13 +31,14 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+            title="All videos"
           >
             All videos
           </p>
         </li>
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-1"
           role="menuitem"
           tabindex="-1"
@@ -53,13 +54,14 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+            title="Test-1"
           >
             Test-1
           </p>
         </li>
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-2"
           role="menuitem"
           tabindex="-1"
@@ -75,13 +77,14 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+            title="Test-2"
           >
             Test-2
           </p>
         </li>
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dnxijb-MuiButtonBase-root-MuiMenuItem-root-MenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-3"
           role="menuitem"
           tabindex="-1"
@@ -97,7 +100,8 @@ exports[`Sidebar Component should match snapshot 1`] = `
             width="18"
           />
           <p
-            class="MuiTypography-root MuiTypography-bodyMedium css-p5v6a9-MuiTypography-root-Text-root"
+            class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+            title="Test-3"
           >
             Test-3
           </p>

@@ -34,7 +34,7 @@ const Sidebar = () => {
           <MenuList data-testid="loading">
             {loadingTags?.map((item) => (
               <MenuItem key={item}>
-                <Box key={item} display="flex" justifyContent="space-between" alignItems={"center"} width="90%" mb={1}>
+                <Box display="flex" justifyContent="space-between" alignItems="center" width="90%" mb={1}>
                   <Skeleton variant="rounded" width="15%" height={20} />
                   <Skeleton width="76%" height={25} />
                 </Box>
@@ -42,10 +42,12 @@ const Sidebar = () => {
             ))}
           </MenuList>
         ) : (
-          <MenuList>
+          <MenuList sx={{ pt: 0 }}>
             <StyledMenuItem selected={!playlist && !tag} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
               <Image src="/assets/images/sidebar-item-icon.svg" alt="All videos" width={18} height={12} />
-              <Text>All videos</Text>
+              <Text variant="bodySmall" title="All videos">
+                All videos
+              </Text>
             </StyledMenuItem>
             {playlists.map((item) => (
               <StyledMenuItem
@@ -57,7 +59,9 @@ const Sidebar = () => {
                 data-testid={`sidebar-item-${item.name}`}
               >
                 <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
-                <Text>{item.name}</Text>
+                <Text variant="bodySmall" title={item.name}>
+                  {item.name}
+                </Text>
               </StyledMenuItem>
             ))}
           </MenuList>

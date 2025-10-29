@@ -5,15 +5,9 @@ import Stack from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
-import { pxToRem, shouldForwardProp } from "@/utils/styleUtils";
-
-export const SidebarContainer = styled(Box, {
-  name: "SidebarContainer",
-})(() => {
-  return css`
-    height: 100%;
-    width: 100%;
-  `;
+export const SidebarContainer = styled(Box)({
+  height: "100%",
+  width: "100%",
 });
 
 export const MenuStack = styled(Stack, {
@@ -26,28 +20,25 @@ export const MenuStack = styled(Stack, {
   `;
 });
 
-export const StyledMenuItem = styled(MenuItem, {
-  name: "MenuItem",
-  shouldForwardProp,
-})(() => {
-  return css`
-    border-radius: 6px;
-    cursor: pointer;
-    flex-direction: row;
-    gap: 10px;
-    padding: 12px;
-  `;
-});
+export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+  borderRadius: 6,
+  cursor: "pointer",
+  gap: theme.spacing(1.5),
+  padding: theme.spacing(1.5),
+}));
 
-export const Text = styled(Typography, {
-  name: "Text",
-})(() => {
-  return css`
-    font-size: ${pxToRem(14)};
-    line-height: 12px;
-    font-weight: 500;
-    letter-spacing: 0.4px;
-  `;
+export const Text = styled(Typography)({
+  lineHeight: 1.2,
+  fontWeight: 500,
+  letterSpacing: 0.4,
+  whiteSpace: "normal",
+  display: "-webkit-box",
+  overflow: "hidden",
+  maxWidth: "100%",
+  "-webkit-box-orient": "vertical",
+  "-webkit-line-clamp": "3",
+  overflowWrap: "break-word",
+  textOverflow: "ellipsis",
 });
 
 export const TagsContainer = styled(Box, {

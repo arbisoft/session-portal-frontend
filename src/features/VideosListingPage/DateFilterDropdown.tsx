@@ -89,7 +89,6 @@ const DateFilterDropdown = ({
         onClick={handleClick}
         endIcon={!open ? <ArrowDropDown /> : <ArrowDropUp />}
         sx={{ minWidth: 200, justifyContent: "space-between" }}
-        size="large"
       >
         {yearFilter ? `Year: ${yearFilter} (${sortByText})` : sortByText}
       </Button>
