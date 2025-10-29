@@ -2,26 +2,31 @@
 
 exports[`Sidebar Component should match snapshot 1`] = `
 <DocumentFragment>
-  <div
-    class="MuiBox-root css-ekmg7i"
+  <nav
+    aria-label="Video navigation sidebar"
+    class="css-4kypo5"
     data-testid="sidebar-container"
   >
     <div
       class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
     >
       <ul
+        aria-label="Video playlists"
         class="MuiList-root MuiList-padding css-18jbpcj-MuiList-root"
         role="menu"
         tabindex="-1"
       >
-        <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+        <a
+          aria-current="page"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-All"
+          href="/videos"
           role="menuitem"
           tabindex="0"
         >
           <img
-            alt="All videos"
+            alt="sidebar item icon"
+            aria-hidden="true"
             data-nimg="1"
             decoding="async"
             height="12"
@@ -36,15 +41,17 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             All videos
           </p>
-        </li>
-        <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+        </a>
+        <a
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-1"
+          href="/videos?playlist=Test-1"
           role="menuitem"
           tabindex="-1"
         >
           <img
-            alt="Test-1"
+            alt="sidebar item icon"
+            aria-hidden="true"
             data-nimg="1"
             decoding="async"
             height="12"
@@ -59,15 +66,17 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             Test-1
           </p>
-        </li>
-        <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+        </a>
+        <a
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-2"
+          href="/videos?playlist=Test-2"
           role="menuitem"
           tabindex="-1"
         >
           <img
-            alt="Test-2"
+            alt="sidebar item icon"
+            aria-hidden="true"
             data-nimg="1"
             decoding="async"
             height="12"
@@ -82,15 +91,17 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             Test-2
           </p>
-        </li>
-        <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+        </a>
+        <a
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-3"
+          href="/videos?playlist=Test-3"
           role="menuitem"
           tabindex="-1"
         >
           <img
-            alt="Test-3"
+            alt="sidebar item icon"
+            aria-hidden="true"
             data-nimg="1"
             decoding="async"
             height="12"
@@ -105,15 +116,19 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             Test-3
           </p>
-        </li>
+        </a>
       </ul>
       <div
-        class="MuiBox-root css-1do1o5k-TagsContainer-root"
+        aria-label="Video tags"
+        class="MuiBox-root css-1gpn19b-TagsContainer-root"
         data-testid="sidebar-tags"
+        role="list"
       >
-        <div
+        <a
+          aria-pressed="false"
           class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-1"
+          href="/videos?tag=Test-1"
           role="button"
           tabindex="0"
         >
@@ -122,10 +137,12 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             #Test-1
           </span>
-        </div>
-        <div
+        </a>
+        <a
+          aria-pressed="false"
           class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-2"
+          href="/videos?tag=Test-2"
           role="button"
           tabindex="0"
         >
@@ -134,10 +151,12 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             #Test-2
           </span>
-        </div>
-        <div
+        </a>
+        <a
+          aria-pressed="false"
           class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-3"
+          href="/videos?tag=Test-3"
           role="button"
           tabindex="0"
         >
@@ -146,9 +165,9 @@ exports[`Sidebar Component should match snapshot 1`] = `
           >
             #Test-3
           </span>
-        </div>
+        </a>
       </div>
     </div>
-  </div>
+  </nav>
 </DocumentFragment>
 `;

@@ -182,8 +182,9 @@ describe("Navbar Component", () => {
 
   test("should navigate to the videos page when logo is clicked", () => {
     customRender(<Navbar />);
-    fireEvent.click(screen.getByTestId("navbar-logo"));
-    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
+    const logo = screen.getByTestId("navbar-logo");
+    fireEvent.click(logo);
+    expect(logo).toHaveAttribute("href", "/videos");
   });
 
   test("should match snapshot", () => {
