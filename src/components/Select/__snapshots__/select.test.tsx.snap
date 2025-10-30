@@ -11,18 +11,18 @@ exports[`Select Component should match snapshot 1`] = `
       Sort By
     </label>
     <div
-      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-sizeSmall css-8r70ge-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-sizeSmall MuiSelect-root css-8r70ge-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
       data-testid="sort-select"
     >
       <div
-        aria-controls=":r5:"
         aria-expanded="false"
         aria-haspopup="listbox"
-        class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-laj7or-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+        class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-qvkotf-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
         role="combobox"
         tabindex="0"
       >
         <span
+          aria-hidden="true"
           class="notranslate"
         >
           ​
@@ -37,7 +37,7 @@ exports[`Select Component should match snapshot 1`] = `
       />
       <svg
         aria-hidden="true"
-        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1exavk5-MuiSvgIcon-root-MuiSelect-icon"
+        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1778ep4-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
         data-testid="ArrowDropDownIcon"
         focusable="false"
         viewBox="0 0 24 24"
@@ -48,12 +48,13 @@ exports[`Select Component should match snapshot 1`] = `
       </svg>
       <fieldset
         aria-hidden="true"
-        class="MuiOutlinedInput-notchedOutline css-1v24f9t-MuiOutlinedInput-notchedOutline"
+        class="MuiOutlinedInput-notchedOutline css-1ohs4y1-MuiNotchedOutlined-root-MuiOutlinedInput-notchedOutline"
       >
         <legend
-          class="css-w4cd9x"
+          class="css-1nf2c5d-MuiNotchedOutlined-root"
         >
           <span
+            aria-hidden="true"
             class="notranslate"
           >
             ​

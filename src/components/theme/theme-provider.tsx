@@ -3,7 +3,14 @@
 import { useMemo, PropsWithChildren } from "react";
 
 import GlobalStyles from "@mui/material/GlobalStyles";
-import { createTheme, ThemeProvider as MuiThemeProvider, responsiveFontSizes, Theme, useTheme } from "@mui/material/styles";
+import {
+  createTheme,
+  ThemeProvider as MuiThemeProvider,
+  responsiveFontSizes,
+  Shadows,
+  Theme,
+  useTheme,
+} from "@mui/material/styles";
 import { Roboto_Condensed, Inter } from "next/font/google";
 
 import { pxToRem } from "@/utils/styleUtils";
@@ -44,6 +51,7 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
     () =>
       responsiveFontSizes(
         createTheme({
+          shadows: Array(defaultTheme.shadows.length).fill("none") as Shadows,
           cssVariables: {
             colorSchemeSelector: "class",
           },

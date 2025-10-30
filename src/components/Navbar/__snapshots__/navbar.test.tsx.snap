@@ -30,7 +30,7 @@ exports[`Navbar Component should match snapshot 1`] = `
             width="24"
           />
           <h6
-            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1k6p2lw-MuiTypography-root"
+            class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1w5d8ft-MuiTypography-root"
           >
             Arbisoft Sessions Portal
           </h6>
@@ -39,10 +39,10 @@ exports[`Navbar Component should match snapshot 1`] = `
           class="MuiBox-root css-1rqqp05"
         >
           <form
-            class="css-15t2c4j-Search-root"
+            class="css-uhe58a-Search-root"
           >
             <div
-              class="MuiInputBase-root MuiInputBase-colorPrimary css-1mhii58-MuiInputBase-root-StyledInputBase-root"
+              class="MuiInputBase-root MuiInputBase-colorPrimary css-uzxt12-MuiInputBase-root-StyledInputBase-root"
             >
               <input
                 aria-label="search"
@@ -55,7 +55,7 @@ exports[`Navbar Component should match snapshot 1`] = `
             </div>
             <button
               aria-label="cancel"
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1bf1yfo-MuiButtonBase-root-MuiIconButton-root"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-sl1li0-MuiButtonBase-root-MuiIconButton-root"
               data-testid="cancelIcon"
               tabindex="0"
               type="button"
@@ -74,7 +74,7 @@ exports[`Navbar Component should match snapshot 1`] = `
             </button>
             <button
               aria-label="search"
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1wvdlgz-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1qlfmo1-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
               tabindex="0"
               type="submit"
             >
@@ -97,7 +97,7 @@ exports[`Navbar Component should match snapshot 1`] = `
         >
           <button
             aria-label="Open settings"
-            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-euwqad-MuiButtonBase-root-MuiIconButton-root"
             data-mui-internal-clone-element="true"
             data-testid="avatar-btn"
             tabindex="0"

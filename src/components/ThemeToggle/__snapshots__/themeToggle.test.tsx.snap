@@ -4,7 +4,7 @@ exports[`ThemeToggle matches snapshot 1`] = `
 <DocumentFragment>
   <button
     aria-label="Switch to dark mode"
-    class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-sizeMedium css-hcxzx-MuiButtonBase-root-MuiIconButton-root"
+    class="MuiButtonBase-root MuiIconButton-root MuiIconButton-colorInherit MuiIconButton-sizeMedium css-c02qdb-MuiButtonBase-root-MuiIconButton-root"
     data-mui-internal-clone-element="true"
     role="dark-mode-button"
     tabindex="0"

@@ -10,12 +10,12 @@ exports[`Sidebar Component should match snapshot 1`] = `
       class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
     >
       <ul
-        class="MuiList-root MuiList-padding css-18jbpcj-MuiList-root"
+        class="MuiList-root MuiList-padding css-zym0s0-MuiList-root"
         role="menu"
         tabindex="-1"
       >
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-dfbjkr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-All"
           role="menuitem"
           tabindex="0"
@@ -38,7 +38,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           </p>
         </li>
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dfbjkr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-1"
           role="menuitem"
           tabindex="-1"
@@ -61,7 +61,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           </p>
         </li>
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dfbjkr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-2"
           role="menuitem"
           tabindex="-1"
@@ -84,7 +84,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           </p>
         </li>
         <li
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-dfbjkr-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-3"
           role="menuitem"
           tabindex="-1"
@@ -112,7 +112,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
         data-testid="sidebar-tags"
       >
         <div
-          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-1"
           role="button"
           tabindex="0"
@@ -124,7 +124,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           </span>
         </div>
         <div
-          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-2"
           role="button"
           tabindex="0"
@@ -136,7 +136,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           </span>
         </div>
         <div
-          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-3"
           role="button"
           tabindex="0"
