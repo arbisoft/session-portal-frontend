@@ -8,7 +8,7 @@ type Props = {
 };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { search } = searchParams;
+  const { search } = await searchParams;
 
   const title = "Sessions Portal";
 

@@ -1,14 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -18,17 +22,27 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
   "include": [
-    "next-env.d.ts",
+    ".next/dev/types/**/*.ts",
+    ".next/types/**/*.ts",
+    ".next/types/**/*.ts",
+    ".storybook/**/*",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/middleware.ts",
-    "./.next/types/**/*.ts"
+    "commitlint.config.js",
+    "eslint.config.mjs",
+    "next-env.d.ts",
+    "next.config.js",
+    "src/**/*"
   ],
-  "exclude": ["node_modules", ".next"]
+  "exclude": [
+    ".next",
+    "dist",
+    "node_modules",
+  ]
 }

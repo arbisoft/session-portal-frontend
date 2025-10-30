@@ -1,9 +1,11 @@
 import React from "react";
-import { CssBaseline } from "@mui/material";
+
+import CssBaseline from "@mui/material/CssBaseline";
 import type { Preview } from "@storybook/react";
 import { themes } from "@storybook/theming";
+
 import ThemeProvider from "../src/components/theme/theme-provider";
-import {Providers} from "../src/redux/store/provider";
+import { Providers } from "../src/redux/store/provider";
 
 const preview: Preview = {
   decorators: [

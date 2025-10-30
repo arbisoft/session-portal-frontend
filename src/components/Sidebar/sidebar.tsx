@@ -32,8 +32,8 @@ const Sidebar = () => {
       <MenuStack>
         {arePlaylistsLoading ? (
           <MenuList data-testid="loading">
-            {loadingTags?.map((item) => (
-              <MenuItem key={item}>
+            {loadingTags?.map((item, index) => (
+              <MenuItem key={item.concat(index.toString())}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" width="90%" mb={1}>
                   <Skeleton variant="rounded" width="15%" height={20} />
                   <Skeleton width="76%" height={25} />

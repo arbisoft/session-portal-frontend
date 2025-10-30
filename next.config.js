@@ -3,9 +3,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
     remotePatterns: [
       { hostname: "sessions.arbisoft.com" },
@@ -15,9 +12,12 @@ const nextConfig = {
     ],
   },
   reactStrictMode: true,
-  swcMinify: true, // Faster and smaller output
   compress: true, // Enable gzip compression
   productionBrowserSourceMaps: false, // Remove source maps in production
+  compiler: {
+    // For other options, see https://nextjs.org/docs/architecture/nextjs-compiler#emotion
+    emotion: true,
+  },
 };
 
 module.exports = nextConfig;

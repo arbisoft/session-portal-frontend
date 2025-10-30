@@ -35,8 +35,8 @@ export const Text = styled(Typography)({
   display: "-webkit-box",
   overflow: "hidden",
   maxWidth: "100%",
-  "-webkit-box-orient": "vertical",
-  "-webkit-line-clamp": "3",
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: "3",
   overflowWrap: "break-word",
   textOverflow: "ellipsis",
 });
