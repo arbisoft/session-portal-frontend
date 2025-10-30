@@ -4,7 +4,7 @@ exports[`VideoCard should matches snapshot 1`] = `
 <DocumentFragment>
   <article
     aria-label="Video card: Refresher & AMA Session on Competency Framework Changes - January 2025"
-    class="MuiCard-root custom-class normal-card css-cy8rcv-MuiCard-root-VideoCardContainer-root"
+    class="MuiCard-root custom-class normal-card css-1m34fuv-MuiCard-root-VideoCardContainer-root"
     data-testid="video-card"
     elevation="0"
     role="group"
@@ -16,7 +16,7 @@ exports[`VideoCard should matches snapshot 1`] = `
       href="/videos/test-01"
     >
       <div
-        class="image-wrapper MuiBox-root css-1k95zkw-ImageWrapper-root"
+        class="image-wrapper MuiBox-root css-cmszgv-ImageWrapper-root"
       >
         <span
           aria-hidden="true"

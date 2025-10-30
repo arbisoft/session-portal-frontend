@@ -46,7 +46,7 @@ export const Search = styled("form", { name: "Search" })(({ theme }) => {
   return css`
     align-items: center;
     background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.15) : "#e3e3e3"};
-    border-radius: ${theme.shape.borderRadius * 2}px;
+    border-radius: ${theme.spacing()};
     display: flex;
     justify-content: space-between;
     margin-left: 0;
@@ -71,9 +71,9 @@ export const SearchIconWrapper = styled(IconButton, {
   return css`
     align-items: center;
     background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.25) : "#cccccc"};
-    border-bottom-right-radius: ${theme.shape.borderRadius * 2}px;
+    border-bottom-right-radius: ${theme.spacing()};
     border-radius: 0;
-    border-top-right-radius: ${theme.shape.borderRadius * 2}px;
+    border-top-right-radius: ${theme.spacing()};
     border: none;
     color: inherit;
     display: flex;
