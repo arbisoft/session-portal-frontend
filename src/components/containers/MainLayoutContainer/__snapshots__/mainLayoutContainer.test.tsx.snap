@@ -34,7 +34,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               width="24"
             />
             <h6
-              class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1k6p2lw-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1w5d8ft-MuiTypography-root"
             >
               Arbisoft Sessions Portal
             </h6>
@@ -43,10 +43,10 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             class="MuiBox-root css-1rqqp05"
           >
             <form
-              class="css-asd7gd-Search-root"
+              class="css-uhe58a-Search-root"
             >
               <div
-                class="MuiInputBase-root MuiInputBase-colorPrimary css-1mhii58-MuiInputBase-root-StyledInputBase-root"
+                class="MuiInputBase-root MuiInputBase-colorPrimary css-uzxt12-MuiInputBase-root-StyledInputBase-root"
               >
                 <input
                   aria-label="search"
@@ -59,7 +59,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </div>
               <button
                 aria-label="cancel"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1bf1yfo-MuiButtonBase-root-MuiIconButton-root"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-sl1li0-MuiButtonBase-root-MuiIconButton-root"
                 data-testid="cancelIcon"
                 tabindex="0"
                 type="button"
@@ -78,7 +78,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </button>
               <button
                 aria-label="search"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-ndsf0k-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1qlfmo1-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
                 tabindex="0"
                 type="submit"
               >
@@ -101,7 +101,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           >
             <button
               aria-label="Open settings"
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-euwqad-MuiButtonBase-root-MuiIconButton-root"
               data-mui-internal-clone-element="true"
               data-testid="avatar-btn"
               tabindex="0"
@@ -141,12 +141,12 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
         >
           <ul
             aria-label="Video playlists"
-            class="MuiList-root MuiList-padding css-18jbpcj-MuiList-root"
+            class="MuiList-root MuiList-padding css-zym0s0-MuiList-root"
             role="menu"
             tabindex="-1"
           >
             <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-All"
               href="/videos"
               role="menuitem"
@@ -171,7 +171,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </p>
             </a>
             <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-1"
               href="/videos?playlist=Test-1"
               role="menuitem"
@@ -196,7 +196,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </p>
             </a>
             <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-2"
               href="/videos?playlist=Test-2"
               role="menuitem"
@@ -221,7 +221,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </p>
             </a>
             <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-19f1w6o-MuiButtonBase-root-MuiMenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-3"
               href="/videos?playlist=Test-3"
               role="menuitem"
@@ -254,7 +254,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           >
             <a
               aria-pressed="false"
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-1"
               href="/videos?tag=Test-1"
               role="button"
@@ -268,7 +268,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             </a>
             <a
               aria-pressed="false"
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-2"
               href="/videos?tag=Test-2"
               role="button"
@@ -282,7 +282,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             </a>
             <a
               aria-pressed="false"
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-3"
               href="/videos?tag=Test-3"
               role="button"
@@ -299,10 +299,10 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
       </nav>
     </div>
     <div
-      class="MuiContainer-root MuiContainer-maxWidthXl css-11shws3-MuiContainer-root"
+      class="MuiContainer-root MuiContainer-maxWidthXl css-nscwq1-MuiContainer-root"
     >
       <div
-        class="MuiBox-root css-17i13ng"
+        class="MuiBox-root css-19oxwiq"
       >
         <div
           class="MuiBox-root css-uwwqev"
