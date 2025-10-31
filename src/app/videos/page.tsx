@@ -7,8 +7,8 @@ type Props = {
   searchParams: { [key: string]: string | string[] | undefined };
 };
 
-export function generateMetadata({ searchParams }: Props): Metadata {
-  const { playlist, tag } = searchParams;
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const { playlist, tag } = await searchParams;
 
   const terms = playlist || tag;
 

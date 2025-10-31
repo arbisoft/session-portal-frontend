@@ -281,7 +281,7 @@ describe("VideoPlayer", () => {
       render(<VideoPlayer {...propsWithoutPoster} />);
 
       const poster = screen.getByTestId("poster");
-      expect(poster).toHaveAttribute("src", "");
+      expect(poster.getAttribute("src")).toBeNull();
       expect(poster).toHaveAttribute("alt", "");
     });
   });
