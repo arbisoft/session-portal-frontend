@@ -49,25 +49,7 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
           },
           defaultColorScheme: "dark",
           colorSchemes: {
-            light: {
-              palette: {
-                mode: "light",
-                primary: {
-                  main: "#E3E3E3",
-                },
-                secondary: {
-                  main: "#A5A5A5",
-                },
-                background: {
-                  default: "#F2F2F2",
-                  paper: "#F3F3F3",
-                },
-                text: {
-                  primary: "#000000",
-                  secondary: "#7f7f7f",
-                },
-              },
-            },
+            light: false,
             dark: {
               palette: {
                 mode: "dark",
@@ -131,7 +113,7 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
   );
 
   return (
-    <MuiThemeProvider theme={props.customTheme || theme} defaultMode="dark">
+    <MuiThemeProvider theme={props.customTheme || theme}>
       <GlobalStyles
         styles={{
           "html,body,#__next": {

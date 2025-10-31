@@ -1,3 +1,5 @@
+import type { UrlObject } from "url";
+
 export type VideoCardProps = {
   className?: string;
   data: {
@@ -10,6 +12,7 @@ export type VideoCardProps = {
     video_file?: string;
   };
   onClick?: VoidFunction;
+  href: string | UrlObject;
   variant?: "featured-card" | "search-card" | "related-card" | "normal-card";
   width?: string;
   height?: string;

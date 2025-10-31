@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
 import { alpha, css, styled } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
+import Link from "next/link";
 
 import { pxToRem } from "@/utils/styleUtils";
 
@@ -13,12 +14,13 @@ export const StyledAppBar = styled(AppBar, { name: "StyledAppBar" })(() => {
   `;
 });
 
-export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
+export const Logo = styled(Link, { name: "Logo" })(({ theme }) => {
   return css`
     align-items: center;
     cursor: pointer;
     display: flex;
     width: 240px;
+    text-decoration: none;
 
     ${theme.breakpoints.down("lg")} {
       width: unset;

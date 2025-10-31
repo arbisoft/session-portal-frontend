@@ -8,6 +8,9 @@ import Typography from "@mui/material/Typography";
 export const SidebarContainer = styled(Box)({
   height: "100%",
   width: "100%",
+  a: {
+    textDecoration: "none",
+  },
 });
 
 export const MenuStack = styled(Stack, {
@@ -25,7 +28,8 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   cursor: "pointer",
   gap: theme.spacing(1.5),
   padding: theme.spacing(1.5),
-}));
+  color: theme.palette.common.white,
+})) as typeof MenuItem;
 
 export const Text = styled(Typography)({
   lineHeight: 1.2,
@@ -54,6 +58,7 @@ export const TagsContainer = styled(Box, {
       border-radius: 6px;
       cursor: pointer;
       text-transform: capitalize;
+      text-decoration: none;
 
       .${chipClasses.icon} {
         margin: 0;

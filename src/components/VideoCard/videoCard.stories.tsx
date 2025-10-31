@@ -40,7 +40,7 @@ type Story = StoryObj<VideoCardProps>;
 const mockVideoData = {
   event_time: "2023-10-01 14:30",
   organizer: "Sample Organizer",
-  thumbnail: faker.image.urlLoremFlickr(),
+  thumbnail: faker.image.urlLoremFlickr({ width: 500, height: 500, category: "animals" }),
   title: "Sample Video Title",
   video_duration: "10:30",
   description: "This is a sample video description. It can be a long text that describes the video in detail.",
@@ -51,6 +51,7 @@ export const NormalCard: Story = {
     data: mockVideoData,
     variant: "normal-card",
     width: "315px",
+    href: "/videos/sample-video-title",
   },
 };
 
