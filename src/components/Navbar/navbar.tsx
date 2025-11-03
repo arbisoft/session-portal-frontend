@@ -91,7 +91,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               <MenuIcon />
             </IconButton>
           )}
-          <Logo data-testid="navbar-logo" onClick={() => navigateTo("videos")}>
+          <Logo data-testid="navbar-logo" href="/videos">
             <Image src={"/assets/images/apple-icon.png"} width={24} height={24} alt="Arbisoft Icon" data-testid="arbisoftLogo" />
             <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" }, marginLeft: theme.spacing(1) }}>
               Arbisoft Sessions Portal

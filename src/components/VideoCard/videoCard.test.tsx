@@ -23,6 +23,7 @@ const mockProps: VideoCardProps = {
   onClick: jest.fn(),
   width: "300px",
   variant: "normal-card",
+  href: "/videos/test-01",
 };
 
 describe("VideoCard", () => {

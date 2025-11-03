@@ -2,18 +2,24 @@
 
 exports[`VideoCard should matches snapshot 1`] = `
 <DocumentFragment>
-  <div
-    class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation0 MuiCard-root custom-class normal-card css-rk6m5y-MuiPaper-root-MuiCard-root-VideoCardContainer-root"
+  <article
+    aria-label="Video card: Refresher & AMA Session on Competency Framework Changes - January 2025"
+    class="MuiCard-root custom-class normal-card css-cy8rcv-MuiCard-root-VideoCardContainer-root"
     data-testid="video-card"
-    style="--Paper-shadow: var(--mui-shadows-0); --Paper-overlay: var(--mui-overlays-0);"
+    elevation="0"
+    role="group"
+    tabindex="0"
   >
-    <div
-      class="MuiCardContent-root css-1lt5qva-MuiCardContent-root"
+    <a
+      aria-label="Open video: Refresher & AMA Session on Competency Framework Changes - January 2025"
+      class="MuiCardContent-root css-23ksqf-MuiCardContent-root"
+      href="/videos/test-01"
     >
       <div
         class="image-wrapper MuiBox-root css-1k95zkw-ImageWrapper-root"
       >
         <span
+          aria-hidden="true"
           class="MuiSkeleton-root MuiSkeleton-rounded MuiSkeleton-wave css-116i1gn-MuiSkeleton-root"
           style="width: 100%; height: 100%;"
         />
@@ -21,10 +27,13 @@ exports[`VideoCard should matches snapshot 1`] = `
           alt="Refresher & AMA Session on Competency Framework Changes - January 2025"
           data-testid="video-card-image"
           height="196"
+          loading="lazy"
           src="http://localhost:1234/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png"
+          style="border-radius: 8px;"
           width="315"
         />
         <div
+          aria-label="Duration 30:30"
           class="MuiTypography-root MuiTypography-bodyMedium video-duration css-1xa7gk3-MuiTypography-root"
           data-testid="video-card-duration"
         >
@@ -37,6 +46,7 @@ exports[`VideoCard should matches snapshot 1`] = `
         <h3
           class="MuiTypography-root MuiTypography-h3 css-1tq2yg0-MuiTypography-root"
           data-testid="video-card-title"
+          tabindex="-1"
           title="Refresher & AMA Session on Competency Framework Changes - January 2025"
         >
           Refresher & AMA Session on Competency Framework Changes - January 2025
@@ -45,6 +55,7 @@ exports[`VideoCard should matches snapshot 1`] = `
           class="MuiBox-root css-0"
         >
           <p
+            aria-label="Organizer: John Doe"
             class="MuiTypography-root MuiTypography-bodyMedium organizer-name css-l4hfz4-MuiTypography-root"
             data-testid="video-card-organizer"
             title="John Doe"
@@ -52,6 +63,7 @@ exports[`VideoCard should matches snapshot 1`] = `
             John Doe
           </p>
           <p
+            aria-label="Event time: Jan 09, 2025"
             class="MuiTypography-root MuiTypography-bodyMedium date-time css-l4hfz4-MuiTypography-root"
             data-testid="video-card-date-time"
           >
@@ -59,7 +71,7 @@ exports[`VideoCard should matches snapshot 1`] = `
           </p>
         </div>
       </div>
-    </div>
-  </div>
+    </a>
+  </article>
 </DocumentFragment>
 `;

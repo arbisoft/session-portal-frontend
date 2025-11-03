@@ -140,6 +140,7 @@ const VideosListingPage = () => {
                     variant="featured-card"
                     width="auto"
                     height="auto"
+                    href={`/videos/${feaetuedVideo.slug}`}
                   />
                 );
               })}
@@ -177,6 +178,7 @@ const VideosListingPage = () => {
                   key={videoCard.id}
                   onClick={() => navigateTo("videoDetail", { id: videoCard.slug })}
                   width="100%"
+                  href={`/videos/${videoCard.slug}`}
                 />
               )}
             />

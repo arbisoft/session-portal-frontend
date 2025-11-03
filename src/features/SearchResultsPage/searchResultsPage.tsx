@@ -83,7 +83,7 @@ const SearchResultsPage = () => {
         }
       }}
       itemContent={(_, event) => (
-        <Box pb={4}>
+        <Box pb={4} height={isLargeScreen ? 260 : undefined}>
           <VideoCard
             data={{
               description: event.description,
@@ -97,6 +97,7 @@ const SearchResultsPage = () => {
             width="100%"
             onClick={() => navigateTo("videoDetail", { id: event.slug })}
             variant="search-card"
+            href={`/videos/${event.slug}`}
           />
         </Box>
       )}
