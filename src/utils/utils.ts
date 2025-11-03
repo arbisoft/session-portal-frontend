@@ -51,3 +51,8 @@ export function generateYearList(startYear: number) {
 
   return years;
 }
+
+export const getQueryValue = (key?: string | string[]) => {
+  const value = Array.isArray(key) ? key[0] : key;
+  return value ?? "";
+};
