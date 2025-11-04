@@ -10,6 +10,7 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import { format } from "date-fns";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useSelector } from "react-redux";
 import { Virtuoso } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
@@ -19,6 +20,7 @@ import VideoPlayer from "@/components/VideoPlayer";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
+import { selectAccessToken } from "@/redux/login/selectors";
 import { convertSecondsToFormattedTime, fullName } from "@/utils/utils";
 
 import SkeletonLoader from "./skeletonLoader";
@@ -27,15 +29,17 @@ import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContai
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
 
+  const accessToken = useSelector(selectAccessToken);
+
   const { navigateTo, getPageUrl } = useNavigation();
 
   const [page, setPage] = useState(1);
 
   const { data: recommendationsData, isFetching: isRecommendationsFetching } = useRecommendationQuery(
-    videoId ? { id: videoId, page } : skipToken
+    accessToken && videoId ? { id: videoId, page } : skipToken
   );
 
-  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(videoId || skipToken);
+  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery((accessToken && videoId) || skipToken);
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
 
