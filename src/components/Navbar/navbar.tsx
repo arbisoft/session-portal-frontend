@@ -14,6 +14,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -44,25 +45,32 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
 
   const search = searchParams?.get("search");
 
+  const [avatarButton, setAvatarButton] = useState<HTMLElement | null>(null);
+
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
+    setAvatarButton(event.currentTarget);
   };
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+    if (avatarButton) {
+      avatarButton.focus();
+    }
   };
 
   const handleLogout = async () => {
+    handleCloseUserMenu();
     dispatch(loginActions.logout());
     await persistor.purge();
     persistor.persist();
-    handleCloseUserMenu();
   };
 
-  const handleSearch = (searchEvent: React.FormEvent) => {
+  const handleSearch = (searchEvent: React.FormEvent<HTMLFormElement>) => {
     searchEvent.preventDefault();
-    if (searchQuery.length > 0) {
-      navigateTo("searchResult", { search: searchQuery });
+    const trimmed = searchQuery.trim();
+    if (trimmed.length > 0) {
+      navigateTo("searchResult", { search: trimmed });
     }
   };
 
@@ -75,8 +83,10 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
     setSearchQuery(search ?? "");
   }, [search]);
 
+  const menuId = "navbar-profile-menu";
+
   return (
-    <StyledAppBar data-testid="navbar">
+    <StyledAppBar data-testid="navbar" role="banner">
       <Container maxWidth={false}>
         <Toolbar disableGutters>
           {shouldShowDrawer && (
@@ -84,48 +94,75 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               color="inherit"
               data-testid="open-drawer"
               sx={{ marginRight: theme.spacing() }}
-              aria-label="open drawer"
+              aria-label="Open navigation drawer"
               edge="start"
               onClick={onDrawerToggle}
             >
               <MenuIcon />
             </IconButton>
           )}
-          <Logo data-testid="navbar-logo" href="/videos">
-            <Image src={"/assets/images/apple-icon.png"} width={24} height={24} alt="Arbisoft Icon" data-testid="arbisoftLogo" />
+          <Logo data-testid="navbar-logo" href="/videos" aria-label="Go to videos homepage">
+            <Image src={"/assets/images/apple-icon.png"} width={24} height={24} alt="Arbisoft logo" data-testid="arbisoftLogo" />
             <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" }, marginLeft: theme.spacing(1) }}>
               Arbisoft Sessions Portal
             </Typography>
           </Logo>
 
           <Box sx={{ flexGrow: 1, display: "flex", justifyContent: "center" }}>
-            <Search onSubmit={handleSearch}>
+            <Search onSubmit={handleSearch} role="search" aria-label="Search sessions" data-testid="navbar-search-form">
+              <label
+                htmlFor="navbar-search-input"
+                style={{ position: "absolute", left: -9999, top: "auto", width: 1, height: 1, overflow: "hidden" }}
+              >
+                Search sessions
+              </label>
+
               <StyledInputBase
+                id="navbar-search-input"
                 value={searchQuery}
                 onChange={(inputEvent: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(inputEvent.target.value)}
-                placeholder={"Search..."}
-                inputProps={{ "aria-label": "search", "data-testid": "search-query" }}
+                placeholder="Search..."
+                inputProps={{
+                  "aria-label": "Search sessions",
+                  "data-testid": "search-query",
+                }}
               />
 
               {searchQuery.length > 0 && (
-                <CancelIconWrapper data-testid="cancelIcon" onClick={handleClearSearch} aria-label="cancel" size="small">
+                <CancelIconWrapper data-testid="cancelIcon" onClick={handleClearSearch} aria-label="Clear search" size="small">
                   <CancelIcon />
                 </CancelIconWrapper>
               )}
-
-              <SearchIconWrapper type="submit" aria-label="search">
-                <SearchIcon data-testid="SearchIcon" />
+              <SearchIconWrapper
+                type="submit"
+                aria-label="Submit search"
+                data-testid="SearchIconButton"
+                sx={{ marginLeft: theme.spacing(1) }}
+              >
+                <SearchIcon data-testid="SearchIcon" aria-hidden="true" />
               </SearchIconWrapper>
             </Search>
           </Box>
+
           <NavbarRightArea>
             {isDarkModeVisible && <ThemeToggle />}
-            <Tooltip title="Open settings">
-              <IconButton size="large" data-testid="avatar-btn" onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar variant="rounded" alt={userInfo.full_name ?? ""} src={userInfo.avatar ?? ""} />
+            <Tooltip title="Open settings" enterDelay={300}>
+              <IconButton
+                size="large"
+                data-testid="avatar-btn"
+                id="avatar-btn"
+                onClick={handleOpenUserMenu}
+                sx={{ p: 0 }}
+                aria-label="Open account settings"
+                aria-controls={anchorElUser ? menuId : undefined}
+                aria-haspopup="true"
+                aria-expanded={Boolean(anchorElUser)}
+              >
+                <Avatar variant="rounded" alt={userInfo.full_name ?? "User avatar"} src={userInfo.avatar ?? ""} />
               </IconButton>
             </Tooltip>
             <Menu
+              id={menuId}
               data-testid="profile-menu"
               anchorEl={anchorElUser}
               anchorOrigin={{
@@ -139,14 +176,27 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
+              slotProps={{
+                root: {
+                  "aria-labelledby": "avatar-btn",
+                  role: "menu",
+                },
+              }}
             >
               {isUploadVideoVisible && (
-                <MenuItem onClick={() => navigateTo("uploadVideo")}>
-                  <Typography>Upload a video</Typography>
+                <MenuItem role="menuitem" component={Link} href="/upload-video" onClick={handleCloseUserMenu}>
+                  <Typography component="span">Upload a video</Typography>
                 </MenuItem>
               )}
-              <MenuItem data-testid="Logout" onClick={handleLogout}>
-                <Typography>Logout</Typography>
+
+              <MenuItem
+                data-testid="Logout"
+                onClick={() => {
+                  handleLogout();
+                }}
+                role="menuitem"
+              >
+                <Typography component="span">Logout</Typography>
               </MenuItem>
             </Menu>
           </NavbarRightArea>
