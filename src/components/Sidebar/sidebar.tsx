@@ -31,7 +31,7 @@ const Sidebar = () => {
         {arePlaylistsLoading ? (
           <MenuList aria-busy="true" aria-label="Loading playlists" data-testid="loading">
             {loadingTags.map((item, index) => (
-              <MenuItem key={index} disabled aria-hidden="true">
+              <MenuItem key={item.concat(index.toString())} disabled aria-hidden="true">
                 <Box display="flex" justifyContent="space-between" alignItems="center" width="90%" mb={1}>
                   <Skeleton variant="rounded" width="15%" height={20} />
                   <Skeleton width="76%" height={25} />

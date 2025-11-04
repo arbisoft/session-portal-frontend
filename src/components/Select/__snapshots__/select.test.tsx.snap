@@ -15,7 +15,7 @@ exports[`Select Component should match snapshot 1`] = `
       data-testid="sort-select"
     >
       <div
-        aria-controls=":r5:"
+        aria-controls="«rb»"
         aria-expanded="false"
         aria-haspopup="listbox"
         class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-laj7or-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
