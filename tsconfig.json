@@ -24,7 +24,9 @@
     ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
@@ -44,5 +46,6 @@
     ".next",
     "dist",
     "node_modules",
+    "src/middleware.ts",
   ]
 }
