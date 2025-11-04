@@ -38,7 +38,7 @@ export function parseNonPassedParams<T extends Record<string, unknown>>(data: T)
 export const initCapital = (str: string) => str && str.toLowerCase().replace(/(?:^|\s)[a-z]/g, (m) => m.toUpperCase());
 
 export const fullName = (user?: Partial<{ first_name: string; last_name: string }>) => {
-  return `${initCapital(user?.first_name ?? "")} ${initCapital(user?.last_name ?? "")}`.trim();
+  return `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
 };
 
 export function generateYearList(startYear: number) {

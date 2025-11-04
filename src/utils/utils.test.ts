@@ -130,14 +130,14 @@ describe("initCapital", () => {
 describe("fullName", () => {
   it("should return full name with capitalized first and last names", () => {
     const user = { first_name: "john", last_name: "doe" };
-    expect(fullName(user)).toBe("John Doe");
+    expect(fullName(user)).toBe("john doe");
   });
 
   it("should handle missing first or last name", () => {
     const user1 = { first_name: "john" };
     const user2 = { last_name: "doe" };
-    expect(fullName(user1)).toBe("John");
-    expect(fullName(user2)).toBe("Doe");
+    expect(fullName(user1)).toBe("john");
+    expect(fullName(user2)).toBe("doe");
   });
 
   it("should return empty string for undefined user", () => {
