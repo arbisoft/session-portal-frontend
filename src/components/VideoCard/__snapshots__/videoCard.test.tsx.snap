@@ -8,12 +8,13 @@ exports[`VideoCard should matches snapshot 1`] = `
     data-testid="video-card"
     elevation="0"
     role="group"
-    tabindex="0"
+    tabindex="-1"
   >
     <a
       aria-label="Open video: Refresher & AMA Session on Competency Framework Changes - January 2025"
       class="MuiCardContent-root css-23ksqf-MuiCardContent-root"
       href="/videos/test-01"
+      role="link"
     >
       <div
         class="image-wrapper MuiBox-root css-1k95zkw-ImageWrapper-root"

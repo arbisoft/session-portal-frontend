@@ -45,7 +45,7 @@ const VideoCard: FC<VideoCardProps> = ({
       elevation={0}
       role="group"
       aria-label={`Video card: ${data.title}`}
-      tabIndex={0}
+      tabIndex={-1}
     >
       <CardContent
         component={Link}
@@ -56,6 +56,7 @@ const VideoCard: FC<VideoCardProps> = ({
           textDecoration: "none",
           color: "inherit",
         }}
+        role="link"
       >
         <ImageWrapper className="image-wrapper">
           {/* Decorative skeleton placeholder */}
