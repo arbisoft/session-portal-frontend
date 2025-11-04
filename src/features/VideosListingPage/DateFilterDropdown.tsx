@@ -2,7 +2,6 @@ import React, { MouseEventHandler, useEffect, useState } from "react";
 
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUp from "@mui/icons-material/ArrowDropUp";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
@@ -74,52 +73,91 @@ const DateFilterDropdown = ({
     setYearFilter(undefined);
     onSortChange("newest");
     onYearChange(null);
-    handleClose();
     onClear();
+    handleClose();
   };
 
   return (
     <DropdownContainer>
-      <Typography variant="bodyLarge" color="textSecondary">
+      <Typography variant="bodyLarge" color="textSecondary" id="filter-sort-label">
         Filter and Sort
       </Typography>
 
       <Button
         variant="outlined"
         onClick={handleClick}
-        endIcon={!open ? <ArrowDropDown /> : <ArrowDropUp />}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-controls={open ? "filter-sort-menu" : undefined}
+        aria-labelledby="filter-sort-label"
+        endIcon={!open ? <ArrowDropDown aria-hidden="true" /> : <ArrowDropUp aria-hidden="true" />}
         sx={{ minWidth: 200, justifyContent: "space-between" }}
       >
         {yearFilter ? `Year: ${yearFilter} (${sortByText})` : sortByText}
       </Button>
 
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose} slotProps={{ paper: { style: { width: 200 } } }}>
-        <Typography variant="h6" sx={{ px: 2, py: 1 }}>
+      <Menu
+        id="filter-sort-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        slotProps={{
+          paper: { style: { width: 220 } },
+          list: {
+            "aria-labelledby": "filter-sort-label",
+            role: "menu",
+            "aria-activedescendant": sortBy,
+            style: {
+              maxHeight: 500,
+              overflowY: "auto",
+            },
+          },
+        }}
+      >
+        <Typography component="li" variant="h6" sx={{ px: 2, py: 1 }} id="sort-section">
           Sort By
         </Typography>
-        <MenuItem selected={sortBy === "newest"} onClick={() => handleSortChange("newest")}>
+        <MenuItem
+          id="newest"
+          selected={sortBy === "newest"}
+          onClick={() => handleSortChange("newest")}
+          role="menuitemradio"
+          aria-checked={sortBy === "newest"}
+        >
           Newest first
         </MenuItem>
-        <MenuItem selected={sortBy === "oldest"} onClick={() => handleSortChange("oldest")}>
+        <MenuItem
+          id="oldest"
+          selected={sortBy === "oldest"}
+          onClick={() => handleSortChange("oldest")}
+          role="menuitemradio"
+          aria-checked={sortBy === "oldest"}
+        >
           Oldest first
         </MenuItem>
 
-        <Divider sx={{ my: 1 }} />
+        <Divider component="li" role="separator" sx={{ my: 1 }} />
 
-        <Typography variant="h6" sx={{ px: 2, py: 1 }}>
+        <Typography component="li" variant="h6" sx={{ px: 2, py: 1 }} id="filter-section">
           Filter by
         </Typography>
-        <Box maxHeight={300} overflow="scroll">
-          {availableYears.map(({ label, value }) => (
-            <MenuItem key={value} selected={yearFilter === value} onClick={() => handleYearFilter(value)}>
-              {label}
-            </MenuItem>
-          ))}
-        </Box>
 
-        <Divider sx={{ my: 1 }} />
+        {availableYears.map(({ label, value }) => (
+          <MenuItem
+            key={value}
+            id={`year-${value}`}
+            selected={yearFilter === value}
+            onClick={() => handleYearFilter(value)}
+            role="menuitemradio"
+            aria-checked={yearFilter === value}
+          >
+            {label}
+          </MenuItem>
+        ))}
 
-        <MenuItem onClick={clearFilters}>
+        <Divider component="li" role="separator" sx={{ my: 1 }} />
+
+        <MenuItem onClick={clearFilters} role="menuitem" aria-label="Clear all filters">
           <Typography color={theme.palette.text.primary}>Clear All Filters</Typography>
         </MenuItem>
       </Menu>
