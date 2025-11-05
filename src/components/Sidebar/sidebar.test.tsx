@@ -79,7 +79,7 @@ describe("Sidebar Component", () => {
 
   it("should render sidebar item icons", () => {
     customRender(<Sidebar />);
-    expect(screen.getAllByAltText("sidebar item icon")).toHaveLength(mockItems.length + 1);
+    expect(screen.getAllByTestId("sidebar-item-icon")).toHaveLength(mockItems.length + 1);
   });
 
   it("should highlight the selected tag", async () => {
@@ -145,7 +145,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
 
     await waitFor(() => {
-      expect(screen.getAllByRole("button")).toHaveLength(mockItems.length);
+      expect(screen.getAllByRole("link")).toHaveLength(mockItems.length);
     });
   });
 

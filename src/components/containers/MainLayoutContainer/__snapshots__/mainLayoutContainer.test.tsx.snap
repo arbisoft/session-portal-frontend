@@ -169,9 +169,10 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               tabindex="0"
             >
               <img
-                alt="sidebar item icon"
+                alt=""
                 aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -191,12 +192,13 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               data-testid="sidebar-item-Test-1"
               href="/videos?playlist=Test-1"
               role="menuitem"
-              tabindex="-1"
+              tabindex="0"
             >
               <img
-                alt="sidebar item icon"
+                alt=""
                 aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -216,12 +218,13 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               data-testid="sidebar-item-Test-2"
               href="/videos?playlist=Test-2"
               role="menuitem"
-              tabindex="-1"
+              tabindex="0"
             >
               <img
-                alt="sidebar item icon"
+                alt=""
                 aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -241,12 +244,13 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               data-testid="sidebar-item-Test-3"
               href="/videos?playlist=Test-3"
               role="menuitem"
-              tabindex="-1"
+              tabindex="0"
             >
               <img
-                alt="sidebar item icon"
+                alt=""
                 aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -269,11 +273,11 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             role="list"
           >
             <a
-              aria-pressed="false"
+              aria-current="false"
               class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-1"
               href="/videos?tag=Test-1"
-              role="button"
+              role="link"
               tabindex="0"
             >
               <span
@@ -283,11 +287,11 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </span>
             </a>
             <a
-              aria-pressed="false"
+              aria-current="false"
               class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-2"
               href="/videos?tag=Test-2"
-              role="button"
+              role="link"
               tabindex="0"
             >
               <span
@@ -297,11 +301,11 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </span>
             </a>
             <a
-              aria-pressed="false"
+              aria-current="false"
               class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-3"
               href="/videos?tag=Test-3"
-              role="button"
+              role="link"
               tabindex="0"
             >
               <span
