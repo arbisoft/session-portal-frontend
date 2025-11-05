@@ -31,7 +31,7 @@ const Sidebar = () => {
         {arePlaylistsLoading ? (
           <MenuList aria-busy="true" aria-label="Loading playlists" data-testid="loading">
             {loadingTags.map((item, index) => (
-              <MenuItem key={item.concat(index.toString())} disabled aria-hidden="true">
+              <MenuItem key={`${item}-${index}`} disabled aria-hidden="true" tabIndex={-1}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" width="90%" mb={1}>
                   <Skeleton variant="rounded" width="15%" height={20} />
                   <Skeleton width="76%" height={25} />
@@ -40,17 +40,20 @@ const Sidebar = () => {
             ))}
           </MenuList>
         ) : (
-          <MenuList sx={{ pt: 0 }} aria-label="Video playlists">
+          <MenuList sx={{ pt: 0 }} aria-label="Video playlists" role="menu">
             <StyledMenuItem
               component={Link}
               href="/videos"
               selected={!playlist && !tag}
               data-testid="sidebar-item-All"
               aria-current={!playlist && !tag ? "page" : undefined}
+              tabIndex={0}
+              role="menuitem"
             >
               <Image
                 src="/assets/images/sidebar-item-icon.svg"
-                alt="sidebar item icon"
+                data-testid="sidebar-item-icon"
+                alt=""
                 width={18}
                 height={12}
                 aria-hidden="true"
@@ -62,16 +65,19 @@ const Sidebar = () => {
 
             {playlists.map((item) => (
               <StyledMenuItem
+                key={item.id}
                 component={Link}
                 href={`/videos?playlist=${encodeURIComponent(item.name)}`}
-                key={item.id}
                 selected={item.name === playlist}
                 data-testid={`sidebar-item-${item.name}`}
                 aria-current={item.name === playlist ? "page" : undefined}
+                tabIndex={0}
+                role="menuitem"
               >
                 <Image
                   src="/assets/images/sidebar-item-icon.svg"
-                  alt="sidebar item icon"
+                  data-testid="sidebar-item-icon"
+                  alt=""
                   width={18}
                   height={12}
                   aria-hidden="true"
@@ -95,8 +101,9 @@ const Sidebar = () => {
               component={Link}
               href={`/videos?tag=${encodeURIComponent(item.name)}`}
               clickable
-              aria-pressed={tag === item.name}
-              role="button"
+              aria-current={tag === item.name}
+              role="link"
+              tabIndex={0}
             />
           ))}
         </TagsContainer>
