@@ -6,6 +6,7 @@ import {
   initCapital,
   fullName,
   generateYearList,
+  getQueryValue,
 } from "./utils";
 
 describe("parseNonPassedParams", () => {
@@ -198,5 +199,19 @@ describe("generateYearList", () => {
     const expectedOutput: string[] = [];
     const result = generateYearList(startYear);
     expect(result).toEqual(expectedOutput);
+  });
+});
+
+describe("getQueryValue", () => {
+  it("returns first element if array is passed", () => {
+    expect(getQueryValue(["abc", "def"])).toBe("abc");
+  });
+
+  it("returns the same string if string is passed", () => {
+    expect(getQueryValue("xyz")).toBe("xyz");
+  });
+
+  it("returns empty string when undefined is passed", () => {
+    expect(getQueryValue(undefined)).toBe("");
   });
 });
