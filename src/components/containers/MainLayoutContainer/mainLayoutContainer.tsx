@@ -26,13 +26,11 @@ const MainLayoutContainer = ({
   useAuth();
   const [open, setOpen] = useState(false);
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
-  };
+  const toggleDrawer = (newOpen: boolean) => () => setOpen(newOpen);
 
   return (
     <Box sx={{ height: "100vh" }}>
-      <Navbar onDrawerToggle={toggleDrawer(!open)} shouldShowDrawer={shouldShowDrawer} />
+      <Navbar onDrawerToggle={toggleDrawer(!open)} shouldShowDrawer={shouldShowDrawer} isDrawerOpen={open} />
       {isLeftSidebarVisible && (
         <LeftSidebar data-testid="left-sidebar">
           <Sidebar />
@@ -40,8 +38,23 @@ const MainLayoutContainer = ({
       )}
       <MainContainer maxWidth="xl" isSidebarAvailable={isLeftSidebarVisible}>
         {shouldShowDrawer && (
-          <StyledDrawer open={open} onClose={toggleDrawer(false)} data-testid="drawer">
-            <Box sx={{ width: SidebarWidth, p: 1 }} role="presentation" onClick={toggleDrawer(false)}>
+          <StyledDrawer
+            id="sidebar-drawer"
+            open={open}
+            onClose={toggleDrawer(false)}
+            data-testid="drawer"
+            role="complementary"
+            aria-label="Sidebar navigation"
+          >
+            <Box
+              sx={{ width: SidebarWidth, p: 1 }}
+              role="presentation"
+              onClick={toggleDrawer(false)}
+              onKeyDown={(event) => {
+                // Allow closing drawer via keyboard (Escape)
+                if (event.key === "Escape") setOpen(false);
+              }}
+            >
               <Sidebar />
             </Box>
           </StyledDrawer>

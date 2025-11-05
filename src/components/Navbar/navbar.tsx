@@ -28,7 +28,13 @@ import ThemeToggle from "../ThemeToggle";
 
 import { CancelIconWrapper, Logo, NavbarRightArea, Search, SearchIconWrapper, StyledAppBar, StyledInputBase } from "./styled";
 
-function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?: VoidFunction; shouldShowDrawer?: boolean }) {
+interface NavbarProps {
+  onDrawerToggle?: VoidFunction;
+  shouldShowDrawer?: boolean;
+  isDrawerOpen?: boolean;
+}
+
+function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: NavbarProps) {
   const dispatch = useDispatch();
   const { navigateTo } = useNavigation();
   const searchParams = useSearchParams();
@@ -91,12 +97,21 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
         <Toolbar disableGutters>
           {shouldShowDrawer && (
             <IconButton
-              color="inherit"
               data-testid="open-drawer"
               sx={{ marginRight: theme.spacing() }}
-              aria-label="Open navigation drawer"
               edge="start"
+              color="inherit"
+              aria-label={isDrawerOpen ? "close drawer" : "open drawer"}
+              aria-expanded={isDrawerOpen}
+              aria-controls="sidebar-drawer"
               onClick={onDrawerToggle}
+              onKeyDown={(event) => {
+                // Allow closing with Enter/Space for full keyboard control
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  onDrawerToggle?.();
+                }
+              }}
             >
               <MenuIcon />
             </IconButton>
@@ -158,7 +173,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer = false }: { onDrawerToggle?:
                 aria-haspopup="true"
                 aria-expanded={Boolean(anchorElUser)}
               >
-                <Avatar variant="rounded" alt={userInfo.full_name ?? "User avatar"} src={userInfo.avatar ?? ""} />
+                <Avatar variant="rounded" alt={userInfo.full_name?.toString()} src={userInfo.avatar?.toString()} />
               </IconButton>
             </Tooltip>
             <Menu

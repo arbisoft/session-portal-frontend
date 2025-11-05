@@ -65,7 +65,7 @@ const VideoCard: FC<VideoCardProps> = ({
           {/* Thumbnail image */}
           <img
             data-testid="video-card-image"
-            alt={data.title || "Video thumbnail"}
+            alt={data.title}
             height={196}
             width={315}
             src={data.thumbnail || DEFAULT_THUMBNAIL}
