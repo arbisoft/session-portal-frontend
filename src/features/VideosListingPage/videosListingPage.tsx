@@ -123,24 +123,24 @@ const VideosListingPage = () => {
         ) : (
           <>
             <FeaturedSlider
-              slides={featuredVideos.map((feaetuedVideo, idx) => {
+              slides={featuredVideos.map((featuredVideo, idx) => {
                 return (
                   <VideoCard
                     key={idx}
                     data={{
-                      description: feaetuedVideo.description,
-                      event_time: formatDateTime(feaetuedVideo.event_time),
-                      organizer: feaetuedVideo.presenters.map(fullName).join(", "),
-                      thumbnail: feaetuedVideo.thumbnail ? BASE_URL.concat(feaetuedVideo.thumbnail) : DEFAULT_THUMBNAIL,
-                      title: feaetuedVideo.title,
-                      video_duration: convertSecondsToFormattedTime(feaetuedVideo.video_duration),
-                      video_file: feaetuedVideo.video_file ? BASE_URL.concat(feaetuedVideo.video_file) : undefined,
+                      description: featuredVideo.description,
+                      event_time: formatDateTime(featuredVideo.event_time),
+                      organizer: featuredVideo.presenters.map(fullName).join(", "),
+                      thumbnail: featuredVideo.thumbnail ? BASE_URL.concat(featuredVideo.thumbnail) : DEFAULT_THUMBNAIL,
+                      title: featuredVideo.title,
+                      video_duration: convertSecondsToFormattedTime(featuredVideo.video_duration),
+                      video_file: featuredVideo.video_file ? BASE_URL.concat(featuredVideo.video_file) : undefined,
                     }}
-                    onClick={() => navigateTo("videoDetail", { id: feaetuedVideo.slug })}
+                    onClick={() => navigateTo("videoDetail", { id: featuredVideo.slug })}
                     variant="featured-card"
                     width="auto"
                     height="auto"
-                    href={`/videos/${feaetuedVideo.slug}`}
+                    href={`/videos/${featuredVideo.slug}`}
                   />
                 );
               })}
