@@ -27,9 +27,6 @@ export const FilterBox = styled(Box, {
   () => css`
     width: 100%;
     .${stackClasses.root} {
-      align-items: center;
-      flex-direction: row;
-      justify-content: space-between;
       margin-bottom: 20px;
       width: 100%;
 

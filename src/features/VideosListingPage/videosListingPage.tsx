@@ -98,8 +98,11 @@ const VideosListingPage = () => {
   return (
     <MainLayoutContainer shouldShowDrawer={!isLargeScreen} isLeftSidebarVisible={isLargeScreen}>
       <FilterBox>
-        <Stack>
-          <Typography variant="h2">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          sx={{ alignItems: { sm: "center" }, justifyContent: { sm: "space-between" } }}
+        >
+          <Typography variant="h2" sx={{ paddingBottom: { xs: 2 } }}>
             {parsedParams.tag ? `#${parsedParams.tag}` : (parsedParams.playlist ?? "All videos")}
           </Typography>
           <DateFilterDropdown
