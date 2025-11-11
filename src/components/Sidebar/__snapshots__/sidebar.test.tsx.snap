@@ -38,9 +38,9 @@ exports[`Sidebar Component should match snapshot 1`] = `
           />
           <p
             class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
-            title="All videos"
+            title="All Videos"
           >
-            All videos
+            All Videos
           </p>
         </a>
         <a
