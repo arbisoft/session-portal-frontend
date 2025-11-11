@@ -221,6 +221,7 @@ export const VideoCardContainer = styled(Card, {
 
     &.search-card {
       display: flex;
+      height: auto;
 
       .${cardContentClasses.root} {
         flex-direction: row;

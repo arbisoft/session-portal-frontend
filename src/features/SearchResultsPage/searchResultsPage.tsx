@@ -126,7 +126,7 @@ const SearchResultsPage = () => {
   };
 
   return (
-    <MainLayoutContainer isLeftSidebarVisible={isLargeScreen} shouldShowDrawer={!isLargeScreen}>
+    <MainLayoutContainer isLeftSidebarVisible={isLargeScreen} shouldShowDrawer={!isLargeScreen} maxWidth={false}>
       {(videoListings?.results.length ?? 0) > 0 && (
         <FilterBox>
           <Stack>
