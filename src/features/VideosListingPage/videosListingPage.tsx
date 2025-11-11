@@ -96,7 +96,7 @@ const VideosListingPage = () => {
   const isDataLoading = isLoading || isUninitialized || !videoListings?.results || isFeatureFetching;
 
   return (
-    <MainLayoutContainer shouldShowDrawer={!isLargeScreen} isLeftSidebarVisible={isLargeScreen}>
+    <MainLayoutContainer shouldShowDrawer={!isLargeScreen} isLeftSidebarVisible={isLargeScreen} maxWidth={false}>
       <FilterBox>
         <Stack>
           <Typography variant="h2">
