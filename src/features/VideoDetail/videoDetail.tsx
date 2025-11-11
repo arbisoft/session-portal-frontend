@@ -133,7 +133,7 @@ const VideoDetail = () => {
             <StyledNotesSection>
               <Typography variant="h5" component="h2" tabIndex={0}>
                 Session Details
-              </Typography>{" "}
+              </Typography>
               <div className="description">
                 <ReadMore text={dataEvent?.description ?? ""} showLessText="Show Less" showMoreText="Show More" />
                 {(dataEvent?.tags?.length ?? 0) > 0 && (
