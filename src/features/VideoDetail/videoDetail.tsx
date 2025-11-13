@@ -17,11 +17,11 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import ReadMore from "@/components/ReadMore";
 import VideoCard from "@/components/VideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
-import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
+import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { selectAccessToken } from "@/redux/login/selectors";
-import { convertSecondsToFormattedTime, fullName } from "@/utils/utils";
+import { fullName, transformVideoToCardData } from "@/utils/utils";
 
 import SkeletonLoader from "./skeletonLoader";
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
@@ -67,19 +67,12 @@ const VideoDetail = () => {
             useWindowScroll
             itemContent={(_, video) => (
               <VideoCard
+                data={transformVideoToCardData(video)}
                 height="100px"
+                href={`/videos/${video.slug}`}
                 key={`recommendation-${video.id}`}
-                data={{
-                  event_time: format(new Date(video.event_time), "MMM dd, yyyy"),
-                  organizer: video.presenters.map(fullName).join(", "),
-                  thumbnail: video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL,
-                  title: video.title,
-                  video_duration: convertSecondsToFormattedTime(video.video_duration),
-                  video_file: video.video_file ? BASE_URL.concat(video.video_file) : undefined,
-                }}
                 onClick={() => navigateTo("videoDetail", { id: video.slug })}
                 variant="related-card"
-                href={`/videos/${video.slug}`}
               />
             )}
             endReached={() => {
