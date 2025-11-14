@@ -39,12 +39,12 @@ const VideoDetail = () => {
     accessToken && videoId ? { id: videoId, page } : skipToken
   );
 
-  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery((accessToken && videoId) || skipToken);
+  const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(accessToken ? videoId : skipToken);
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
 
   useEffect(() => {
-    document.title = `${data?.event?.title ?? ""}  - Sessions Portal`;
+    document.title = `${data?.event?.title ?? ""} - Sessions Portal`;
   }, [data?.event?.title]);
 
   useEffect(() => {
