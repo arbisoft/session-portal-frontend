@@ -39,23 +39,6 @@ export const FilterBox = styled(Box, {
   `
 );
 
-export const NoSearchResultsWrapper = styled("div", {
-  name: "NoSearchResultsWrapper",
-})(
-  () => css`
-    margin-top: 10rem;
-
-    .${typographyClasses.h3} {
-      font-size: ${pxToRem(24)};
-      font-style: normal;
-      font-weight: 400;
-      letter-spacing: 0.4px;
-      line-height: 28px;
-      text-align: center;
-    }
-  `
-);
-
 export const DropdownContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
