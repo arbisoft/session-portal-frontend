@@ -211,4 +211,41 @@ describe("Navbar Component", () => {
 
     expect(screen.getByText("Upload a video")).toBeInTheDocument();
   });
+
+  it("calls onDrawerToggle when Enter key is pressed", () => {
+    const mockToggle = jest.fn();
+
+    render(<Navbar shouldShowDrawer onDrawerToggle={mockToggle} />);
+
+    const drawerButton = screen.getByTestId("open-drawer");
+    fireEvent.keyDown(drawerButton, { key: "Enter" });
+
+    expect(mockToggle).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls onDrawerToggle when Space key is pressed", () => {
+    const mockToggle = jest.fn();
+
+    render(<Navbar shouldShowDrawer onDrawerToggle={mockToggle} />);
+
+    const drawerButton = screen.getByTestId("open-drawer");
+    fireEvent.keyDown(drawerButton, { key: " " }); // Space
+    expect(mockToggle).toHaveBeenCalledTimes(1);
+  });
+
+  it("has aria-label='open drawer' when closed", () => {
+    render(<Navbar shouldShowDrawer />);
+    const toggleButton = screen.getByTestId("open-drawer");
+    expect(toggleButton).toHaveAttribute("aria-label", "open drawer");
+  });
+
+  it("sets empty searchQuery when URL param is missing", () => {
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn().mockReturnValue(null),
+    });
+
+    const { getByTestId } = render(<Navbar />);
+    const input = getByTestId("search-query") as HTMLInputElement;
+    expect(input.value).toBe("");
+  });
 });

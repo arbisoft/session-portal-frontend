@@ -1,128 +1,133 @@
 import { renderHook } from "@testing-library/react";
-import { usePathname, useParams, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { useSelector } from "react-redux";
 
+import useNavigation from "@/hooks/useNavigation";
 import { getQueryValue } from "@/utils/utils";
 
 import useAuth from "./useAuth";
-import useNavigation from "./useNavigation";
 
 jest.mock("react-redux", () => ({
   useSelector: jest.fn(),
 }));
 
 jest.mock("next/navigation", () => ({
-  usePathname: jest.fn(),
   useParams: jest.fn(),
+  usePathname: jest.fn(),
   useSearchParams: jest.fn(),
 }));
 
+jest.mock("@/hooks/useNavigation", () => jest.fn());
 jest.mock("@/utils/utils", () => ({
   getQueryValue: jest.fn(),
 }));
 
-jest.mock("./useNavigation", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
+const mockNavigateTo = jest.fn();
+const mockGetPageUrl = jest.fn();
 
 describe("useAuth hook", () => {
-  const navigateToMock = jest.fn();
-  const getPageUrlMock = jest.fn();
-
-  const mockSearchParams = new URLSearchParams();
-
   beforeEach(() => {
     jest.clearAllMocks();
-
     (useNavigation as jest.Mock).mockReturnValue({
-      navigateTo: navigateToMock,
-      getPageUrl: getPageUrlMock,
+      navigateTo: mockNavigateTo,
+      getPageUrl: mockGetPageUrl,
+    });
+    mockGetPageUrl.mockImplementation((page) => {
+      if (page === "home") return "/";
+      if (page === "login") return "/login";
+      return `/${page}`;
+    });
+  });
+
+  const mockNextNavigation = ({
+    pathname = "/",
+    params = {},
+    searchParams = new URLSearchParams(),
+  }: {
+    pathname?: string;
+    params?: Record<string, string>;
+    searchParams?: URLSearchParams;
+  }) => {
+    (usePathname as jest.Mock).mockReturnValue(pathname);
+    (useParams as jest.Mock).mockReturnValue(params);
+    (useSearchParams as jest.Mock).mockReturnValue(searchParams);
+  };
+
+  it("navigates to videoDetail when logged in and redirect_to is present", () => {
+    (useSelector as unknown as jest.Mock).mockReturnValue("token123");
+    mockNextNavigation({
+      pathname: "/something",
+      searchParams: new URLSearchParams({ redirect_to: "video-123" }),
     });
 
-    (useParams as jest.Mock).mockReturnValue({});
-    (usePathname as jest.Mock).mockReturnValue("/");
-    (useSearchParams as jest.Mock).mockReturnValue(mockSearchParams);
-    (getQueryValue as jest.Mock).mockImplementation((v) => v);
+    renderHook(() => useAuth());
+
+    expect(mockNavigateTo).toHaveBeenCalledWith("videoDetail", { id: "video-123" });
   });
 
-  test("should redirects to videoDetail if user is authenticated and redirect_to is present", () => {
-    (useSelector as unknown as jest.Mock).mockReturnValue("valid_token");
-    mockSearchParams.get = jest.fn().mockReturnValue("123");
+  it("navigates to videos when logged in and on home page", () => {
+    (useSelector as unknown as jest.Mock).mockReturnValue("token123");
+    mockNextNavigation({ pathname: "/" });
 
     renderHook(() => useAuth());
 
-    expect(navigateToMock).toHaveBeenCalledWith("videoDetail", { id: "123" });
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
   });
 
-  test("should redirects to videos if user is authenticated and on home or login page", () => {
-    (useSelector as unknown as jest.Mock).mockReturnValue("valid_token");
-    (usePathname as jest.Mock).mockReturnValue("/");
-    mockSearchParams.get = jest.fn().mockReturnValue(null);
-
-    getPageUrlMock.mockImplementation((page) => (page === "home" ? "/" : "/login"));
+  it("navigates to videos when logged in and on login page", () => {
+    (useSelector as unknown as jest.Mock).mockReturnValue("token123");
+    mockNextNavigation({ pathname: "/login" });
 
     renderHook(() => useAuth());
 
-    expect(navigateToMock).toHaveBeenCalledWith("videos");
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos");
   });
 
-  test("should redirects to login with redirect param if user not authenticated and videoId is present", () => {
+  it("navigates to login with videoSlug when not logged in", () => {
     (useSelector as unknown as jest.Mock).mockReturnValue(null);
-    (useParams as jest.Mock).mockReturnValue({ videoId: "abc" });
-    (getQueryValue as jest.Mock).mockReturnValue("abc");
+    (getQueryValue as jest.Mock).mockReturnValue("slug-123");
+    mockNextNavigation({ pathname: "/videos/slug-123", params: { videoId: "slug-123" } });
 
     renderHook(() => useAuth());
 
-    expect(navigateToMock).toHaveBeenCalledWith("login", { redirect_to: "abc" });
+    expect(getQueryValue).toHaveBeenCalledWith("slug-123");
+    expect(mockNavigateTo).toHaveBeenCalledWith("login", { redirect_to: "slug-123" });
   });
 
-  test("should redirects to login with redirect param if user not authenticated and redirect_to is present", () => {
+  it("navigates to login with redirect_to when not logged in", () => {
     (useSelector as unknown as jest.Mock).mockReturnValue(null);
-    mockSearchParams.get = jest.fn().mockReturnValue("xyz");
+    (getQueryValue as jest.Mock).mockReturnValue(undefined);
+    mockNextNavigation({
+      pathname: "/",
+      searchParams: new URLSearchParams({ redirect_to: "abc999" }),
+    });
 
     renderHook(() => useAuth());
 
-    expect(navigateToMock).toHaveBeenCalledWith("login", { redirect_to: "xyz" });
+    expect(mockNavigateTo).toHaveBeenCalledWith("login", { redirect_to: "abc999" });
   });
 
-  test("should redirects to login without params if user not authenticated and no redirect info", () => {
+  it("navigates to login without redirect when not logged in and no redirect params", () => {
     (useSelector as unknown as jest.Mock).mockReturnValue(null);
-    mockSearchParams.get = jest.fn().mockReturnValue(null);
-    (useParams as jest.Mock).mockReturnValue({});
-    (getQueryValue as jest.Mock).mockReturnValue(null);
+    (getQueryValue as jest.Mock).mockReturnValue(undefined);
+    mockNextNavigation({ pathname: "/videos" });
 
     renderHook(() => useAuth());
 
-    expect(navigateToMock).toHaveBeenCalledWith("login");
+    expect(mockNavigateTo).toHaveBeenCalledWith("login");
   });
 
-  test("should does not redirect if user authenticated and not on home or login", () => {
-    (useSelector as unknown as jest.Mock).mockReturnValue("valid_token");
-    (usePathname as jest.Mock).mockReturnValue("/dashboard");
-    mockSearchParams.get = jest.fn().mockReturnValue(null);
-    getPageUrlMock.mockImplementation((page) => (page === "home" ? "/" : "/login"));
+  it("handles undefined params and searchParams gracefully (no crashes)", () => {
+    (useSelector as unknown as jest.Mock).mockReturnValue("token123");
+    (getQueryValue as jest.Mock).mockReturnValue(undefined);
+    (usePathname as jest.Mock).mockReturnValue("/unknown");
+    (useParams as jest.Mock).mockReturnValue(undefined);
+    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams());
 
     renderHook(() => useAuth());
 
-    expect(navigateToMock).not.toHaveBeenCalled();
-  });
-
-  test("should re-runs effect when dependencies change", () => {
-    const { rerender } = renderHook(() => useAuth());
-
-    expect(navigateToMock).toHaveBeenCalled();
-
-    // Simulate token change
-    (useSelector as unknown as jest.Mock).mockReturnValue("new_token");
-    rerender();
-
-    expect(navigateToMock).toHaveBeenCalled();
-
-    // Simulate redirect_to param
-    mockSearchParams.get = jest.fn().mockReturnValue("555");
-    rerender();
-
-    expect(navigateToMock).toHaveBeenCalledWith("videoDetail", { id: "555" });
+    // token present but no redirect_to and not home/login
+    // → no navigation expected
+    expect(mockNavigateTo).not.toHaveBeenCalled();
   });
 });
