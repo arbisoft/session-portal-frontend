@@ -3,6 +3,7 @@
 import React, { isValidElement, ReactNode, useState } from "react";
 
 import Box from "@mui/material/Box";
+import { ContainerOwnProps } from "@mui/material/Container";
 
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar/sidebar";
@@ -15,6 +16,7 @@ type TMainLayoutContainer = {
   isLeftSidebarVisible?: boolean;
   rightSidebar?: ReactNode;
   shouldShowDrawer?: boolean;
+  maxWidth?: ContainerOwnProps["maxWidth"];
 };
 
 const MainLayoutContainer = ({
@@ -22,6 +24,7 @@ const MainLayoutContainer = ({
   rightSidebar,
   isLeftSidebarVisible = true,
   shouldShowDrawer = false,
+  maxWidth = "xl",
 }: TMainLayoutContainer) => {
   useAuth();
   const [open, setOpen] = useState(false);
@@ -36,7 +39,7 @@ const MainLayoutContainer = ({
           <Sidebar />
         </LeftSidebar>
       )}
-      <MainContainer maxWidth="xl" isSidebarAvailable={isLeftSidebarVisible}>
+      <MainContainer maxWidth={maxWidth} isSidebarAvailable={isLeftSidebarVisible}>
         {shouldShowDrawer && (
           <StyledDrawer
             id="sidebar-drawer"
