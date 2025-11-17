@@ -26,7 +26,7 @@ const ReadMore = ({ className, text, amountOfWords = 36, showMoreText, showLessT
   };
 
   return (
-    <StyledReadMore className={className} variant="bodySmall" color="textSecondary">
+    <StyledReadMore className={className} variant="bodySmall" color="textSecondary" tabIndex={0}>
       {visibleText}
       {canExpand && (
         <>

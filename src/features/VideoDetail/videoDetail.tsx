@@ -116,35 +116,46 @@ const VideoDetail = () => {
               posterAlt: data?.event?.title ?? "",
             }}
           />
-          <StyledTitleSection>
-            <Typography variant="h4">{data?.event?.title}</Typography>
-          </StyledTitleSection>
-          <StyledDetailSection>
-            <Typography color="textSecondary" variant="h6">
-              {dataEvent?.presenters.map(fullName).join(", ")}
-            </Typography>
-            <Typography color="textSecondary">{format(dataEvent?.event_time ?? "", "MMM dd, yyy")}</Typography>
-          </StyledDetailSection>
-          <StyledNotesSection>
-            <Typography variant="h5">Session Details</Typography>
-            <div className="description">
-              <ReadMore text={dataEvent?.description ?? ""} showLessText="Show Less" showMoreText="Show More" />
-              {(dataEvent?.tags?.length ?? 0) > 0 && (
-                <TagsContainer>
-                  {dataEvent?.tags?.map((tag) => (
-                    <Chip
-                      component={Link}
-                      href={getPageUrl("videos", { tag })}
-                      label={`#${tag}`}
-                      key={tag}
-                      variant="outlined"
-                      size="small"
-                    />
-                  ))}
-                </TagsContainer>
-              )}
-            </div>
-          </StyledNotesSection>
+          <article aria-label={`Session details for ${data?.event?.title}`}>
+            <StyledTitleSection>
+              <Typography variant="h4" component="h1" tabIndex={0}>
+                {data?.event?.title}
+              </Typography>
+            </StyledTitleSection>
+            <StyledDetailSection>
+              <Typography color="textSecondary" variant="h6" component="p" tabIndex={0}>
+                {dataEvent?.presenters.map(fullName).join(", ")}
+              </Typography>
+              <Typography color="textSecondary" component="time" dateTime={dataEvent?.event_time} tabIndex={0}>
+                {format(dataEvent?.event_time ?? "", "MMM dd, yyyy")}
+              </Typography>
+            </StyledDetailSection>
+            <StyledNotesSection>
+              <Typography variant="h5" component="h2" tabIndex={0}>
+                Session Details
+              </Typography>{" "}
+              <div className="description">
+                <ReadMore text={dataEvent?.description ?? ""} showLessText="Show Less" showMoreText="Show More" />
+                {(dataEvent?.tags?.length ?? 0) > 0 && (
+                  <TagsContainer>
+                    {dataEvent?.tags?.map((tag) => (
+                      <Chip
+                        component={Link}
+                        href={getPageUrl("videos", { tag })}
+                        label={`#${tag}`}
+                        key={tag}
+                        variant="outlined"
+                        size="small"
+                        data-testid={`sidebar-tags-${tag}`}
+                        clickable
+                        role="button"
+                      />
+                    ))}
+                  </TagsContainer>
+                )}
+              </div>
+            </StyledNotesSection>
+          </article>
         </>
       )}
     </MainLayoutContainer>
