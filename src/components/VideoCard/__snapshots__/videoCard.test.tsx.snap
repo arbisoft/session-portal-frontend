@@ -33,6 +33,14 @@ exports[`VideoCard should matches snapshot 1`] = `
           style="border-radius: 8px;"
           width="315"
         />
+        <video
+          class="video-player"
+          loop=""
+          playsinline=""
+          preload="metadata"
+          src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          style="visibility: hidden;"
+        />
         <div
           aria-label="Duration 30:30"
           class="MuiTypography-root MuiTypography-bodyMedium video-duration css-1xa7gk3-MuiTypography-root"
