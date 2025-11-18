@@ -182,9 +182,9 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               />
               <p
                 class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
-                title="All videos"
+                title="All Videos"
               >
-                All videos
+                All Videos
               </p>
             </a>
             <a

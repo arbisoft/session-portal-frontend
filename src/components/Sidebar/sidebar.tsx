@@ -58,8 +58,8 @@ const Sidebar = () => {
                 height={12}
                 aria-hidden="true"
               />
-              <Text variant="bodySmall" title="All videos">
-                All videos
+              <Text variant="bodySmall" title="All Videos">
+                All Videos
               </Text>
             </StyledMenuItem>
 
