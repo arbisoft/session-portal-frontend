@@ -14,7 +14,7 @@ export const VideoListingContainer = styled("div", {
     .virtuoso-grid-list {
       display: grid;
       gap: ${theme.spacing(3)};
-      grid-template-columns: repeat(auto-fill, minmax(287px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(396px, 1fr));
       padding-bottom: ${theme.spacing(3)};
       width: 100%;
     }
