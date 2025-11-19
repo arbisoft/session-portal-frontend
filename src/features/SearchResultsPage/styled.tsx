@@ -54,21 +54,3 @@ export const SearchCardLoadingState = styled(Box, {
     margin-bottom: 1rem;
   `
 );
-
-export const NoSearchResultsWrapper = styled("div", {
-  name: "NoSearchResultsWrapper",
-})(
-  ({ theme }) => css`
-    margin-top: 10rem;
-
-    .${typographyClasses.h3} {
-      color: ${theme.palette.common.white};
-      font-size: ${pxToRem(24)};
-      font-style: normal;
-      font-weight: 400;
-      letter-spacing: 0.4px;
-      line-height: 28px;
-      text-align: center;
-    }
-  `
-);
