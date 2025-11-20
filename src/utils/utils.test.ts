@@ -6,6 +6,7 @@ import {
   initCapital,
   fullName,
   generateYearList,
+  getQueryValue,
 } from "./utils";
 
 describe("parseNonPassedParams", () => {
@@ -130,14 +131,14 @@ describe("initCapital", () => {
 describe("fullName", () => {
   it("should return full name with capitalized first and last names", () => {
     const user = { first_name: "john", last_name: "doe" };
-    expect(fullName(user)).toBe("John Doe");
+    expect(fullName(user)).toBe("john doe");
   });
 
   it("should handle missing first or last name", () => {
     const user1 = { first_name: "john" };
     const user2 = { last_name: "doe" };
-    expect(fullName(user1)).toBe("John");
-    expect(fullName(user2)).toBe("Doe");
+    expect(fullName(user1)).toBe("john");
+    expect(fullName(user2)).toBe("doe");
   });
 
   it("should return empty string for undefined user", () => {
@@ -153,14 +154,12 @@ describe("BASE_URL constant", () => {
 
   it("should use NEXT_PUBLIC_BASE_URL when defined", () => {
     process.env.NEXT_PUBLIC_BASE_URL = "https://example.com";
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { BASE_URL } = require("../constants/constants");
 
     expect(BASE_URL).toBe("https://example.com");
   });
 
   it("should default to an empty string when NEXT_PUBLIC_BASE_URL is undefined", () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { BASE_URL } = require("../constants/constants");
 
     expect(BASE_URL).toBe("");
@@ -200,5 +199,19 @@ describe("generateYearList", () => {
     const expectedOutput: string[] = [];
     const result = generateYearList(startYear);
     expect(result).toEqual(expectedOutput);
+  });
+});
+
+describe("getQueryValue", () => {
+  it("returns first element if array is passed", () => {
+    expect(getQueryValue(["abc", "def"])).toBe("abc");
+  });
+
+  it("returns the same string if string is passed", () => {
+    expect(getQueryValue("xyz")).toBe("xyz");
+  });
+
+  it("returns empty string when undefined is passed", () => {
+    expect(getQueryValue(undefined)).toBe("");
   });
 });

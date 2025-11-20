@@ -2,7 +2,7 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": false,
   "eslint.options": {
-    "overrideConfigFile": "./.eslintrc.json"
+    "overrideConfigFile": "./eslint.config.mjs"
   },
   "eslint.validate": [
     "javascript",

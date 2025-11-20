@@ -1,5 +1,8 @@
 import { format, parseISO } from "date-fns";
 
+import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
+import { Event } from "@/models/Events";
+
 export function formatDateTime(event_time: string) {
   return format(parseISO(event_time), "MMM dd, yyyy");
 }
@@ -38,7 +41,7 @@ export function parseNonPassedParams<T extends Record<string, unknown>>(data: T)
 export const initCapital = (str: string) => str && str.toLowerCase().replace(/(?:^|\s)[a-z]/g, (m) => m.toUpperCase());
 
 export const fullName = (user?: Partial<{ first_name: string; last_name: string }>) => {
-  return `${initCapital(user?.first_name ?? "")} ${initCapital(user?.last_name ?? "")}`.trim();
+  return `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
 };
 
 export function generateYearList(startYear: number) {
@@ -51,3 +54,18 @@ export function generateYearList(startYear: number) {
 
   return years;
 }
+
+export const getQueryValue = (key?: string | string[]) => {
+  const value = Array.isArray(key) ? key[0] : key;
+  return value ?? "";
+};
+
+export const transformVideoToCardData = (video: Event) => ({
+  event_time: formatDateTime(video.event_time),
+  organizer: video.presenters.map(fullName).join(", "),
+  thumbnail: video.thumbnail ? BASE_URL.concat(video.thumbnail) : DEFAULT_THUMBNAIL,
+  title: video.title,
+  video_duration: convertSecondsToFormattedTime(video.video_duration),
+  video_file: video.video_file ? BASE_URL.concat(video.video_file) : undefined,
+  description: video.description,
+});

@@ -1,10 +1,10 @@
-import { FC, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 
 import ArrowForward from "@mui/icons-material/ArrowForward";
 import Box from "@mui/material/Box";
 import MuiButton from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import useTheme from "@mui/material/styles/useTheme";
+import { useTheme } from "@mui/material/styles";
 import { Meta } from "@storybook/react";
 import chunk from "lodash/chunk";
 import startCase from "lodash/startCase";
@@ -31,7 +31,7 @@ const createButtonProps = (buttonType: "normal" | "icon", options?: Partial<Butt
     ...options,
   }) as ButtonProps;
 
-const createIconButtonProps = (icon: JSX.Element, options?: Partial<ButtonProps>): ButtonProps =>
+const createIconButtonProps = (icon: ReactNode, options?: Partial<ButtonProps>): ButtonProps =>
   ({ buttonType: "icon", children: icon, color: "primary", variant: "contained", ...options }) as ButtonProps;
 
 const normal: ButtonProps = createButtonProps("normal");
@@ -125,7 +125,7 @@ const ColorComponent: FC<{
       </Box>
       <Grid container spacing={4}>
         {buttonsChunk.map((val, key) => (
-          <Grid item xs={4} key={key}>
+          <Grid size={{ md: 3 }} key={key}>
             {val.map((button, index) => {
               return (
                 <Box key={index} marginBottom={4}>

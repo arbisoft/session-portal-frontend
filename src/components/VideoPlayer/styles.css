@@ -20,7 +20,7 @@
     aspect-ratio: 16 /9;
   }
 
-  .vds-google-cast-button{
+  .vds-google-cast-button,.vds-pip-button{
     display: none;
   }
 

@@ -4,6 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import InputBase, { inputBaseClasses } from "@mui/material/InputBase";
 import { alpha, css, styled } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
+import Link from "next/link";
 
 import { pxToRem } from "@/utils/styleUtils";
 
@@ -13,12 +14,13 @@ export const StyledAppBar = styled(AppBar, { name: "StyledAppBar" })(() => {
   `;
 });
 
-export const Logo = styled("div", { name: "Logo" })(({ theme }) => {
+export const Logo = styled(Link, { name: "Logo" })(({ theme }) => {
   return css`
     align-items: center;
     cursor: pointer;
     display: flex;
     width: 240px;
+    text-decoration: none;
 
     ${theme.breakpoints.down("lg")} {
       width: unset;
@@ -44,7 +46,7 @@ export const Search = styled("form", { name: "Search" })(({ theme }) => {
   return css`
     align-items: center;
     background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.15) : "#e3e3e3"};
-    border-radius: ${theme.shape.borderRadius * 2}px;
+    border-radius: ${theme.spacing()};
     display: flex;
     justify-content: space-between;
     margin-left: 0;
@@ -69,9 +71,9 @@ export const SearchIconWrapper = styled(IconButton, {
   return css`
     align-items: center;
     background-color: ${theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.25) : "#cccccc"};
-    border-bottom-right-radius: ${theme.shape.borderRadius * 2}px;
+    border-bottom-right-radius: ${theme.spacing()};
     border-radius: 0;
-    border-top-right-radius: ${theme.shape.borderRadius * 2}px;
+    border-top-right-radius: ${theme.spacing()};
     border: none;
     color: inherit;
     display: flex;

@@ -7,9 +7,9 @@ import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import Skeleton from "@mui/material/Skeleton";
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-import useNavigation from "@/hooks/useNavigation";
 import useSidebar from "@/hooks/useSidebar";
 
 import { StyledMenuItem, MenuStack, SidebarContainer, TagsContainer, Text } from "./styled";
@@ -19,21 +19,19 @@ const loadingTags: string[] = Array(10)
   .map(() => faker.lorem.words(1));
 
 const Sidebar = () => {
-  const { navigateTo } = useNavigation();
   const searchParams = useSearchParams();
-
   const { arePlaylistsLoading, tags, playlists } = useSidebar();
 
   const tag = searchParams?.get("tag");
   const playlist = searchParams?.get("playlist");
 
   return (
-    <SidebarContainer data-testid="sidebar-container">
+    <SidebarContainer data-testid="sidebar-container" as="nav" aria-label="Video navigation sidebar">
       <MenuStack>
         {arePlaylistsLoading ? (
-          <MenuList data-testid="loading">
-            {loadingTags?.map((item) => (
-              <MenuItem key={item}>
+          <MenuList aria-busy="true" aria-label="Loading playlists" data-testid="loading">
+            {loadingTags.map((item, index) => (
+              <MenuItem key={`${item}-${index}`} disabled aria-hidden="true" tabIndex={-1}>
                 <Box display="flex" justifyContent="space-between" alignItems="center" width="90%" mb={1}>
                   <Skeleton variant="rounded" width="15%" height={20} />
                   <Skeleton width="76%" height={25} />
@@ -42,23 +40,48 @@ const Sidebar = () => {
             ))}
           </MenuList>
         ) : (
-          <MenuList sx={{ pt: 0 }}>
-            <StyledMenuItem selected={!playlist && !tag} onClick={() => navigateTo("videos")} data-testid={"sidebar-item-All"}>
-              <Image src="/assets/images/sidebar-item-icon.svg" alt="All videos" width={18} height={12} />
-              <Text variant="bodySmall" title="All videos">
-                All videos
+          <MenuList sx={{ pt: 0 }} aria-label="Video playlists" role="menu">
+            <StyledMenuItem
+              component={Link}
+              href="/videos"
+              selected={!playlist && !tag}
+              data-testid="sidebar-item-All"
+              aria-current={!playlist && !tag ? "page" : undefined}
+              tabIndex={0}
+              role="menuitem"
+            >
+              <Image
+                src="/assets/images/sidebar-item-icon.svg"
+                data-testid="sidebar-item-icon"
+                alt=""
+                width={18}
+                height={12}
+                aria-hidden="true"
+              />
+              <Text variant="bodySmall" title="All Videos">
+                All Videos
               </Text>
             </StyledMenuItem>
+
             {playlists.map((item) => (
               <StyledMenuItem
                 key={item.id}
+                component={Link}
+                href={`/videos?playlist=${encodeURIComponent(item.name)}`}
                 selected={item.name === playlist}
-                onClick={() => {
-                  navigateTo("videos", { playlist: item.name });
-                }}
                 data-testid={`sidebar-item-${item.name}`}
+                aria-current={item.name === playlist ? "page" : undefined}
+                tabIndex={0}
+                role="menuitem"
               >
-                <Image src="/assets/images/sidebar-item-icon.svg" alt={item.name} width={18} height={12} />
+                <Image
+                  src="/assets/images/sidebar-item-icon.svg"
+                  data-testid="sidebar-item-icon"
+                  alt=""
+                  width={18}
+                  height={12}
+                  aria-hidden="true"
+                />
                 <Text variant="bodySmall" title={item.name}>
                   {item.name}
                 </Text>
@@ -66,17 +89,21 @@ const Sidebar = () => {
             ))}
           </MenuList>
         )}
-        <TagsContainer data-testid="sidebar-tags">
+
+        <TagsContainer data-testid="sidebar-tags" aria-label="Video tags" role="list">
           {tags.map((item) => (
             <Chip
-              data-testid={`sidebar-tags-${item.name}`}
               key={item.id}
-              onClick={() => {
-                navigateTo("videos", { tag: item.name });
-              }}
+              data-testid={`sidebar-tags-${item.name}`}
               label={`#${item.name}`}
               variant={tag === item.name ? "filled" : "outlined"}
               size="small"
+              component={Link}
+              href={`/videos?tag=${encodeURIComponent(item.name)}`}
+              clickable
+              aria-current={tag === item.name}
+              role="link"
+              tabIndex={0}
             />
           ))}
         </TagsContainer>

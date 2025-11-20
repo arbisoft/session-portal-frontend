@@ -20,6 +20,10 @@ export const VideoCardContainer = styled(Card, {
     width: ${$width};
     height: ${$height};
 
+    a {
+      text-decoration: unset;
+    }
+
     .${cardContentClasses.root} {
       align-items: flex-start;
       display: flex;
@@ -33,7 +37,7 @@ export const VideoCardContainer = styled(Card, {
       }
 
       img {
-        border-radius: ${theme.shape.borderRadius + 8}px;
+        border-radius: ${theme.spacing()};
         height: auto;
         max-height: 192px;
         min-height: 192px;
@@ -42,7 +46,7 @@ export const VideoCardContainer = styled(Card, {
       }
 
       .${skeletonClasses.root} {
-        border-radius: ${theme.shape.borderRadius + 8}px;
+        border-radius: ${theme.spacing()};
         position: absolute;
         top: 0;
         z-index: -1;
@@ -62,6 +66,7 @@ export const VideoCardContainer = styled(Card, {
           display: -webkit-box;
           overflow: hidden;
           text-overflow: ellipsis;
+          color: #fff;
         }
 
         .date-time,
@@ -106,23 +111,23 @@ export const VideoCardContainer = styled(Card, {
         gap: 10px;
 
         .image-wrapper {
-          border-radius: ${theme.shape.borderRadius + 2}px;
+          border-radius: ${theme.spacing()};
           overflow: hidden;
           width: 113px;
 
           .video-player {
-            border-radius: ${theme.shape.borderRadius + 2}px;
+            border-radius: ${theme.spacing()};
           }
 
           img {
-            border-radius: ${theme.shape.borderRadius + 2}px;
+            border-radius: ${theme.spacing()};
             height: unset;
             max-height: unset;
             min-height: unset;
           }
 
           .${skeletonClasses.root} {
-            border-radius: ${theme.shape.borderRadius + 2}px;
+            border-radius: ${theme.spacing()};
           }
         }
 
@@ -164,10 +169,10 @@ export const VideoCardContainer = styled(Card, {
         }
 
         .image-wrapper {
-          border-radius: ${theme.shape.borderRadius + 8}px;
-          height: auto;
-          object-fit: cover;
+          border-radius: ${theme.spacing()};
+          height: 100%;
           width: 420px;
+          overflow: hidden;
 
           ${theme.breakpoints.down("md")} {
             width: 300px;
@@ -178,20 +183,21 @@ export const VideoCardContainer = styled(Card, {
           }
 
           img {
-            border-radius: ${theme.shape.borderRadius + 8}px;
+            border-radius: ${theme.spacing()};
             height: unset;
             max-height: unset;
             min-height: unset;
           }
 
           .${skeletonClasses.root} {
-            border-radius: ${theme.shape.borderRadius + 8}px;
+            border-radius: ${theme.spacing()};
           }
         }
 
         .video-detail {
           width: calc(100% - 430px);
           gap: 5px;
+          color: #fff;
 
           ${theme.breakpoints.down("md")} {
             width: calc(100% - 320px);
@@ -215,6 +221,7 @@ export const VideoCardContainer = styled(Card, {
 
     &.search-card {
       display: flex;
+      height: auto;
 
       .${cardContentClasses.root} {
         flex-direction: row;
@@ -225,8 +232,10 @@ export const VideoCardContainer = styled(Card, {
         }
 
         .image-wrapper {
-          border-radius: ${theme.shape.borderRadius + 8}px;
+          border-radius: ${theme.spacing()};
           width: 400px;
+          height: 100%;
+          overflow: hidden;
 
           ${theme.breakpoints.down("md")} {
             width: 300px;
@@ -237,20 +246,21 @@ export const VideoCardContainer = styled(Card, {
           }
 
           img {
-            border-radius: ${theme.shape.borderRadius + 8}px;
+            border-radius: ${theme.spacing()};
             height: unset;
             max-height: unset;
             min-height: unset;
           }
 
           .${skeletonClasses.root} {
-            border-radius: ${theme.shape.borderRadius + 8}px;
+            border-radius: ${theme.spacing()};
           }
         }
 
         .video-detail {
           width: calc(100% - 430px);
           gap: 10px;
+          color: #fff;
 
           ${theme.breakpoints.down("md")} {
             width: calc(100% - 320px);
@@ -295,7 +305,7 @@ export const ImageWrapper = styled(Box, {
     width: 100%;
 
     .video-player {
-      border-radius: ${theme.shape.borderRadius + 8}px;
+      border-radius: ${theme.spacing()};
       height: 100%;
       left: 0;
       object-fit: cover;

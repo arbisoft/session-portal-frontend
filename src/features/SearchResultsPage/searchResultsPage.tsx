@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import { faker } from "@faker-js/faker";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import Box from "@mui/material/Box";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
@@ -13,6 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { Virtuoso } from "react-virtuoso";
 
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
+import EmptyState from "@/components/EmptyState";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
@@ -20,7 +22,7 @@ import { EventsParams } from "@/models/Events";
 import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
-import { FilterBox, NoSearchResultsWrapper, SearchCardLoadingState, SearchResultsContainer } from "./styled";
+import { FilterBox, SearchCardLoadingState, SearchResultsContainer } from "./styled";
 import { defaultParams } from "./types";
 
 const loaderCards: string[] = Array.from({ length: 5 }, () => faker.lorem.word());
@@ -53,7 +55,7 @@ const SearchResultsPage = () => {
   const [page, setPage] = useState(1);
   const search = searchParams?.get("search") ?? "";
 
-  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, error }] = useLazyGetEventsQuery();
+  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, isError }] = useLazyGetEventsQuery();
 
   const isDataLoading = isLoading || isUninitialized;
 
@@ -69,7 +71,7 @@ const SearchResultsPage = () => {
     getEvents(updatedParams);
   }, [search, page]);
 
-  const renderSkeletons = () => loaderCards.map((key) => <LoaderSkeleton key={key} />);
+  const renderSkeletons = () => loaderCards.map((_, key) => <LoaderSkeleton key={key} />);
 
   const renderVideoResults = () => (
     <Virtuoso
@@ -83,7 +85,7 @@ const SearchResultsPage = () => {
         }
       }}
       itemContent={(_, event) => (
-        <Box pb={4}>
+        <Box pb={4} height={isLargeScreen ? 260 : undefined}>
           <VideoCard
             data={{
               description: event.description,
@@ -97,6 +99,7 @@ const SearchResultsPage = () => {
             width="100%"
             onClick={() => navigateTo("videoDetail", { id: event.slug })}
             variant="search-card"
+            href={`/videos/${event.slug}`}
           />
         </Box>
       )}
@@ -107,34 +110,22 @@ const SearchResultsPage = () => {
   );
 
   const renderNoResults = () => (
-    <NoSearchResultsWrapper>
-      <Typography variant="h3">
-        No videos found for{" "}
-        <Box component="span" color={theme.palette.text.primary}>
-          {search}
-        </Box>
-      </Typography>
-    </NoSearchResultsWrapper>
+    <EmptyState heading={<>No videos found for{" " + search}</>} icon={<SearchOutlinedIcon sx={{ fontSize: 48 }} />} />
   );
 
   const renderResults = () => {
-    if (error) return renderNoResults();
+    if (isError) return renderNoResults();
     if (isDataLoading) return renderSkeletons();
     if (videoListings?.results?.length) return renderVideoResults();
     return renderNoResults();
   };
 
   return (
-    <MainLayoutContainer isLeftSidebarVisible={isLargeScreen} shouldShowDrawer={!isLargeScreen}>
+    <MainLayoutContainer isLeftSidebarVisible={isLargeScreen} shouldShowDrawer={!isLargeScreen} maxWidth={false}>
       {(videoListings?.results.length ?? 0) > 0 && (
         <FilterBox>
           <Stack>
-            <Typography variant="h2">
-              Showing search results for&nbsp;
-              <Box component="span" color={theme.palette.text.primary}>
-                {search}
-              </Box>
-            </Typography>
+            <Typography variant="h2">Showing search results for {search}</Typography>
           </Stack>
         </FilterBox>
       )}

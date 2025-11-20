@@ -73,7 +73,7 @@ describe("MainLayoutContainer", () => {
     expect(globalThis.innerWidth).toBe(500);
 
     waitFor(() => {
-      expect(screen.queryByTestId("right-sidebar")).toHaveStyle("display:none");
+      expect(screen.queryByTestId("right-sidebar")).toBeNull();
     });
   });
 
@@ -176,5 +176,24 @@ describe("MainLayoutContainer", () => {
     await waitFor(() => {
       expect(screen.getByTestId("drawer").firstChild).toHaveAttribute("aria-hidden", "true");
     });
+  });
+
+  test("should closes the drawer when Escape key is pressed", () => {
+    render(
+      <MainLayoutContainer shouldShowDrawer={true}>
+        <div>Content</div>
+      </MainLayoutContainer>
+    );
+
+    const drawerToggle = screen.getByRole("button", { name: /open drawer/i });
+    fireEvent.click(drawerToggle);
+
+    const drawer = screen.getByTestId("drawer");
+    expect(drawer).toBeInTheDocument();
+
+    const presentationBox = screen.getByRole("presentation");
+    fireEvent.keyDown(presentationBox, { key: "Escape" });
+
+    expect(drawer).toHaveAttribute("aria-hidden", "true");
   });
 });

@@ -8,6 +8,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
     <header
       class="MuiPaper-root MuiPaper-elevation MuiPaper-elevation4 MuiAppBar-root MuiAppBar-colorPrimary MuiAppBar-positionFixed mui-fixed css-b4hu5c-MuiPaper-root-MuiAppBar-root-StyledAppBar-root"
       data-testid="navbar"
+      role="banner"
       style="--Paper-shadow: var(--mui-shadows-4); --Paper-overlay: var(--mui-overlays-4);"
     >
       <div
@@ -16,12 +17,14 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
         <div
           class="MuiToolbar-root MuiToolbar-regular css-1u9o2lj-MuiToolbar-root"
         >
-          <div
-            class="css-1vbiuhu-Logo-root"
+          <a
+            aria-label="Go to videos homepage"
+            class="css-jiztmo-Logo-root"
             data-testid="navbar-logo"
+            href="/videos"
           >
             <img
-              alt="Arbisoft Icon"
+              alt="Arbisoft logo"
               data-nimg="1"
               data-testid="arbisoftLogo"
               decoding="async"
@@ -33,32 +36,42 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               width="24"
             />
             <h6
-              class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1k6p2lw-MuiTypography-root"
+              class="MuiTypography-root MuiTypography-h6 MuiTypography-noWrap css-1w5d8ft-MuiTypography-root"
             >
               Arbisoft Sessions Portal
             </h6>
-          </div>
+          </a>
           <div
             class="MuiBox-root css-1rqqp05"
           >
             <form
-              class="css-asd7gd-Search-root"
+              aria-label="Search sessions"
+              class="css-uhe58a-Search-root"
+              data-testid="navbar-search-form"
+              role="search"
             >
+              <label
+                for="navbar-search-input"
+                style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;"
+              >
+                Search sessions
+              </label>
               <div
-                class="MuiInputBase-root MuiInputBase-colorPrimary css-1mhii58-MuiInputBase-root-StyledInputBase-root"
+                class="MuiInputBase-root MuiInputBase-colorPrimary css-uzxt12-MuiInputBase-root-StyledInputBase-root"
               >
                 <input
-                  aria-label="search"
+                  aria-label="Search sessions"
                   class="MuiInputBase-input css-1943rd7-MuiInputBase-input"
                   data-testid="search-query"
+                  id="navbar-search-input"
                   placeholder="Search..."
                   type="text"
                   value="test search"
                 />
               </div>
               <button
-                aria-label="cancel"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-1bf1yfo-MuiButtonBase-root-MuiIconButton-root"
+                aria-label="Clear search"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-sl1li0-MuiButtonBase-root-MuiIconButton-root"
                 data-testid="cancelIcon"
                 tabindex="0"
                 type="button"
@@ -76,8 +89,9 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
                 </svg>
               </button>
               <button
-                aria-label="search"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-ndsf0k-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
+                aria-label="Submit search"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-7m40xq-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
+                data-testid="SearchIconButton"
                 tabindex="0"
                 type="submit"
               >
@@ -99,10 +113,13 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             class="MuiBox-root css-si7qf5-NavbarRightArea-root"
           >
             <button
-              aria-label="Open settings"
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-9nlk2f-MuiButtonBase-root-MuiIconButton-root"
+              aria-expanded="false"
+              aria-haspopup="true"
+              aria-label="Open account settings"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-euwqad-MuiButtonBase-root-MuiIconButton-root"
               data-mui-internal-clone-element="true"
               data-testid="avatar-btn"
+              id="avatar-btn"
               tabindex="0"
               type="button"
             >
@@ -130,27 +147,32 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
       class="MuiBox-root css-1ylnd6d"
       data-testid="left-sidebar"
     >
-      <div
-        class="MuiBox-root css-ekmg7i"
+      <nav
+        aria-label="Video navigation sidebar"
+        class="css-4kypo5"
         data-testid="sidebar-container"
       >
         <div
           class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
         >
           <ul
-            class="MuiList-root MuiList-padding css-18jbpcj-MuiList-root"
+            aria-label="Video playlists"
+            class="MuiList-root MuiList-padding css-zym0s0-MuiList-root"
             role="menu"
             tabindex="-1"
           >
-            <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+            <a
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-All"
+              href="/videos"
               role="menuitem"
               tabindex="0"
             >
               <img
-                alt="All videos"
+                alt=""
+                aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -160,20 +182,23 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               />
               <p
                 class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
-                title="All videos"
+                title="All Videos"
               >
-                All videos
+                All Videos
               </p>
-            </li>
-            <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+            </a>
+            <a
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-1"
+              href="/videos?playlist=Test-1"
               role="menuitem"
-              tabindex="-1"
+              tabindex="0"
             >
               <img
-                alt="Test-1"
+                alt=""
+                aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -187,16 +212,19 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 Test-1
               </p>
-            </li>
-            <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+            </a>
+            <a
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-2"
+              href="/videos?playlist=Test-2"
               role="menuitem"
-              tabindex="-1"
+              tabindex="0"
             >
               <img
-                alt="Test-2"
+                alt=""
+                aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -210,16 +238,19 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 Test-2
               </p>
-            </li>
-            <li
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1tvk9pr-MuiButtonBase-root-MuiMenuItem-root"
+            </a>
+            <a
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-3"
+              href="/videos?playlist=Test-3"
               role="menuitem"
-              tabindex="-1"
+              tabindex="0"
             >
               <img
-                alt="Test-3"
+                alt=""
+                aria-hidden="true"
                 data-nimg="1"
+                data-testid="sidebar-item-icon"
                 decoding="async"
                 height="12"
                 loading="lazy"
@@ -233,16 +264,20 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 Test-3
               </p>
-            </li>
+            </a>
           </ul>
           <div
-            class="MuiBox-root css-1do1o5k-TagsContainer-root"
+            aria-label="Video tags"
+            class="MuiBox-root css-1gpn19b-TagsContainer-root"
             data-testid="sidebar-tags"
+            role="list"
           >
-            <div
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+            <a
+              aria-current="false"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-1"
-              role="button"
+              href="/videos?tag=Test-1"
+              role="link"
               tabindex="0"
             >
               <span
@@ -250,11 +285,13 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 #Test-1
               </span>
-            </div>
-            <div
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+            </a>
+            <a
+              aria-current="false"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-2"
-              role="button"
+              href="/videos?tag=Test-2"
+              role="link"
               tabindex="0"
             >
               <span
@@ -262,11 +299,13 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 #Test-2
               </span>
-            </div>
-            <div
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-mtehtf-MuiButtonBase-root-MuiChip-root"
+            </a>
+            <a
+              aria-current="false"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-3"
-              role="button"
+              href="/videos?tag=Test-3"
+              role="link"
               tabindex="0"
             >
               <span
@@ -274,16 +313,16 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               >
                 #Test-3
               </span>
-            </div>
+            </a>
           </div>
         </div>
-      </div>
+      </nav>
     </div>
     <div
-      class="MuiContainer-root MuiContainer-maxWidthXl css-11shws3-MuiContainer-root"
+      class="MuiContainer-root MuiContainer-maxWidthXl css-nscwq1-MuiContainer-root"
     >
       <div
-        class="MuiBox-root css-17i13ng"
+        class="MuiBox-root css-19oxwiq"
       >
         <div
           class="MuiBox-root css-uwwqev"

@@ -1,7 +1,7 @@
 "use client";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import useTheme from "@mui/material/styles/useTheme";
+import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";

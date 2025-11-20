@@ -23,6 +23,7 @@ const mockProps: VideoCardProps = {
   onClick: jest.fn(),
   width: "300px",
   variant: "normal-card",
+  href: "/videos/test-01",
 };
 
 describe("VideoCard", () => {
@@ -120,5 +121,21 @@ describe("VideoCard", () => {
 
     const card = screen.getByTestId("video-card");
     expect(getComputedStyle(card).backgroundColor).toBe("transparent");
+  });
+
+  it("should plays video on hover and resets on leave (if not on mobile)", () => {
+    const { container } = render(<VideoCard {...mockProps} variant="normal-card" />);
+    const wrapper = container.querySelector(".image-wrapper")!;
+
+    const video = container.querySelector(".video-player") as HTMLVideoElement;
+    const playSpy = jest.spyOn(video, "play").mockImplementation(() => Promise.resolve());
+    const pauseSpy = jest.spyOn(video, "pause").mockImplementation(() => {});
+
+    fireEvent.mouseEnter(wrapper);
+    expect(playSpy).toHaveBeenCalled();
+
+    fireEvent.mouseLeave(wrapper);
+    expect(pauseSpy).toHaveBeenCalled();
+    expect(video.currentTime).toBe(0);
   });
 });

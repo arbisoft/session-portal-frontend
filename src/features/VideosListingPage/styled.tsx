@@ -14,7 +14,7 @@ export const VideoListingContainer = styled("div", {
     .virtuoso-grid-list {
       display: grid;
       gap: ${theme.spacing(3)};
-      grid-template-columns: repeat(auto-fill, minmax(287px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(396px, 1fr));
       padding-bottom: ${theme.spacing(3)};
       width: 100%;
     }
@@ -27,9 +27,6 @@ export const FilterBox = styled(Box, {
   () => css`
     width: 100%;
     .${stackClasses.root} {
-      align-items: center;
-      flex-direction: row;
-      justify-content: space-between;
       margin-bottom: 20px;
       width: 100%;
 
@@ -38,23 +35,6 @@ export const FilterBox = styled(Box, {
         font-weight: 500;
         text-transform: capitalize;
       }
-    }
-  `
-);
-
-export const NoSearchResultsWrapper = styled("div", {
-  name: "NoSearchResultsWrapper",
-})(
-  () => css`
-    margin-top: 10rem;
-
-    .${typographyClasses.h3} {
-      font-size: ${pxToRem(24)};
-      font-style: normal;
-      font-weight: 400;
-      letter-spacing: 0.4px;
-      line-height: 28px;
-      text-align: center;
     }
   `
 );
