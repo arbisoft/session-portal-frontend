@@ -31,19 +31,30 @@ It provides:
 
 ## Authentication Flow
 
-`useAuth()` is a central redirect hook and is used by:
+Authentication is handled by middleware in `src/middleware.ts` and server actions in `src/app/login/actions.ts`.
 
-- `HomePage`
-- `LoginPage`
-- `MainLayoutContainer`
+### Middleware Rules (`middleware.ts`)
 
-### Redirect rules implemented in `useAuth.ts`
+The middleware intercepts requests to enforce authentication:
 
-1. If a user is authenticated and a `redirect_to` query parameter exists, redirect to the matching video detail page.
-2. If a user is authenticated and currently on `/` or `/login`, redirect to `/videos`.
-3. If a user is not authenticated:
-   - redirect to `/login`
-   - preserve `redirect_to` when a video slug or redirect target exists
+1. Protects routes: `/videos` and `/videos/*` require valid authentication
+2. Redirects unauthenticated users to `/login` with `redirect_to` parameter
+3. Redirects authenticated users away from `/login` to `/videos`
+4. Redirects root path `/` and `/upload-video` to `/videos`
+
+### Server Actions (`actions.ts`)
+
+- `loginAndSetCookie`: Handles Google OAuth login, sets HttpOnly cookie, updates Redux state
+- `logoutAndClearCookie`: Clears cookie and redirects to login
+
+### Login Flow
+
+1. User visits `/login`
+2. `LoginPage` invokes Google OAuth using `useGoogleLogin`
+3. On success, calls `loginAndSetCookie` server action with `auth_token`
+4. Server action validates token, sets HttpOnly cookie, updates client Redux state
+5. On success, navigates to `/videos` or redirect target
+6. On failure, shows notification
 
 ## Login Flow
 

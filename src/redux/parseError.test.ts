@@ -28,6 +28,23 @@ describe("parseError", () => {
     ]);
   });
 
+  it("should handle object errors with array of objects", () => {
+    expect(
+      parseError(
+        {
+          errors: [
+            { field: "email", message: "Invalid" },
+            { field: "password", message: "Required" },
+          ],
+        },
+        400
+      )
+    ).toEqual([
+      { statusCode: 400, message: "Errors: Email: Invalid" },
+      { statusCode: 400, message: "Errors: Password: Required" },
+    ]);
+  });
+
   it("should handle object errors with nested object values", () => {
     expect(parseError({ user: { name: "Required" } }, 400)).toEqual([{ statusCode: 400, message: "User: Name: Required" }]);
   });
@@ -57,5 +74,33 @@ describe("parseError", () => {
   it("should return fallback error message for unknown types", () => {
     expect(parseError(12345, 400)).toEqual([{ statusCode: 400, message: "Something went wrong." }]);
     expect(parseError(undefined, 400)).toEqual([{ statusCode: 400, message: "Something went wrong." }]);
+  });
+
+  it("should handle empty object error", () => {
+    expect(parseError({}, 400)).toEqual([{ statusCode: 400, message: "Something went wrong." }]);
+  });
+
+  it("should handle object without field/message", () => {
+    expect(parseError({ custom: "error" }, 400)).toEqual([{ statusCode: 400, message: "Custom: error" }]);
+  });
+
+  it("should handle null error", () => {
+    expect(parseError(null, 400)).toEqual([{ statusCode: 400, message: "Something went wrong." }]);
+  });
+
+  it("should handle object with field but no message", () => {
+    expect(parseError({ field: "email" }, 400)).toEqual([{ statusCode: 400, message: "Field: email" }]);
+  });
+
+  it("should handle object with message but no field", () => {
+    expect(parseError({ message: "Invalid" }, 400)).toEqual([{ statusCode: 400, message: "Message: Invalid" }]);
+  });
+
+  it("should default field to 'Field' when undefined", () => {
+    expect(parseError({ field: undefined, message: "Invalid" }, 400)).toEqual([{ statusCode: 400, message: "Field: Invalid" }]);
+  });
+
+  it("should stringify non-string primitive values", () => {
+    expect(parseError({ count: 5 }, 400)).toEqual([{ statusCode: 400, message: "Count: 5" }]);
   });
 });

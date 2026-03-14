@@ -1,3 +1,5 @@
+import { Event } from "@/models/Events";
+
 import {
   parseNonPassedParams,
   formatDateTime,
@@ -7,6 +9,7 @@ import {
   fullName,
   generateYearList,
   getQueryValue,
+  transformVideoToCardData,
 } from "./utils";
 
 describe("parseNonPassedParams", () => {
@@ -72,6 +75,8 @@ describe("parseNonPassedParams", () => {
       d: "",
       e: [],
       f: [1, 2, 3],
+      g: { nested: true },
+      h: true,
     };
 
     const expectedOutput = {
@@ -79,6 +84,8 @@ describe("parseNonPassedParams", () => {
       b: 1,
       c: "hello",
       f: [1, 2, 3],
+      g: { nested: true },
+      h: true,
     };
 
     expect(parseNonPassedParams(input)).toEqual(expectedOutput);
@@ -105,16 +112,60 @@ describe("trimTextLength", () => {
 });
 
 describe("convertSecondsToFormattedTime", () => {
-  it("should convert seconds to 'HH:MM:SS' format when hours are present", () => {
-    expect(convertSecondsToFormattedTime(3661)).toBe("01:01:01");
+  it("should returns 00:00 when seconds is 0", () => {
+    expect(convertSecondsToFormattedTime(0)).toBe("00:00");
   });
 
-  it("should convert seconds to 'MM:SS' format when hours are not present", () => {
+  it("should formats seconds less than 10 correctly", () => {
+    expect(convertSecondsToFormattedTime(5)).toBe("00:05");
+  });
+
+  it("should formats seconds less than a minute correctly", () => {
+    expect(convertSecondsToFormattedTime(45)).toBe("00:45");
+  });
+
+  it("should formats exactly one minute", () => {
+    expect(convertSecondsToFormattedTime(60)).toBe("01:00");
+  });
+
+  it("should formats minutes and seconds correctly", () => {
     expect(convertSecondsToFormattedTime(125)).toBe("02:05");
   });
 
-  it("should handle zero seconds", () => {
-    expect(convertSecondsToFormattedTime(0)).toBe("00:00");
+  it("should formats exactly one hour", () => {
+    expect(convertSecondsToFormattedTime(3600)).toBe("01:00:00");
+  });
+
+  it("should formats hours, minutes, and seconds correctly", () => {
+    expect(convertSecondsToFormattedTime(3665)).toBe("01:01:05");
+  });
+
+  it("should formats hours with padded values", () => {
+    expect(convertSecondsToFormattedTime(7322)).toBe("02:02:02");
+  });
+
+  it("should handles large durations correctly", () => {
+    expect(convertSecondsToFormattedTime(86399)).toBe("23:59:59");
+  });
+
+  it("should handles exactly one hour minus one second", () => {
+    expect(convertSecondsToFormattedTime(3599)).toBe("59:59");
+  });
+
+  it("should handles hour with zero minutes and seconds", () => {
+    expect(convertSecondsToFormattedTime(7200)).toBe("02:00:00");
+  });
+
+  it("should handles minutes with zero seconds", () => {
+    expect(convertSecondsToFormattedTime(180)).toBe("03:00");
+  });
+
+  it("should handles seconds producing single digit minutes", () => {
+    expect(convertSecondsToFormattedTime(65)).toBe("01:05");
+  });
+
+  it("should handles seconds producing single digit seconds", () => {
+    expect(convertSecondsToFormattedTime(61)).toBe("01:01");
   });
 });
 
@@ -213,5 +264,49 @@ describe("getQueryValue", () => {
 
   it("returns empty string when undefined is passed", () => {
     expect(getQueryValue(undefined)).toBe("");
+  });
+});
+
+describe("transformVideoToCardData", () => {
+  it("should transform event data to card data format", () => {
+    const mockEvent = {
+      event_time: "2023-10-05T12:00:00Z",
+      presenters: [{ first_name: "John", last_name: "Doe" }],
+      thumbnail: "thumb.jpg",
+      title: "Test Video",
+      video_duration: 125,
+      video_file: "video.mp4",
+      description: "Test description",
+    };
+
+    const result = transformVideoToCardData(mockEvent as Event);
+
+    expect(result).toEqual({
+      event_time: "Oct 05, 2023",
+      organizer: "John Doe",
+      thumbnail: "http://localhost:1234thumb.jpg",
+      title: "Test Video",
+      video_duration: "02:05",
+      video_file: "http://localhost:1234video.mp4",
+      description: "Test description",
+    });
+  });
+
+  it("should handle missing thumbnail and video_file", () => {
+    const mockEvent = {
+      event_time: "2023-10-05T12:00:00Z",
+      presenters: [],
+      thumbnail: null,
+      title: "Test Video",
+      video_duration: 0,
+      video_file: null,
+      description: "Test description",
+    };
+
+    const result = transformVideoToCardData(mockEvent as unknown as Event);
+
+    expect(result.thumbnail).toBe("/assets/images/temp-youtube-logo.webp");
+    expect(result.video_file).toBeUndefined();
+    expect(result.organizer).toBe("");
   });
 });

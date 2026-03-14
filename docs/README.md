@@ -6,6 +6,7 @@ This directory contains project documentation generated from the current reposit
 
 - [Project Overview](./project-overview.md)
 - [Architecture](./ARCHITECTURE.md)
+- [API Documentation](./api.md)
 - [Folder Structure](./folder-structure.md)
 - [Setup and Installation](./setup-and-installation.md)
 - [Environment and Configuration](./environment-and-configuration.md)

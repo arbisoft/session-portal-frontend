@@ -5,7 +5,7 @@
 ![TYPESCRIPT](https://img.shields.io/badge/TypeScript%205.9.3-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![MATERIAL UI](https://img.shields.io/badge/Material%20UI%207.3.4-007FFF?style=for-the-badge&logo=mui&logoColor=white)
 ![PLAYWRIGHT](https://img.shields.io/badge/Playwright%201.43.1-45ba4b?style=for-the-badge&logo=Playwright&logoColor=white)
-![ESLINT](https://img.shields.io/badge/eslint%208.57.1-3A33D1?style=for-the-badge&logo=eslint&logoColor=white)
+![ESLINT](https://img.shields.io/badge/eslint%209.38.0-3A33D1?style=for-the-badge&logo=eslint&logoColor=white)
 ![GITHUB ACTIONS](https://img.shields.io/badge/Github%20Actions-282a2e?style=for-the-badge&logo=githubactions&logoColor=367cfe)
 
 # Arbisoft Sessions Portal Frontend

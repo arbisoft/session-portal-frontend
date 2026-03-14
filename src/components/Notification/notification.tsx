@@ -24,7 +24,7 @@ const initialState: NotificationState = {
   vertical: "top",
 };
 
-const notificationReducer = (state: NotificationState, action: NotificationAction): NotificationState => {
+export const notificationReducer = (state: NotificationState, action: NotificationAction): NotificationState => {
   switch (action.type) {
     case "SHOW_NOTIFICATION":
       return { ...action.payload, open: true };
