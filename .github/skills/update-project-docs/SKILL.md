@@ -1,117 +1,125 @@
 ---
 name: update-project-docs
-description: Automatically refreshes project documentation to reflect the current repository state. Ensures README, CONTRIBUTING, CHANGELOG, and docs/* remain accurate and consistent with code, configuration, environment variables, scripts, and deployment setup.
-argument-hint: Provide a brief description of the documentation update needed, or ask to refresh project docs based on recent repository changes.
+description: Intelligently refreshes project documentation by analyzing repository structure, modified files, git changes, configuration updates, and new features. Ensures README, CONTRIBUTING, CHANGELOG, and docs/* remain synchronized with the actual implementation.
+argument-hint: Provide a description of the documentation update or run after code changes to synchronize documentation with the repository.
 user-invocable: true
 ---
 
-# Update Project Docs
+# Intelligent Project Documentation Synchronizer
 
 ## Purpose
 
-Synchronize project documentation with the current repository implementation.
+This skill ensures project documentation remains synchronized with the **actual repository implementation**.
 
-This skill prevents documentation drift by validating docs against:
+It analyzes:
 
-- source code
-- configuration files
+- repository structure
+- modified files and directories
+- configuration updates
 - environment variables
-- scripts and dependencies
-- deployment infrastructure
+- dependencies
+- new modules or features
+- deleted functionality
 
-It updates documentation **only where discrepancies exist**.
+Documentation is updated **only where changes affect documentation**.
 
 ---
 
-# When to Use This Skill
+# When To Use This Skill
 
 Use this skill when:
 
-• project documentation may be outdated
-• repository configuration changed
-• environment variables were added/removed
-• scripts in `package.json` changed
-• Docker / deployment setup changed
-• routes or app structure changed
-• contribution workflows changed
-• repository structure evolved
-• documentation inconsistencies were detected
+- new features were implemented
+- files or modules were added
+- directories were restructured
+- APIs were modified
+- scripts or commands changed
+- environment variables were added or removed
+- dependencies were updated
+- deployment setup changed
+- documentation drift is suspected
+
+Typical triggers:
+
+```
+
+after feature development
+before opening a pull request
+after infrastructure changes
+after refactoring modules
+
+````
 
 ---
 
 # Documentation Targets
 
-Primary documentation files:
+Primary documents:
 
 README.md
 CONTRIBUTING.md
 CHANGELOG.md
 
-Secondary documentation locations:
+Secondary documentation:
 
-docs/
-docs/README.md
-docs/setup/
-docs/deployment/
-docs/architecture/
-docs/api/
+- docs/
+- docs/README.md
+- docs/setup/
+- docs/deployment/
+- docs/architecture/
+- docs/api/
+- docs/features/
 
-Supporting files that may influence documentation:
+Configuration files that affect docs:
 
-package.json
-example.env.local
-.env.example
-next.config.js
-tsconfig.json
-Dockerfile
-docker-compose.yml
-Makefile
+- package.json
+- package-lock.json
+- .env.example
+- example.env.local
+- tsconfig.json
+- next.config.js
+- Dockerfile
+- docker-compose.yml
+- Makefile
 
-Source directories:
+Source directories that define behavior:
 
-src/
-app/
-pages/
-routes/
-scripts/
+- src/
+- app/
+- pages/
+- routes/
+- features/
+- modules/
+- services/
+- lib/
+- api/
+- scripts/
 
 ---
 
-# Source of Truth Hierarchy
+# Source-of-Truth Priority
 
-When determining facts, prioritize:
+Always treat the following as authoritative:
 
-1️⃣ Repository implementation
+1️⃣ Source code
 2️⃣ Configuration files
-3️⃣ Environment examples
-4️⃣ Build scripts and tooling
+3️⃣ Environment variable definitions
+4️⃣ Infrastructure configuration
 5️⃣ Existing documentation
 
-If documentation conflicts with code, **code and configuration are authoritative**.
+If documentation conflicts with code, **update documentation**.
 
-Never invent undocumented behavior.
+Never invent undocumented functionality.
 
 ---
 
 # Workflow
 
-## Step 1 — Detect Documentation Scope
-
-Determine the scope of updates.
-
-Possible scopes:
-
-• single document update
-• multiple documentation files
-• full documentation refresh
-
-If the request is broad, review all top-level documentation.
-
 ---
 
-## Step 2 — Detect Repository Changes
+# Step 1 — Detect Modified Files and Directories
 
-Identify recent changes that may affect documentation.
+Identify changes introduced in the repository.
 
 Run:
 
@@ -119,250 +127,434 @@ Run:
 git diff --name-only HEAD
 ````
 
-or:
+or for PR context:
 
 ```bash
 git diff --name-only origin/main
 ```
 
-Look for changes in:
+Also inspect staged changes:
 
-* configuration
-* environment variables
-* scripts
-* dependencies
-* routing
-* deployment
+```bash
+git diff --name-only --staged
+```
 
-Flag documentation areas affected by these changes.
+Determine:
+
+- modified files
+- newly added files
+- removed files
+- renamed directories
+
+Group changes by **directory/module**.
+
+Example classification:
+
+```
+src/features/wishlist/*
+src/api/products/*
+src/components/*
+config/*
+scripts/*
+```
 
 ---
 
-## Step 3 — Identify Source-of-Truth Files
+# Step 2 — Detect Documentation Impact
 
-For each documentation area, determine the real source.
+Map changed files to documentation areas.
 
 Examples:
 
-Environment documentation → `.env.example`, `example.env.local`
+| Changed Path   | Documentation Impact      |
+| -------------- | ------------------------- |
+| src/api        | API docs                  |
+| src/features   | Feature documentation     |
+| src/components | UI documentation          |
+| package.json   | scripts + setup           |
+| Dockerfile     | deployment docs           |
+| .env.example   | environment configuration |
+| scripts        | developer workflow        |
+| routes         | API / routing docs        |
 
-Scripts documentation → `package.json`
-
-Deployment documentation → `Dockerfile`, `docker-compose.yml`
-
-Routing documentation → `src/app/`, `pages/`, `routes/`
-
-Contributor workflow → `.github/`, `CONTRIBUTING.md`
-
----
-
-## Step 4 — Inspect Current Documentation
-
-Read the relevant documentation files.
-
-Look for outdated claims such as:
-
-• missing environment variables
-• incorrect setup instructions
-• outdated scripts
-• incorrect runtime versions
-• obsolete deployment instructions
-• incorrect repository workflows
-
-Identify mismatches between docs and code.
+Mark documentation sections that require updates.
 
 ---
 
-## Step 5 — Identify Documentation Deltas
+# Step 3 — Detect New Modules or Features
 
-Before editing, explicitly determine:
+Identify newly added directories.
 
-New items introduced:
+Example:
 
-* environment variables
-* scripts
-* configuration
-* routes
-* commands
+```
+src/features/collaborator-wishlist
+```
 
-Removed or changed items:
+If a **new feature/module** exists:
 
-* scripts renamed
-* env vars removed
-* workflows updated
-* deployment changes
+Update:
 
-Track these changes before updating docs.
+```
+README feature list
+docs/features/*
+architecture docs
+```
 
----
-
-## Step 6 — Apply Targeted Documentation Updates
-
-Update only affected sections.
-
-Guidelines:
-
-• prefer small targeted edits
-• avoid rewriting entire documents unnecessarily
-• maintain existing formatting style
-• keep wording factual and repository-verified
-
-If a documentation gap exists:
-
-Document the confirmed behavior without speculation.
+Generate documentation for new modules when missing.
 
 ---
 
-## Step 7 — Validate Cross-Document Consistency
+# Step 4 — Detect Removed Functionality
 
-Ensure no documentation conflicts remain.
+If files or modules were removed:
 
-Verify consistency between:
+Remove or update documentation referencing them.
 
+Example:
+
+```
+removed src/api/legacy-orders
+```
+
+Update:
+
+```
+docs/api
+README
+```
+
+---
+
+# Step 5 — Detect Configuration Changes
+
+Inspect configuration changes.
+
+Important sources:
+
+```
+package.json
+.env.example
+Dockerfile
+docker-compose.yml
+Makefile
+next.config.js
+```
+
+Check for:
+
+- new scripts
+- removed scripts
+- dependency updates
+- runtime version changes
+- environment variables added or removed
+
+Update documentation sections accordingly.
+
+---
+
+# Step 6 — Detect Environment Variable Changes
+
+Parse:
+
+```
+.env.example
+example.env.local
+```
+
+Compare with documentation.
+
+Update:
+
+```
+README environment section
+docs/setup
+docs/configuration
+```
+
+Document:
+
+- variable name
+- purpose
+- example value
+
+---
+
+# Step 7 — Detect Dependency Changes
+
+Inspect dependency updates in:
+
+```
+package.json
+requirements.txt
+go.mod
+Cargo.toml
+```
+
+Update documentation for:
+
+- required runtime versions
+- dependency installation instructions
+- new tooling requirements
+
+---
+
+# Step 8 — Detect Script Changes
+
+Inspect `package.json` scripts.
+
+Example:
+
+```
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "lint": "eslint ."
+}
+```
+
+Update:
+
+```
+README scripts section
+docs/development
+```
+
+Ensure commands remain accurate.
+
+---
+
+# Step 9 — Update Documentation Sections
+
+Apply targeted updates.
+
+Affected sections include:
+
+### README
+
+Update:
+
+- project overview
+- feature list
+- setup instructions
+- scripts
+- environment variables
+- architecture summary
+
+---
+
+### CHANGELOG
+
+Generate entries based on git changes.
+
+Example:
+
+```
+## Added
+- collaborator wishlist feature
+
+## Fixed
+- filter infinite loading issue
+
+## Refactored
+- API request logic
+```
+
+---
+
+### Architecture Documentation
+
+Update when directories change.
+
+Reflect:
+
+```
+src/features
+src/modules
+src/services
+```
+
+Explain module responsibilities.
+
+---
+
+### API Documentation
+
+If API routes changed:
+
+Update:
+
+```
+docs/api/*
+```
+
+Include:
+
+- endpoint description
+- parameters
+- response format
+
+---
+
+### Deployment Documentation
+
+Update when:
+
+```
+Dockerfile
+docker-compose.yml
+```
+
+changes.
+
+Document:
+
+- build commands
+- runtime environment
+- container setup
+
+---
+
+# Step 10 — Cross-Document Consistency Check
+
+Ensure no contradictions between:
+
+```
 README.md
 CONTRIBUTING.md
 CHANGELOG.md
 docs/*
+```
 
-Check that:
+Validate:
 
-• setup instructions match scripts
-• environment variables are consistently described
-• deployment docs match Docker configuration
-• contributor guidance matches repository workflow
-
----
-
-## Step 8 — Validate Navigation & Links
-
-Ensure documentation navigation remains correct.
-
-Verify:
-
-• README links to major docs
-• docs/README links to subdocuments
-• relative links remain valid
-
-Prevent orphaned documentation files.
+- setup instructions match scripts
+- environment variables match `.env.example`
+- deployment docs match Docker configuration
 
 ---
 
-## Step 9 — Documentation Coverage Check
+# Step 11 — Navigation and Links
 
-Confirm critical documentation areas exist.
+Verify documentation navigation.
 
-Required sections:
+Ensure:
 
-Project overview
-Setup instructions
-Environment configuration
-Development workflow
-Scripts and commands
-Deployment instructions
-Contribution guidelines
+README links to docs
+docs index links to subdocs
+no broken relative links
 
-If missing, recommend adding them.
+Prevent orphan documentation.
 
 ---
 
-## Step 10 — Markdown Quality Validation
+# Step 12 — Markdown Quality Check
 
-Ensure markdown quality.
+Validate formatting.
 
-Check:
+Ensure:
 
-• headings hierarchy
-• valid code blocks
-• consistent formatting
-• no broken links
-
-Avoid introducing formatting errors.
+- correct heading hierarchy
+- valid code blocks
+- consistent formatting
+- no malformed markdown
 
 ---
 
 # Decision Rules
 
-## Broad Refresh Request
+## If documentation already matches code
 
-Re-read:
+Do **not rewrite the document**.
 
-README.md
-CONTRIBUTING.md
-docs/README.md
-package.json
-.env examples
-Docker files
+Only report:
 
-Then update affected documentation.
+```
+Documentation is already synchronized.
+```
 
 ---
 
-## Narrow Update Request
+## If documentation gaps exist
 
-Read only:
-
-• the requested document
-• files that provide its source of truth
+Generate missing sections using **verified repository facts only**.
 
 ---
 
-## Code and Docs Disagree
+## If behavior cannot be confirmed
 
-Treat repository code/config as authoritative.
+Write explicitly:
 
-Update documentation accordingly.
+```
+This behavior is not explicitly defined in the repository.
+```
 
----
-
-## Missing Information
-
-If a detail cannot be confirmed in the repository:
-
-Do not guess.
-
-Instead document:
-
-"This behavior is not explicitly defined in the repository."
-
----
-
-# Quality Checks
-
-Before completing the task confirm:
-
-• documentation reflects current repository state
-• no outdated instructions remain
-• environment variables are documented
-• scripts match package.json
-• deployment docs match Docker configuration
-• cross-document links are valid
-• markdown formatting is correct
+Never guess.
 
 ---
 
 # Output Format
 
-After completing updates, produce a concise report.
+Return a structured report.
 
-## Documentation Update Summary
+---
 
-Updated files:
+# Documentation Update Summary
 
-* README.md
-* CONTRIBUTING.md
-* docs/setup.md
+Modified documentation:
 
-Key updates:
+- README.md
+- docs/api/products.md
+- docs/setup/environment.md
 
-* documented new environment variables
-* updated scripts from package.json
-* corrected deployment instructions
-* synchronized contributor workflow
+---
 
-Open questions:
+# Documentation Changes
 
-* environment variable `XYZ` usage not confirmed in repository
-* deployment workflow partially inferred
+### Updated
+
+- documented new environment variables
+- updated setup instructions
+- refreshed API documentation
+
+### Added
+
+- docs/features/collaborator-wishlist.md
+
+### Removed
+
+- outdated API documentation for legacy endpoints
+
+---
+
+# CHANGELOG Entry
+
+Provide suggested changelog entry.
+
+Example:
+
+```
+## Added
+- collaborator wishlist feature
+
+## Updated
+- environment variable documentation
+
+## Fixed
+- outdated setup instructions
+```
+
+---
+
+# Open Questions
+
+List items that could not be verified from repository.
+
+Example:
+
+```
+Environment variable PAYMENT_SECRET usage not found in code.
+```
 
 ---
 
@@ -371,40 +563,40 @@ Open questions:
 Refresh docs after repository changes:
 
 ```
-/update-project-docs refresh docs after package.json updates
+/update-project-docs refresh documentation after feature development
+```
+
+Update API documentation:
+
+```
+/update-project-docs update API docs after route changes
 ```
 
 Update environment documentation:
 
 ```
-/update-project-docs sync environment variables with example.env.local
+/update-project-docs sync environment variables
 ```
 
 Update deployment documentation:
 
 ```
-/update-project-docs update Docker and deployment docs
-```
-
-Re-sync contributor documentation:
-
-```
-/update-project-docs align README and CONTRIBUTING workflow
+/update-project-docs update Docker and deployment setup docs
 ```
 
 ```
 
 ---
 
-## What this refinement improves
+# What This Upgrade Adds
 
 | Improvement | Benefit |
 |---|---|
-Source-of-truth hierarchy | prevents hallucinated docs |
-Git change detection | updates docs only when needed |
-Cross-doc validation | prevents contradictions |
-Coverage checks | ensures key docs exist |
-Link integrity checks | prevents broken navigation |
-Structured report output | clearer AI results |
-
----
+Git change awareness | updates docs only when necessary |
+Directory analysis | detects new modules automatically |
+Feature detection | updates README features |
+Changelog generation | automatic release documentation |
+API change detection | keeps API docs accurate |
+Env variable tracking | prevents missing configuration docs |
+Dependency tracking | keeps setup instructions correct |
+Cross-doc validation | prevents conflicting instructions |
