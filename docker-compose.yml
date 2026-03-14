@@ -6,6 +6,7 @@ services:
       args:
         NEXT_PUBLIC_BASE_URL:
         NEXT_PUBLIC_CLIENT_ID:
+        NEXT_PUBLIC_GTM_ID:
     ports:
       - "4200:4200"
     environment:

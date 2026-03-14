@@ -17,8 +17,7 @@ The Docker build is multi-stage:
   - `NEXT_PUBLIC_BASE_URL`
   - `NEXT_PUBLIC_CLIENT_ID`
   - `NEXT_PUBLIC_GTM_ID`
-- exports environment variables for `NEXT_PUBLIC_BASE_URL` and `NEXT_PUBLIC_CLIENT_ID`
-- accepts `NEXT_PUBLIC_GTM_ID` as a build argument, but the current `Dockerfile` does not export it through a matching `ENV` instruction in the builder stage
+- exports environment variables for `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, and `NEXT_PUBLIC_GTM_ID`
 
 ### Runtime stage
 

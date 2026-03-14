@@ -5,3 +5,4 @@ export const DEFAULT_THUMBNAIL = "/assets/images/temp-youtube-logo.webp";
 export const DEFAULT_LANGUAGE = "en";
 export const DEFAULT_LANGUAGE_DIR = "ltr";
 export const ALLOWED_TYPES = ["video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"];
+export const REDIRECT_TO_KEY = "redirect_to";

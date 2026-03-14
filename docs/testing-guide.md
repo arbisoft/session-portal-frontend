@@ -35,7 +35,7 @@ Key settings:
 | Setup file | `jest.setup.ts` |
 | Coverage provider | `v8` |
 | Coverage directory | `./coverage/` |
-| Coverage thresholds | branches 80, functions 80, lines 80, statements -10 |
+| Coverage thresholds | branches 80%, functions 80%, lines 80% (statements not enforced) |
 
 ### Module mappings
 
