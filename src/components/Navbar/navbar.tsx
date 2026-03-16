@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 
 import CancelIcon from "@mui/icons-material/Cancel";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
+import { logoutAndClearCookie } from "@/app/login/actions";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
 import { selectUserInfo } from "@/redux/login/selectors";
@@ -52,6 +53,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
   const search = searchParams?.get("search");
 
   const [avatarButton, setAvatarButton] = useState<HTMLElement | null>(null);
+  const [, startTransition] = useTransition();
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -67,9 +69,16 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
 
   const handleLogout = async () => {
     handleCloseUserMenu();
+
+    // Clear Redux state and persist
     dispatch(loginActions.logout());
     await persistor.purge();
     persistor.persist();
+
+    // Clear cookie via server action
+    startTransition(async () => {
+      await logoutAndClearCookie();
+    });
   };
 
   const handleSearch = (searchEvent: React.FormEvent<HTMLFormElement>) => {

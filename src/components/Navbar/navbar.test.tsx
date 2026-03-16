@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useSearchParams } from "next/navigation";
 import { Provider, useDispatch, useSelector } from "react-redux";
 
+import { logoutAndClearCookie } from "@/app/login/actions";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { fireEvent, screen, waitFor, render, RenderOptions, act } from "@/jest/utils/testUtils";
 import { selectUserInfo } from "@/redux/login/selectors";
@@ -13,6 +14,11 @@ import { persistor } from "@/redux/store/configureStore";
 import ThemeProvider from "../theme/theme-provider";
 
 import Navbar from "./navbar";
+
+// Mock logout action to avoid Next.js cookie API during tests
+jest.mock("@/app/login/actions", () => ({
+  logoutAndClearCookie: jest.fn(),
+}));
 
 jest.mock("next/navigation", () => ({
   ...jest.requireActual("next/navigation"),
@@ -121,7 +127,7 @@ describe("Navbar Component", () => {
     fireEvent.click(screen.getByTestId("Logout"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("profile-menu")).toHaveAttribute("aria-hidden", "true");
+      expect(screen.queryByText("Logout")).not.toBeVisible();
     });
   });
 
@@ -169,6 +175,7 @@ describe("Navbar Component", () => {
     expect(mockDispatch).toHaveBeenCalledWith(loginActions.logout());
     expect(persistor.purge).toHaveBeenCalled();
     await waitFor(() => expect(persistor.persist).toHaveBeenCalled());
+    expect(logoutAndClearCookie).toHaveBeenCalled();
   });
 
   test("should render ThemeToggle in the user menu", () => {
@@ -185,6 +192,14 @@ describe("Navbar Component", () => {
     const logo = screen.getByTestId("navbar-logo");
     fireEvent.click(logo);
     expect(logo).toHaveAttribute("href", "/videos");
+  });
+
+  test("should not navigate on search submit when query is empty", () => {
+    customRender(<Navbar />);
+    const searchInput = screen.getByPlaceholderText("Search...");
+    fireEvent.change(searchInput, { target: { value: "   " } }); // only spaces
+    fireEvent.submit(searchInput.closest("form")!);
+    expect(mockNavigateTo).not.toHaveBeenCalled();
   });
 
   test("should match snapshot", () => {

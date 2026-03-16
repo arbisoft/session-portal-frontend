@@ -1,50 +1,60 @@
 "use client";
+import { useTransition } from "react";
+
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useDispatch } from "react-redux";
 
+import { loginAndSetCookie } from "@/app/login/actions";
 import { useNotification } from "@/components/Notification";
 import ThemeToggle from "@/components/ThemeToggle";
-import useAuth from "@/hooks/useAuth";
+import { REDIRECT_TO_KEY } from "@/constants/constants";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
-import { useLoginMutation } from "@/redux/login/apiSlice";
+import { loginActions } from "@/redux/login/slice";
 
 import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
 
 export default function LoginPage() {
-  useAuth();
   const theme = useTheme();
-
   const { navigateTo } = useNavigation();
   const { showNotification } = useNotification();
   const { isFeatureEnabled } = useFeatureFlags();
+  const dispatch = useDispatch();
+  const params = useSearchParams();
+  const { push } = useRouter();
+  const [, startTransition] = useTransition();
 
+  const redirectTo = params.get(REDIRECT_TO_KEY);
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
-
-  const [login] = useLoginMutation();
 
   const onSuccess = async (credentialResponse: CredentialResponse) => {
     if ("access_token" in credentialResponse) {
-      const response = await login({
-        auth_token: credentialResponse.access_token as string,
-      });
-      const errorState = response?.error as FetchBaseQueryError;
+      try {
+        // Call server action to login and set cookie
+        const formData = new FormData();
+        formData.append("auth_token", credentialResponse.access_token as string);
+        startTransition(async () => {
+          const loginData = await loginAndSetCookie(formData);
 
-      if (response.data) {
-        navigateTo("videos");
-      } else if (errorState) {
-        const errorMessage = errorState.data as string[];
-        if (errorMessage) {
-          showNotification({
-            message: errorMessage[0],
-            severity: "error",
-          });
-        }
+          // Update Redux state
+          dispatch(loginActions.login(loginData));
+          if (redirectTo) {
+            push(redirectTo);
+          } else {
+            navigateTo("videos");
+          }
+        });
+      } catch {
+        showNotification({
+          message: "Login failed. Please try again.",
+          severity: "error",
+        });
       }
     } else {
       showNotification({
@@ -70,7 +80,11 @@ export default function LoginPage() {
   return (
     <LoginContainer>
       <Box position="fixed" top={8} right={8}>
-        {isDarkModeVisible && <ThemeToggle />}
+        {isDarkModeVisible && (
+          <span data-testid="theme-toggle">
+            <ThemeToggle />
+          </span>
+        )}
       </Box>
       <LoginSubContainer>
         <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />

@@ -34,6 +34,16 @@ Current reducer composition includes:
 - base query: `customBaseQuery`
 - tag types: currently an empty tuple with a TODO comment
 
+## Server Actions
+
+Authentication operations use Next.js server actions for security:
+
+- Located in `src/app/login/actions.ts`
+- `loginAndSetCookie`: Validates Google OAuth token, sets HttpOnly cookie, returns session data for Redux
+- `logoutAndClearCookie`: Clears authentication cookie and redirects to login
+
+These actions complement client-side Redux state management by handling secure server-side operations.
+
 ## Custom Base Query Behavior
 
 `src/redux/customBaseQuery.ts` adds shared request behavior:

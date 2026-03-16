@@ -29,6 +29,21 @@ export const parseError = (error: unknown, statusCode: ErrorStatus): ErrorType[]
 
   // Handle errors that are objects
   if (isErrorAnObject(error)) {
+    /**
+     * Handle common API validation pattern:
+     * { field: "email", message: "Invalid" }
+     */
+    if ("field" in error && "message" in error) {
+      const err = error as { field?: string; message?: string };
+
+      return [
+        {
+          statusCode,
+          message: `${capitalize(err.field ?? "Field")}: ${err.message}`,
+        },
+      ];
+    }
+
     return Object.entries(error).flatMap(([key, value]) => {
       // Directly handle null and undefined values
       if (value === null || value === undefined) {
@@ -58,6 +73,7 @@ export const parseError = (error: unknown, statusCode: ErrorStatus): ErrorType[]
 
       // Convert non-array and non-object values to string
       const messageValue = typeof value === "string" ? value : JSON.stringify(value);
+
       return [{ statusCode, message: `${capitalize(key)}: ${messageValue}` }];
     });
   }
