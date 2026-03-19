@@ -173,6 +173,69 @@ describe("LoginPage", () => {
     });
   });
 
+  it("ignores invalid redirect_to path and navigates to videos", async () => {
+    mockGet.mockReturnValue("//evil.com");
+
+    let successHandler: ((param: object) => Promise<void>) | undefined;
+
+    mockUseGoogleLogin.mockImplementation(({ onSuccess }) => {
+      successHandler = onSuccess;
+      return jest.fn();
+    });
+
+    mockLoginAndSetCookie.mockResolvedValue({ access: "token" });
+
+    customRender(<LoginPage />);
+
+    if (!successHandler) {
+      throw new Error("successHandler was not assigned");
+    }
+
+    await successHandler({ access_token: "token123" });
+
+    await waitFor(() => {
+      expect(mockNavigateTo).toHaveBeenCalledWith("videos");
+      expect(mockPush).not.toHaveBeenCalledWith("//evil.com");
+    });
+  });
+
+  it("falls back to window location search for redirect_to and navigates correctly", async () => {
+    mockGet.mockReturnValue(null);
+
+    const originalLocation = window.location;
+
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: {
+        ...originalLocation,
+        search: "?redirect_to=%2Fvideos%2F777",
+      },
+    });
+
+    let successHandler!: (param: object) => Promise<void>;
+
+    mockUseGoogleLogin.mockImplementation(({ onSuccess }) => {
+      successHandler = onSuccess;
+      return jest.fn();
+    });
+
+    mockLoginAndSetCookie.mockResolvedValue({ access: "token" });
+
+    customRender(<LoginPage />);
+
+    await successHandler({ access_token: "token123" });
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/videos/777");
+    });
+
+    // restore
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: originalLocation,
+    });
+  });
+
   it("shows error when credential has no access_token", async () => {
     let successHandler: ((param: object) => Promise<void>) | undefined;
 

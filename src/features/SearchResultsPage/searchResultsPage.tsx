@@ -17,7 +17,6 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import EmptyState from "@/components/EmptyState";
 import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
-import useNavigation from "@/hooks/useNavigation";
 import { EventsParams } from "@/models/Events";
 import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
@@ -47,7 +46,6 @@ const LoaderSkeleton = () => (
 
 const SearchResultsPage = () => {
   const searchParams = useSearchParams();
-  const { navigateTo } = useNavigation();
   const theme = useTheme();
 
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
@@ -78,7 +76,7 @@ const SearchResultsPage = () => {
       useWindowScroll
       style={{ height: "100%" }}
       data={videoListings?.results ?? []}
-      increaseViewportBy={200}
+      increaseViewportBy={400}
       endReached={() => {
         if (!isFetching && videoListings?.next) {
           setPage((prevPage) => prevPage + 1);
@@ -97,14 +95,13 @@ const SearchResultsPage = () => {
               video_file: event.video_file ? BASE_URL.concat(event.video_file) : undefined,
             }}
             width="100%"
-            onClick={() => navigateTo("videoDetail", { id: event.slug })}
             variant="search-card"
             href={`/videos/${event.slug}`}
           />
         </Box>
       )}
       components={{
-        Footer: () => (isFetching ? <LoaderSkeleton /> : null),
+        Footer: () => (isFetching && !!videoListings?.next ? <LoaderSkeleton /> : null),
       }}
     />
   );

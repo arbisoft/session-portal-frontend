@@ -6,6 +6,7 @@ import { persistStore, REHYDRATE, FLUSH, PAUSE, PERSIST, PURGE, REGISTER, persis
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import createFilter from "redux-persist-transform-filter";
 
+import { NODE_ENV } from "@/constants/constants";
 import { baseApi, REDUCER_PATH } from "@/redux/baseApi";
 import loginReducer, { LoginState } from "@/redux/login/slice";
 
@@ -45,7 +46,7 @@ const rootReducer = combineReducers({
 });
 const persistedReducer = persistReducer<ReturnType<typeof rootReducer>>(persistConfig, rootReducer);
 const store = configureStore({
-  devTools: process.env.NODE_ENV !== "production",
+  devTools: NODE_ENV !== "production",
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

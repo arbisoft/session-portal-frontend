@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { REDIRECT_TO_KEY } from "./constants/constants";
+import { isValidInternalRedirectPath } from "./utils/utils";
 
 // Protected routes that require authentication
 const protectedRoutes = ["/videos"];
@@ -32,6 +33,15 @@ export function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith("/videos/"));
 
   if (isValidToken(token) && pathname === "/login") {
+    const redirectTo =
+      request.nextUrl.searchParams?.get(REDIRECT_TO_KEY) ??
+      new URLSearchParams(request.nextUrl.search || "").get(REDIRECT_TO_KEY);
+
+    // Prefer explicit redirect target if provided (e.g. /videos/123) after login.
+    if (redirectTo && isValidInternalRedirectPath(redirectTo)) {
+      return NextResponse.redirect(new URL(redirectTo, request.url));
+    }
+
     return NextResponse.redirect(new URL("/videos", request.url));
   }
 

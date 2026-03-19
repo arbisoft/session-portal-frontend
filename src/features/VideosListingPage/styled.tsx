@@ -8,18 +8,26 @@ import { pxToRem } from "@/utils/styleUtils";
 
 export const VideoListingContainer = styled("div", {
   name: "VideoListingContainer",
-})(
-  ({ theme }) => css`
-    .skeleton-loader,
-    .virtuoso-grid-list {
-      display: grid;
-      gap: ${theme.spacing(3)};
-      grid-template-columns: repeat(auto-fill, minmax(396px, 1fr));
-      padding-bottom: ${theme.spacing(3)};
-      width: 100%;
-    }
-  `
-);
+})(({ theme }) => ({
+  [".skeleton-loader, .virtuoso-grid-list"]: {
+    display: "grid",
+    gap: theme.spacing(3),
+    width: "100%",
+    gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
+
+    [theme.breakpoints.up("sm")]: {
+      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+    },
+
+    [theme.breakpoints.up("lg")]: {
+      gridTemplateColumns: "repeat(auto-fill, minmax(268px, 1fr))",
+    },
+
+    [theme.breakpoints.up("xl")]: {
+      gridTemplateColumns: "repeat(auto-fill, minmax(396px, 1fr))",
+    },
+  },
+}));
 
 export const FilterBox = styled(Box, {
   name: "FilterBox",
