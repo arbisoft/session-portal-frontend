@@ -26,6 +26,7 @@ The repository implements a web application that includes:
 | State | Redux Toolkit, RTK Query, redux-persist |
 | Forms | react-hook-form, yup, @hookform/resolvers |
 | Media/UI helpers | @vidstack/react, swiper, react-virtuoso |
+| Utilities | lodash |
 | Authentication | @react-oauth/google |
 | Testing | Jest, React Testing Library, Playwright |
 | Component development | Storybook |

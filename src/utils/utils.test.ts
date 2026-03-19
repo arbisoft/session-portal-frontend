@@ -10,6 +10,7 @@ import {
   generateYearList,
   getQueryValue,
   transformVideoToCardData,
+  isValidInternalRedirectPath,
 } from "./utils";
 
 describe("parseNonPassedParams", () => {
@@ -194,6 +195,29 @@ describe("fullName", () => {
 
   it("should return empty string for undefined user", () => {
     expect(fullName()).toBe("");
+  });
+});
+
+describe("isValidInternalRedirectPath", () => {
+  it("should allow simple internal paths", () => {
+    expect(isValidInternalRedirectPath("/videos/123")).toBe(true);
+    expect(isValidInternalRedirectPath("/")).toBe(true);
+  });
+
+  it("should reject external protocol-relative paths", () => {
+    expect(isValidInternalRedirectPath("//evil.com")).toBe(false);
+    expect(isValidInternalRedirectPath("///evil.com")).toBe(false);
+  });
+
+  it("should reject paths with double slashes after first slash", () => {
+    expect(isValidInternalRedirectPath("/videos//123")).toBe(false);
+  });
+
+  it("should reject non-leading-slash or empty paths", () => {
+    expect(isValidInternalRedirectPath("http://example.com")).toBe(false);
+    expect(isValidInternalRedirectPath("/\nfoo")).toBe(false);
+    expect(isValidInternalRedirectPath("")).toBe(false);
+    expect(isValidInternalRedirectPath(null)).toBe(false);
   });
 });
 

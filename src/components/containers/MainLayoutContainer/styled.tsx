@@ -26,7 +26,7 @@ export const MainContainer = styled(Container, {
   },
 
   [theme.breakpoints.up("lg")]: {
-    paddingInlineStart: isSidebarAvailable ? `calc(${SidebarWidth}px + ${theme.spacing(3)})` : theme.spacing(0),
+    paddingInlineStart: isSidebarAvailable ? `calc(${SidebarWidth}px + ${theme.spacing(3)})` : theme.spacing(3),
   },
 }));
 
