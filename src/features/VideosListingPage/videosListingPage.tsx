@@ -11,6 +11,8 @@ import Stack from "@mui/material/Stack";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 import { useSearchParams } from "next/navigation";
 import { VirtuosoGrid } from "react-virtuoso";
 
@@ -41,7 +43,8 @@ const VideosListingPage = () => {
 
   const shouldSkipFeaturedVideos = !!(parsedParams.tag || parsedParams.playlist || parsedParams.search || parsedParams.year);
 
-  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, isError }] = useLazyGetEventsQuery();
+  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, isError, originalArgs }] =
+    useLazyGetEventsQuery();
 
   const defaultEventParams = {
     ...defaultParams,
@@ -94,7 +97,12 @@ const VideosListingPage = () => {
 
   const featuredVideos = featureVideos?.results ?? [];
 
-  const isDataLoading = isLoading || isUninitialized || !videoListings?.results || isFeatureFetching;
+  const isDataLoading =
+    isLoading ||
+    isUninitialized ||
+    !videoListings?.results ||
+    isFeatureFetching ||
+    !isEqual(omit(originalArgs, "page"), omit(apiParams, "page"));
 
   // Determine what to render based on state
   const renderContent = () => {
@@ -153,16 +161,15 @@ const VideosListingPage = () => {
               setPage((prev) => prev + 1);
             }
           }}
-          increaseViewportBy={0}
+          increaseViewportBy={400}
           components={{
-            Footer: () => isFetching && <SkeletonLoader count={3} />,
+            Footer: () => <>{isFetching && !!videoListings?.next && <SkeletonLoader count={12} />}</>,
           }}
           itemContent={(_, videoCard) => (
             <VideoCard
               data={transformVideoToCardData(videoCard)}
               href={`/videos/${videoCard.slug}`}
               key={videoCard.id}
-              onClick={() => navigateTo("videoDetail", { id: videoCard.slug })}
               width="100%"
             />
           )}
@@ -205,7 +212,6 @@ const VideosListingPage = () => {
                     height="auto"
                     href={`/videos/${featuredVideo.slug}`}
                     key={idx}
-                    onClick={() => navigateTo("videoDetail", { id: featuredVideo.slug })}
                     variant="featured-card"
                     width="auto"
                   />

@@ -17,6 +17,7 @@ import { REDIRECT_TO_KEY } from "@/constants/constants";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
 import { loginActions } from "@/redux/login/slice";
+import { isValidInternalRedirectPath } from "@/utils/utils";
 
 import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
 
@@ -30,7 +31,13 @@ export default function LoginPage() {
   const { push } = useRouter();
   const [, startTransition] = useTransition();
 
-  const redirectTo = params.get(REDIRECT_TO_KEY);
+  // Persist redirect target from query string or fallback to window query in cases where
+  // new token/redirect flow reloads page and Next hook may not yet resolve.
+  const rawRedirectTo =
+    params.get(REDIRECT_TO_KEY) ??
+    (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get(REDIRECT_TO_KEY) : null);
+
+  const redirectTo = isValidInternalRedirectPath(rawRedirectTo) ? rawRedirectTo : null;
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
 
   const onSuccess = async (credentialResponse: CredentialResponse) => {

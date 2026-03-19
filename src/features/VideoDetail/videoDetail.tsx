@@ -71,7 +71,6 @@ const VideoDetail = () => {
                 height="100px"
                 href={`/videos/${video.slug}`}
                 key={`recommendation-${video.id}`}
-                onClick={() => navigateTo("videoDetail", { id: video.slug })}
                 variant="related-card"
               />
             )}
@@ -98,17 +97,19 @@ const VideoDetail = () => {
         <SkeletonLoader />
       ) : (
         <>
-          <VideoPlayer
-            {...{
-              crossOrigin: true,
-              playsInline: true,
-              width: "100%",
-              title: "",
-              videoSrc: data?.video_file ?? "",
-              posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
-              posterAlt: data?.event?.title ?? "",
-            }}
-          />
+          {data?.video_file && (
+            <VideoPlayer
+              {...{
+                crossOrigin: true,
+                playsInline: true,
+                width: "100%",
+                title: "",
+                videoSrc: data?.video_file ?? "",
+                posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
+                posterAlt: data?.event?.title ?? "",
+              }}
+            />
+          )}
           <article aria-label={`Session details for ${data?.event?.title}`}>
             <StyledTitleSection>
               <Typography variant="h4" component="h1" tabIndex={0}>

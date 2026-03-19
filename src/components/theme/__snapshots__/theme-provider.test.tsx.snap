@@ -28,7 +28,7 @@ try {
   }
   if (colorScheme) {
     document.documentElement.classList.remove('%s'.replace('%s', light), '%s'.replace('%s', dark));
-      document.documentElement.classList.add('%s'.replace('%s', colorScheme));document.documentElement.setAttribute('.%s', colorScheme);
+      document.documentElement.classList.add('%s'.replace('%s', colorScheme));
   }
 } catch(e){}})();
   </script>

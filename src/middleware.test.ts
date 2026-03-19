@@ -112,6 +112,32 @@ describe("Middleware", () => {
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
 
+  it("should redirect login page to redirect_to when already authenticated", () => {
+    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
+    const req = {
+      nextUrl: { pathname: "/login", search: "?redirect_to=%2Fvideos%2F123" },
+      url: "http://localhost:3000/login?redirect_to=%2Fvideos%2F123",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    middleware(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/123", req.url));
+  });
+
+  it("should ignore external redirect_to on login and fallback to /videos", () => {
+    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
+    const req = {
+      nextUrl: { pathname: "/login", search: "?redirect_to=%2F%2Fevil.com" },
+      url: "http://localhost:3000/login?redirect_to=%2F%2Fevil.com",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    middleware(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
+  });
+
   it("should allow access to unprotected routes without token", () => {
     const req = {
       nextUrl: { pathname: "/some-other", search: "" },

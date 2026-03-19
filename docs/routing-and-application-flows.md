@@ -39,7 +39,7 @@ The middleware intercepts requests to enforce authentication:
 
 1. Protects routes: `/videos` and `/videos/*` require valid authentication
 2. Redirects unauthenticated users to `/login` with `redirect_to` parameter
-3. Redirects authenticated users away from `/login` to `/videos`
+3. Redirects authenticated users away from `/login` to validated `redirect_to` or `/videos`
 4. Redirects root path `/` and `/upload-video` to `/videos`
 
 ### Server Actions (`actions.ts`)
@@ -47,25 +47,18 @@ The middleware intercepts requests to enforce authentication:
 - `loginAndSetCookie`: Handles Google OAuth login, sets HttpOnly cookie, updates Redux state
 - `logoutAndClearCookie`: Clears cookie and redirects to login
 
-### Login Flow
-
-1. User visits `/login`
-2. `LoginPage` invokes Google OAuth using `useGoogleLogin`
-3. On success, calls `loginAndSetCookie` server action with `auth_token`
-4. Server action validates token, sets HttpOnly cookie, updates client Redux state
-5. On success, navigates to `/videos` or redirect target
-6. On failure, shows notification
-
 ## Login Flow
 
 Observed sequence:
 
 1. User visits `/login`
-2. `LoginPage` invokes Google OAuth using `useGoogleLogin`
-3. On success, the frontend sends the Google `access_token` as `auth_token`
-4. Request is sent to `POST /users/login`
-5. On success, the app navigates to `/videos`
-6. On failure, a notification is shown
+2. `LoginPage` reads `redirect_to` from URL params or window.location.search
+3. `redirect_to` is validated using `isValidInternalRedirectPath` (prevents external redirects)
+4. `LoginPage` invokes Google OAuth using `useGoogleLogin`
+5. On success, the frontend sends the Google `access_token` as `auth_token`
+6. Request is sent to `POST /users/login`
+7. On success, the app navigates to the validated `redirect_to` path or defaults to `/videos`
+8. On failure, a notification is shown
 
 ## Videos Listing Flow
 

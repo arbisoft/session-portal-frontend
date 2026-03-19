@@ -69,3 +69,18 @@ export const transformVideoToCardData = (video: Event) => ({
   video_file: video.video_file ? BASE_URL.concat(video.video_file) : undefined,
   description: video.description,
 });
+
+export function isValidInternalRedirectPath(redirectPath?: string | null): boolean {
+  if (typeof redirectPath !== "string" || redirectPath.length === 0) return false;
+  if (!redirectPath.startsWith("/")) return false;
+  if (redirectPath.startsWith("//")) return false;
+  if (/[\\\n\r]/.test(redirectPath)) return false;
+  if (redirectPath.slice(1).includes("//")) return false;
+
+  try {
+    const parsedUrl = new URL(redirectPath, "http://example.com");
+    return parsedUrl.origin === "http://example.com";
+  } catch {
+    return false;
+  }
+}

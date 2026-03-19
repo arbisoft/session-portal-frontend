@@ -48,6 +48,18 @@ Key settings:
 
 - imports `@testing-library/jest-dom`
 - imports `whatwg-fetch`
+
+## Test Coverage
+
+Current test suite includes unit tests for:
+
+- Utility functions (`src/utils/utils.ts`)
+- Middleware authentication (`src/middleware.ts`)
+- Feature pages: HomePage, LoginPage, VideosListingPage, SearchResultsPage, VideoDetail
+- Redux slices and API integrations
+- Reusable components (Navbar, Sidebar, etc.)
+
+New tests added for previously untested feature pages to improve coverage on routing, loading states, and error handling.
 - enables `jest-fetch-mock`
 - mocks `@/hooks/useFeatureFlags`
 - resets fetch mocks before each test

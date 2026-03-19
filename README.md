@@ -104,7 +104,13 @@ Run tests:
 npm run test
 ```
 
-Coverage output is written to `./coverage/`.
+Run with coverage:
+
+```bash
+npm run test:cov
+```
+
+Coverage output is written to `./coverage/`. The test suite includes unit tests for utilities, middleware, Redux state, and feature components with Jest and React Testing Library.
 
 ## Deployment
 
