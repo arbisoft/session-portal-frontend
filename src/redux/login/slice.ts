@@ -29,6 +29,9 @@ const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
+    login: (state, action) => {
+      state.session = action.payload;
+    },
     logout: () => initialState,
   },
   extraReducers: (builder) => {

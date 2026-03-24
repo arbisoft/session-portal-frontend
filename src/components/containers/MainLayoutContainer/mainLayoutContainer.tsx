@@ -7,7 +7,6 @@ import { ContainerOwnProps } from "@mui/material/Container";
 
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar/sidebar";
-import useAuth from "@/hooks/useAuth";
 
 import { MainContainer, SidebarWidth, LeftSidebar, RightSidebar, ContentContainer, StyledDrawer } from "./styled";
 
@@ -26,7 +25,6 @@ const MainLayoutContainer = ({
   shouldShowDrawer = false,
   maxWidth = "xl",
 }: TMainLayoutContainer) => {
-  useAuth();
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = (newOpen: boolean) => () => setOpen(newOpen);

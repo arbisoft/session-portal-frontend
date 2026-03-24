@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 
 import { render, screen, act, waitFor, fireEvent } from "@/jest/utils/testUtils";
 
-import { NotificationProvider, useNotification } from "./notification";
+import { NotificationProvider, useNotification, notificationReducer, notificationManager } from "./notification";
 
 const TestComponent = () => {
   const notifier = useNotification();
@@ -15,6 +15,54 @@ const TestComponent = () => {
     </div>
   );
 };
+
+describe("notificationReducer", () => {
+  const initialState = {
+    horizontal: "right" as const,
+    vertical: "top" as const,
+    message: "",
+    open: false,
+    severity: "info" as const,
+  };
+
+  it("should handle SHOW_NOTIFICATION", () => {
+    const nextState = notificationReducer(initialState, {
+      type: "SHOW_NOTIFICATION",
+      payload: { message: "Test", severity: "success" },
+    });
+    expect(nextState.open).toBe(true);
+    expect(nextState.message).toBe("Test");
+    expect(nextState.severity).toBe("success");
+  });
+
+  it("should handle HIDE_NOTIFICATION", () => {
+    const shown = { ...initialState, open: true, message: "Test" };
+    const nextState = notificationReducer(shown, { type: "HIDE_NOTIFICATION" });
+    expect(nextState.open).toBe(false);
+    expect(nextState.message).toBe("Test");
+  });
+
+  it("should return state for unknown actions", () => {
+    // @ts-expect-error - intentionally using bad action type
+    const nextState = notificationReducer(initialState, { type: "UNKNOWN" });
+    expect(nextState).toBe(initialState);
+  });
+});
+
+describe("NotificationManager", () => {
+  it("should notify subscribers when showing and hiding notifications", () => {
+    const listener = jest.fn();
+    const unsubscribe = notificationManager.subscribe(listener);
+
+    notificationManager.showNotification({ message: "Hi", severity: "info" });
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ open: true, message: "Hi" }));
+
+    notificationManager.hideNotification();
+    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ open: false }));
+
+    unsubscribe();
+  });
+});
 
 describe("NotificationProvider", () => {
   it("should renders children", () => {
@@ -84,11 +132,14 @@ describe("NotificationProvider", () => {
     );
     fireEvent.click(screen.getByText("Show Notification"));
 
-    const closeIcon = screen.getByRole("alert");
-    fireEvent.click(closeIcon); // Close via alert itself
+    expect(await screen.findByText("Test Alert")).toBeInTheDocument();
+
+    // MUI provides a close button in the Alert component
+    const closeButton = screen.getByLabelText(/close/i);
+    fireEvent.click(closeButton);
 
     await waitFor(() => {
-      expect(screen.queryByText("Test Message")).not.toBeInTheDocument();
+      expect(screen.queryByText("Test Alert")).not.toBeInTheDocument();
     });
   });
 });

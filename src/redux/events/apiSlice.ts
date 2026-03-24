@@ -1,7 +1,27 @@
 import isEqual from "lodash/isEqual";
+import omit from "lodash/omit";
 
 import { EventDetail, Tag, AllEventResponse, EventsParams, Recommendation, Playlist, RecommendationParam } from "@/models/Events";
 import { baseApi } from "@/redux/baseApi";
+
+const getEventsCacheKey = (params: Omit<EventsParams, "page">) => {
+  const searchParams = new URLSearchParams();
+
+  searchParams.set("event_type", params.event_type);
+  searchParams.set("status", params.status);
+
+  if (params.event_time_after) searchParams.set("event_time_after", params.event_time_after);
+  if (params.event_time_before) searchParams.set("event_time_before", params.event_time_before);
+  if (typeof params.is_featured === "boolean") searchParams.set("is_featured", String(params.is_featured));
+  if (params.linked_to_events) searchParams.set("linked_to_events", params.linked_to_events);
+  if (params.ordering?.length) searchParams.set("ordering", params.ordering.join(","));
+  if (params.page_size) searchParams.set("page_size", String(params.page_size));
+  if (params.playlist) searchParams.set("playlist", params.playlist);
+  if (params.search) searchParams.set("search", params.search);
+  if (params.tag) searchParams.set("tag", params.tag);
+
+  return searchParams.toString();
+};
 
 export const eventsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -23,12 +43,7 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
         params,
       }),
-      serializeQueryArgs: ({ endpointName, queryArgs }) => {
-        if (queryArgs.search) {
-          return endpointName.concat(`?is_featured=${queryArgs.is_featured}&search=${queryArgs.search}`);
-        }
-        return endpointName.concat(`?is_featured=${queryArgs.is_featured}`);
-      },
+      serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}?${getEventsCacheKey(omit(queryArgs, "page"))}`,
       merge: (currentCache, newItems, { arg }) => {
         if (arg.page === 1) currentCache.results = [];
 

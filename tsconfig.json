@@ -46,6 +46,5 @@
     ".next",
     "dist",
     "node_modules",
-    "src/middleware.ts",
   ]
 }
