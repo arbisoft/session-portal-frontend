@@ -41,13 +41,14 @@ Configured tools found:
 
 ### Release tooling
 
-`release-it` is configured directly in `package.json`.
+`release-it` is configured in `.release-it.json`.
 
 Observed release behavior:
 
-- release commit message: `chore: release v${version}`
-- GitHub releases enabled
+- release commit message: `chore(release): v${version}`
+- GitHub releases enabled with conventional changelog
 - npm publishing disabled
+- Automated via GitHub Actions workflow on PR merge to main from dev
 - changelog written to `CHANGELOG.md`
 - conventional commit sections customized for features, fixes, docs, refactors, tests, CI, and more
 

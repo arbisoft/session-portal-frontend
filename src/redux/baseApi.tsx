@@ -4,7 +4,7 @@ import customBaseQuery from "./customBaseQuery";
 
 export const REDUCER_PATH = "api";
 
-export const tagTypes = [] as const; // TODO: will add tags here
+export const tagTypes = ["Event", "Tag", "Playlist", "Recommendation"] as const;
 
 export const baseApi = createApi({
   reducerPath: REDUCER_PATH,

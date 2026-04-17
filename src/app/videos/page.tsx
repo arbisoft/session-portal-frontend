@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 
-import VideosListingPage from "@/features/VideosListingPage";
+const VideosListingPage = dynamic(() => import("@/features/VideosListingPage"));
 
 type Props = {
   params: { language: string; search: string };

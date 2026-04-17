@@ -19,27 +19,18 @@ exports[`VideoCard should matches snapshot 1`] = `
       <div
         class="image-wrapper MuiBox-root css-cmszgv-ImageWrapper-root"
       >
-        <span
-          aria-hidden="true"
-          class="MuiSkeleton-root MuiSkeleton-rounded MuiSkeleton-wave css-116i1gn-MuiSkeleton-root"
-          style="width: 100%; height: 100%;"
-        />
         <img
           alt="Refresher & AMA Session on Competency Framework Changes - January 2025"
+          data-nimg="1"
           data-testid="video-card-image"
+          decoding="async"
           height="196"
           loading="lazy"
-          src="http://localhost:1234/media/thumbnails/Screenshot_2025-02-12_at_1.13.39PM.png"
-          style="border-radius: 8px;"
+          sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 315px"
+          src="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=3840&q=75"
+          srcset="/_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=384&q=75 384w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=640&q=75 640w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=750&q=75 750w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=828&q=75 828w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=1080&q=75 1080w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=1200&q=75 1200w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=1920&q=75 1920w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=2048&q=75 2048w, /_next/image?url=http%3A%2F%2Flocalhost%3A1234%2Fmedia%2Fthumbnails%2FScreenshot_2025-02-12_at_1.13.39PM.png&w=3840&q=75 3840w"
+          style="color: transparent; border-radius: 8px; background-size: cover; background-position: 50% 50%; background-repeat: no-repeat;"
           width="315"
-        />
-        <video
-          class="video-player"
-          loop=""
-          playsinline=""
-          preload="metadata"
-          src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-          style="visibility: hidden;"
         />
         <div
           aria-label="Duration 30:30"
