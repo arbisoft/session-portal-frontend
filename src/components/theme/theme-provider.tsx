@@ -17,8 +17,8 @@ import { pxToRem } from "@/utils/styleUtils";
 
 import { colors } from "./colors";
 
-const inter = Inter({ subsets: ["latin"] });
-const robotoCondensed = Roboto_Condensed({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], display: "swap" });
+const robotoCondensed = Roboto_Condensed({ subsets: ["latin"], display: "swap" });
 
 declare module "@mui/material/styles" {
   interface TypographyVariants {

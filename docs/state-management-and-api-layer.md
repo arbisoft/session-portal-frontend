@@ -32,7 +32,7 @@ Current reducer composition includes:
 
 - reducer path: `api`
 - base query: `customBaseQuery`
-- tag types: currently an empty tuple with a TODO comment
+- tag types: `["Event", "Tag", "Playlist", "Recommendation"]`
 
 ## Server Actions
 
@@ -158,7 +158,7 @@ GET /events/recommendations/{id}/?page=1&page_size=10
 Observed custom behavior includes:
 
 - custom `serializeQueryArgs`
-- result merging for infinite scrolling
+- result merging for virtualized scrolling
 - duplicate prevention by event ID
 - `forceRefetch` using `lodash/isEqual`
 
@@ -184,6 +184,6 @@ type ErrorType = {
 
 ## Notes and Gaps
 
-- RTK Query tags are not currently configured, so tag-based invalidation is not documented.
+- RTK Query tags are configured, but the current codebase does not yet use `invalidatesTags` for automatic cache invalidation on mutations.
 - Only frontend-visible API paths are documented here; backend response contracts may be broader than the inferred model types.
 - The repository does not include canonical backend error response examples, so exact non-`401` error payload shapes should be confirmed from the backend service.

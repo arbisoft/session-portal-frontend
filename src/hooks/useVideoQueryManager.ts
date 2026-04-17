@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { startOfYear, endOfYear, format } from "date-fns";
 
@@ -20,14 +20,26 @@ export function useVideoQueryManager(searchParams: URLSearchParams) {
     [searchParams]
   );
 
+  const prevParamsRef = useRef<typeof parsedParams | null>(null);
+
   useEffect(() => {
     setPage(1);
+    prevParamsRef.current = parsedParams;
   }, [parsedParams.tag, parsedParams.playlist, parsedParams.search, parsedParams.order, parsedParams.year]);
 
   const apiParams = useMemo(() => {
+    const prevParams = prevParamsRef.current;
+    const paramsChanged =
+      !prevParams ||
+      prevParams.tag !== parsedParams.tag ||
+      prevParams.playlist !== parsedParams.playlist ||
+      prevParams.search !== parsedParams.search ||
+      prevParams.order !== parsedParams.order ||
+      prevParams.year !== parsedParams.year;
+
     return parseNonPassedParams({
       ...defaultParams,
-      page,
+      page: paramsChanged ? 1 : page,
       page_size: 12,
       ordering: parsedParams.order ? [parsedParams.order] : ["-event_time"],
       search: parsedParams.search ?? undefined,
