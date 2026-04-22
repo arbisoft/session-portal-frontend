@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 
-import HomePage from "@/features/HomePage";
+const HomePage = dynamic(() => import("@/features/HomePage"));
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

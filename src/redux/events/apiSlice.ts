@@ -30,12 +30,14 @@ export const eventsApi = baseApi.injectEndpoints({
         url: `/events/videoasset/${id}/`,
         method: "GET",
       }),
+      providesTags: ["Event"],
     }),
     eventTags: builder.query<Tag[], void>({
       query: () => ({
         url: "/events/tags/?linked_to_events=True",
         method: "GET",
       }),
+      providesTags: ["Tag"],
     }),
     getEvents: builder.query<AllEventResponse, EventsParams>({
       query: (params) => ({
@@ -43,6 +45,7 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
         params,
       }),
+      providesTags: ["Event"],
       serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}?${getEventsCacheKey(omit(queryArgs, "page"))}`,
       merge: (currentCache, newItems, { arg }) => {
         if (arg.page === 1) currentCache.results = [];
@@ -68,6 +71,7 @@ export const eventsApi = baseApi.injectEndpoints({
         url: "/events/event_types/",
         method: "GET",
       }),
+      providesTags: ["Tag"],
     }),
     recommendation: builder.query<Recommendation, RecommendationParam>({
       query: ({ id, page = 1, page_size = 10 }) => ({
@@ -75,6 +79,7 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
         params: { page, page_size },
       }),
+      providesTags: ["Recommendation"],
       serializeQueryArgs: ({ endpointName, queryArgs }) => `${endpointName}-${queryArgs.id}`,
       merge: (currentCache, newItems) => {
         currentCache.count = newItems.count;
@@ -95,6 +100,7 @@ export const eventsApi = baseApi.injectEndpoints({
         url: "/events/playlists/?linked_to_events=True",
         method: "GET",
       }),
+      providesTags: ["Playlist"],
     }),
   }),
 });

@@ -75,6 +75,8 @@ Used on the video detail page to expand/collapse long descriptions.
 
 ### `VideoCard`
 
+Displays video thumbnails with metadata, supports responsive image sizing for different screen sizes.
+
 Used across:
 
 - featured slider
