@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 
-import VideoDetail from "@/features/VideoDetail";
+const VideoDetail = dynamic(() => import("@/features/VideoDetail"));
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

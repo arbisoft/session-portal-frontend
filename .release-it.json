@@ -1,0 +1,64 @@
+{
+  "$schema": "https://unpkg.com/release-it/schema/release-it.json",
+  "github": {
+    "release": true,
+    "releaseName": "v${version}",
+    "autoGenerate": {
+      "template": "compact"
+    }
+  },
+  "git": {
+    "commitMessage": "chore(release): v${version}",
+    "tagName": "v${version}",
+    "requireCleanWorkingDir": false,
+    "requireBranch": ["main"]
+  },
+  "npm": {
+    "publish": false
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "infile": "CHANGELOG.md",
+      "preset": {
+        "name": "conventionalcommits",
+        "types": [
+          {
+            "type": "feat",
+            "section": "Features"
+          },
+          {
+            "type": "fix",
+            "section": "Bug Fixes"
+          },
+          {
+            "type": "perf",
+            "section": "Performance Improvements"
+          },
+          {
+            "type": "revert",
+            "section": "Reverts"
+          },
+          {
+            "type": "docs",
+            "section": "Documentation"
+          },
+          {
+            "type": "refactor",
+            "section": "Code Refactoring"
+          },
+          {
+            "type": "test",
+            "section": "Tests"
+          },
+          {
+            "type": "ci",
+            "section": "Continuous Integration"
+          }
+        ]
+      }
+    }
+  },
+  "hooks": {
+    "after:release": "echo 🎉 Successfully released ${name} v${version}"
+  }
+}

@@ -144,5 +144,5 @@ Observed characteristics:
 ## Known Gaps / Ambiguities
 
 - No middleware file is active in the current structure for route protection; auth guarding currently appears hook-based.
-- RTK Query `tagTypes` exists but is empty in `src/redux/baseApi.tsx`, so cache invalidation strategy is only partially established.
+
 - The upload architecture is incomplete from the inspected files because only the top-level upload UI entry points were reviewed.
