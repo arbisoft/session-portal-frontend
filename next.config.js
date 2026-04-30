@@ -4,12 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [
-      { hostname: "sessions.arbisoft.com" },
-      { hostname: "www.google.com" },
-      { hostname: "localhost" },
-      { hostname: "loremflickr.com" },
-    ],
+    remotePatterns: [{ hostname: "*" }],
   },
   reactStrictMode: true,
   compress: true, // Enable gzip compression
