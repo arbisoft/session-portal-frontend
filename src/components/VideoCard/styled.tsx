@@ -91,11 +91,26 @@ export const VideoCardContainer = styled(Card, {
     }
 
     &.normal-card {
+      height: auto;
+
       .${cardContentClasses.root} {
+        img {
+          aspect-ratio: 16 / 9;
+          height: auto;
+          max-height: unset;
+          min-height: unset;
+        }
+
         .video-detail {
           .${typographyClasses.h3} {
-            font-size: ${pxToRem(16)};
+            font-size: ${pxToRem(14)};
             font-weight: 600;
+            -webkit-line-clamp: 2;
+          }
+
+          .organizer-name,
+          .date-time {
+            font-size: ${pxToRem(13)};
           }
         }
       }
@@ -103,17 +118,18 @@ export const VideoCardContainer = styled(Card, {
 
     &.related-card {
       display: flex;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       width: 100%;
 
       .${cardContentClasses.root} {
         flex-direction: row;
-        gap: 10px;
+        gap: 8px;
 
         .image-wrapper {
           border-radius: ${theme.spacing()};
           overflow: hidden;
-          width: 113px;
+          flex-shrink: 0;
+          width: 160px;
 
           .video-player {
             border-radius: ${theme.spacing()};
@@ -132,11 +148,11 @@ export const VideoCardContainer = styled(Card, {
         }
 
         .video-detail {
-          gap: 4px;
-          width: calc(100% - 113px);
+          gap: 3px;
+          width: calc(100% - 168px);
 
           .${typographyClasses.h5} {
-            font-size: ${pxToRem(12)};
+            font-size: ${pxToRem(13)};
             font-weight: 500;
           }
 
