@@ -8,6 +8,8 @@ import { ACCESS_COOKIE_NAME, BASE_URL } from "@/constants/constants";
 import { LoginResponse } from "@/models/Auth";
 import { getJwtExpiry } from "@/utils/utils";
 
+const SERVER_BASE_URL = process.env.BACKEND_URL ?? BASE_URL;
+
 // Server action for login - sets auth cookie
 export async function loginAndSetCookie(formData: FormData): Promise<LoginResponse> {
   const authToken = formData.get("auth_token") as string;
@@ -18,7 +20,7 @@ export async function loginAndSetCookie(formData: FormData): Promise<LoginRespon
 
   try {
     // Call the login API
-    const response = await fetch(`${BASE_URL}/api/v1/users/login`, {
+    const response = await fetch(`${SERVER_BASE_URL}/api/v1/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

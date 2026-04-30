@@ -45,7 +45,8 @@ src/utils/utils.ts → pure transform/display helpers
 
 **Route → Feature mapping:**
 
-- `/` and `/upload-video` → middleware redirects both to `/videos`
+- `/` → middleware redirects to `/videos`
+- `/upload-video` → `UploadVideo` (staff only: the navbar entry is gated on `selectIsStaff`; uploads go through the BFF proxy)
 - `/login` → `LoginPage`
 - `/videos` → `VideosListingPage`
 - `/videos/results` → `SearchResultsPage`
@@ -81,7 +82,7 @@ Feature flags in `src/constants/featureFlags.ts` can be overridden via URL query
 /videos?darkModeSwitcher=true
 ```
 
-`useFeatureFlags` reads `useSearchParams()` and applies: URL param > config > semver check. Both current flags (`darkModeSwitcher`, `uploadVideo`) are `enabled: false`.
+`useFeatureFlags` reads `useSearchParams()` and applies: URL param > config > semver check. The `darkModeSwitcher` flag is `enabled: false`; the upload-video menu item is gated by the user's `is_staff` flag, not a feature flag.
 
 ## Key ESLint Rules That Will Catch You
 
