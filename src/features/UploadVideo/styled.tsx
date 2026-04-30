@@ -13,14 +13,18 @@ export const StyledCard = styled(Card, {
   ({ theme }) => css`
     background-color: ${alpha(theme.palette.common.white, 0.1)};
     border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
     width: 700px;
 
     .first-step.${cardContentClasses.root} {
       align-items: center;
       display: flex;
+      flex: 1;
       flex-direction: column;
       gap: 20px;
-      height: 400px;
       justify-content: center;
       text-align: center;
     }
@@ -37,15 +41,12 @@ export const StyledCard = styled(Card, {
     }
 
     .${cardActionsClasses.root} {
+      align-items: center;
       border-top: 1px solid ${alpha(theme.palette.common.white, 0.1)};
+      box-sizing: border-box;
       justify-content: center;
+      min-height: 76px;
       padding: 20px;
-
-      p {
-        font-size: 10px;
-        font-style: normal;
-        font-weight: 400;
-      }
     }
   `
 );
@@ -86,6 +87,7 @@ export const InputContainer = styled(Box, {
     margin-bottom: 20px;
 
     .${formLabelClasses.root} {
+      color: #fff;
       font-size: 14px;
       font-weight: 400;
     }

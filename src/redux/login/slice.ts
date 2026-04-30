@@ -19,6 +19,7 @@ const initialState: LoginState = {
       first_name: null,
       full_name: null,
       last_name: null,
+      is_staff: false,
     },
   },
   error: null,

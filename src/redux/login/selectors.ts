@@ -11,3 +11,5 @@ export const selectRefreshToken = createSelector([getBaseState], (auth) => auth.
 export const selectUserInfo = createSelector([getBaseState], (auth) => auth.session.user_info);
 
 export const selectIsLoading = createSelector([getBaseState], (auth) => auth.isLoading);
+
+export const selectIsStaff = createSelector([getBaseState], (auth) => auth.session.user_info?.is_staff ?? false);
