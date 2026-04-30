@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -19,7 +19,7 @@ import VideoCard from "@/components/VideoCard";
 import VideoPlayer from "@/components/VideoPlayer";
 import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
-import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
+import { useEventDetailQuery, useIncrementViewCountMutation, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { selectAccessToken } from "@/redux/login/selectors";
 import { fullName, transformVideoToCardData } from "@/utils/utils";
 
@@ -34,6 +34,9 @@ const VideoDetail = () => {
   const { navigateTo, getPageUrl } = useNavigation();
 
   const [page, setPage] = useState(1);
+  const [displayedViewCount, setDisplayedViewCount] = useState<number | null>(null);
+
+  const [incrementViewCount] = useIncrementViewCountMutation();
 
   const { data: recommendationsData, isFetching: isRecommendationsFetching } = useRecommendationQuery(
     accessToken && videoId ? { id: videoId, page } : skipToken
@@ -52,6 +55,18 @@ const VideoDetail = () => {
       navigateTo("videos");
     }
   }, [error]);
+
+  useEffect(() => {
+    if (data?.view_count !== null && data?.view_count !== undefined) setDisplayedViewCount(data.view_count);
+  }, [data?.view_count]);
+
+  const handleWatchThreshold = useCallback(() => {
+    incrementViewCount(videoId)
+      .unwrap()
+      .then((res) => {
+        setDisplayedViewCount(res.view_count);
+      });
+  }, [videoId, incrementViewCount]);
 
   const dataEvent = data?.event;
   const allRecommendations = recommendationsData?.results ?? [];
@@ -100,6 +115,7 @@ const VideoDetail = () => {
           {data?.video_file && (
             <VideoPlayer
               {...{
+                captionsFile: data?.captions_file,
                 crossOrigin: true,
                 playsInline: true,
                 width: "100%",
@@ -107,6 +123,7 @@ const VideoDetail = () => {
                 videoSrc: data?.video_file ?? "",
                 posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
                 posterAlt: data?.event?.title ?? "",
+                onWatchThreshold: handleWatchThreshold,
               }}
             />
           )}
@@ -123,6 +140,11 @@ const VideoDetail = () => {
               <Typography color="textSecondary" component="time" dateTime={dataEvent?.event_time} tabIndex={0}>
                 {format(dataEvent?.event_time ?? "", "MMM dd, yyyy")}
               </Typography>
+              {displayedViewCount !== null && displayedViewCount !== undefined && (
+                <Typography color="textSecondary" variant="bodySmall" component="p" tabIndex={0}>
+                  {displayedViewCount.toLocaleString()} {displayedViewCount === 1 ? "view" : "views"}
+                </Typography>
+              )}
             </StyledDetailSection>
             <StyledNotesSection>
               <Typography variant="h5" component="h2" tabIndex={0}>
