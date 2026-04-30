@@ -66,7 +66,7 @@ Observed sequence:
 
 - featured video slider when no tag/playlist/search/year filter is active
 - lazy event loading through RTK Query
-- infinite scrolling with `react-virtuoso`
+- virtualized scrolling with infinite loading using `react-virtuoso`
 - sort/year filtering
 - retry handling for failed loads
 - empty states for no results
@@ -103,7 +103,7 @@ Recognized search params:
   - session title and metadata
   - expandable description
   - clickable tags linking back to filtered listings
-  - recommendations sidebar with infinite scroll
+  - recommendations sidebar with virtualized infinite loading
 
 ## Upload Flow
 

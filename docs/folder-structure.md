@@ -57,7 +57,7 @@ Routes visible from `src/app/`:
 | --- | --- |
 | `HomePage` | Startup route behavior and auth redirect shell |
 | `LoginPage` | Login screen and Google OAuth initiation |
-| `VideosListingPage` | Browsing videos, featured content, filters, infinite scroll |
+| `VideosListingPage` | Browsing videos, featured content, filters, virtualized list with infinite loading |
 | `SearchResultsPage` | Search-specific result presentation |
 | `VideoDetail` | Player page with metadata and recommendations |
 | `UploadVideo` | Upload-related UI flow |

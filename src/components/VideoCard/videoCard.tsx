@@ -2,13 +2,14 @@ import React, { FC } from "react";
 
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
-import Skeleton from "@mui/material/Skeleton";
 import { useColorScheme } from "@mui/material/styles";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import clsx from "clsx";
+import Image from "next/image";
 import Link from "next/link";
 
 import { DEFAULT_THUMBNAIL } from "@/constants/constants";
+import { BLUR_DATA_URI } from "@/constants/images";
 
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
@@ -32,6 +33,13 @@ const VideoCard: FC<VideoCardProps> = ({
   };
 
   const displayDescription = variant === "featured-card" || variant === "search-card";
+
+  const responsiveImageSizes: Record<typeof variant, string> = {
+    "featured-card": "(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 315px",
+    "normal-card": "(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 315px",
+    "related-card": "(max-width: 600px) 100vw, (max-width: 1200px) 33vw, 315px",
+    "search-card": "(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 315px",
+  };
 
   return (
     <VideoCardContainer
@@ -58,20 +66,18 @@ const VideoCard: FC<VideoCardProps> = ({
         }}
         role="link"
       >
-        <ImageWrapper
-          className="image-wrapper"
-        >
-          {/* Decorative skeleton placeholder */}
-          <Skeleton width="100%" height="100%" variant="rounded" animation="wave" aria-hidden="true" />
-
+        <ImageWrapper className="image-wrapper">
           {/* Thumbnail image */}
-          <img
+          <Image
             data-testid="video-card-image"
             alt={data.title}
             height={196}
             width={315}
             src={data.thumbnail || DEFAULT_THUMBNAIL}
             loading="lazy"
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URI}
+            sizes={responsiveImageSizes[variant]}
             style={{ borderRadius: "8px" }}
           />
           {/* Video duration — visually small but needs screen reader context */}
@@ -132,4 +138,4 @@ const VideoCard: FC<VideoCardProps> = ({
   );
 };
 
-export default VideoCard;
+export default React.memo(VideoCard);
