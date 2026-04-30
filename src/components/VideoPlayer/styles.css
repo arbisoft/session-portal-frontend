@@ -14,13 +14,19 @@
   --video-focus-ring-color: var(--focus-color);
   --video-border-radius: 2px;
 
+  --media-cue-font-size: calc(var(--media-height) / 100 * 4.5);
+
   /* 👉 https://vidstack.io/docs/player/components/layouts/default#css-variables for more. */
 
   [data-view-type="video"] {
     aspect-ratio: 16 /9;
   }
 
-  .vds-google-cast-button,.vds-pip-button{
+  [data-preview] .vds-captions {
+    opacity: 1;
+  }
+
+  .vds-google-cast-button,.vds-pip-button {
     display: none;
   }
 
