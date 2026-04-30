@@ -19,11 +19,11 @@ const VideoPicker: FC<{ onFileSelect: (val: File | undefined) => void }> = ({ on
   const fileInputRef = useRef<HTMLInputElement>(null);
   const notification = useNotification();
 
-  const isVideoFile = (file: File) => !ALLOWED_TYPES.includes(file.type);
+  const isAllowedVideoFile = (file: File) => ALLOWED_TYPES.includes(file.type);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && !isVideoFile(file)) {
+    if (file && !isAllowedVideoFile(file)) {
       notification.showNotification({ message: "Only MP4, MOV, AVI, and WebM video files are allowed", severity: "error" });
     } else {
       onFileSelect(file);
@@ -36,7 +36,7 @@ const VideoPicker: FC<{ onFileSelect: (val: File | undefined) => void }> = ({ on
     setDragOver(false);
 
     const file = event.dataTransfer.files?.[0];
-    if (file && !isVideoFile(file)) {
+    if (file && !isAllowedVideoFile(file)) {
       notification.showNotification({ message: "Only MP4, MOV, AVI, and WebM video files are allowed", severity: "error" });
     } else {
       onFileSelect(file);
@@ -69,7 +69,11 @@ const VideoPicker: FC<{ onFileSelect: (val: File | undefined) => void }> = ({ on
           Drag and drop a video file to upload
         </Typography>
 
-        <Button variant="contained" color="primary" onClick={handleSelectFileClick} sx={{ mt: 2 }}>
+        <Button
+          variant="contained"
+          onClick={handleSelectFileClick}
+          sx={{ mt: 2, backgroundColor: "#fff", color: "#3c3e42", "&:hover": { backgroundColor: "#e0e0e0" } }}
+        >
           {dragOver ? "Drop File Here" : "Select File"}
         </Button>
         <input
@@ -82,7 +86,7 @@ const VideoPicker: FC<{ onFileSelect: (val: File | undefined) => void }> = ({ on
       </CardContent>
 
       <CardActions>
-        <Typography color="textSecondary" textAlign="center">
+        <Typography color="textSecondary" textAlign="center" variant="bodySmall">
           Upload your video in supported formats (MP4, MOV, AVI, WebM) and stay within the file size limit (1GB)
         </Typography>
       </CardActions>

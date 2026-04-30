@@ -12,6 +12,7 @@ import {
   useTheme,
 } from "@mui/material/styles";
 import { Roboto_Condensed, Inter } from "next/font/google";
+import "@mui/x-date-pickers/themeAugmentation";
 
 import { pxToRem } from "@/utils/styleUtils";
 
@@ -94,6 +95,24 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
                   bodySmall: "p",
                   bodyMedium: "p",
                   bodyLarge: "p",
+                },
+              },
+            },
+            MuiOutlinedInput: {
+              styleOverrides: {
+                root: {
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                  },
+                },
+              },
+            },
+            MuiPickersOutlinedInput: {
+              styleOverrides: {
+                root: {
+                  "&.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                    borderColor: "#fff",
+                  },
                 },
               },
             },

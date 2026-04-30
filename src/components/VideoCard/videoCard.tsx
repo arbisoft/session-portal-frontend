@@ -87,13 +87,7 @@ const VideoCard: FC<VideoCardProps> = ({
         }}
         role="link"
       >
-        <ImageWrapper
-          className="image-wrapper"
-          {...(!matches && {
-            onMouseEnter: handleMouseEnter,
-            onMouseLeave: handleMouseLeave,
-          })}
-        >
+        <ImageWrapper className="image-wrapper">
           {/* Decorative skeleton placeholder */}
           <Skeleton width="100%" height="100%" variant="rounded" animation="wave" aria-hidden="true" />
 

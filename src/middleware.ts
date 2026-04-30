@@ -5,7 +5,7 @@ import { REDIRECT_TO_KEY } from "./constants/constants";
 import { isValidInternalRedirectPath } from "./utils/utils";
 
 // Protected routes that require authentication
-const protectedRoutes = ["/videos"];
+const protectedRoutes = ["/videos", "/upload-video"];
 
 // Utility to validate JWT token (check presence and expiry)
 function isValidToken(token: string | undefined): boolean {
@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
   // Get token from cookies
   const token = request.cookies.get("access")?.value;
   // Check if current route is protected
-  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith("/videos/"));
+  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
   if (isValidToken(token) && pathname === "/login") {
     const redirectTo =
@@ -45,7 +45,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/videos", request.url));
   }
 
-  if (pathname === "/" || pathname === "/upload-video") {
+  if (pathname === "/") {
     return NextResponse.redirect(new URL("/videos", request.url));
   }
 
