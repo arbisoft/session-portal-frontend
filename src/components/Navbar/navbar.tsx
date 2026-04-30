@@ -21,7 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutAndClearCookie } from "@/app/login/actions";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
-import { selectUserInfo } from "@/redux/login/selectors";
+import { selectIsStaff, selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
@@ -44,9 +44,9 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
   const theme = useTheme();
 
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
-  const isUploadVideoVisible = isFeatureEnabled("uploadVideo");
 
   const userInfo = useSelector(selectUserInfo);
+  const isStaff = useSelector(selectIsStaff);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -221,7 +221,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
                 },
               }}
             >
-              {isUploadVideoVisible && (
+              {isStaff && (
                 <MenuItem
                   role="menuitem"
                   component={Link}

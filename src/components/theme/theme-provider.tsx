@@ -13,6 +13,7 @@ import {
 } from "@mui/material/styles";
 import "@mui/x-date-pickers/themeAugmentation";
 import { Roboto_Condensed, Inter } from "next/font/google";
+import "@mui/x-date-pickers/themeAugmentation";
 
 import { pxToRem } from "@/utils/styleUtils";
 
