@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, HTMLAttributes } from "react";
 
 import { sendGTMEvent } from "@next/third-parties/google";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as vidstackModuleOriginal from "@vidstack/react";
 
@@ -78,6 +78,9 @@ jest.mock("@vidstack/react", () => {
       <button data-testid="play-button" className={className} onClick={onClick}>
         {children}
       </button>
+    ),
+    Track: ({ src, type, kind, language }: { src?: string; type?: string; kind?: string; language?: string }) => (
+      <div data-testid="caption-track" data-src={src} data-type={type} data-kind={kind} data-language={language} />
     ),
     useMediaState: mockUseMediaState,
     __mockSubscribe: mockSubscribe,
@@ -498,6 +501,117 @@ describe("VideoPlayer", () => {
       (getMediaPlayerProps().onPlay as VoidFunction)();
 
       expect(sendGTMEvent).toHaveBeenCalledWith(expect.objectContaining({ title: "Test Poster" }));
+    });
+  });
+
+  describe("Captions", () => {
+    it("should not render a caption track when captionsFile is not provided", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      expect(screen.queryByTestId("caption-track")).not.toBeInTheDocument();
+    });
+
+    it("should render a vtt subtitles track for a vtt captions file", () => {
+      render(<VideoPlayer {...defaultProps} captionsFile="https://example.com/captions.vtt" />);
+
+      const track = screen.getByTestId("caption-track");
+      expect(track).toHaveAttribute("data-src", "https://example.com/captions.vtt");
+      expect(track).toHaveAttribute("data-type", "vtt");
+      expect(track).toHaveAttribute("data-kind", "subtitles");
+    });
+
+    it("should render an srt track for an srt captions file, ignoring the query string", () => {
+      render(<VideoPlayer {...defaultProps} captionsFile="https://example.com/captions.SRT?token=abc" />);
+
+      expect(screen.getByTestId("caption-track")).toHaveAttribute("data-type", "srt");
+    });
+  });
+
+  describe("Watch threshold", () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("should call onWatchThreshold once after the default threshold of playing time", () => {
+      mockUseMediaState.mockReturnValue(false);
+      const onWatchThreshold = jest.fn();
+
+      render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} />);
+
+      act(() => {
+        jest.advanceTimersByTime(29_000);
+      });
+      expect(onWatchThreshold).not.toHaveBeenCalled();
+
+      act(() => {
+        jest.advanceTimersByTime(60_000);
+      });
+      expect(onWatchThreshold).toHaveBeenCalledTimes(1);
+    });
+
+    it("should track video_watch_threshold once when the threshold is reached", () => {
+      mockUseMediaState.mockReturnValue(false);
+      (sendGTMEvent as jest.Mock).mockClear();
+
+      render(<VideoPlayer {...defaultProps} onWatchThreshold={jest.fn()} watchThresholdSeconds={5} />);
+
+      act(() => {
+        jest.advanceTimersByTime(4_000);
+      });
+      expect(sendGTMEvent).not.toHaveBeenCalledWith(expect.objectContaining({ event: GA_EVENTS.VIDEO_WATCH_THRESHOLD }));
+
+      act(() => {
+        jest.advanceTimersByTime(60_000);
+      });
+
+      const thresholdCalls = (sendGTMEvent as jest.Mock).mock.calls.filter(
+        ([payload]) => payload.event === GA_EVENTS.VIDEO_WATCH_THRESHOLD
+      );
+      expect(thresholdCalls).toHaveLength(1);
+      expect(thresholdCalls[0][0]).toEqual({
+        event: GA_EVENTS.VIDEO_WATCH_THRESHOLD,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+        threshold_seconds: 5,
+      });
+    });
+
+    it("should respect a custom watchThresholdSeconds", () => {
+      mockUseMediaState.mockReturnValue(false);
+      const onWatchThreshold = jest.fn();
+
+      render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} watchThresholdSeconds={5} />);
+
+      act(() => {
+        jest.advanceTimersByTime(5_000);
+      });
+
+      expect(onWatchThreshold).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not count time while the video is paused", () => {
+      mockUseMediaState.mockReturnValue(true);
+      const onWatchThreshold = jest.fn();
+
+      render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} watchThresholdSeconds={5} />);
+
+      act(() => {
+        jest.advanceTimersByTime(60_000);
+      });
+
+      expect(onWatchThreshold).not.toHaveBeenCalled();
+    });
+
+    it("should not start counting when onWatchThreshold is not provided", () => {
+      mockUseMediaState.mockReturnValue(false);
+
+      render(<VideoPlayer {...defaultProps} />);
+
+      expect(jest.getTimerCount()).toBe(0);
     });
   });
 

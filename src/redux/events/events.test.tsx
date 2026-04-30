@@ -1,7 +1,13 @@
-import { renderHook, waitFor } from "@/jest/utils/testUtils";
+import { act, renderHook, waitFor } from "@/jest/utils/testUtils";
 import type { EventsParams } from "@/models/Events";
 
-import { eventsApi, useGetEventsQuery, useRecommendationQuery, usePlaylistsQuery } from "../events/apiSlice";
+import {
+  eventsApi,
+  useGetEventsQuery,
+  useIncrementViewCountMutation,
+  useRecommendationQuery,
+  usePlaylistsQuery,
+} from "../events/apiSlice";
 import { store } from "../store/configureStore";
 import { Providers } from "../store/provider";
 
@@ -452,5 +458,23 @@ describe("eventsApi endpoints", () => {
       ]);
       expect(result.current.isSuccess).toBe(true);
     });
+  });
+
+  it("should POST to the view endpoint and return the updated view count", async () => {
+    fetchMock.mockResponseOnce(JSON.stringify({ view_count: 42 }));
+
+    const { result } = renderHook(() => useIncrementViewCountMutation(), {
+      wrapper: ({ children }) => <Providers>{children}</Providers>,
+    });
+
+    let response: { view_count: number } | undefined;
+    await act(async () => {
+      response = await result.current[0]("my-video").unwrap();
+    });
+
+    expect(response).toEqual({ view_count: 42 });
+    const request = fetchMock.mock.calls[fetchMock.mock.calls.length - 1][0] as Request;
+    expect(request.method).toBe("POST");
+    expect(request.url).toContain("/bff/events/videoasset/my-video/view");
   });
 });
