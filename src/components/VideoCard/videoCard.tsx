@@ -1,11 +1,10 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC } from "react";
 
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
 import Skeleton from "@mui/material/Skeleton";
-import { useColorScheme, useTheme } from "@mui/material/styles";
+import { useColorScheme } from "@mui/material/styles";
 import Typography, { TypographyProps } from "@mui/material/Typography";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import clsx from "clsx";
 import Link from "next/link";
 
@@ -24,11 +23,6 @@ const VideoCard: FC<VideoCardProps> = ({
   href,
 }) => {
   const { mode } = useColorScheme();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.down("md"));
-
-  const [isHovered, setIsHovered] = useState(false);
 
   const headingVariant: Record<typeof variant, TypographyProps["variant"]> = {
     "featured-card": "h1",
@@ -38,29 +32,6 @@ const VideoCard: FC<VideoCardProps> = ({
   };
 
   const displayDescription = variant === "featured-card" || variant === "search-card";
-
-  const handleMouseEnter = async () => {
-    if (data.video_file && videoRef.current) {
-      setIsHovered(true);
-      const video = videoRef.current;
-
-      try {
-        if (video.paused) {
-          await video.play();
-        }
-      } catch (err) {
-        console.warn("Video play interrupted:", err);
-      }
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (videoRef.current) {
-      setIsHovered(false);
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
-  };
 
   return (
     <VideoCardContainer
@@ -89,10 +60,6 @@ const VideoCard: FC<VideoCardProps> = ({
       >
         <ImageWrapper
           className="image-wrapper"
-          {...(!matches && {
-            onMouseEnter: handleMouseEnter,
-            onMouseLeave: handleMouseLeave,
-          })}
         >
           {/* Decorative skeleton placeholder */}
           <Skeleton width="100%" height="100%" variant="rounded" animation="wave" aria-hidden="true" />
@@ -107,18 +74,6 @@ const VideoCard: FC<VideoCardProps> = ({
             loading="lazy"
             style={{ borderRadius: "8px" }}
           />
-          {data.video_file && (
-            <video
-              className="video-player"
-              ref={videoRef}
-              src={data.video_file}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              style={{ visibility: !isHovered ? "hidden" : "visible" }}
-            />
-          )}
           {/* Video duration — visually small but needs screen reader context */}
           {data.video_duration && (
             <Typography

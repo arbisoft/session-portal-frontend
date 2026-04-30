@@ -43,7 +43,7 @@ const VideosListingPage = () => {
 
   const shouldSkipFeaturedVideos = !!(parsedParams.tag || parsedParams.playlist || parsedParams.search || parsedParams.year);
 
-  const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, isError, originalArgs }] =
+  const [getEvents, { currentData: videoListings, isFetching, isLoading, isUninitialized, isError, originalArgs }] =
     useLazyGetEventsQuery();
 
   const defaultEventParams = {
@@ -103,6 +103,9 @@ const VideosListingPage = () => {
     !videoListings?.results ||
     isFeatureFetching ||
     !isEqual(omit(originalArgs, "page"), omit(apiParams, "page"));
+
+  // eslint-disable-next-line no-console
+  console.warn("[VLP]", { isDataLoading, isLoading, isUninitialized, isFetching, isFeatureFetching, originalPlaylist: (originalArgs as any)?.playlist, apiPlaylist: (apiParams as any)?.playlist, resultsCount: videoListings?.results?.length, firstTitle: videoListings?.results?.[0]?.title });
 
   // Determine what to render based on state
   const renderContent = () => {
@@ -171,6 +174,7 @@ const VideosListingPage = () => {
               href={`/videos/${videoCard.slug}`}
               key={videoCard.id}
               width="100%"
+              height="auto"
             />
           )}
         />
