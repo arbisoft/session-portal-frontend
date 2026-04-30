@@ -2,6 +2,7 @@ import React, { FC } from "react";
 
 import Box from "@mui/material/Box";
 import CardContent from "@mui/material/CardContent";
+import Skeleton from "@mui/material/Skeleton";
 import { useColorScheme } from "@mui/material/styles";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import clsx from "clsx";
@@ -67,6 +68,9 @@ const VideoCard: FC<VideoCardProps> = ({
         role="link"
       >
         <ImageWrapper className="image-wrapper">
+          {/* Decorative skeleton placeholder */}
+          <Skeleton width="100%" height="100%" variant="rounded" animation="wave" aria-hidden="true" />
+
           {/* Thumbnail image */}
           <Image
             data-testid="video-card-image"
