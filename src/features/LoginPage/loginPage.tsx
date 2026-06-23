@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch } from "react-redux";
 
 import { loginAndSetCookie } from "@/app/login/actions";
-import { useNotification } from "@/components/Notification";
+import { notificationManager, useNotification } from "@/components/Notification";
 import ThemeToggle from "@/components/ThemeToggle";
 import { REDIRECT_TO_KEY } from "@/constants/constants";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
@@ -42,27 +42,24 @@ export default function LoginPage() {
 
   const onSuccess = async (credentialResponse: CredentialResponse) => {
     if ("access_token" in credentialResponse) {
-      try {
-        // Call server action to login and set cookie
-        const formData = new FormData();
-        formData.append("auth_token", credentialResponse.access_token as string);
-        startTransition(async () => {
+      const formData = new FormData();
+      formData.append("auth_token", credentialResponse.access_token as string);
+      startTransition(async () => {
+        try {
           const loginData = await loginAndSetCookie(formData);
-
-          // Update Redux state
           dispatch(loginActions.login(loginData));
           if (redirectTo) {
             push(redirectTo);
           } else {
             navigateTo("videos");
           }
-        });
-      } catch {
-        showNotification({
-          message: "Login failed. Please try again.",
-          severity: "error",
-        });
-      }
+        } catch {
+          notificationManager.showNotification({
+            message: "Something went wrong.",
+            severity: "error",
+          });
+        }
+      });
     } else {
       showNotification({
         message: "Google login failed: No credential received.",
