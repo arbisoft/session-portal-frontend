@@ -126,16 +126,47 @@ The current contribution guidance indicates that contributors should:
 - include screenshots or recordings for UI changes when useful
 - mention follow-up work when the change is partial
 
-## Things Not Explicitly Documented
+## Pre-Commit Hook
 
-The following contributor workflow details are not explicitly present in inspected files:
+Husky installs a pre-commit hook at `.husky/pre-commit` that runs three checks on every commit:
 
-- branch naming convention
-- pull request template
-- PR title convention
-- review checklist
-- issue triage process
-- code ownership / maintainers
-- merge strategy preferences
+```bash
+npm run lint
+npm run test:cov
+npm run build
+```
 
-If those rules exist elsewhere, they should be added to a future dedicated contribution guide.
+All three must pass before a commit is accepted. This means commits take longer locally but ensures the tree is always in a buildable, tested, linted state.
+
+The commit-msg hook at `.husky/commit-msg` runs `npx commitlint --edit` to enforce conventional commit format.
+
+## Pull Request Template
+
+A PR template is defined at `.github/PULL_REQUEST_TEMPLATE.md`. It requires:
+
+- A concise description and summary
+- A list of changes implemented
+- A "How It Works" section
+- A pre-merge checklist (tested, verified, code standards)
+- Screenshots or recordings for UI changes
+- A link to the associated Taiga ticket: `https://projects.arbisoft.com/project/arbisoft-sessions-portal-20/us/XXX`
+- Notes for reviewers
+
+## Branch and Release Workflow
+
+The repository uses a two-branch model:
+
+| Branch | Purpose                                                                          |
+| ------ | -------------------------------------------------------------------------------- |
+| `dev`  | Active development target; PRs and lint CI run against this branch               |
+| `main` | Stable/release branch; a PR merge from `dev` → `main` triggers automated release |
+
+Contributors should branch off `dev` and open PRs targeting `dev`. The release workflow fires automatically when a `dev` → `main` PR is merged — contributors do not need to run `npm run release` manually.
+
+## CI Workflows
+
+| Workflow       | Trigger                       | What it runs                                 |
+| -------------- | ----------------------------- | -------------------------------------------- |
+| Lint           | Push or PR to `dev`           | `npm run lint` (ESLint + TypeScript)         |
+| Release        | PR merged from `dev` → `main` | `npm run release -- --ci` via `release-it`   |
+| Build and Push | GitHub release published      | Docker build → ECR push → deployment trigger |

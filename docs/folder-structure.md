@@ -42,25 +42,25 @@ src/
 
 Routes visible from `src/app/`:
 
-| Route | File |
-| --- | --- |
-| `/` | `src/app/page.tsx` |
-| `/login` | `src/app/login/page.tsx` |
-| `/videos` | `src/app/videos/page.tsx` |
+| Route               | File                                |
+| ------------------- | ----------------------------------- |
+| `/`                 | `src/app/page.tsx`                  |
+| `/login`            | `src/app/login/page.tsx`            |
+| `/videos`           | `src/app/videos/page.tsx`           |
 | `/videos/[videoId]` | `src/app/videos/[videoId]/page.tsx` |
-| `/videos/results` | `src/app/videos/results/page.tsx` |
-| `/upload-video` | `src/app/upload-video/page.tsx` |
+| `/videos/results`   | `src/app/videos/results/page.tsx`   |
+| `/upload-video`     | `src/app/upload-video/page.tsx`     |
 
 ## Feature Modules
 
-| Feature folder | Main responsibility inferred |
-| --- | --- |
-| `HomePage` | Startup route behavior and auth redirect shell |
-| `LoginPage` | Login screen and Google OAuth initiation |
+| Feature folder      | Main responsibility inferred                                                       |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| `HomePage`          | Startup route behavior and auth redirect shell                                     |
+| `LoginPage`         | Login screen and Google OAuth initiation                                           |
 | `VideosListingPage` | Browsing videos, featured content, filters, virtualized list with infinite loading |
-| `SearchResultsPage` | Search-specific result presentation |
-| `VideoDetail` | Player page with metadata and recommendations |
-| `UploadVideo` | Upload-related UI flow |
+| `SearchResultsPage` | Search-specific result presentation                                                |
+| `VideoDetail`       | Player page with metadata and recommendations                                      |
+| `UploadVideo`       | Upload-related UI flow                                                             |
 
 ## Component Organization Pattern
 
@@ -108,7 +108,10 @@ These define request/response and domain object shapes used across features and 
 - End-to-end tests live in `playwright-tests/`.
 - Manual mocks live in `__mocks__/`.
 
+## Server-Side Services
+
+`src/services/runs-on-server-side/` contains utilities intended for server execution only (not client bundles). These are distinct from Next.js server actions (`src/app/login/actions.ts`) and from the RTK Query API layer.
+
 ## Notes
 
-- No existing repository `docs/` directory was found before this documentation task.
-- Some folders such as `src/services/runs-on-server-side/` were not deeply documented here because their responsibilities were not fully inferable from the inspected subset.
+- Some folders such as `src/services/runs-on-server-side/` are not deeply documented because their responsibilities were not fully inferable from the inspected files. Extend this section when server-side service responsibilities are clarified.

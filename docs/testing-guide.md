@@ -29,12 +29,12 @@ Defined in `jest.config.ts`.
 
 Key settings:
 
-| Setting | Value |
-| --- | --- |
-| Environment | `jsdom` |
-| Setup file | `jest.setup.ts` |
-| Coverage provider | `v8` |
-| Coverage directory | `./coverage/` |
+| Setting             | Value                                                            |
+| ------------------- | ---------------------------------------------------------------- |
+| Environment         | `jsdom`                                                          |
+| Setup file          | `jest.setup.ts`                                                  |
+| Coverage provider   | `v8`                                                             |
+| Coverage directory  | `./coverage/`                                                    |
 | Coverage thresholds | branches 80%, functions 80%, lines 80% (statements not enforced) |
 
 ### Module mappings
@@ -60,6 +60,7 @@ Current test suite includes unit tests for:
 - Reusable components (Navbar, Sidebar, etc.)
 
 New tests added for previously untested feature pages to improve coverage on routing, loading states, and error handling.
+
 - enables `jest-fetch-mock`
 - mocks `@/hooks/useFeatureFlags`
 - resets fetch mocks before each test
@@ -79,8 +80,8 @@ Examples found in the repository:
 - `src/components/Notification/notification.test.tsx`
 - `src/components/ReadMore/readMore.test.tsx`
 - `src/components/Select/select.test.tsx`
-- `src/hooks/useAuth.test.ts`
 - `src/hooks/useNavigation.test.ts`
+- `src/middleware.test.ts`
 - `src/redux/parseError.test.ts`
 - `src/utils/utils.test.ts`
 
@@ -98,7 +99,39 @@ Examples found in the repository include:
 - `src/components/Sidebar/sidebar.test.tsx`
 - `src/components/ThemeToggle/themeToggle.test.tsx`
 
-## Important Caveats
+## End-to-End Tests (Playwright)
 
-- Although `playwright.config.ts` and `playwright-tests/` exist in the repository, this documentation update reflects the current team state described in this request: only Jest unit/component test cases should be treated as the active documented test workflow.
-- Storybook is available and likely used for component verification, but no dedicated visual regression tooling configuration was confirmed from the inspected files.
+Playwright tests live in `playwright-tests/` and use `.spec.ts` naming. They are separate from Jest.
+
+Install browsers before first use:
+
+```bash
+npx playwright install
+```
+
+Run tests:
+
+```bash
+npx playwright test
+```
+
+The Playwright config (`playwright.config.ts`) sets base URL to `http://localhost:3000` and adjusts retries/workers based on the `CI` environment variable.
+
+## Jest Test File Pattern
+
+Jest picks up files matching:
+
+- `**/__tests__/**/*.[jt]s?(x)`
+- `**/?(*.)+(test).[jt]s?(x)`
+
+The `.spec.ts` extension in `playwright-tests/` is intentionally excluded — those files are only picked up by Playwright, not Jest.
+
+## Storybook
+
+Storybook stories are co-located with components (`*.stories.tsx`). Run Storybook for isolated component development:
+
+```bash
+npm run sb
+```
+
+No visual regression testing tooling is configured beyond manual Storybook review.

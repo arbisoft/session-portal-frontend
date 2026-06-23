@@ -1,7 +1,7 @@
 ---
-name: commit-and-PR-generator
-description: 'Automatically generates semantic commit messages and a structured Pull Request description by analyzing git staged changes, branch names, and modified files.'
-argument-hint: 'Provide a brief description of the changes you made, or simply ask to generate a commit message and PR description based on your staged changes.'
+name: commit-and-pr-generator
+description: "Automatically generates semantic commit messages and a structured Pull Request description by analyzing git staged changes, branch names, and modified files."
+argument-hint: "Provide a brief description of the changes you made, or simply ask to generate a commit message and PR description based on your staged changes."
 user-invocable: true
 ---
 
@@ -41,7 +41,7 @@ Retrieve the current branch:
 
 ```bash
 git rev-parse --abbrev-ref HEAD
-````
+```
 
 Example branch names:
 
@@ -158,27 +158,27 @@ Analyze the diff and detect:
 
 ### Structural Changes
 
-* new components
-* new functions
-* deleted code
-* moved files
+- new components
+- new functions
+- deleted code
+- moved files
 
 ### Behavior Changes
 
-* validation updates
-* API integration
-* UI changes
-* state management updates
-* bug fixes
+- validation updates
+- API integration
+- UI changes
+- state management updates
+- bug fixes
 
 ### Code Improvements
 
 Detect:
 
-* performance optimizations
-* accessibility improvements
-* error handling
-* edge case handling
+- performance optimizations
+- accessibility improvements
+- error handling
+- edge case handling
 
 ---
 
@@ -202,10 +202,10 @@ refactor(api): simplify wishlist query handling
 
 Rules:
 
-* Imperative tone
-* < 72 characters
-* Specific but concise
-* Avoid generic words like "update stuff"
+- Imperative tone
+- < 72 characters
+- Specific but concise
+- Avoid generic words like "update stuff"
 
 ---
 
@@ -373,11 +373,11 @@ This PR improves the reliability of PLP filters by validating numeric inputs and
 
 The skill must:
 
-* Prioritize **clarity**
-* Avoid **guessing functionality**
-* Ignore **whitespace-only changes**
-* Ignore **lock file changes**
-* Summarize **functional behavior**, not code lines
+- Prioritize **clarity**
+- Avoid **guessing functionality**
+- Ignore **whitespace-only changes**
+- Ignore **lock file changes**
+- Summarize **functional behavior**, not code lines
 
 ---
 

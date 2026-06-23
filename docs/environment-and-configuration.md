@@ -4,20 +4,20 @@
 
 `example.env.local` defines the following variables explicitly:
 
-| Variable | Present in example file | Usage observed |
-| --- | --- | --- |
-| `NEXT_PUBLIC_BASE_URL` | Yes | API host prefix in `src/constants/constants.ts` and media URL composition |
-| `NEXT_PUBLIC_CLIENT_ID` | Yes | Google OAuth provider in `src/app/layout.tsx` |
-| `NEXT_PUBLIC_GTM_ID` | Yes | Google Tag Manager initialization in `src/app/layout.tsx` |
+| Variable                | Present in example file | Usage observed                                                            |
+| ----------------------- | ----------------------- | ------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_BASE_URL`  | Yes                     | API host prefix in `src/constants/constants.ts` and media URL composition |
+| `NEXT_PUBLIC_CLIENT_ID` | Yes                     | Google OAuth provider in `src/app/layout.tsx`                             |
+| `NEXT_PUBLIC_GTM_ID`    | Yes                     | Google Tag Manager initialization in `src/app/layout.tsx`                 |
 
 `src/app/layout.tsx` also embeds a Hotjar initialization script directly in the document head.
 
 Additional variables are referenced elsewhere:
 
-| Variable | Usage observed | Notes |
-| --- | --- | --- |
-| `CI` | `playwright.config.ts` | Controls retries, worker count, and server command |
-| `NODE_ENV` | store config / Docker | Used for dev tools and production behavior |
+| Variable   | Usage observed         | Notes                                              |
+| ---------- | ---------------------- | -------------------------------------------------- |
+| `CI`       | `playwright.config.ts` | Controls retries, worker count, and server command |
+| `NODE_ENV` | store config / Docker  | Used for dev tools and production behavior         |
 
 ## Base URL Behavior
 
@@ -42,25 +42,21 @@ This value is used for:
 - `productionBrowserSourceMaps: false`
 - Emotion compiler support
 - standalone build output (`output: "standalone"`)
-- relaxed remote image host allowlist for:
-  - `sessions.arbisoft.com`
-  - `www.google.com`
-  - `localhost`
-  - `loremflickr.com`
+- `images.remotePatterns: [{ hostname: "*" }]` — all external image hostnames are allowed (intentionally permissive for development convenience)
 - build-time ESLint suppression via `ignoreDuringBuilds: true`
 
 ## TypeScript Configuration
 
 Important `tsconfig.json` settings:
 
-| Setting | Value |
-| --- | --- |
-| `strict` | `true` |
-| `noEmit` | `true` |
-| `moduleResolution` | `bundler` |
-| `jsx` | `preserve` |
-| `baseUrl` | `.` |
-| path alias | `@/* -> ./src/*` |
+| Setting            | Value            |
+| ------------------ | ---------------- |
+| `strict`           | `true`           |
+| `noEmit`           | `true`           |
+| `moduleResolution` | `bundler`        |
+| `jsx`              | `preserve`       |
+| `baseUrl`          | `.`              |
+| path alias         | `@/* -> ./src/*` |
 
 ## ESLint Configuration
 

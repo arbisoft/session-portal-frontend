@@ -48,13 +48,13 @@ These actions complement client-side Redux state management by handling secure s
 
 `src/redux/customBaseQuery.ts` adds shared request behavior:
 
-| Behavior | Description |
-| --- | --- |
-| Base host | `${NEXT_PUBLIC_BASE_URL}/api/v1` |
-| Authorization | Adds `Bearer <token>` when an access token exists |
-| Unauthorized handling | Dispatches `login/logout` on `401` |
-| Error normalization | Uses `parseError` |
-| User feedback | Shows toast notifications by default |
+| Behavior              | Description                                       |
+| --------------------- | ------------------------------------------------- |
+| Base host             | `${NEXT_PUBLIC_BASE_URL}/api/v1`                  |
+| Authorization         | Adds `Bearer <token>` when an access token exists |
+| Unauthorized handling | Dispatches `login/logout` on `401`                |
+| Error normalization   | Uses `parseError`                                 |
+| User feedback         | Shows toast notifications by default              |
 
 ## Login State
 
@@ -92,8 +92,8 @@ These actions complement client-side Redux state management by handling secure s
 
 `src/redux/login/apiSlice.ts` injects a mutation:
 
-| Hook | Method | Endpoint |
-| --- | --- | --- |
+| Hook               | Method | Endpoint       |
+| ------------------ | ------ | -------------- |
 | `useLoginMutation` | `POST` | `/users/login` |
 
 Request body:
@@ -132,14 +132,14 @@ Example response shape:
 
 ### Available queries
 
-| Hook | Endpoint | Purpose |
-| --- | --- | --- |
-| `useEventDetailQuery` | `/events/videoasset/{id}/` | Single event/video asset detail |
-| `useEventTagsQuery` | `/events/tags/?linked_to_events=True` | Tag list |
-| `useGetEventsQuery` / lazy variant | `/events/all/` | Paginated event listing |
-| `useEventTypesQuery` | `/events/event_types/` | Event type list |
-| `useRecommendationQuery` | `/events/recommendations/{id}/` | Recommendations for a video |
-| `usePlaylistsQuery` | `/events/playlists/?linked_to_events=True` | Playlist list |
+| Hook                               | Endpoint                                   | Purpose                         |
+| ---------------------------------- | ------------------------------------------ | ------------------------------- |
+| `useEventDetailQuery`              | `/events/videoasset/{id}/`                 | Single event/video asset detail |
+| `useEventTagsQuery`                | `/events/tags/?linked_to_events=True`      | Tag list                        |
+| `useGetEventsQuery` / lazy variant | `/events/all/`                             | Paginated event listing         |
+| `useEventTypesQuery`               | `/events/event_types/`                     | Event type list                 |
+| `useRecommendationQuery`           | `/events/recommendations/{id}/`            | Recommendations for a video     |
+| `usePlaylistsQuery`                | `/events/playlists/?linked_to_events=True` | Playlist list                   |
 
 Example event detail request:
 
@@ -179,7 +179,7 @@ type ErrorType = {
   statusCode: number | string;
   message: string;
   details?: Record<string, string>;
-}
+};
 ```
 
 ## Notes and Gaps

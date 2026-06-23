@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import nextPlugin from "@next/eslint-plugin-next";
 import { defineConfig } from "eslint/config";
+import eslintConfigPrettier from "eslint-config-prettier";
 import importPlugin from "eslint-plugin-import";
 import prettierPlugin from "eslint-plugin-prettier";
 import reactPlugin from "eslint-plugin-react";
@@ -12,6 +13,7 @@ export default defineConfig([
   js.configs.recommended,
   ...tseslint.configs.recommended,
   reactPlugin.configs.flat.recommended,
+  eslintConfigPrettier,
   {
     ignores: [".next/", "node_modules/", "dist/", "build/", "coverage/", "public/", "next-env.d.ts"],
   },

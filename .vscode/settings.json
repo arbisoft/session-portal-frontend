@@ -4,14 +4,7 @@
   "eslint.options": {
     "overrideConfigFile": "./eslint.config.mjs"
   },
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "json",
-    "yaml"
-  ],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact", "json", "yaml", "markdown", "md"],
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
   "editor.codeActionsOnSave": {
@@ -31,7 +24,8 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[markdown]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
   },
   "files.eol": "\n",
   "files.insertFinalNewline": true,
@@ -41,9 +35,13 @@
     "*.ts": "typescriptreact",
     "*.tsx": "typescriptreact"
   },
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
   "markdown.extension.toc.levels": "2..6",
   "markdown.extension.orderedList.autoRenumber": false,
-  "trailing-spaces.trimOnSave": true
+  "trailing-spaces.trimOnSave": true,
+  "prettier.bracketSameLine": false,
+  "prettier.configPath": ".prettierrc",
+  "prettier.proseWrap": "preserve",
+  "prettier.requireConfig": false
 }

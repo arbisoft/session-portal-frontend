@@ -18,28 +18,25 @@ The repository implements a web application that includes:
 
 ## Current Technology Stack
 
-| Area | Technologies found |
-| --- | --- |
-| Framework | Next.js 15.5.6 |
-| UI | React 19.1.0, Material UI 7.3.4, Emotion |
-| Language | TypeScript 5.9.3 |
-| State | Redux Toolkit, RTK Query, redux-persist |
-| Forms | react-hook-form, yup, @hookform/resolvers |
-| Media/UI helpers | @vidstack/react, swiper |
-| Utilities | lodash |
-| Authentication | @react-oauth/google |
-| Testing | Jest, React Testing Library, Playwright |
-| Component development | Storybook |
-| Release automation | release-it, conventional changelog |
-| Quality gates | ESLint, CommitLint, Husky, TypeScript strict mode |
-| Containerization | Docker, docker-compose |
+| Area                  | Technologies found                                |
+| --------------------- | ------------------------------------------------- |
+| Framework             | Next.js 15.5.6                                    |
+| UI                    | React 19.1.0, Material UI 7.3.4, Emotion          |
+| Language              | TypeScript 5.9.3                                  |
+| State                 | Redux Toolkit, RTK Query, redux-persist           |
+| Forms                 | react-hook-form, yup, @hookform/resolvers         |
+| Media/UI helpers      | @vidstack/react, swiper                           |
+| Utilities             | lodash                                            |
+| Authentication        | @react-oauth/google                               |
+| Testing               | Jest, React Testing Library, Playwright           |
+| Component development | Storybook                                         |
+| Release automation    | release-it, conventional changelog                |
+| Quality gates         | ESLint, CommitLint, Husky, TypeScript strict mode |
+| Containerization      | Docker, docker-compose                            |
 
 ## Version Presentation Notes
 
-The root `README.md` badges currently show older version numbers than the installed dependencies declared in `package.json`.
-
-- `README.md` is useful for quick navigation and onboarding.
-- `package.json` is the more reliable source for current dependency versions.
+The root `README.md` badges reflect the pinned or minimum declared versions in `package.json` and are accurate as of this documentation update. When dependencies are upgraded in the future, the badge URLs in `README.md` should be updated to match.
 
 ## Runtime Requirements
 
@@ -50,16 +47,16 @@ From `package.json`:
 
 ## Application Capabilities Seen in Source
 
-| Capability | Evidence |
-| --- | --- |
-| Auth redirect handling | `src/hooks/useAuth.ts` |
-| Video listing with filters and infinite loading | `src/features/VideosListingPage/videosListingPage.tsx` |
-| Search results page | `src/features/SearchResultsPage/searchResultsPage.tsx` |
-| Video detail with recommendations | `src/features/VideoDetail/videoDetail.tsx` |
-| Theme provider and color scheme initialization | `src/components/theme/` |
-| Notification system | `src/components/Notification/notification.tsx` |
-| Feature flags | `src/constants/featureFlags.ts`, `src/hooks/useFeatureFlags.ts` |
-| Upload flow UI | `src/app/upload-video/page.tsx`, `src/features/UploadVideo/uploadVideo.tsx` |
+| Capability                                      | Evidence                                                                    |
+| ----------------------------------------------- | --------------------------------------------------------------------------- |
+| Auth redirect handling                          | `src/middleware.ts`, `src/app/login/actions.ts`                             |
+| Video listing with filters and infinite loading | `src/features/VideosListingPage/videosListingPage.tsx`                      |
+| Search results page                             | `src/features/SearchResultsPage/searchResultsPage.tsx`                      |
+| Video detail with recommendations               | `src/features/VideoDetail/videoDetail.tsx`                                  |
+| Theme provider and color scheme initialization  | `src/components/theme/`                                                     |
+| Notification system                             | `src/components/Notification/notification.tsx`                              |
+| Feature flags                                   | `src/constants/featureFlags.ts`, `src/hooks/useFeatureFlags.ts`             |
+| Upload flow UI                                  | `src/app/upload-video/page.tsx`, `src/features/UploadVideo/uploadVideo.tsx` |
 
 ## What Is Not Fully Documented in the Repository
 
