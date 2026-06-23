@@ -71,11 +71,11 @@ nvm use 22
 
 ## Expected Local Ports
 
-| Port | Purpose |
-| --- | --- |
+| Port   | Purpose                                   |
+| ------ | ----------------------------------------- |
 | `3000` | Next.js application / Playwright base URL |
-| `6006` | Storybook |
-| `4200` | Dockerized production container |
+| `6006` | Storybook                                 |
+| `4200` | Dockerized production container           |
 
 ## Setup Notes
 

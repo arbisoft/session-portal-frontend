@@ -2,14 +2,14 @@
 
 ## Route Map
 
-| Route | Source file | Rendered feature/component |
-| --- | --- | --- |
-| `/` | `src/app/page.tsx` | `HomePage` |
-| `/login` | `src/app/login/page.tsx` | `LoginPage` |
-| `/videos` | `src/app/videos/page.tsx` | `VideosListingPage` |
-| `/videos/results` | `src/app/videos/results/page.tsx` | `SearchResultsPage` |
-| `/videos/[videoId]` | `src/app/videos/[videoId]/page.tsx` | `VideoDetail` |
-| `/upload-video` | `src/app/upload-video/page.tsx` | Upload page wrapped in `MainLayoutContainer` |
+| Route               | Source file                         | Rendered feature/component                   |
+| ------------------- | ----------------------------------- | -------------------------------------------- |
+| `/`                 | `src/app/page.tsx`                  | `HomePage`                                   |
+| `/login`            | `src/app/login/page.tsx`            | `LoginPage`                                  |
+| `/videos`           | `src/app/videos/page.tsx`           | `VideosListingPage`                          |
+| `/videos/results`   | `src/app/videos/results/page.tsx`   | `SearchResultsPage`                          |
+| `/videos/[videoId]` | `src/app/videos/[videoId]/page.tsx` | `VideoDetail`                                |
+| `/upload-video`     | `src/app/upload-video/page.tsx`     | Upload page wrapped in `MainLayoutContainer` |
 
 ## Navigation Helper
 
@@ -44,8 +44,8 @@ The middleware intercepts requests to enforce authentication:
 
 ### Server Actions (`actions.ts`)
 
-- `loginAndSetCookie`: Handles Google OAuth login, sets HttpOnly cookie, updates Redux state
-- `logoutAndClearCookie`: Clears cookie and redirects to login
+- `loginAndSetCookie`: Receives the Google OAuth `access_token` via `FormData`, calls `POST /api/v1/users/login` on the server, sets an HttpOnly `access` cookie (expiry derived from JWT `exp` claim), and returns the session data. The client component then dispatches `loginActions.login(data)` to update Redux state.
+- `logoutAndClearCookie`: Deletes the `access` cookie and calls `redirect("/login")`
 
 ## Login Flow
 
@@ -73,13 +73,13 @@ Observed sequence:
 
 Recognized search params:
 
-| Param | Purpose |
-| --- | --- |
-| `tag` | filter by tag |
+| Param      | Purpose            |
+| ---------- | ------------------ |
+| `tag`      | filter by tag      |
 | `playlist` | filter by playlist |
-| `search` | text search |
-| `order` | sort ordering |
-| `year` | year filter |
+| `search`   | text search        |
+| `order`    | sort ordering      |
+| `year`     | year filter        |
 
 ## Search Results Flow
 
@@ -107,11 +107,27 @@ Recognized search params:
 
 ## Upload Flow
 
-The inspected upload entry points show:
+The upload route (`/upload-video`) is redirected to `/videos` by `src/middleware.ts` regardless of feature flag state. The feature is also gated behind `uploadVideo` in `src/constants/featureFlags.ts` (currently `enabled: false`).
 
-- `/upload-video` renders `FileUpload`
-- `FileUpload` toggles between `VideoPicker` and `VideoForm` based on selected file state
+When the route eventually becomes accessible:
 
-### Documentation gap
+- `FileUpload` toggles between `VideoPicker` (file selection) and `VideoForm` (metadata entry) based on selected file state
+- `VideoForm` collects: title, presenter, event date, description, related videos, playlists, thumbnail
+- Backend submission is not yet implemented; `VideoForm.onSubmit` currently returns the form data without making an API call
 
-The exact upload submission workflow, validation, and backend endpoint usage were not fully inspected, so this flow should be expanded later if upload behavior needs deeper documentation.
+## Feature Flag URL Override
+
+`useFeatureFlags` supports URL-based overrides for local development and testing. Append the feature name as a query parameter to any page:
+
+```
+/videos?darkModeSwitcher=true
+/login?uploadVideo=true
+```
+
+| URL value            | Effect                                            |
+| -------------------- | ------------------------------------------------- |
+| `?featureName=true`  | Force-enables the feature regardless of config    |
+| `?featureName=false` | Force-disables the feature regardless of config   |
+| (absent)             | Uses the value in `src/constants/featureFlags.ts` |
+
+This override applies only to the current page load and is not persisted.

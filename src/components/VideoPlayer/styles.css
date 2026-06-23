@@ -20,7 +20,8 @@
     aspect-ratio: 16 /9;
   }
 
-  .vds-google-cast-button,.vds-pip-button{
+  .vds-google-cast-button,
+  .vds-pip-button {
     display: none;
   }
 
@@ -28,7 +29,7 @@
     background: #eeeeee1b;
     border: 0;
     bottom: 0;
-    color: rgba(0, 0, 0, 0.30);
+    color: rgba(0, 0, 0, 0.3);
     cursor: pointer;
     left: 0;
     margin: 0;
@@ -41,7 +42,7 @@
 
     .play-icon {
       border-radius: 50%;
-      box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.30);
+      box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.3);
       font-size: 150px;
 
       @media (max-width: 1199.95px) {
