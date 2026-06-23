@@ -35,7 +35,7 @@ This value is used for:
 
 ## Next.js Configuration
 
-`next.config.js` currently configures:
+`next.config.ts` currently configures:
 
 - `reactStrictMode: true`
 - `compress: true`

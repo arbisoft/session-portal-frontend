@@ -4,6 +4,10 @@ export const CLIENT_ID = process.env.NEXT_PUBLIC_CLIENT_ID ?? "";
 export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "";
 export const NODE_ENV = process.env.NODE_ENV ?? "development";
 export const CI = process.env.CI ?? "";
+export const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN || "";
+export const SENTRY_ORG = process.env.SENTRY_ORG || "";
+export const SENTRY_PROJECT = process.env.SENTRY_PROJECT || "";
+
 export const DEFAULT_THUMBNAIL = "/assets/images/temp-youtube-logo.webp";
 export const DEFAULT_LANGUAGE = "en";
 export const DEFAULT_LANGUAGE_DIR = "ltr";
