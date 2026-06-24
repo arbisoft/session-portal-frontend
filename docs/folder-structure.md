@@ -13,7 +13,7 @@
 ├── docker-compose.yml    # Container orchestration for app image
 ├── package.json          # Dependencies, scripts, release config
 ├── tsconfig.json         # TypeScript configuration
-├── next.config.js        # Next.js configuration
+├── next.config.ts        # Next.js configuration
 ├── jest.config.ts        # Jest configuration
 ├── playwright.config.ts  # Playwright configuration
 ├── eslint.config.mjs     # ESLint flat config

@@ -44,7 +44,7 @@ The Docker build is **multi-stage**:
 
 ## Next.js Build Configuration Relevant to Deployment
 
-From `next.config.js`:
+From `next.config.ts`:
 
 - `output: "standalone"`
 - `compress: true`

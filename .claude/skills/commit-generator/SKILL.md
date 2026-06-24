@@ -1,5 +1,5 @@
 ---
-name: commit-and-pr-generator
+name: commit-generator
 description: "Automatically generates semantic commit messages and a structured Pull Request description by analyzing git staged changes, branch names, and modified files."
 argument-hint: "Provide a brief description of the changes you made, or simply ask to generate a commit message and PR description based on your staged changes."
 user-invocable: true

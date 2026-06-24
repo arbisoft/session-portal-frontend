@@ -32,7 +32,7 @@
     "commitlint.config.js",
     "eslint.config.mjs",
     "next-env.d.ts",
-    "next.config.js",
+    "next.config.ts",
     "src/**/*"
   ],
   "exclude": [".next", "dist", "node_modules"]

@@ -75,7 +75,7 @@ Configuration files that affect docs:
 - .env.example
 - example.env.local
 - tsconfig.json
-- next.config.js
+- next.config.ts
 - Dockerfile
 - docker-compose.yml
 - Makefile
@@ -232,7 +232,7 @@ package.json
 Dockerfile
 docker-compose.yml
 Makefile
-next.config.js
+next.config.ts
 ```
 
 Check for:
