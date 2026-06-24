@@ -10,8 +10,8 @@ import { EmptyStateProps } from "./emptyStateType";
 import { ButtonsContainer, Container, Heading, ImageContainer, SVGIconWrapper } from "./styled";
 
 const DEFAULT_IMAGE = {
-  src: "/images/empty-state.svg",
-  alt: "Bee flying out of an empty box",
+  src: "/assets/svgs/empty-state.svg",
+  alt: "Empty box with a magnifying glass",
   width: 132,
   height: 132,
 };
