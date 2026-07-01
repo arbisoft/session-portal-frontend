@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # Stage 1: Install dependencies
 FROM node:22.14.0-alpine AS deps
 
@@ -14,10 +15,16 @@ FROM node:22.14.0-alpine AS builder
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_CLIENT_ID
 ARG NEXT_PUBLIC_GTM_ID
+ARG NEXT_PUBLIC_SENTRY_DSN
+ARG SENTRY_ORG
+ARG SENTRY_PROJECT
 
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 ENV NEXT_PUBLIC_CLIENT_ID=${NEXT_PUBLIC_CLIENT_ID}
 ENV NEXT_PUBLIC_GTM_ID=${NEXT_PUBLIC_GTM_ID}
+ENV NEXT_PUBLIC_SENTRY_DSN=${NEXT_PUBLIC_SENTRY_DSN}
+ENV SENTRY_ORG=${SENTRY_ORG}
+ENV SENTRY_PROJECT=${SENTRY_PROJECT}
 
 WORKDIR /app
 
@@ -27,7 +34,8 @@ COPY --from=deps /app/node_modules ./node_modules
 # Copy application source
 COPY . .
 
-RUN npm run build
+RUN --mount=type=secret,id=sentry_auth,required=false \
+    SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth 2>/dev/null || true)" npm run build
 
 # Stage 3: Lightweight runtime image
 FROM node:22.14.0-alpine AS runner
