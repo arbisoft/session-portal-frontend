@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 (2026-03-24)
+
+- feat(videos): [255,283,284] add routing, loading optimization and responsive layout fixes ([d4b55e7](https://github.com/arbisoft/session-portal-frontend/commit/d4b55e7))
+- refactor(auth): implement secure server-side authentication using middleware and server actions ([4873198](https://github.com/arbisoft/session-portal-frontend/commit/4873198))
+- docs(docs): add project reference and contribution documentation ([8fec8e2](https://github.com/arbisoft/session-portal-frontend/commit/8fec8e2))
+
 ## 1.2.0 (2025-11-20)
 
 - feat: add automated deployment trigger to build workflow ([cd19fe8](https://github.com/arbisoft-qaisarirfan/session-portal-frontend/commit/cd19fe8))
