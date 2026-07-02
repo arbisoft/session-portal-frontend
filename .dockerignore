@@ -20,3 +20,4 @@ README.md
 *.tsx
 !sentry.server.config.ts
 !sentry.edge.config.ts
+!next.config.ts
