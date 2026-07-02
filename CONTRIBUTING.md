@@ -109,13 +109,51 @@ Important Jest details from the current setup:
   - functions: 80%
   - lines: 80%
 
-Test files should follow the existing naming patterns:
+Jest picks up test files matching these patterns:
 
-- `*.test.ts`
-- `*.test.tsx`
-- `*.spec.ts`
-- `*.spec.tsx`
+- `*.test.ts` / `*.test.tsx`
 - files under `__tests__/`
+
+Note: `.spec.ts` files in `playwright-tests/` are Playwright end-to-end tests, not Jest tests.
+
+## Git Hooks (Husky)
+
+Once `npm install` completes, Husky installs local Git hooks automatically. The pre-commit hook runs three checks before every commit:
+
+```bash
+npm run lint
+npm run test:cov
+npm run build
+```
+
+All three must pass. Expect commits to take 1–2 minutes locally. The commit-msg hook enforces conventional commit format via `commitlint`.
+
+## Commit Messages
+
+Commit messages must follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>(<scope>): <short description>
+```
+
+Supported types used in this project: `feat`, `fix`, `refactor`, `docs`, `test`, `ci`, `chore`, `perf`, `revert`.
+
+Examples:
+
+```
+feat(auth): redirect to original page after login
+fix(a11y): make sidebar collapse keyboard-accessible
+chore(deps): upgrade Next.js to v15
+```
+
+## Branch Workflow
+
+| Branch | Purpose                                        |
+| ------ | ---------------------------------------------- |
+| `dev`  | Active development; all PRs target this branch |
+| `main` | Stable/release branch; never commit directly   |
+
+Create a branch from `dev`, open a PR back to `dev`. The release to `main` is automated — do not open PRs directly to `main`.
 
 ## Development Expectations
 
@@ -128,14 +166,15 @@ When contributing:
 
 ## Suggested Local Checks
 
-Before opening a pull request, run the checks already documented in the project:
+Before opening a pull request, run the full suite:
 
 ```bash
-npm run dev
-npm run test
+npm run lint
+npm run test:cov
+npm run build
 ```
 
-If your change affects coverage-sensitive code, also review the coverage output in `./coverage/`.
+These are the same checks the pre-commit hook runs. If your change affects coverage-sensitive code, also review the output in `./coverage/`.
 
 ## Environment Setup
 
@@ -148,22 +187,29 @@ Do not commit secrets or local-only environment values.
 
 ## Pull Requests
 
-When opening a pull request:
+A PR template is pre-filled when you open a pull request. Complete all sections:
 
-- push your branch to your fork
-- open the pull request from your fork to the upstream repository
-- describe the purpose of the change clearly
-- mention any setup or testing steps reviewers should know
-- include screenshots or recordings for UI changes when useful
-- note any follow-up work if the change is partial
+- **Description**: concise summary of what the PR does and why
+- **Changes Implemented**: bullet list of key changes
+- **How It Works**: step-by-step explanation including edge cases
+- **Checklist**: confirm testing, behavior verification, and code standards
+- **Screenshots**: required for any UI changes
+- **Taiga Ticket**: link to the associated Taiga issue at `https://projects.arbisoft.com/project/arbisoft-sessions-portal-20/us/XXX`
+- **Notes for Reviewers**: anything important for code review
 
-## Areas That May Need Future Clarification
+Steps:
 
-This repository did not include a dedicated contribution guide before this file was created, so some workflow details are still not explicitly documented in source files, including:
+1. Push your branch to your fork
+2. Open the pull request targeting the `dev` branch of the upstream repository
+3. Fill in the PR template completely
+4. Wait for CI (lint workflow) to pass before requesting review
 
-- branch naming rules
-- PR title conventions
-- review and approval expectations
-- release responsibilities
+## CI and Release
 
-If the team has internal standards for these, they can be added here later.
+| Event                          | What happens                                                     |
+| ------------------------------ | ---------------------------------------------------------------- |
+| Push or PR to `dev`            | Lint + type check runs automatically                             |
+| PR from `dev` merged to `main` | `release-it` creates a GitHub release and updates `CHANGELOG.md` |
+| GitHub release published       | Docker image built and pushed to AWS ECR; deployment triggered   |
+
+Contributors do not need to run `npm run release` manually.

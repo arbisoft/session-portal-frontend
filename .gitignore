@@ -40,3 +40,6 @@ next-env.d.ts
 /playwright/.cache/
 
 *storybook.log
+
+# Sentry Config File
+.env.sentry-build-plugin

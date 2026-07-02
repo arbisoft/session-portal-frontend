@@ -46,7 +46,7 @@ Configured changelog sections in `package.json` include:
 
 - Current `package.json` version is `1.2.0`.
 - The latest `CHANGELOG.md` release is also `1.2.0`, so package metadata and changelog are aligned.
-- Feature flags also reference version thresholds, e.g. `1.2.0` and `1.3.0` in `src/constants/featureFlags.ts`.
+- Feature flags reference version thresholds: `darkModeSwitcher` requires `>=1.2.0`, `uploadVideo` requires `>=1.3.0`. Both are currently disabled regardless of version (`enabled: false`).
 
 ## Observation
 

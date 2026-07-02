@@ -36,7 +36,7 @@ Provides the authenticated application shell:
 - left sidebar on larger screens
 - optional drawer for smaller screens
 - optional right sidebar region
-- auth enforcement through `useAuth()`
+- auth redirect enforcement is handled by middleware, not by this component
 
 ### `Navbar`
 

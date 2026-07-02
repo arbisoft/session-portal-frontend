@@ -33,6 +33,11 @@ jobs:
             NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
             NEXT_PUBLIC_CLIENT_ID=${{ secrets.NEXT_PUBLIC_CLIENT_ID }}
             NEXT_PUBLIC_GTM_ID=${{ secrets.NEXT_PUBLIC_GTM_ID }}
+            NEXT_PUBLIC_SENTRY_DSN=${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+          secrets: |
+            sentry_auth=${{ secrets.SENTRY_AUTH_TOKEN }}
           push: true
           tags: ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:${{ github.ref_name }}, ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:latest
 
@@ -55,10 +60,10 @@ jobs:
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |
-              await github.rest.actions.createWorkflowDispatch({
-                owner: process.env.OWNER,
-                repo: process.env.REPO,
-                workflow_id: process.env.WORKFLOW_ID,
-                ref: 'main',
-                inputs: { 'frontend_version': '${{ github.ref_name }}' }
-              });
+            await github.rest.actions.createWorkflowDispatch({
+              owner: process.env.OWNER,
+              repo: process.env.REPO,
+              workflow_id: process.env.WORKFLOW_ID,
+              ref: 'main',
+              inputs: { 'frontend_version': '${{ github.ref_name }}' }
+            });

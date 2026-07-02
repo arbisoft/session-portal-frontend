@@ -48,7 +48,7 @@ before opening a pull request
 after infrastructure changes
 after refactoring modules
 
-````
+```
 
 ---
 
@@ -56,9 +56,7 @@ after refactoring modules
 
 Primary documents:
 
-README.md
-CONTRIBUTING.md
-CHANGELOG.md
+README.md CONTRIBUTING.md CHANGELOG.md
 
 Secondary documentation:
 
@@ -77,7 +75,7 @@ Configuration files that affect docs:
 - .env.example
 - example.env.local
 - tsconfig.json
-- next.config.js
+- next.config.ts
 - Dockerfile
 - docker-compose.yml
 - Makefile
@@ -101,11 +99,7 @@ Source directories that define behavior:
 
 Always treat the following as authoritative:
 
-1️⃣ Source code
-2️⃣ Configuration files
-3️⃣ Environment variable definitions
-4️⃣ Infrastructure configuration
-5️⃣ Existing documentation
+1️⃣ Source code 2️⃣ Configuration files 3️⃣ Environment variable definitions 4️⃣ Infrastructure configuration 5️⃣ Existing documentation
 
 If documentation conflicts with code, **update documentation**.
 
@@ -125,7 +119,7 @@ Run:
 
 ```bash
 git diff --name-only HEAD
-````
+```
 
 or for PR context:
 
@@ -238,7 +232,7 @@ package.json
 Dockerfile
 docker-compose.yml
 Makefile
-next.config.js
+next.config.ts
 ```
 
 Check for:
@@ -440,9 +434,7 @@ Verify documentation navigation.
 
 Ensure:
 
-README links to docs
-docs index links to subdocs
-no broken relative links
+README links to docs docs index links to subdocs no broken relative links
 
 Prevent orphan documentation.
 
@@ -600,3 +592,4 @@ API change detection | keeps API docs accurate |
 Env variable tracking | prevents missing configuration docs |
 Dependency tracking | keeps setup instructions correct |
 Cross-doc validation | prevents conflicting instructions |
+```

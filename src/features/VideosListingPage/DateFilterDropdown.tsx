@@ -114,7 +114,7 @@ const DateFilterDropdown = ({
           },
         }}
       >
-        <Typography component="li" variant="h6" sx={{ px: 2, py: 1 }} id="sort-section">
+        <Typography component="li" variant="h6" sx={{ px: 2, py: 1 }} id="sort-section" role="heading" aria-level={3}>
           Sort By
         </Typography>
         <MenuItem
@@ -138,7 +138,7 @@ const DateFilterDropdown = ({
 
         <Divider component="li" role="separator" sx={{ my: 1 }} />
 
-        <Typography component="li" variant="h6" sx={{ px: 2, py: 1 }} id="filter-section">
+        <Typography component="li" variant="h6" sx={{ px: 2, py: 1 }} id="filter-section" role="heading" aria-level={3}>
           Filter by
         </Typography>
 

@@ -418,7 +418,7 @@ For UI components:
 
 expect(container).toMatchSnapshot()
 
-````
+```
 
 Use snapshots only if project already uses them.
 
@@ -447,27 +447,26 @@ Example:
 # Generated Test Files
 
 ### File
+
 src/utils/priceFormatter.test.ts
 
 ```ts
-import { formatPrice } from "../priceFormatter"
+import { formatPrice } from "../priceFormatter";
 
 describe("formatPrice", () => {
-
   it("formats integer prices correctly", () => {
-    expect(formatPrice(10)).toBe("$10.00")
-  })
+    expect(formatPrice(10)).toBe("$10.00");
+  });
 
   it("formats decimal prices correctly", () => {
-    expect(formatPrice(10.5)).toBe("$10.50")
-  })
+    expect(formatPrice(10.5)).toBe("$10.50");
+  });
 
   it("throws error on invalid input", () => {
-    expect(() => formatPrice(null)).toThrow()
-  })
-
-})
-````
+    expect(() => formatPrice(null)).toThrow();
+  });
+});
+```
 
 ---
 
@@ -538,4 +537,3 @@ Avoid:
 
 - testing private implementation details
 - duplicating production logic inside tests
-

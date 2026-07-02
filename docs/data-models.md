@@ -53,24 +53,24 @@ interface EventDetail {
 
 Core session/video object used in listings and detail relationships:
 
-| Field | Type |
-| --- | --- |
-| `description` | `string` |
-| `event_time` | `string` |
-| `event_type` | `string` |
-| `id` | `number` |
-| `is_featured` | `boolean` |
-| `playlists` | `string[]` |
-| `presenters` | `Presenter[]` |
-| `publisher` | `Publisher` |
-| `status` | `string` |
-| `tags` | `string[]` |
-| `thumbnail` | `string` |
-| `title` | `string` |
-| `video_duration` | `number` |
-| `workstream_id` | `string` |
-| `video_file` | `string` |
-| `slug` | `string` |
+| Field            | Type          |
+| ---------------- | ------------- |
+| `description`    | `string`      |
+| `event_time`     | `string`      |
+| `event_type`     | `string`      |
+| `id`             | `number`      |
+| `is_featured`    | `boolean`     |
+| `playlists`      | `string[]`    |
+| `presenters`     | `Presenter[]` |
+| `publisher`      | `Publisher`   |
+| `status`         | `string`      |
+| `tags`           | `string[]`    |
+| `thumbnail`      | `string`      |
+| `title`          | `string`      |
+| `video_duration` | `number`      |
+| `workstream_id`  | `string`      |
+| `video_file`     | `string`      |
+| `slug`           | `string`      |
 
 ### `Publisher` and `Presenter`
 

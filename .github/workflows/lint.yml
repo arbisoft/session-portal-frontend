@@ -14,7 +14,7 @@ jobs:
   run-linters:
     name: Run linters
     runs-on: ubuntu-latest
-    continue-on-error: false 
+    continue-on-error: false
 
     steps:
       - name: Check out Git repository
@@ -24,16 +24,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: "npm"
 
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
-            path: node_modules
-            key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-              ${{ runner.os }}-node-
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+            ${{ runner.os }}-node-
 
       - name: Install Node.js dependencies
         run: npm ci
@@ -43,4 +43,3 @@ jobs:
 
       - name: Run Lint and Type Check
         run: npm run lint
-

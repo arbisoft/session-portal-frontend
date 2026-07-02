@@ -9,10 +9,12 @@ The repository includes both a `Dockerfile` and `docker-compose.yml`.
 The Docker build is **multi-stage**:
 
 ### Stage 1: deps
+
 - Base: `node:22.14.0-alpine`
 - Copies `package*.json`, runs `npm ci`
 
 ### Stage 2: builder
+
 - Base: `node:22.14.0-alpine`
 - Accepts build args: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`
 - Reuses deps/node_modules from stage 1
@@ -20,6 +22,7 @@ The Docker build is **multi-stage**:
 - Standalone output (`output: "standalone"`)
 
 ### Stage 3: runner (production)
+
 - Base: `node:22.14.0-alpine`
 - Non-root user (`app`)
 - Copies standalone, static, public
@@ -41,7 +44,8 @@ The Docker build is **multi-stage**:
 
 ## Next.js Build Configuration Relevant to Deployment
 
-From `next.config.js`:
+From `next.config.ts`:
+
 - `output: "standalone"`
 - `compress: true`
 - `productionBrowserSourceMaps: false`
@@ -50,12 +54,13 @@ From `next.config.js`:
 ## Release Process
 
 `release-it` from `npm run release`:
+
 - Commits changes
 - GitHub releases
 - Updates `CHANGELOG.md` (conventional commits)
 - No npm publish
 
-Current version: `1.3.0` (see `CHANGELOG.md`).
+Current version: `1.2.0` (see `CHANGELOG.md`).
 
 ## Changelog File
 
@@ -63,15 +68,30 @@ Current version: `1.3.0` (see `CHANGELOG.md`).
 
 The root `README.md` now links directly to `CHANGELOG.md` under additional documentation.
 
-## CI/CD Notes
+## CI/CD Pipeline
 
-The root `README.md` badges reference GitHub Actions, and `renovate.json` exists.
+Three GitHub Actions workflows are defined in `.github/workflows/`:
 
-A release workflow exists at `.github/workflows/release.yml` that:
-- Triggers on pull request merged to `main` from `dev` branch
-- Runs `release-it` to create releases, update changelog, and tag commits
+### Lint (`lint.yml`)
 
-Deployment triggers, target environment, and full CI pipeline details are not documented here as confirmed facts beyond the release process.
+- Triggers on push or pull request to the `dev` branch
+- Runs `npm run lint` (ESLint + TypeScript check)
+
+### Release (`release.yml`)
+
+- Triggers when a PR from `dev` to `main` is merged
+- Runs `npm run release -- --ci` via `release-it`
+- Creates a GitHub release, updates `CHANGELOG.md`, and tags the commit
+
+### Build and Push Container Image (`build-and-push-container-image.yml`)
+
+- Triggers when a GitHub release is published, or on manual `workflow_dispatch`
+- Authenticates to AWS ECR using `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` secrets
+- Builds the Docker image with `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID` as build args
+- Pushes to ECR with two tags: the release tag and `latest`
+- Triggers downstream deployment via a GitHub App token dispatching a workflow in a separate deployment repository
+
+The deployment repository and target environment are configured via `GH_TRIGGER_OWNER`, `GH_TRIGGER_REPO`, and `GH_TRIGGER_WORKFLOW_ID` secrets. The specific hosting platform is external to this repository.
 
 ## Operational Gaps
 
