@@ -97,7 +97,25 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
                 },
               },
             },
-            MuiCssBaseline: {
+            MuiOutlinedInput: {
+            styleOverrides: {
+              root: {
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#fff",
+                },
+              },
+            },
+          },
+          MuiPickersOutlinedInput: {
+            styleOverrides: {
+              root: {
+                "&.Mui-focused .MuiPickersOutlinedInput-notchedOutline": {
+                  borderColor: "#fff",
+                },
+              },
+            },
+          },
+          MuiCssBaseline: {
               /* c8 ignore next 14 */
               styleOverrides: (val) => ({
                 body: {

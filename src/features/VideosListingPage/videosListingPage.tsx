@@ -97,6 +97,9 @@ const VideosListingPage = () => {
   const isDataLoading =
     isLoading || isUninitialized || !videoListings?.results || (isFetching && page === 1) || isFeatureFetching;
 
+  // eslint-disable-next-line no-console
+  console.warn("[VLP]", { isDataLoading, isLoading, isUninitialized, isFetching, isFeatureFetching, originalPlaylist: (originalArgs as any)?.playlist, apiPlaylist: (apiParams as any)?.playlist, resultsCount: videoListings?.results?.length, firstTitle: videoListings?.results?.[0]?.title });
+
   // Determine what to render based on state
   const renderContent = () => {
     // Error state
@@ -157,6 +160,7 @@ const VideosListingPage = () => {
               href={`/videos/${videoCard.slug}`}
               key={videoCard.id}
               width="100%"
+              height="auto"
             />
           )}
         />
