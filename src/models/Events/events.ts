@@ -1,4 +1,5 @@
 export interface EventDetail {
+  captions_file?: string;
   duration: number;
   event: Event;
   file_size: number;
@@ -6,6 +7,7 @@ export interface EventDetail {
   thumbnail: string;
   title: string;
   video_file: string;
+  view_count: number;
 }
 
 export interface Tag {
@@ -83,3 +85,29 @@ export type RecommendationParam = {
   page: number;
   page_size?: number;
 };
+
+export interface VideoAssetUploadResponse {
+  id: number;
+  title: string;
+  video_file: string;
+  status: string;
+}
+
+export interface UserSearchResult {
+  id: number;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+}
+
+export interface EventCreateParams {
+  title: string;
+  description: string;
+  event_time: string;
+  playlists: number[];
+  presenter_ids: number[];
+  video_asset_id: number;
+  thumbnail?: File;
+  tags?: number[];
+}
