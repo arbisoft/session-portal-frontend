@@ -1,5 +1,6 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -31,6 +32,10 @@ export async function loginAndSetCookie(formData: FormData): Promise<LoginRespon
 
     const data = await response.json();
 
+    if (!data.access) {
+      throw new Error("Login response did not include an access token");
+    }
+
     // Decode JWT to get expiry
     let maxAge = 60 * 60 * 24 * 7; // default 7 days
     try {
@@ -55,8 +60,15 @@ export async function loginAndSetCookie(formData: FormData): Promise<LoginRespon
     });
     // Return the full response data for client-side localStorage storage
     return data;
-  } catch {
-    throw new Error("Authentication failed");
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    // Non-Error throws (rejected fetch abort reasons, thrown strings, etc.) lose their
+    // detail once collapsed to a generic message; capture the original value so Sentry
+    // still shows what actually failed.
+    Sentry.captureException(error, { extra: { originalError: error } });
+    throw new Error("Authentication failed", { cause: error });
   }
 }
 

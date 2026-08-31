@@ -13,6 +13,12 @@ jest.mock("next/navigation", () => ({
   redirect: jest.fn(),
 }));
 
+const mockCaptureException = jest.fn();
+
+jest.mock("@sentry/nextjs", () => ({
+  captureException: (...args: unknown[]) => mockCaptureException(...args),
+}));
+
 import { loginAndSetCookie, logoutAndClearCookie } from "./actions";
 
 // Get the mocked redirect function
@@ -92,7 +98,7 @@ describe("loginAndSetCookie", () => {
       json: jest.fn().mockResolvedValue({ message: "Invalid token" }),
     } as unknown as Response);
 
-    await expect(loginAndSetCookie(formData)).rejects.toThrow("Authentication failed");
+    await expect(loginAndSetCookie(formData)).rejects.toThrow("Invalid token");
   });
 
   it("should handle network errors", async () => {
@@ -101,7 +107,44 @@ describe("loginAndSetCookie", () => {
 
     mockFetch.mockRejectedValueOnce(new Error("Network error"));
 
+    await expect(loginAndSetCookie(formData)).rejects.toThrow("Network error");
+  });
+
+  it("should fall back to a generic message for non-Error throws", async () => {
+    const formData = new FormData();
+    formData.append("auth_token", "token");
+
+    mockFetch.mockRejectedValueOnce("some non-Error rejection");
+
     await expect(loginAndSetCookie(formData)).rejects.toThrow("Authentication failed");
+  });
+
+  it("should capture the original error and set it as cause for non-Error throws", async () => {
+    const formData = new FormData();
+    formData.append("auth_token", "token");
+
+    mockFetch.mockRejectedValueOnce("some non-Error rejection");
+
+    await expect(loginAndSetCookie(formData)).rejects.toMatchObject({
+      message: "Authentication failed",
+      cause: "some non-Error rejection",
+    });
+    expect(mockCaptureException).toHaveBeenCalledWith("some non-Error rejection", {
+      extra: { originalError: "some non-Error rejection" },
+    });
+  });
+
+  it("should throw when the login response does not include an access token", async () => {
+    const formData = new FormData();
+    formData.append("auth_token", "token");
+
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: jest.fn().mockResolvedValue({ refresh: "refresh_token" }),
+    } as unknown as Response);
+
+    await expect(loginAndSetCookie(formData)).rejects.toThrow("Login response did not include an access token");
+    expect(mockCookies.set).not.toHaveBeenCalled();
   });
 
   it("should decode JWT and calculate maxAge correctly", async () => {
