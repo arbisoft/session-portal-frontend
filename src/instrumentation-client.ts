@@ -1,6 +1,7 @@
 import * as Sentry from "@sentry/nextjs";
 
 import { SENTRY_DSN } from "@/constants/constants";
+import { recoverFromChunkLoadError } from "@/utils/chunkLoadRecovery";
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -13,3 +14,15 @@ Sentry.init({
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
+
+// Chunk load failures from a dynamic import() (e.g. route prefetch) reject outside
+// React's render tree, so they never reach error.tsx's boundary — only the global
+// handlers below see them. Sentry's GlobalHandlers integration still reports them.
+function handleChunkLoadRejection(reason: unknown) {
+  if (reason instanceof Error) {
+    recoverFromChunkLoadError(reason);
+  }
+}
+
+window.addEventListener("unhandledrejection", (event) => handleChunkLoadRejection(event.reason));
+window.addEventListener("error", (event) => handleChunkLoadRejection(event.error));
