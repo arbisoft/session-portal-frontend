@@ -7,12 +7,14 @@ import { useRouter } from "next/navigation";
 
 import Button from "@/components/Button";
 import EmptyState from "@/components/EmptyState";
+import { recoverFromChunkLoadError } from "@/utils/chunkLoadRecovery";
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   const router = useRouter();
 
   useEffect(() => {
     Sentry.captureException(error);
+    recoverFromChunkLoadError(error);
   }, [error]);
 
   return (
