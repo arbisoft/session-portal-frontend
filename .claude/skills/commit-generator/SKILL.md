@@ -121,6 +121,7 @@ Infer scope from modified file paths, using this repo's actual layer structure.
 | `e2e/`, `playwright.config.ts` | e2e |
 | `Dockerfile*`, `.dockerignore` | docker |
 | `.github/workflows/` | ci |
+| `sonar-project.properties` | ci |
 | `next.config.ts`, `tsconfig.json`, `jest.config.*` | build |
 | `eslint.config.mjs`, `.prettierrc*`, `commitlint.config.*` | lint |
 | `package.json`, `package-lock.json` | deps |
