@@ -19,6 +19,7 @@ import VideoCard from "@/components/VideoCard";
 import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
 import { EventsParams } from "@/models/Events";
 import { useLazyGetEventsQuery } from "@/redux/events/apiSlice";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { convertSecondsToFormattedTime, formatDateTime, fullName, parseNonPassedParams } from "@/utils/utils";
 
 import { FilterBox, SearchCardLoadingState, SearchResultsContainer } from "./styled";
@@ -69,6 +70,15 @@ const SearchResultsPage = () => {
     getEvents(updatedParams);
   }, [search, page]);
 
+  useEffect(() => {
+    if (!isFetching && !isUninitialized && page === 1) {
+      trackEvent(GA_EVENTS.SEARCH_RESULTS_VIEW, ANALYTICS_CATEGORY.SEARCH, {
+        query: search,
+        results_count: videoListings?.count ?? 0,
+      });
+    }
+  }, [videoListings, isFetching]);
+
   const renderSkeletons = () => loaderCards.map((_, key) => <LoaderSkeleton key={key} />);
 
   const renderVideoResults = () => (
@@ -79,6 +89,7 @@ const SearchResultsPage = () => {
       increaseViewportBy={400}
       endReached={() => {
         if (!isFetching && videoListings?.next) {
+          trackEvent(GA_EVENTS.SEARCH_LOAD_MORE, ANALYTICS_CATEGORY.SEARCH, { query: search, next_page: page + 1 });
           setPage((prevPage) => prevPage + 1);
         }
       }}

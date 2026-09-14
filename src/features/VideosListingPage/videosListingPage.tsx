@@ -23,6 +23,7 @@ import useNavigation from "@/hooks/useNavigation";
 import { useVideoQueryManager } from "@/hooks/useVideoQueryManager";
 import { OrderingField } from "@/models/Events";
 import { useGetEventsQuery } from "@/redux/events/apiSlice";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { generateYearList, parseNonPassedParams, transformVideoToCardData } from "@/utils/utils";
 
 import DateFilterDropdown from "./DateFilterDropdown";
@@ -107,7 +108,15 @@ const VideosListingPage = () => {
           text="We couldn't load the videos. Please try again."
           icon={<ErrorOutlineOutlinedIcon sx={{ fontSize: 48 }} />}
           ctas={[
-            <Button variant="contained" color="primary" onClick={refetch} key="retry">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                trackEvent(GA_EVENTS.VIDEOS_RETRY_CLICK, ANALYTICS_CATEGORY.VIDEOS_LISTING);
+                refetch();
+              }}
+              key="retry"
+            >
               Retry
             </Button>,
           ]}
@@ -144,6 +153,7 @@ const VideosListingPage = () => {
           useWindowScroll
           endReached={() => {
             if (!isFetching && videoListings?.next) {
+              trackEvent(GA_EVENTS.VIDEOS_LOAD_MORE, ANALYTICS_CATEGORY.VIDEOS_LISTING, { next_page: page + 1 });
               setPage((prev) => prev + 1);
             }
           }}

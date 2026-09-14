@@ -9,6 +9,8 @@ import MenuItem from "@mui/material/MenuItem";
 import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
+
 import { DropdownContainer } from "./styled";
 
 interface Props {
@@ -57,18 +59,21 @@ const DateFilterDropdown = ({
   };
 
   const handleSortChange = (value: string) => {
+    trackEvent(GA_EVENTS.VIDEO_SORT_CHANGE, ANALYTICS_CATEGORY.VIDEOS_LISTING, { sort: value });
     setSortBy(value);
     onSortChange(value);
     handleClose();
   };
 
   const handleYearFilter = (year: string) => {
+    trackEvent(GA_EVENTS.VIDEO_FILTER_YEAR, ANALYTICS_CATEGORY.VIDEOS_LISTING, { year });
     setYearFilter(year);
     onYearChange(year);
     handleClose();
   };
 
   const clearFilters = () => {
+    trackEvent(GA_EVENTS.VIDEO_FILTER_CLEAR, ANALYTICS_CATEGORY.VIDEOS_LISTING);
     setSortBy("newest");
     setYearFilter(undefined);
     onSortChange("newest");

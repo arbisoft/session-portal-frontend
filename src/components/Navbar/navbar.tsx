@@ -24,6 +24,7 @@ import useNavigation from "@/hooks/useNavigation";
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
 import ThemeToggle from "../ThemeToggle";
 
@@ -68,6 +69,7 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
   };
 
   const handleLogout = async () => {
+    trackEvent(GA_EVENTS.LOGOUT, ANALYTICS_CATEGORY.AUTH);
     handleCloseUserMenu();
 
     // Clear Redux state and persist
@@ -85,13 +87,20 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
     searchEvent.preventDefault();
     const trimmed = searchQuery.trim();
     if (trimmed.length > 0) {
+      trackEvent(GA_EVENTS.SEARCH_SUBMIT, ANALYTICS_CATEGORY.SEARCH, { query: trimmed });
       navigateTo("searchResult", { search: trimmed });
     }
   };
 
   const handleClearSearch = () => {
+    trackEvent(GA_EVENTS.SEARCH_CLEAR, ANALYTICS_CATEGORY.SEARCH);
     setSearchQuery("");
     navigateTo("videos");
+  };
+
+  const handleDrawerToggle = () => {
+    trackEvent(GA_EVENTS.NAV_DRAWER_TOGGLE, ANALYTICS_CATEGORY.NAVIGATION, { action: isDrawerOpen ? "close" : "open" });
+    onDrawerToggle?.();
   };
 
   useEffect(() => {
@@ -113,19 +122,24 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
               aria-label={isDrawerOpen ? "close drawer" : "open drawer"}
               aria-expanded={isDrawerOpen}
               aria-controls="sidebar-drawer"
-              onClick={onDrawerToggle}
+              onClick={handleDrawerToggle}
               onKeyDown={(event) => {
                 // Allow closing with Enter/Space for full keyboard control
                 if (event.key === "Enter" || event.key === " ") {
                   event.preventDefault();
-                  onDrawerToggle?.();
+                  handleDrawerToggle();
                 }
               }}
             >
               <MenuIcon />
             </IconButton>
           )}
-          <Logo data-testid="navbar-logo" href="/videos" aria-label="Go to videos homepage">
+          <Logo
+            data-testid="navbar-logo"
+            href="/videos"
+            aria-label="Go to videos homepage"
+            onClick={() => trackEvent(GA_EVENTS.NAV_LOGO_CLICK, ANALYTICS_CATEGORY.NAVIGATION)}
+          >
             <Image src={"/assets/images/apple-icon.png"} width={24} height={24} alt="Arbisoft logo" data-testid="arbisoftLogo" />
             <Typography variant="h6" noWrap sx={{ display: { xs: "none", md: "flex" }, marginLeft: theme.spacing(1) }}>
               Arbisoft Sessions Portal
@@ -208,7 +222,15 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
               }}
             >
               {isUploadVideoVisible && (
-                <MenuItem role="menuitem" component={Link} href="/upload-video" onClick={handleCloseUserMenu}>
+                <MenuItem
+                  role="menuitem"
+                  component={Link}
+                  href="/upload-video"
+                  onClick={() => {
+                    trackEvent(GA_EVENTS.NAV_UPLOAD_VIDEO_CLICK, ANALYTICS_CATEGORY.NAVIGATION);
+                    handleCloseUserMenu();
+                  }}
+                >
                   <Typography component="span">Upload a video</Typography>
                 </MenuItem>
               )}

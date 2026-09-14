@@ -21,6 +21,7 @@ import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { selectAccessToken } from "@/redux/login/selectors";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { fullName, transformVideoToCardData } from "@/utils/utils";
 
 import SkeletonLoader from "./skeletonLoader";
@@ -76,6 +77,7 @@ const VideoDetail = () => {
             )}
             endReached={() => {
               if (!isRecommendationsFetching && recommendationsData?.next) {
+                trackEvent(GA_EVENTS.RECOMMENDATIONS_LOAD_MORE, ANALYTICS_CATEGORY.RECOMMENDATIONS, { next_page: page + 1 });
                 setPage((prev) => prev + 1);
               }
             }}
@@ -143,6 +145,9 @@ const VideoDetail = () => {
                         data-testid={`sidebar-tags-${tag}`}
                         clickable
                         role="button"
+                        onClick={() =>
+                          trackEvent(GA_EVENTS.TAG_SELECT, ANALYTICS_CATEGORY.SIDEBAR, { tag, source: "video_detail" })
+                        }
                       />
                     ))}
                   </TagsContainer>
