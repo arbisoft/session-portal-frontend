@@ -6,15 +6,23 @@ import IconButton from "@mui/material/IconButton";
 import { useColorScheme, alpha, useTheme } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
+
 const ThemeToggle: React.FC = () => {
   const theme = useTheme();
   const { mode, setMode } = useColorScheme();
+
+  const handleToggle = () => {
+    const nextMode = mode === "dark" ? "light" : "dark";
+    trackEvent(GA_EVENTS.THEME_TOGGLE, ANALYTICS_CATEGORY.NAVIGATION, { mode: nextMode });
+    setMode(nextMode);
+  };
 
   return (
     <Tooltip title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
       <IconButton
         role="dark-mode-button"
-        onClick={() => setMode(mode === "dark" ? "light" : "dark")}
+        onClick={handleToggle}
         size="medium"
         color="inherit"
         sx={{

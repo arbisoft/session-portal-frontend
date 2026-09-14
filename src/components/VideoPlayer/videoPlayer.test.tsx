@@ -1,11 +1,18 @@
 import React, { forwardRef, useImperativeHandle, HTMLAttributes } from "react";
 
+import { sendGTMEvent } from "@next/third-parties/google";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import * as vidstackModuleOriginal from "@vidstack/react";
 
+import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
+
 import { VideoPlayerProps } from "./types";
 import VideoPlayer from "./videoPlayer";
+
+jest.mock("@next/third-parties/google", () => ({
+  sendGTMEvent: jest.fn(),
+}));
 
 jest.mock("next/dynamic", () => () => {
   const MockedComponent = (props: Record<string, unknown>) => {
@@ -26,6 +33,7 @@ jest.mock("@mui/icons-material/PlayCircle", () => {
 jest.mock("@vidstack/react", () => {
   const mockSubscribe = jest.fn();
   const mockUseMediaState = jest.fn();
+  let capturedMediaPlayerProps: Record<string, unknown> = {};
 
   const mockMediaPlayerInstance = {
     subscribe: mockSubscribe,
@@ -49,9 +57,10 @@ jest.mock("@vidstack/react", () => {
     }
   >(({ children, className, src, title, ...props }, ref) => {
     useImperativeHandle(ref, () => mockMediaPlayerInstance);
+    capturedMediaPlayerProps = props;
 
     return (
-      <div data-testid="media-player" className={className} data-src={src} data-title={title} {...props}>
+      <div data-testid="media-player" className={className} data-src={src} data-title={title}>
         {children}
       </div>
     );
@@ -74,6 +83,7 @@ jest.mock("@vidstack/react", () => {
     __mockSubscribe: mockSubscribe,
     __mockUseMediaState: mockUseMediaState,
     __mockMediaPlayerInstance: mockMediaPlayerInstance,
+    __getMediaPlayerProps: () => capturedMediaPlayerProps,
   };
 });
 
@@ -128,10 +138,15 @@ describe("VideoPlayer", () => {
     vidstackModuleOriginal as typeof vidstackModuleOriginal & {
       __mockSubscribe: jest.Mock;
       __mockUseMediaState: jest.Mock;
+      __getMediaPlayerProps: () => Record<string, unknown>;
     }
   );
 
-  const { __mockSubscribe: mockSubscribe, __mockUseMediaState: mockUseMediaState } = jest.mocked(vidstackModule);
+  const {
+    __mockSubscribe: mockSubscribe,
+    __mockUseMediaState: mockUseMediaState,
+    __getMediaPlayerProps: getMediaPlayerProps,
+  } = jest.mocked(vidstackModule);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -376,6 +391,113 @@ describe("VideoPlayer", () => {
       const playButton = screen.getByTestId("play-button");
       expect(playButton).toBeInTheDocument();
       expect(playButton.tagName).toBe("BUTTON");
+    });
+  });
+
+  describe("Analytics tracking", () => {
+    it("should track video_play on play", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      (getMediaPlayerProps().onPlay as VoidFunction)();
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_PLAY,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+      });
+    });
+
+    it("should track video_pause on pause", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      (getMediaPlayerProps().onPause as VoidFunction)();
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_PAUSE,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+      });
+    });
+
+    it("should track video_seek with the seeked time on seeked", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      (getMediaPlayerProps().onSeeked as (time: number) => void)(42);
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_SEEK,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+        current_time: 42,
+      });
+    });
+
+    it("should track video_volume_change with volume and muted state", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      (getMediaPlayerProps().onVolumeChange as (change: { volume: number; muted: boolean }) => void)({
+        volume: 0.5,
+        muted: false,
+      });
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_VOLUME_CHANGE,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+        volume: 0.5,
+        muted: false,
+      });
+    });
+
+    it("should track video_fullscreen_change with the fullscreen state", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      (getMediaPlayerProps().onFullscreenChange as (fullscreen: boolean) => void)(true);
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_FULLSCREEN_CHANGE,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+        fullscreen: true,
+      });
+    });
+
+    it("should track video_playback_rate_change with the new rate", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      (getMediaPlayerProps().onRateChange as (rate: number) => void)(1.5);
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_PLAYBACK_RATE_CHANGE,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+        playback_rate: 1.5,
+      });
+    });
+
+    it("should track video_play_error with the error message on play failure", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      (getMediaPlayerProps().onPlayFail as (error: Error) => void)(new Error("playback failed"));
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_PLAY_ERROR,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+        message: "playback failed",
+      });
+    });
+
+    it("should track video_complete when the video ends", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      const subscribeCallback = mockSubscribe.mock.calls[0][0];
+      subscribeCallback({ ended: true });
+
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.VIDEO_COMPLETE,
+        event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+        title: "Test Video",
+      });
+    });
+
+    it("should fall back to posterAlt for the tracked title when title is empty", () => {
+      render(<VideoPlayer {...defaultProps} title="" />);
+      (getMediaPlayerProps().onPlay as VoidFunction)();
+
+      expect(sendGTMEvent).toHaveBeenCalledWith(expect.objectContaining({ title: "Test Poster" }));
     });
   });
 

@@ -91,6 +91,12 @@ Feature flags in `src/constants/featureFlags.ts` can be overridden via URL query
 - **Max line length**: 130 characters.
 - **Double quotes** enforced by Prettier via ESLint.
 
+## Google Analytics Tracking
+
+Custom GA events are pushed to the GTM `dataLayer` via `trackEvent`/`GA_EVENTS`/`ANALYTICS_CATEGORY` in `src/utils/analytics.ts` — see that file for the full event catalog and naming convention (event names are `lower_snake_case`, grouped into categories).
+
+**Any task that adds or changes a frontend feature, page, component, or user-facing interaction (buttons, links, forms, filters, navigation, player controls, etc.) must invoke the `ga-event-tracker` agent (`.claude/agents/ga-event-tracker.md`) before being considered done**, so the new interaction gets instrumented consistently and the coverage gate stays green. Do this automatically — don't wait for the user to ask for tracking.
+
 ## Notification System
 
 `notificationManager` (exported from `src/components/Notification/notification.tsx`) is a singleton accessible outside React. `customBaseQuery` uses it directly to show API error toasts. Inside components use the `useNotification()` hook instead.
