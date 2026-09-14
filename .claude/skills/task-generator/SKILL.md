@@ -60,7 +60,7 @@ Signals for "same piece of work":
 
 Each cluster becomes one task — this is what "identify all distinct pieces of work" means. A large diff can produce many tasks; a small, focused diff can produce just one.
 
-Changes confined to `docs/`, `plans/`, `README.md`, `CLAUDE.md`, or `.claude/skills/**` don't get a task of their own — they don't fit Feature/UI-UX/Data-State/Infra, and documenting already-built behavior isn't an unbuilt requirement. Note them in your summary as excluded rather than silently dropping them or forcing them into a category. If a doc change is the _only_ staged change, say so and stop rather than generating a task from it.
+Changes confined to `docs/`, `plans/`, `README.md`, `CLAUDE.md`, `.claude/skills/**`, or `.claude/agents/**` don't get a task of their own — they don't fit Feature/UI-UX/Data-State/Infra, and documenting already-built behavior or adding/editing a Claude Code agent config isn't an unbuilt requirement. Note them in your summary as excluded rather than silently dropping them or forcing them into a category. If a doc/agent-config change is the _only_ staged change, say so and stop rather than generating a task from it.
 
 ---
 
@@ -74,6 +74,7 @@ This is a single Next.js frontend app — there is no backend repo, so there's n
 | Styling, spacing, layout, color, animation, or visual-hierarchy changes with no new data/logic/behavior — a `src/components/**` primitive, `src/app/**` markup, theme (`src/components/theme/`), or `ThemeToggle`/`Sidebar`/`Navbar` visual tweak | **UI/UX** |
 | `src/redux/**` (RTK Query API slices, `store`, `login` slice, `customBaseQuery.ts`, `parseError.ts`), `src/models/**` (API shape types), `src/hooks/**` when the hook manages state/query orchestration (e.g. `useVideoQueryManager`), or `src/middleware.ts` auth/redirect logic | **Data/State** |
 | `src/instrumentation.ts` / `src/instrumentation-client.ts` (Sentry/monitoring), `next.config.ts`, `Dockerfile`/`.dockerignore`, CI workflows, `src/constants/featureFlags.ts` flag plumbing, env/config wiring, `src/utils/chunkLoadRecovery.ts`-style resiliency utilities | **Infra** |
+| A new/changed `src/utils/analytics.ts`-style cross-cutting tracking module plus `trackEvent`/GA event wiring dropped into otherwise-unrelated components across multiple pages (auth, nav, player, listing, search, sidebar, etc.) purely to add instrumentation — no new user-facing behavior | **Infra** |
 
 Notes:
 

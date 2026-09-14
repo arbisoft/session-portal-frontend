@@ -10,6 +10,7 @@ import Link from "next/link";
 
 import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 import { BLUR_DATA_URI } from "@/constants/images";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
@@ -34,6 +35,11 @@ const VideoCard: FC<VideoCardProps> = ({
 
   const displayDescription = variant === "featured-card" || variant === "search-card";
 
+  const handleClick = () => {
+    trackEvent(GA_EVENTS.VIDEO_CARD_CLICK, ANALYTICS_CATEGORY.VIDEO_CARD, { variant, title: data.title });
+    onClick?.();
+  };
+
   const responsiveImageSizes: Record<typeof variant, string> = {
     "featured-card": "(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 315px",
     "normal-card": "(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 315px",
@@ -48,7 +54,7 @@ const VideoCard: FC<VideoCardProps> = ({
       $height={height}
       className={clsx(className, { [variant]: true })}
       data-testid="video-card"
-      onClick={onClick}
+      onClick={handleClick}
       variant={mode === "light" && variant === "featured-card" ? "outlined" : undefined}
       elevation={0}
       role="group"

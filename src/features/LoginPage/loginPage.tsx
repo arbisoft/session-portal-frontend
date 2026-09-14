@@ -17,6 +17,7 @@ import { REDIRECT_TO_KEY } from "@/constants/constants";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
 import { loginActions } from "@/redux/login/slice";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { isValidInternalRedirectPath } from "@/utils/utils";
 
 import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
@@ -48,12 +49,14 @@ export default function LoginPage() {
         try {
           const loginData = await loginAndSetCookie(formData);
           dispatch(loginActions.login(loginData));
+          trackEvent(GA_EVENTS.LOGIN_SUCCESS, ANALYTICS_CATEGORY.AUTH, { method: "google" });
           if (redirectTo) {
             push(redirectTo);
           } else {
             navigateTo("videos");
           }
         } catch {
+          trackEvent(GA_EVENTS.LOGIN_FAILED, ANALYTICS_CATEGORY.AUTH, { reason: "login_request_failed" });
           notificationManager.showNotification({
             message: "Something went wrong.",
             severity: "error",
@@ -61,6 +64,7 @@ export default function LoginPage() {
         }
       });
     } else {
+      trackEvent(GA_EVENTS.LOGIN_FAILED, ANALYTICS_CATEGORY.AUTH, { reason: "no_credential" });
       showNotification({
         message: "Google login failed: No credential received.",
         severity: "error",
@@ -70,6 +74,7 @@ export default function LoginPage() {
   };
 
   const onError = () => {
+    trackEvent(GA_EVENTS.LOGIN_FAILED, ANALYTICS_CATEGORY.AUTH, { reason: "google_login_error" });
     showNotification({
       message: "Authentication Error: Google login failed. Please try again.",
       severity: "error",
@@ -96,7 +101,15 @@ export default function LoginPage() {
           Sessions Portal
         </Typography>
         <LoginButtonContainer>
-          <Button data-testid="login-button" className="login-button" onClick={() => googleLoginHandler()} variant="outlined">
+          <Button
+            data-testid="login-button"
+            className="login-button"
+            onClick={() => {
+              trackEvent(GA_EVENTS.LOGIN_CLICK, ANALYTICS_CATEGORY.AUTH, { method: "google" });
+              googleLoginHandler();
+            }}
+            variant="outlined"
+          >
             <Box className="button-content">
               <Image height={20} width={20} src="/assets/svgs/google.svg" alt="google-logo" />
               <Typography color="textSecondary">Sign in with Google</Typography>

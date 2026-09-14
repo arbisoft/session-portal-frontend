@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 
 import ThemeProvider from "@/components/theme/theme-provider";
 import { loginActions } from "@/redux/login/slice";
+import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
 
 import LoginPage from "./loginPage";
 
@@ -38,9 +39,18 @@ jest.mock("@/hooks/useFeatureFlags", () => ({
 }));
 
 const mockShowNotification = jest.fn();
+const mockManagerShowNotification = jest.fn();
 
 jest.mock("@/components/Notification", () => ({
   useNotification: () => ({ showNotification: mockShowNotification }),
+  notificationManager: { showNotification: (...args: unknown[]) => mockManagerShowNotification(...args) },
+}));
+
+const mockTrackEvent = jest.fn();
+
+jest.mock("@/utils/analytics", () => ({
+  ...jest.requireActual("@/utils/analytics"),
+  trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
 }));
 
 const mockNavigateTo = jest.fn();
@@ -257,6 +267,66 @@ describe("LoginPage", () => {
         message: "Google login failed: No credential received.",
         severity: "error",
       });
+    });
+  });
+
+  it("handles failed login request and shows an error notification", async () => {
+    let successHandler: ((param: object) => Promise<void>) | undefined;
+
+    mockUseGoogleLogin.mockImplementation(({ onSuccess }) => {
+      successHandler = onSuccess;
+      return jest.fn();
+    });
+
+    mockLoginAndSetCookie.mockRejectedValue(new Error("network error"));
+
+    customRender(<LoginPage />);
+
+    if (!successHandler) {
+      throw new Error("successHandler was not assigned");
+    }
+
+    await successHandler({ access_token: "token123" });
+
+    await waitFor(() => {
+      expect(mockManagerShowNotification).toHaveBeenCalledWith({
+        message: "Something went wrong.",
+        severity: "error",
+      });
+      expect(mockTrackEvent).toHaveBeenCalledWith(GA_EVENTS.LOGIN_FAILED, ANALYTICS_CATEGORY.AUTH, {
+        reason: "login_request_failed",
+      });
+    });
+  });
+
+  it("tracks a login_click event when the Google button is clicked", () => {
+    customRender(<LoginPage />);
+
+    fireEvent.click(screen.getByTestId("login-button"));
+
+    expect(mockTrackEvent).toHaveBeenCalledWith(GA_EVENTS.LOGIN_CLICK, ANALYTICS_CATEGORY.AUTH, { method: "google" });
+  });
+
+  it("tracks a login success event after a successful login", async () => {
+    let successHandler: ((param: object) => Promise<void>) | undefined;
+
+    mockUseGoogleLogin.mockImplementation(({ onSuccess }) => {
+      successHandler = onSuccess;
+      return jest.fn();
+    });
+
+    mockLoginAndSetCookie.mockResolvedValue({ access: "token" });
+
+    customRender(<LoginPage />);
+
+    if (!successHandler) {
+      throw new Error("successHandler was not assigned");
+    }
+
+    await successHandler({ access_token: "token123" });
+
+    await waitFor(() => {
+      expect(mockTrackEvent).toHaveBeenCalledWith(GA_EVENTS.LOGIN_SUCCESS, ANALYTICS_CATEGORY.AUTH, { method: "google" });
     });
   });
 

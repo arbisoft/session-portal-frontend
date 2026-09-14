@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
 
+import { sendGTMEvent } from "@next/third-parties/google";
 import { configureStore } from "@reduxjs/toolkit";
 import { useSearchParams } from "next/navigation";
 import { Provider, useDispatch, useSelector } from "react-redux";
@@ -10,6 +11,7 @@ import { fireEvent, screen, waitFor, render, RenderOptions, act } from "@/jest/u
 import { selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
+import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
 
 import ThemeProvider from "../theme/theme-provider";
 
@@ -18,6 +20,10 @@ import Navbar from "./navbar";
 // Mock logout action to avoid Next.js cookie API during tests
 jest.mock("@/app/login/actions", () => ({
   logoutAndClearCookie: jest.fn(),
+}));
+
+jest.mock("@next/third-parties/google", () => ({
+  sendGTMEvent: jest.fn(),
 }));
 
 jest.mock("next/navigation", () => ({
@@ -225,6 +231,21 @@ describe("Navbar Component", () => {
     customRender(<Navbar />);
 
     expect(screen.getByText("Upload a video")).toBeInTheDocument();
+  });
+
+  it("tracks nav_upload_video_click when Upload a video is clicked", () => {
+    (useFeatureFlags as jest.Mock).mockReturnValue({
+      isFeatureEnabled: (feature: string) => feature === "uploadVideo",
+    });
+
+    customRender(<Navbar />);
+
+    fireEvent.click(screen.getByText("Upload a video"));
+
+    expect(sendGTMEvent).toHaveBeenCalledWith({
+      event: GA_EVENTS.NAV_UPLOAD_VIDEO_CLICK,
+      event_category: ANALYTICS_CATEGORY.NAVIGATION,
+    });
   });
 
   it("calls onDrawerToggle when Enter key is pressed", () => {
