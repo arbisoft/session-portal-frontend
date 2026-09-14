@@ -11,12 +11,15 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import useSidebar from "@/hooks/useSidebar";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
 import { StyledMenuItem, MenuStack, SidebarContainer, TagsContainer, Text } from "./styled";
 
 const loadingTags: string[] = Array(10)
   .fill("")
   .map(() => faker.lorem.words(1));
+
+const ALL_VIDEOS_LABEL = "All Videos";
 
 const Sidebar = () => {
   const searchParams = useSearchParams();
@@ -49,6 +52,9 @@ const Sidebar = () => {
               aria-current={!playlist && !tag ? "page" : undefined}
               tabIndex={0}
               role="menuitem"
+              onClick={() =>
+                trackEvent(GA_EVENTS.SIDEBAR_PLAYLIST_SELECT, ANALYTICS_CATEGORY.SIDEBAR, { playlist: ALL_VIDEOS_LABEL })
+              }
             >
               <Image
                 src="/assets/images/sidebar-item-icon.svg"
@@ -58,8 +64,8 @@ const Sidebar = () => {
                 height={12}
                 aria-hidden="true"
               />
-              <Text variant="bodySmall" title="All Videos">
-                All Videos
+              <Text variant="bodySmall" title={ALL_VIDEOS_LABEL}>
+                {ALL_VIDEOS_LABEL}
               </Text>
             </StyledMenuItem>
 
@@ -73,6 +79,7 @@ const Sidebar = () => {
                 aria-current={item.name === playlist ? "page" : undefined}
                 tabIndex={0}
                 role="menuitem"
+                onClick={() => trackEvent(GA_EVENTS.SIDEBAR_PLAYLIST_SELECT, ANALYTICS_CATEGORY.SIDEBAR, { playlist: item.name })}
               >
                 <Image
                   src="/assets/images/sidebar-item-icon.svg"
@@ -104,6 +111,7 @@ const Sidebar = () => {
               aria-current={tag === item.name}
               role="link"
               tabIndex={0}
+              onClick={() => trackEvent(GA_EVENTS.TAG_SELECT, ANALYTICS_CATEGORY.SIDEBAR, { tag: item.name, source: "sidebar" })}
             />
           ))}
         </TagsContainer>
