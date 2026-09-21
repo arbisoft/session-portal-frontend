@@ -11,7 +11,8 @@ export const VideoListingContainer = styled("div", {
 })(({ theme }) => ({
   [".skeleton-loader, .virtuoso-grid-list"]: {
     display: "grid",
-    gap: theme.spacing(3),
+    columnGap: theme.spacing(2),
+    rowGap: theme.spacing(3.5),
     width: "100%",
     gridTemplateColumns: "repeat(1, minmax(0, 1fr))",
 
@@ -20,11 +21,7 @@ export const VideoListingContainer = styled("div", {
     },
 
     [theme.breakpoints.up("lg")]: {
-      gridTemplateColumns: "repeat(auto-fill, minmax(268px, 1fr))",
-    },
-
-    [theme.breakpoints.up("xl")]: {
-      gridTemplateColumns: "repeat(auto-fill, minmax(396px, 1fr))",
+      gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
     },
   },
 }));

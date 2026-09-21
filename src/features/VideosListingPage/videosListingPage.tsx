@@ -167,6 +167,7 @@ const VideosListingPage = () => {
               href={`/videos/${videoCard.slug}`}
               key={videoCard.id}
               width="100%"
+              height="auto"
             />
           )}
         />
