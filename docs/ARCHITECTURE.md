@@ -106,10 +106,11 @@ Authentication is implemented across several pieces:
 
 - Google sign-in starts in `src/features/LoginPage/loginPage.tsx`
 - login calls the `loginAndSetCookie` Next.js server action, which POSTs to `POST /api/v1/users/login` and sets an HttpOnly cookie
-- session tokens and user info are stored in Redux login state (client dispatches after server action returns)
-- persisted session data is filtered and stored via `redux-persist` (only `session` sub-key)
+- the access token stays in the HttpOnly cookie only; the server action returns user info with `access`/`refresh` set to `null`
+- only user info is held in Redux and persisted via `redux-persist` (state version 1 migration scrubs legacy persisted tokens)
+- all API calls go through the BFF proxy `src/app/bff/[...path]/route.ts`, which reads the cookie and attaches the `Bearer` header server-side (re-adding the trailing slash the backend expects); it returns `403` unless the request carries the `x-requested-with: session-portal` header that `customBaseQuery` sets, so opening a proxy URL directly in the address bar is refused (this deters casual access only; the authenticated user can still replay requests)
 - route protection is handled entirely by `src/middleware.ts` (JWT cookie validation, no `useAuth` hook)
-- unauthorized API responses (`401`) trigger `login/logout` dispatch in `customBaseQuery`
+- unauthorized API responses (`401`) dispatch `logout()` (from `src/redux/login/actions.ts`) in `customBaseQuery`
 
 See [Authentication Module](./modules/authentication.md) for full flow details.
 
@@ -117,8 +118,7 @@ See [Authentication Module](./modules/authentication.md) for full flow details.
 
 `src/redux/customBaseQuery.ts` centralizes request behavior:
 
-- base URL resolution using `NEXT_PUBLIC_BASE_URL`
-- Bearer token injection from Redux state
+- requests routed through the `/bff` BFF (base URL and Bearer token are applied server-side)
 - logout on `401`
 - notification display for API errors
 - error normalization through `parseError`
@@ -148,17 +148,37 @@ Observed characteristics:
 
 Route protection is handled by `src/middleware.ts`, which runs on every request matched by the Next.js Edge Runtime.
 
-| Rule                                                 | Behavior                                                                |
-| ---------------------------------------------------- | ----------------------------------------------------------------------- |
-| Authenticated user visits `/login`                   | Redirected to `redirect_to` param (if valid internal path) or `/videos` |
-| Unauthenticated user visits `/videos` or `/videos/*` | Redirected to `/login?redirect_to=<original path>`                      |
-| Any user visits `/` or `/upload-video`               | Redirected to `/videos`                                                 |
-| All other requests                                   | Pass through unchanged                                                  |
+| Rule | Behavior |
+| --- | --- |
+| Authenticated user visits `/login` | Redirected to `redirect_to` param (if valid internal path) or `/videos` |
+| Any user visits `/` or `/upload-video` | Redirected to `/videos` |
+| Unauthenticated user visits any route except `/login` (fail closed, `publicRoutes`) | Redirected to `/login?redirect_to=<original path>` |
+| Paths under `/api`, `/bff`, `/_next`, or ending in a static file extension (png, svg, json, …) | Excluded by the matcher (the proxy route enforces its own 401) |
 
 Token validation reads the `access` HttpOnly cookie set by the `loginAndSetCookie` server action. It decodes the JWT payload to check expiry (`exp` claim) without a network call.
 
 `isValidInternalRedirectPath` (in `src/utils/utils.ts`) prevents open redirect attacks by rejecting external URLs in the `redirect_to` parameter.
 
+## Monitoring, Analytics and Error Recovery
+
+Cross-cutting concerns that sit outside the feature layers:
+
+- **Sentry** is initialized per runtime (`sentry.server.config.ts`, `sentry.edge.config.ts`, `src/instrumentation-client.ts`), registered through `src/instrumentation.ts`, and wrapped around the Next.js config outside development.
+- **Error boundaries**: `src/app/error.tsx` (route) and `src/app/global-error.tsx` (root layout) report to Sentry and render fallback UI; `src/app/not-found.tsx` handles 404s.
+- **Stale chunk recovery** (`src/utils/chunkLoadRecovery.ts`) hard-reloads once per session when a tab opened before a deploy requests a missing chunk.
+- **Analytics**: `trackEvent` in `src/utils/analytics.ts` pushes events to the GTM `dataLayer` from feature and component handlers.
+
+Details: [Monitoring and Error Recovery](./modules/monitoring-and-error-recovery.md), [Analytics Tracking](./modules/analytics-tracking.md).
+
 ## Upload Feature Status
 
 The upload UI (`/upload-video`) is behind a feature flag (`uploadVideo: { enabled: false }` in `src/constants/featureFlags.ts`). The route and `FileUpload` component exist, but the backend submission is not yet implemented — `VideoForm` currently uses placeholder/hardcoded data. The middleware redirects `/upload-video` to `/videos` unconditionally regardless of feature flag state.
+
+## Security Headers and Deployment
+
+- `next.config.ts` sets HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and a `Content-Security-Policy-Report-Only`. Review reported violations, then switch to the enforcing header. A nonce-based CSP would remove `'unsafe-inline'`.
+- `images.remotePatterns` allows only the `NEXT_PUBLIC_BASE_URL` host plus `NEXT_PUBLIC_IMAGE_HOSTS`.
+- `GET /api/health` is the liveness probe used by the Docker `HEALTHCHECK`.
+- CI (`.github/workflows/build.yml`) runs lint, coverage tests, `npm audit --audit-level=critical`, the production build and Sonar.
+- `.github/dependabot.yml` opens weekly PRs against `dev` for npm (minor/patch grouped; majors of `next`, `react`, `react-dom` are manual), GitHub Actions and Docker (Node major is manual). Commit prefixes (`chore(deps)`, `chore(deps-dev)`, `ci(deps)`, `ci(docker)`) satisfy `@commitlint/config-conventional`.
+- The `architecture-guardian` agent (`.claude/agents/architecture-guardian.md`) enforces these rules on every change.
