@@ -1,3 +1,5 @@
+export {};
+
 const mockCaptureRequestError = jest.fn();
 const mockSentryInit = jest.fn();
 
