@@ -48,13 +48,13 @@ These actions complement client-side Redux state management by handling secure s
 
 `src/redux/customBaseQuery.ts` adds shared request behavior:
 
-| Behavior              | Description                                       |
-| --------------------- | ------------------------------------------------- |
-| Base host             | `${NEXT_PUBLIC_BASE_URL}/api/v1`                  |
-| Authorization         | Adds `Bearer <token>` when an access token exists |
-| Unauthorized handling | Dispatches `login/logout` on `401`                |
-| Error normalization   | Uses `parseError`                                 |
-| User feedback         | Shows toast notifications by default              |
+| Behavior              | Description                                                |
+| --------------------- | ---------------------------------------------------------- |
+| Base host             | `/bff` (BFF; forwards to `${NEXT_PUBLIC_BASE_URL}/api/v1`) |
+| Authorization         | Added server-side by the proxy from the HttpOnly cookie    |
+| Unauthorized handling | Dispatches `logout()` on `401`                             |
+| Error normalization   | Uses `parseError`                                          |
+| User feedback         | Shows toast notifications by default                       |
 
 ## Login State
 
@@ -83,8 +83,6 @@ These actions complement client-side Redux state management by handling secure s
 
 `src/redux/login/selectors.ts` exposes:
 
-- `selectAccessToken`
-- `selectRefreshToken`
 - `selectUserInfo`
 - `selectIsLoading`
 
@@ -123,8 +121,8 @@ Example response shape:
 
 - Google OAuth is initialized in `src/app/layout.tsx` through `GoogleOAuthProvider`.
 - The frontend sends the Google access token to `POST /users/login` as `auth_token`.
-- `customBaseQuery` attaches `Authorization: Bearer <token>` when an access token is present.
-- A `401` response triggers a `login/logout` dispatch.
+- The BFF proxy attaches `Authorization: Bearer <token>` from the HttpOnly cookie; `customBaseQuery` never sees the token.
+- A `401` response dispatches `logout()` from `src/redux/login/actions.ts`.
 
 ## Events API
 
