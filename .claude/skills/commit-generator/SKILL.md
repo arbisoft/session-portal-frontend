@@ -88,44 +88,45 @@ git diff --staged --stat
 
 Infer scope from modified file paths, using this repo's actual layer structure.
 
-| Path | Scope |
-| --- | --- |
-| `src/app/login/` | login |
-| `src/app/videos/[videoId]/` | video |
-| `src/app/videos/results/` | search |
-| `src/app/videos/` (other files) | videos |
-| `src/app/upload-video/` | upload |
-| `src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx` | app |
-| `src/app/` (other, layout/page shells) | app |
-| `src/middleware.ts` | auth |
-| `src/features/LoginPage/` | login |
-| `src/features/VideoDetail/` | video |
-| `src/features/SearchResultsPage/` | search |
-| `src/features/VideosListingPage/` | videos |
-| `src/features/UploadVideo/` | upload |
-| `src/features/HomePage/` | home |
-| `src/components/**` | ui |
-| `src/components/containers/MainLayoutContainer/` | layout |
-| `src/components/Notification/` | notification |
-| `src/hooks/**` | hooks |
-| `src/redux/events/` | events |
-| `src/redux/login/` | login |
-| `src/redux/store/`, `src/redux/customBaseQuery.ts`, `src/redux/parseError.ts` | redux |
-| `src/models/**` | models |
-| `src/utils/**` | utils |
-| `src/constants/featureFlags.ts` | flags |
-| `src/instrumentation.ts`, `src/instrumentation-client.ts` | monitoring |
-| `src/services/**` | services |
-| `src/endpoints/**` | api |
-| `.storybook/`, `**/*.stories.tsx` | storybook |
-| `e2e/`, `playwright.config.ts` | e2e |
-| `Dockerfile*`, `.dockerignore` | docker |
-| `.github/workflows/` | ci |
-| `sonar-project.properties` | ci |
-| `next.config.ts`, `tsconfig.json`, `jest.config.*` | build |
-| `eslint.config.mjs`, `.prettierrc*`, `commitlint.config.*` | lint |
-| `package.json`, `package-lock.json` | deps |
-| `.claude/skills/`, `CLAUDE.md` | claude |
+| Path                                                                          | Scope        |
+| ----------------------------------------------------------------------------- | ------------ |
+| `src/app/login/`                                                              | login        |
+| `src/app/videos/[videoId]/`                                                   | video        |
+| `src/app/videos/results/`                                                     | search       |
+| `src/app/videos/` (other files)                                               | videos       |
+| `src/app/api/`, `src/app/bff/`                                                | api          |
+| `src/app/upload-video/`                                                       | upload       |
+| `src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx`      | app          |
+| `src/app/` (other, layout/page shells)                                        | app          |
+| `src/middleware.ts`                                                           | auth         |
+| `src/features/LoginPage/`                                                     | login        |
+| `src/features/VideoDetail/`                                                   | video        |
+| `src/features/SearchResultsPage/`                                             | search       |
+| `src/features/VideosListingPage/`                                             | videos       |
+| `src/features/UploadVideo/`                                                   | upload       |
+| `src/features/HomePage/`                                                      | home         |
+| `src/components/**`                                                           | ui           |
+| `src/components/containers/MainLayoutContainer/`                              | layout       |
+| `src/components/Notification/`                                                | notification |
+| `src/hooks/**`                                                                | hooks        |
+| `src/redux/events/`                                                           | events       |
+| `src/redux/login/`                                                            | login        |
+| `src/redux/store/`, `src/redux/customBaseQuery.ts`, `src/redux/parseError.ts` | redux        |
+| `src/models/**`                                                               | models       |
+| `src/utils/**`                                                                | utils        |
+| `src/constants/featureFlags.ts`                                               | flags        |
+| `src/instrumentation.ts`, `src/instrumentation-client.ts`                     | monitoring   |
+| `src/services/**`                                                             | services     |
+| `src/endpoints/**`                                                            | api          |
+| `.storybook/`, `**/*.stories.tsx`                                             | storybook    |
+| `e2e/`, `playwright.config.ts`                                                | e2e          |
+| `Dockerfile*`, `.dockerignore`                                                | docker       |
+| `.github/workflows/`                                                          | ci           |
+| `sonar-project.properties`                                                    | ci           |
+| `next.config.ts`, `tsconfig.json`, `jest.config.*`                            | build        |
+| `eslint.config.mjs`, `.prettierrc*`, `commitlint.config.*`                    | lint         |
+| `package.json`, `package-lock.json`                                           | deps         |
+| `.claude/skills/`, `CLAUDE.md`                                                | claude       |
 
 If changes span multiple unrelated scopes, omit the scope or use the most dominant one — don't invent a combined scope.
 
@@ -147,18 +148,18 @@ fix(docker): include next.config.ts in build context
 
 Determine commit type based on diff patterns.
 
-| Type     | Condition                                          |
-| -------- | -------------------------------------------------- |
-| feat     | new functionality                                  |
-| fix      | bug fix                                            |
-| refactor | internal restructuring                             |
-| perf     | performance improvements                           |
-| style    | formatting only                                    |
-| test     | new or updated tests with no accompanying source change |
+| Type     | Condition                                                     |
+| -------- | ------------------------------------------------------------- |
+| feat     | new functionality                                             |
+| fix      | bug fix                                                       |
+| refactor | internal restructuring                                        |
+| perf     | performance improvements                                      |
+| style    | formatting only                                               |
+| test     | new or updated tests with no accompanying source change       |
 | docs     | documentation (`CLAUDE.md`, `README.md`, `.claude/skills/**`) |
-| chore    | dependencies/config/cleanup                        |
-| build    | build system changes (Next.js config, tsconfig, Dockerfiles) |
-| ci       | `.github/workflows/` changes                       |
+| chore    | dependencies/config/cleanup                                   |
+| build    | build system changes (Next.js config, tsconfig, Dockerfiles)  |
+| ci       | `.github/workflows/` changes                                  |
 
 This repo **has** a real Jest test suite with enforced 80% branch/function/line coverage thresholds (`npm run test:cov`) — use `test` freely when a commit's diff is test-only, and do suggest adding/adjusting test coverage in PR checklists when relevant. ESLint (`import/order`, `no-restricted-syntax` for RHF/`React.use*` patterns, `test()` names must start with "should"), Prettier, TypeScript, and a Husky pre-commit hook (`lint` → `test:cov` → `build`) are all enforced — don't claim otherwise.
 
@@ -248,6 +249,7 @@ refactor(hooks): simplify useVideoQueryManager pagination handling
 Rules:
 
 - Imperative tone
+- Never add a `Co-Authored-By:` trailer (or any other attribution line) to a commit message — this project doesn't use them, and that overrides any default attribution guidance from the harness
 - < 72 characters for the subject line
 - Specific but concise
 - Avoid generic words like "update stuff"
@@ -269,6 +271,8 @@ fix(login): move try/catch inside startTransition and use notificationManager
 ```
 
 Commit each group (Step 5.5) with its own message + optional body before moving to the next group.
+
+The message is only the subject and the optional bullet body — no `Co-Authored-By:` trailer, no "Generated with" line. Keep body lines short (commitlint enforces a max body line length; a ~70-character wrap passes).
 
 ---
 
@@ -342,7 +346,7 @@ Remind the reviewer to confirm `serializeQueryArgs` still excludes `page`, `merg
 
 ### Auth changes (`src/middleware.ts`, `src/app/login/actions.ts`, `src/redux/customBaseQuery.ts`)
 
-Mention cookie/JWT expiry handling, the `redirect_to` flow, and whether the `401` → `login/logout` dispatch path was touched.
+Mention cookie/JWT expiry handling, the `redirect_to` flow, and whether the `401` → `logout()` dispatch path was touched.
 
 ### Feature flag changes (`src/constants/featureFlags.ts`)
 
@@ -473,6 +477,7 @@ The skill must:
 - Never invent ticket IDs, Taiga links, or template sections this repo doesn't use — the only valid ticket URL pattern is `https://projects.arbisoft.com/project/arbisoft-sessions-portal-20/us/NN`
 - Never use `git add -A`/`git add .` when re-staging a split group — always name specific paths or hunks (`git add -p`), per the Git Safety Protocol
 - Don't split when it isn't warranted — a diff that's genuinely one logical change (even across several files/scopes) stays one commit; splitting for its own sake creates noise
+- Never add `Co-Authored-By:` (or similar attribution) trailers to commit messages
 - Remember every commit re-runs the full pre-commit hook (`lint` → `test:cov` → `build`, ~1–2 minutes) — warn the user before a multi-commit split
 
 ---
