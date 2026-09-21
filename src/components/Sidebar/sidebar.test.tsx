@@ -35,6 +35,7 @@ describe("Sidebar Component", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (useSearchParams as jest.Mock).mockReturnValue({ get: jest.fn(() => null) });
     (useSidebar as jest.Mock).mockReturnValue({
       playlists: mockItems,
       arePlaylistsLoading: false,
@@ -53,6 +54,28 @@ describe("Sidebar Component", () => {
     mockItems.forEach((item) => {
       expect(screen.getByTestId(`sidebar-item-${item.name}`)).toBeInTheDocument();
     });
+  });
+
+  it("should mark the playlist from the URL as the current page", () => {
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn((key: string) => (key === "playlist" ? "Test-2" : null)),
+    });
+
+    customRender(<Sidebar />);
+
+    expect(screen.getByTestId("sidebar-item-Test-2")).toHaveAttribute("aria-current", "page");
+    expect(screen.getByTestId("sidebar-item-Test-1")).not.toHaveAttribute("aria-current");
+  });
+
+  it("should fill the tag chip from the URL", () => {
+    (useSearchParams as jest.Mock).mockReturnValue({
+      get: jest.fn((key: string) => (key === "tag" ? "Test-3" : null)),
+    });
+
+    customRender(<Sidebar />);
+
+    expect(screen.getByTestId("sidebar-tags-Test-3")).toHaveClass("MuiChip-filled");
+    expect(screen.getByTestId("sidebar-tags-Test-1")).toHaveClass("MuiChip-outlined");
   });
 
   it("should highlight selected item", async () => {

@@ -275,6 +275,20 @@ describe("Navbar Component", () => {
     expect(toggleButton).toHaveAttribute("aria-label", "open drawer");
   });
 
+  it("tracks a close action and has aria-label='close drawer' when the drawer is open", () => {
+    const mockToggle = jest.fn();
+
+    render(<Navbar shouldShowDrawer isDrawerOpen onDrawerToggle={mockToggle} />);
+
+    const toggleButton = screen.getByTestId("open-drawer");
+    expect(toggleButton).toHaveAttribute("aria-label", "close drawer");
+
+    fireEvent.click(toggleButton);
+
+    expect(sendGTMEvent).toHaveBeenCalledWith(expect.objectContaining({ event: GA_EVENTS.NAV_DRAWER_TOGGLE, action: "close" }));
+    expect(mockToggle).toHaveBeenCalledTimes(1);
+  });
+
   it("sets empty searchQuery when URL param is missing", () => {
     (useSearchParams as jest.Mock).mockReturnValue({
       get: jest.fn().mockReturnValue(null),
