@@ -43,7 +43,7 @@ Object keys are capitalized with `lodash/capitalize`. Nested objects and arrays 
 
 Every API response passes through `customBaseQuery`. On error:
 
-1. **401 Unauthorized**: dispatches `{ type: "login/logout" }` to Redux. This resets the login slice to `initialState`, clearing tokens and user info. The user will be redirected to `/login` on the next navigation attempt (handled by middleware).
+1. **401 Unauthorized**: dispatches `logout()` to Redux. This resets the login slice to `initialState`, clearing user info. The user will be redirected to `/login` on the next navigation attempt (handled by middleware).
 
 2. **Any error** (when `showErrorToast` is not explicitly set to `false`): calls `parseError(result.error.data, result.error.status)` and passes `errors[0].message` to `notificationManager.showNotification`.
 
@@ -61,4 +61,4 @@ No current endpoint in the codebase suppresses toasts — all errors surface aut
 
 - Network errors (e.g. offline) produce a `"FETCH_ERROR"` status code. `parseError` treats non-numeric status codes as 500 and returns "Something went wrong."
 - Retry logic is not implemented at the `customBaseQuery` level. Retries are left to the UI (e.g. the "Retry" button in `VideosListingPage` calls `refetch()`).
-- Error boundaries are not configured in this project; unhandled render errors will crash to a blank page without a fallback UI.
+- Render errors are caught by `src/app/error.tsx` (route level) and `src/app/global-error.tsx` (root layout), which report to Sentry and show a fallback UI. See [Monitoring and Error Recovery](./monitoring-and-error-recovery.md).

@@ -18,21 +18,23 @@ The repository implements a web application that includes:
 
 ## Current Technology Stack
 
-| Area                  | Technologies found                                |
-| --------------------- | ------------------------------------------------- |
-| Framework             | Next.js 15.5.6                                    |
-| UI                    | React 19.1.0, Material UI 7.3.4, Emotion          |
-| Language              | TypeScript 5.9.3                                  |
-| State                 | Redux Toolkit, RTK Query, redux-persist           |
-| Forms                 | react-hook-form, yup, @hookform/resolvers         |
-| Media/UI helpers      | @vidstack/react, swiper                           |
-| Utilities             | lodash                                            |
-| Authentication        | @react-oauth/google                               |
-| Testing               | Jest, React Testing Library, Playwright           |
-| Component development | Storybook                                         |
-| Release automation    | release-it, conventional changelog                |
-| Quality gates         | ESLint, CommitLint, Husky, TypeScript strict mode |
-| Containerization      | Docker, docker-compose                            |
+| Area                  | Technologies found                                                |
+| --------------------- | ----------------------------------------------------------------- |
+| Framework             | Next.js 15.5.24                                                   |
+| UI                    | React 19.1.0, Material UI 7.3.4, Emotion                          |
+| Language              | TypeScript 5.9.3                                                  |
+| State                 | Redux Toolkit, RTK Query, redux-persist                           |
+| Forms                 | react-hook-form, yup, @hookform/resolvers                         |
+| Media/UI helpers      | @vidstack/react, swiper                                           |
+| Utilities             | lodash                                                            |
+| Authentication        | @react-oauth/google                                               |
+| Monitoring            | @sentry/nextjs (errors, tracing, Session Replay)                  |
+| Analytics             | Google Tag Manager via @next/third-parties, Hotjar                |
+| Testing               | Jest, React Testing Library, Playwright                           |
+| Component development | Storybook                                                         |
+| Release automation    | release-it, conventional changelog                                |
+| Quality gates         | ESLint, CommitLint, Husky, TypeScript strict mode, SonarQube (CI) |
+| Containerization      | Docker, docker-compose                                            |
 
 ## Version Presentation Notes
 

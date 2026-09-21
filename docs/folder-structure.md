@@ -13,7 +13,10 @@
 ├── docker-compose.yml    # Container orchestration for app image
 ├── package.json          # Dependencies, scripts, release config
 ├── tsconfig.json         # TypeScript configuration
-├── next.config.ts        # Next.js configuration
+├── next.config.ts        # Next.js configuration (wrapped by Sentry outside development)
+├── sentry.server.config.ts # Sentry init for the Node.js runtime
+├── sentry.edge.config.ts   # Sentry init for the edge runtime
+├── sonar-project.properties # SonarQube scan configuration
 ├── jest.config.ts        # Jest configuration
 ├── playwright.config.ts  # Playwright configuration
 ├── eslint.config.mjs     # ESLint flat config
@@ -31,11 +34,14 @@ src/
 ├── endpoints/   # API endpoint path definitions
 ├── features/    # Page/feature-level modules
 ├── hooks/       # Reusable custom hooks
+├── instrumentation.ts        # Server/edge Sentry registration and onRequestError
+├── instrumentation-client.ts # Browser Sentry init and global chunk-load handlers
+├── middleware.ts             # Edge auth redirect middleware
 ├── jest/        # Test utilities
 ├── models/      # TypeScript domain models
 ├── redux/       # Store, slices, API, selectors, error handling
 ├── services/    # Service utilities, including server-side helpers
-└── utils/       # General utilities
+└── utils/       # General utilities (`utils.ts`, `analytics.ts`, `chunkLoadRecovery.ts`, `styleUtils.ts`)
 ```
 
 ## Route Files
@@ -50,6 +56,8 @@ Routes visible from `src/app/`:
 | `/videos/[videoId]` | `src/app/videos/[videoId]/page.tsx` |
 | `/videos/results`   | `src/app/videos/results/page.tsx`   |
 | `/upload-video`     | `src/app/upload-video/page.tsx`     |
+
+App-level special files: `src/app/error.tsx` (route error boundary), `src/app/global-error.tsx` (root error boundary), `src/app/not-found.tsx` (404).
 
 ## Feature Modules
 
