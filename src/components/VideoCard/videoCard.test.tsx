@@ -9,6 +9,16 @@ import ThemeProvider from "../theme/theme-provider";
 import { VideoCardProps } from "./types";
 import VideoCard from "./videoCard";
 
+let mockColorSchemeMode: string | undefined;
+
+jest.mock("@mui/material/styles", () => {
+  const actual = jest.requireActual("@mui/material/styles");
+  return {
+    ...actual,
+    useColorScheme: () => ({ ...actual.useColorScheme(), mode: mockColorSchemeMode ?? actual.useColorScheme().mode }),
+  };
+});
+
 const mockProps: VideoCardProps = {
   className: "custom-class",
   data: {
@@ -27,6 +37,10 @@ const mockProps: VideoCardProps = {
 };
 
 describe("VideoCard", () => {
+  afterEach(() => {
+    mockColorSchemeMode = undefined;
+  });
+
   it("should renders the component with provided props", () => {
     render(<VideoCard {...mockProps} />);
 
@@ -109,6 +123,13 @@ describe("VideoCard", () => {
 
     const card = screen.getByTestId("video-card");
     expect(getComputedStyle(card).backgroundColor).toBe("transparent");
+  });
+
+  it("should render the featured card outlined in light mode", () => {
+    mockColorSchemeMode = "light";
+    render(<VideoCard {...mockProps} variant="featured-card" />);
+
+    expect(screen.getByTestId("video-card")).toHaveAttribute("variant", "outlined");
   });
 
   it("should apply correct background color in dark mode", () => {

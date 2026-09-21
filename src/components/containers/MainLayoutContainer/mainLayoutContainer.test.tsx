@@ -132,6 +132,16 @@ describe("MainLayoutContainer", () => {
     expect(screen.getByTestId("right-sidebar")).toBeInTheDocument();
   });
 
+  test("should not render the LeftSidebar when isLeftSidebarVisible is false", () => {
+    render(
+      <MainLayoutContainer isLeftSidebarVisible={false}>
+        <div>Test Content</div>
+      </MainLayoutContainer>
+    );
+
+    expect(screen.queryByTestId("left-sidebar")).not.toBeInTheDocument();
+  });
+
   test("should renders multiple children correctly", () => {
     render(
       <MainLayoutContainer>
