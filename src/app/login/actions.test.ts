@@ -86,7 +86,7 @@ describe("loginAndSetCookie", () => {
       maxAge: expect.any(Number),
     });
 
-    expect(result).toEqual(mockResponse);
+    expect(result).toEqual({ ...mockResponse, access: null, refresh: null });
   });
 
   it("should handle API error responses", async () => {
@@ -99,6 +99,18 @@ describe("loginAndSetCookie", () => {
     } as unknown as Response);
 
     await expect(loginAndSetCookie(formData)).rejects.toThrow("Invalid token");
+  });
+
+  it("should fall back to a default message when the API error has no message", async () => {
+    const formData = new FormData();
+    formData.append("auth_token", "invalid_token");
+
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      json: jest.fn().mockResolvedValue({}),
+    } as unknown as Response);
+
+    await expect(loginAndSetCookie(formData)).rejects.toThrow("Login failed");
   });
 
   it("should handle network errors", async () => {

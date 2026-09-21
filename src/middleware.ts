@@ -1,36 +1,23 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-import { REDIRECT_TO_KEY } from "./constants/constants";
-import { isValidInternalRedirectPath } from "./utils/utils";
+import { ACCESS_COOKIE_NAME, REDIRECT_TO_KEY } from "./constants/constants";
+import { getJwtExpiry, isValidInternalRedirectPath } from "./utils/utils";
 
-// Protected routes that require authentication
-const protectedRoutes = ["/videos"];
+// Fail closed: every route requires authentication unless listed here.
+const publicRoutes = ["/login"];
 
-// Utility to validate JWT token (check presence and expiry)
+// Expiry-only gate (no signature check): the backend enforces real authorization.
 function isValidToken(token: string | undefined): boolean {
-  if (!token) return false;
-
-  try {
-    // Decode JWT payload (second part)
-    const payload = token.split(".")[1];
-    const decodedPayload = JSON.parse(atob(payload));
-
-    // Check if token has expired
-    const currentTime = Math.floor(Date.now() / 1000);
-    return decodedPayload.exp > currentTime;
-  } catch {
-    // Invalid token format
-    return false;
-  }
+  const exp = getJwtExpiry(token);
+  return exp !== null && exp > Math.floor(Date.now() / 1000);
 }
 
 export function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   // Get token from cookies
-  const token = request.cookies.get("access")?.value;
-  // Check if current route is protected
-  const isProtectedRoute = protectedRoutes.some((route) => pathname === route || pathname.startsWith("/videos/"));
+  const token = request.cookies.get(ACCESS_COOKIE_NAME)?.value;
+  const isProtectedRoute = !publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
   if (isValidToken(token) && pathname === "/login") {
     const redirectTo =
@@ -63,11 +50,14 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes)
+     * - api, bff (API routes and the BFF proxy)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - static file extensions only (a blanket "any dot" exclusion would let a page slug like /videos/a.b skip auth)
      */
-    "/((?!api|assets|.well-known|_next/static|_next/image|favicon.ico).*)",
+    // Must stay a single static literal for Next's matcher analysis, so it cannot be split.
+    // eslint-disable-next-line max-len
+    "/((?!api|bff/|assets|.well-known|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpe?g|gif|webp|svg|ico|json|webmanifest|txt|xml)$).*)", // NOSONAR typescript:S7780 - Next needs a plain literal, String.raw breaks the build
   ],
 };

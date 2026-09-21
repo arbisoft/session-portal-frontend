@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 import { LoginResponse } from "@/models/Auth";
 
+import { logout } from "./actions";
 import { loginApi } from "./apiSlice";
 
 export type LoginState = {
@@ -32,16 +33,16 @@ const loginSlice = createSlice({
     login: (state, action) => {
       state.session = action.payload;
     },
-    logout: () => initialState,
   },
   extraReducers: (builder) => {
+    builder.addCase(logout, () => initialState);
     builder.addMatcher(loginApi?.endpoints?.login?.matchFulfilled, (state, action) => {
       state.session = action.payload;
     });
   },
 });
 
-export const loginActions = loginSlice.actions;
+export const loginActions = { ...loginSlice.actions, logout };
 
 const loginReducer = loginSlice.reducer;
 
