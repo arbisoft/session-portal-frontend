@@ -57,7 +57,9 @@ Auth has no `useAuth` hook. It is split across three places:
 
 1. **`src/middleware.ts`** — Edge Runtime, runs on every request. Reads the `access` HttpOnly cookie, validates JWT expiry locally (no network call), and redirects unauthenticated requests to `/login?redirect_to=<path>`.
 2. **`src/app/login/actions.ts`** — Next.js server action `loginAndSetCookie`. POSTs Google `access_token` to `POST /api/v1/users/login`, sets the HttpOnly cookie, returns data. The client then dispatches `loginActions.login(data)` to update Redux.
-3. **`src/redux/customBaseQuery.ts`** — Any `401` response dispatches `{ type: "login/logout" }`, resetting Redux login state.
+3. **`src/redux/customBaseQuery.ts`** — sends all API calls to the BFF proxy `src/app/bff/[...path]/route.ts`, which reads the HttpOnly cookie and attaches the `Bearer` token server-side. The token never reaches client JS, Redux or `localStorage`. Any `401` response dispatches `logout()` (from `src/redux/login/actions.ts`), resetting Redux login state.
+
+The middleware fails closed: every route needs auth unless listed in `publicRoutes`.
 
 `MainLayoutContainer` does NOT enforce auth — it is purely layout.
 
@@ -100,6 +102,10 @@ Custom GA events are pushed to the GTM `dataLayer` via `trackEvent`/`GA_EVENTS`/
 ## Notification System
 
 `notificationManager` (exported from `src/components/Notification/notification.tsx`) is a singleton accessible outside React. `customBaseQuery` uses it directly to show API error toasts. Inside components use the `useNotification()` hook instead.
+
+## Architecture Guardian
+
+**Any task that adds or changes code, config, dependencies, CI or Docker files must invoke the `architecture-guardian` agent (`.claude/agents/architecture-guardian.md`) before being considered done** (and before `ga-event-tracker`). It enforces the layering, auth/token, security-header, dependency, testing and accessibility rules from the architecture advisory. Do this automatically.
 
 ## Branching and CI
 
