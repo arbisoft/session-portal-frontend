@@ -30,7 +30,7 @@ _(Add screenshots, videos, or GIFs if necessary.)_
 
 #### **🔗 Related Issues**
 
-_Link to the associated Taiga ticket_ https://projects.arbisoft.com/project/arbisoft-sessions-portal-20/us/XXX
+_Link to the associated Taiga ticket_ https://projects.arbisoft.com/arbisoft/browse/XXX
 
 #### **📢 Notes for Reviewers**
 

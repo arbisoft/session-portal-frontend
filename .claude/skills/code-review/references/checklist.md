@@ -6,11 +6,11 @@ Apply every applicable item. Mark Critical / Warning / Suggestion per the severi
 
 ## Severity Definitions
 
-| Level | Meaning |
-| --- | --- |
-| 🔴 Critical | Causes crash, data loss, security breach, or blocks app function. Block merge. |
-| 🟡 Warning | Bug-prone, degrades performance, or violates project conventions. Should fix. |
-| 🟢 Suggestion | Style, readability, or minor maintainability. Optional but encouraged. |
+| Level         | Meaning                                                                        |
+| ------------- | ------------------------------------------------------------------------------ |
+| 🔴 Critical   | Causes crash, data loss, security breach, or blocks app function. Block merge. |
+| 🟡 Warning    | Bug-prone, degrades performance, or violates project conventions. Should fix.  |
+| 🟢 Suggestion | Style, readability, or minor maintainability. Optional but encouraged.         |
 
 ---
 
@@ -18,12 +18,15 @@ Apply every applicable item. Mark Critical / Warning / Suggestion per the severi
 
 ### Auth & Middleware (Critical)
 
-- [ ] `src/middleware.ts`'s `protectedRoutes` / path-prefix checks are updated when a new route needs auth gating — a new route under an existing protected prefix is covered automatically, but a new top-level route is not
-- [ ] JWT validity check (`isValidToken`) stays a local, no-network-call check (Edge Runtime constraint) — don't introduce a `fetch`/API call into middleware
+- [ ] `src/middleware.ts` fails closed — every route requires auth unless listed in `publicRoutes`; a newly added public route is a security decision and must be called out. New static asset paths need a file extension or a matcher exclusion, otherwise they are redirected to `/login`
+- [ ] JWT validity check (`isValidToken`) stays a local, no-network-call check (Edge Runtime constraint) — don't introduce a `fetch`/API call into middleware; JWT payload decoding goes through the shared `getJwtExpiry` helper in `src/utils/utils.ts`, never re-implemented inline
 - [ ] Any redirect target read from a query param (`redirect_to`) is validated via `isValidInternalRedirectPath` before being used in a `NextResponse.redirect` — an unvalidated redirect target is an open-redirect vulnerability
-- [ ] `src/app/login/actions.ts`'s server action sets the `access` cookie as HttpOnly server-side — never move token storage to `localStorage`/a non-HttpOnly cookie from client code
+- [ ] `src/app/login/actions.ts`'s server action sets the `access` cookie as HttpOnly server-side and returns `access: null, refresh: null` — the token must never be returned to, stored by, or read from client code
 - [ ] Client-side Redux login state (`loginActions.login`) is only dispatched after the server action returns successfully — not optimistically before the cookie is confirmed set
-- [ ] `customBaseQuery`'s `401` → `{ type: "login/logout" }` dispatch is preserved in any new base query or query wrapper — don't bypass `customBaseQuery` with a raw `fetchBaseQuery` for a new API slice
+- [ ] `customBaseQuery`'s `401` → `logout()` dispatch (imported from `src/redux/login/actions.ts`, never the string `"login/logout"`) is preserved in any new base query or query wrapper — don't bypass `customBaseQuery` with a raw `fetchBaseQuery` for a new API slice
+- [ ] Backend calls from the browser go only through the BFF proxy (`src/app/bff/[...path]/route.ts`); no client-side `fetch` to `BASE_URL` with an `Authorization` header, and no UI gating on a client-held token
+- [ ] Persisted Redux shape changes bump `version` and add a migration in `src/redux/store/configureStore.tsx`
+- [ ] No circular imports through the store (`baseApi` ↔ `customBaseQuery` ↔ `login/*`); shared actions live in leaf files
 
 ### RTK Query Correctness (Critical / Warning)
 
@@ -57,7 +60,12 @@ Apply every applicable item. Mark Critical / Warning / Suggestion per the severi
 - [ ] No hardcoded secrets (API base URLs, client IDs, Sentry DSNs) in source — these must come from `src/constants/constants.ts`'s `process.env.*` reads
 - [ ] A new env var that must stay server-only is **not** prefixed `NEXT_PUBLIC_` — that prefix inlines the value into the client bundle at build time; only genuinely public values (base URL, GTM ID, client ID meant for the browser) should use it
 - [ ] No open redirect — any redirect target derived from user input (query params, especially `redirect_to`) is validated against `isValidInternalRedirectPath` or equivalent before use in `NextResponse.redirect`/`router.push`
-- [ ] Auth tokens are never read from or written to `localStorage`/`sessionStorage`/a non-HttpOnly cookie — the `access` cookie must stay HttpOnly, set only by the server action
+- [ ] Auth tokens are never read from or written to `localStorage`/`sessionStorage`/Redux/a non-HttpOnly cookie, and never logged or sent in analytics events — the `access` cookie must stay HttpOnly, set only by the server action
+- [ ] Security headers in `next.config.ts` (HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, CSP) are not weakened; any new third-party script/frame/connection is added to the CSP; no `'unsafe-eval'` outside development
+- [ ] `images.remotePatterns` never uses a wildcard host — only the backend host plus `NEXT_PUBLIC_IMAGE_HOSTS`
+- [ ] No `@ts-ignore`/`@ts-expect-error` in production code; test-only hooks live in `jest.setup.ts`
+- [ ] Route handlers under `src/app/api/**` and `src/app/bff/**` validate input (path segments, method, body), fail closed without credentials, and never leak backend internals in errors
+- [ ] `npm audit --omit=dev` shows no new high/critical advisory; a dependency upgrade that resolves one is preferred over suppressing it; `package-lock.json` is changed only via npm
 - [ ] User-generated or API-sourced text (event titles/descriptions, tags) rendered in the UI is not passed through `dangerouslySetInnerHTML` without sanitization
 - [ ] No `console.log` of tokens, cookies, or user PII in production-path code (only `console.warn`/`console.error` are allowed by ESLint anyway, but check even those for sensitive payloads)
 - [ ] File upload handling (`ALLOWED_TYPES` in `src/constants/constants.ts`, the upload-video feature) validates MIME type/extension against the allowlist both client-side and (if applicable) before any request that persists the file
@@ -116,3 +124,43 @@ This project **has** a test suite (Jest + React Testing Library) with an enforce
 - [ ] Tests assert behavior (rendered output, dispatched actions, returned values), not implementation details that would break on a harmless refactor
 - [ ] A change to `src/middleware.ts`, `customBaseQuery`, or the RTK Query `merge`/`serializeQueryArgs` logic in `src/redux/events/apiSlice.ts` gets explicit test coverage given how easy these are to silently break (see `src/redux/events/events.test.tsx` for the existing pattern)
 - [ ] Run `npm run test:cov` after fixes and confirm the global 80% branch/function/line thresholds still pass — a genuine regression here blocks merge (Critical), not just a Suggestion to "add tests later"
+
+---
+
+## 6. Architecture Advisory Checks
+
+Apply these to every review; they mirror `.claude/agents/architecture-guardian.md`.
+
+### Infrastructure & DevOps (Warning)
+
+- [ ] `.github/workflows/build.yml` keeps lint, `test:cov`, `npm audit`, `npm run build` and Sonar — no step removed or skipped
+- [ ] A new env var is added to `example.env.local`, the Dockerfile `ARG`/`ENV`, and `docs/environment-and-configuration.md`
+- [ ] The Dockerfile stays multi-stage, non-root, standalone, and health-checked against `/api/health`
+- [ ] Config differs per environment via env vars, not code edits; rollback remains "redeploy the previous image tag"
+
+### Performance (Warning / Suggestion)
+
+- [ ] `"use client"` sits as low in the tree as possible; components are Server Components unless they need hooks, state, browser APIs or handlers
+- [ ] Heavy or below-the-fold UI (video player, sliders, date pickers) is loaded with `next/dynamic`; images use `next/image`
+- [ ] Unbounded lists are virtualized (`react-virtuoso`) and have stable keys
+- [ ] No unbounded RTK Query cache growth; the infinite-scroll `merge`/`serializeQueryArgs`/`forceRefetch` contract is intact
+
+### Architecture characteristics (Warning / Suggestion)
+
+- [ ] Accessibility: icon-only controls have `aria-label`, interactive elements are keyboard operable with visible focus, images have meaningful `alt`, semantics are correct (button vs link)
+- [ ] Localization: user-facing strings are kept in one place per feature and are not built by concatenation in logic; dates use the `date-fns` helpers in `src/utils`
+- [ ] Extensibility (OCP): adding a route, flag, endpoint or filter means adding an entry, not editing branching logic
+- [ ] Dependency direction is one-way: `app → features → components → utils/models/constants`; `components/` never imports `features/` or `redux/`
+- [ ] Portability/upgradeability: framework-adjacent packages (`eslint-config-next`, `@next/*`) stay aligned with the installed Next major
+
+### SOLID (Warning / Suggestion)
+
+- [ ] SRP: a file that mixes data fetching, state and markup, or exceeds about 250 lines (functions about 50), is split
+- [ ] OCP: new behavior extends via data/config/registries rather than modifying existing conditionals
+- [ ] LSP: components accepting a shared props shape or `as`/`component` override do not narrow or break the base contract
+- [ ] ISP: props and hook return values expose only what consumers use; no wide "options" objects passed through untouched
+- [ ] DIP: modules depend on abstractions (selectors, action creators, `baseApi`, `notificationManager`) instead of reaching into another module's state shape or string action types
+
+### Advisory health rating
+
+Classify the change's effect on project health in the report: 🟢 Green (aligned), 🟡 Yellow (targeted technical debt), 🔴 Red (significant architectural or security risk needing immediate follow-up).

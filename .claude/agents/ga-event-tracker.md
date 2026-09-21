@@ -51,7 +51,7 @@ Before adding a new `GA_EVENTS` constant, check whether an existing one already 
 2. If the interaction is genuinely new, add a constant to `GA_EVENTS` (and a category to `ANALYTICS_CATEGORY` only if none fits) following the existing naming pattern exactly.
 3. Call `trackEvent(GA_EVENTS.THE_EVENT, ANALYTICS_CATEGORY.THE_CATEGORY, { relevant: params })` at the point the interaction actually happens — inside the real event handler, not in a `useEffect` that might double-fire, and before/alongside the side effect it's describing (e.g. track a sort change in the same handler that calls the sort callback).
 4. **Prefer a single choke point over per-call-site duplication.** If a component is reused across multiple pages/surfaces (the way `VideoCard` is used by the videos listing, search results, featured slider, and recommendations), instrument once inside that shared component using a prop that already distinguishes the surface (e.g. `variant`) rather than wiring every parent page separately.
-5. For pagination/"load more" patterns driven by an `endReached`-style callback, fire `trackEvent` synchronously in the callback using the *current* state value plus one (don't fire it from inside a `setState` updater function — updaters can run more than once and would double-count).
+5. For pagination/"load more" patterns driven by an `endReached`-style callback, fire `trackEvent` synchronously in the callback using the _current_ state value plus one (don't fire it from inside a `setState` updater function — updaters can run more than once and would double-count).
 
 ## What NOT to do
 
