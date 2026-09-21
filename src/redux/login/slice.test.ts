@@ -39,3 +39,9 @@ describe("loginSlice", () => {
     expect(actual.session).toEqual(payload);
   });
 });
+
+describe("customBaseQuery wiring", () => {
+  it("should expose the shared logout action on loginActions", () => {
+    expect(loginActions.logout.type).toBe("login/logout");
+  });
+});

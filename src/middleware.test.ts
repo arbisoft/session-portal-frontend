@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { middleware } from "./middleware";
+import { config, middleware } from "./middleware";
 
 // Mock NextResponse
 jest.mock("next/server", () => ({
@@ -125,6 +125,32 @@ describe("Middleware", () => {
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/123", req.url));
   });
 
+  it("should read redirect_to from nextUrl.searchParams when available", () => {
+    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
+    const req = {
+      nextUrl: { pathname: "/login", search: "", searchParams: new URLSearchParams("redirect_to=%2Fvideos%2F456") },
+      url: "http://localhost:3000/login?redirect_to=%2Fvideos%2F456",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    middleware(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/456", req.url));
+  });
+
+  it("should fall back to /videos when nextUrl has no search string and no searchParams", () => {
+    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
+    const req = {
+      nextUrl: { pathname: "/login" },
+      url: "http://localhost:3000/login",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    middleware(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
+  });
+
   it("should ignore external redirect_to on login and fallback to /videos", () => {
     const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
@@ -138,7 +164,7 @@ describe("Middleware", () => {
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
 
-  it("should allow access to unprotected routes without token", () => {
+  it("should fail closed and redirect unlisted routes to login without a token", () => {
     const req = {
       nextUrl: { pathname: "/some-other", search: "" },
       url: "http://localhost:3000/some-other",
@@ -147,7 +173,8 @@ describe("Middleware", () => {
 
     middleware(req);
 
-    expect(mockNextResponse.next).toHaveBeenCalled();
+    expect(mockNextResponse.redirect).toHaveBeenCalled();
+    expect(mockNextResponse.next).not.toHaveBeenCalled();
   });
 
   it("should redirect protected sub-routes to login with search params", () => {
@@ -162,5 +189,25 @@ describe("Middleware", () => {
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos/123?filter=recent");
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(expectedUrl);
+  });
+
+  describe("matcher", () => {
+    const matcher = new RegExp(`^${config.matcher[0]}$`);
+
+    it("should skip static assets by file extension", () => {
+      expect(matcher.test("/web-app-manifest-192x192.png")).toBe(false);
+    });
+
+    it("should skip the BFF proxy so it can answer 401 itself instead of redirecting", () => {
+      expect(matcher.test("/bff/events/all")).toBe(false);
+    });
+
+    it("should not skip a page path that merely starts with bff", () => {
+      expect(matcher.test("/bffoo")).toBe(true);
+    });
+
+    it("should not skip a page path that merely contains a dot", () => {
+      expect(matcher.test("/videos/some.slug")).toBe(true);
+    });
   });
 });
