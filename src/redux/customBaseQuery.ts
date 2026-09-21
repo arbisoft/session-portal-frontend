@@ -2,38 +2,36 @@ import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 import { notificationManager } from "@/components/Notification";
-import { BASE_URL } from "@/constants/constants";
+import { API_PROXY_GUARD_HEADER, API_PROXY_GUARD_VALUE, API_PROXY_PREFIX } from "@/constants/constants";
 
-import { selectAccessToken } from "./login/selectors";
+import { logout } from "./login/actions";
 import { parseError } from "./parseError";
-import { ReducersState } from "./store/configureStore";
-
-const HOST_URL = BASE_URL + "/api/v1";
 
 interface ExtraOptions {
   showErrorToast?: boolean;
 }
 
+// Requests go through the BFF proxy, which attaches the access token from the HttpOnly cookie.
+// Browser navigations cannot set custom headers, so the proxy rejects requests that lack this marker.
 const baseQuery = fetchBaseQuery({
-  baseUrl: HOST_URL,
-  prepareHeaders: (headers, api) => {
-    const token = selectAccessToken(api.getState() as ReducersState);
-
-    // If we have a token set in state, let's assume that we should be passing it.
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
+  baseUrl: API_PROXY_PREFIX,
+  prepareHeaders: (headers) => {
+    headers.set(API_PROXY_GUARD_HEADER, API_PROXY_GUARD_VALUE);
     return headers;
   },
 });
 
+// The proxy route re-adds the trailing slash the backend expects; dropping it here avoids a 308 redirect.
+const stripTrailingSlash = (url: string) => url.replace(/\/(?=\?|$)/, "");
+
 const customBaseQuery: BaseQueryFn<FetchArgs, unknown, FetchBaseQueryError, ExtraOptions> = async (args, api, extraOptions) => {
   const options = { showErrorToast: true, ...extraOptions };
-  const result = await baseQuery(args, api, options);
+  const request = { ...args, url: stripTrailingSlash(args.url) };
+  const result = await baseQuery(request, api, options);
 
   if (result.error) {
     if (result.error.status === 401) {
-      api.dispatch({ type: "login/logout" });
+      api.dispatch(logout());
     }
 
     if (options.showErrorToast) {

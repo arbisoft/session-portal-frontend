@@ -219,6 +219,16 @@ describe("isValidInternalRedirectPath", () => {
     expect(isValidInternalRedirectPath("")).toBe(false);
     expect(isValidInternalRedirectPath(null)).toBe(false);
   });
+
+  it("should reject paths that make URL parsing throw", () => {
+    const urlSpy = jest.spyOn(global, "URL").mockImplementation(() => {
+      throw new TypeError("Invalid URL");
+    });
+
+    expect(isValidInternalRedirectPath("/videos")).toBe(false);
+
+    urlSpy.mockRestore();
+  });
 });
 
 describe("BASE_URL constant", () => {
@@ -332,5 +342,20 @@ describe("transformVideoToCardData", () => {
     expect(result.thumbnail).toBe("/assets/images/temp-youtube-logo.webp");
     expect(result.video_file).toBeUndefined();
     expect(result.organizer).toBe("");
+  });
+});
+
+describe("getJwtExpiry", () => {
+  const { getJwtExpiry } = jest.requireActual("./utils");
+  const token = (payload: object) => `h.${btoa(JSON.stringify(payload))}.s`;
+
+  it("should return the exp claim", () => {
+    expect(getJwtExpiry(token({ exp: 123 }))).toBe(123);
+  });
+
+  it("should return null for missing, malformed or exp-less tokens", () => {
+    expect(getJwtExpiry(undefined)).toBeNull();
+    expect(getJwtExpiry("garbage")).toBeNull();
+    expect(getJwtExpiry(token({ sub: "1" }))).toBeNull();
   });
 });

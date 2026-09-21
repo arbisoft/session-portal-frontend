@@ -36,6 +36,7 @@ export default function LoginPage() {
   // new token/redirect flow reloads page and Next hook may not yet resolve.
   const rawRedirectTo =
     params.get(REDIRECT_TO_KEY) ??
+    /* c8 ignore next -- SSR-only fallback; window is always defined in jsdom */
     (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get(REDIRECT_TO_KEY) : null);
 
   const redirectTo = isValidInternalRedirectPath(rawRedirectTo) ? rawRedirectTo : null;

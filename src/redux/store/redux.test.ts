@@ -1,7 +1,7 @@
 import { REDUCER_PATH } from "@/redux/baseApi";
 import { loginActions } from "@/redux/login/slice";
 
-import { createNoopStorage, persistor, store } from "./configureStore";
+import { createNoopStorage, migrations, persistor, store } from "./configureStore";
 
 describe("Redux Store", () => {
   it("should initialize store correctly", () => {
@@ -39,6 +39,18 @@ describe("Redux Store", () => {
       error: null,
       isLoading: false,
     });
+  });
+
+  it("should scrub legacy tokens from persisted state when migrating to v1", () => {
+    const legacyState = { login: { session: { access: "a", refresh: "r", user_info: { full_name: "Ada" } } } };
+
+    expect(migrations[1](legacyState)).toEqual({
+      login: { session: { access: null, refresh: null, user_info: { full_name: "Ada" } } },
+    });
+  });
+
+  it("should leave persisted state without a login session untouched when migrating to v1", () => {
+    expect(migrations[1]({})).toEqual({});
   });
 
   it("should initialize the store with default state", () => {
