@@ -176,7 +176,7 @@ The upload UI (`/upload-video`) is behind a feature flag (`uploadVideo: { enable
 
 ## Security Headers and Deployment
 
-- `next.config.ts` sets HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` and a `Content-Security-Policy-Report-Only`. Review reported violations, then switch to the enforcing header. A nonce-based CSP would remove `'unsafe-inline'`.
+- `next.config.ts` no longer sets response security headers (HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`) or a `Content-Security-Policy-Report-Only`; these were removed. There is currently no CSP or hardened header set applied by the app.
 - `images.remotePatterns` allows only the `NEXT_PUBLIC_BASE_URL` host plus `NEXT_PUBLIC_IMAGE_HOSTS`.
 - `GET /api/health` is the liveness probe used by the Docker `HEALTHCHECK`.
 - CI (`.github/workflows/build.yml`) runs lint, coverage tests, `npm audit --audit-level=critical`, the production build and Sonar.
