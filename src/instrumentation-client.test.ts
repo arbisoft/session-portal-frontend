@@ -1,3 +1,5 @@
+export {};
+
 const mockInit = jest.fn();
 const mockCaptureRouterTransitionStart = jest.fn();
 const mockReplayIntegration = jest.fn(() => "replay-integration");

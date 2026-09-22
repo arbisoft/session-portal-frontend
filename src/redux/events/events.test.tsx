@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from "@/jest/utils/testUtils";
+import type { EventsParams } from "@/models/Events";
 
 import { eventsApi, useGetEventsQuery, useRecommendationQuery, usePlaylistsQuery } from "../events/apiSlice";
 import { store } from "../store/configureStore";
@@ -107,6 +108,34 @@ describe("eventsApi endpoints", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     rerender({ page: 2 });
+  });
+
+  it("should build a cache key from every optional param and reset results when page 1 is refetched", async () => {
+    const makeEvent = (id: number) => ({ id, title: `Event ${id}` });
+    const params: Omit<EventsParams, "page"> = {
+      event_type: "SESSION",
+      status: "PUBLISHED",
+      event_time_after: "2025-01-01",
+      event_time_before: "2025-12-31",
+      is_featured: false,
+      linked_to_events: "True",
+      ordering: ["-event_time", "-event_type"],
+      page_size: 10,
+      playlist: "Playlist",
+      search: "query",
+      tag: "tag",
+    };
+
+    fetchMock.mockResponseOnce(JSON.stringify({ count: 2, next: "n", previous: null, results: [makeEvent(1)] }));
+    await store.dispatch(eventsApi.endpoints.getEvents.initiate({ ...params, page: 1 }, { forceRefetch: true }));
+
+    fetchMock.mockResponseOnce(JSON.stringify({ count: 2, next: null, previous: "p", results: [makeEvent(2)] }));
+    const second = await store.dispatch(eventsApi.endpoints.getEvents.initiate({ ...params, page: 2 }, { forceRefetch: true }));
+    expect(second.data?.results).toHaveLength(2);
+
+    fetchMock.mockResponseOnce(JSON.stringify({ count: 1, next: null, previous: null, results: [makeEvent(3)] }));
+    const reset = await store.dispatch(eventsApi.endpoints.getEvents.initiate({ ...params, page: 1 }, { forceRefetch: true }));
+    expect(reset.data?.results).toEqual([makeEvent(3)]);
   });
 
   it("should force refetch when query args change", async () => {

@@ -1,14 +1,26 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import { NextConfig } from "next";
 
-import { SENTRY_ORG, SENTRY_PROJECT } from "@/constants/constants";
+import { ALLOWED_IMAGE_HOSTS, BASE_URL, SENTRY_ORG, SENTRY_PROJECT } from "@/constants/constants";
+
+const getHostname = (url: string) => {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return null;
+  }
+};
+
+// Only the media backend (plus optional NEXT_PUBLIC_IMAGE_HOSTS) may be proxied by the image optimizer.
+const imageHostnames = [getHostname(BASE_URL), ...ALLOWED_IMAGE_HOSTS].filter((host): host is string => Boolean(host));
 
 const nextConfig: NextConfig = {
+  // Lint runs in CI and the pre-commit hook (`npm run lint`), so it is skipped during `next build`.
   eslint: {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [{ hostname: "*" }],
+    remotePatterns: imageHostnames.map((hostname) => ({ hostname })),
   },
   reactStrictMode: true,
   compress: true,

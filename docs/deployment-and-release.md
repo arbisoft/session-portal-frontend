@@ -16,7 +16,8 @@ The Docker build is **multi-stage**:
 ### Stage 2: builder
 
 - Base: `node:22.14.0-alpine`
-- Accepts build args: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`
+- Accepts build args: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` (all exported as `ENV`)
+- Runs `npm run build` with an optional BuildKit secret `sentry_auth` exposed as `SENTRY_AUTH_TOKEN` for source map upload
 - Reuses deps/node_modules from stage 1
 - Copies source, builds with `npm run build`
 - Standalone output (`output: "standalone"`)
@@ -37,7 +38,8 @@ The Docker build is **multi-stage**:
 - Build: current dir + `Dockerfile`, args:
   - `NEXT_PUBLIC_BASE_URL`
   - `NEXT_PUBLIC_CLIENT_ID`
-  - `NEXT_PUBLIC_GTM_ID:`
+  - `NEXT_PUBLIC_GTM_ID`
+  - (no Sentry args are passed by compose, so Sentry stays disabled in compose builds)
 - Ports: `"4200:4200"`
 - Env: `NODE_ENV=production`
 - Restart: `unless-stopped`
@@ -60,11 +62,11 @@ From `next.config.ts`:
 - Updates `CHANGELOG.md` (conventional commits)
 - No npm publish
 
-Current version: `1.2.0` (see `CHANGELOG.md`).
+Latest release tag: `1.3.6` (see `CHANGELOG.md`; `package.json` still reads `1.2.0`).
 
 ## Changelog File
 
-`CHANGELOG.md` exists and includes at least release `1.2.0` dated `2025-11-20`.
+`CHANGELOG.md` exists and includes an entry for every release tag (latest `1.3.6`, `2026-09-14`).
 
 The root `README.md` now links directly to `CHANGELOG.md` under additional documentation.
 
@@ -72,10 +74,12 @@ The root `README.md` now links directly to `CHANGELOG.md` under additional docum
 
 Three GitHub Actions workflows are defined in `.github/workflows/`:
 
-### Lint (`lint.yml`)
+### Build (`build.yml`) — "Lint, test and analyze"
 
-- Triggers on push or pull request to the `dev` branch
-- Runs `npm run lint` (ESLint + TypeScript check)
+- Triggers on push, and on pull request (opened, synchronize, reopened), to the `dev` branch
+- Runs `npm ci`, `npm run lint`, `npm run test:cov`
+- Runs the SonarQube scan (`SonarSource/sonarqube-scan-action`) using `SONAR_TOKEN` and `SONAR_HOST_URL` secrets; config is in `sonar-project.properties` (sources and tests under `src`, coverage from `coverage/lcov.info`)
+- The Sonar quality-gate check step is present but commented out, so a red gate does not fail the job
 
 ### Release (`release.yml`)
 
@@ -87,7 +91,7 @@ Three GitHub Actions workflows are defined in `.github/workflows/`:
 
 - Triggers when a GitHub release is published, or on manual `workflow_dispatch`
 - Authenticates to AWS ECR using `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` secrets
-- Builds the Docker image with `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID` as build args
+- Builds the Docker image with `UID`, `GID`, `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` as build args, and `SENTRY_AUTH_TOKEN` as the `sentry_auth` build secret
 - Pushes to ECR with two tags: the release tag and `latest`
 - Triggers downstream deployment via a GitHub App token dispatching a workflow in a separate deployment repository
 
@@ -95,6 +99,6 @@ The deployment repository and target environment are configured via `GH_TRIGGER_
 
 ## Operational Gaps
 
-- Prod platform/CI-CD not documented.
-- Monitoring/logging/rollback missing.
-- `NEXT_PUBLIC_GTM_ID` empty in compose.
+- Production hosting platform is external to this repository and not documented here.
+- Error monitoring is Sentry (see [Monitoring and Error Recovery](./modules/monitoring-and-error-recovery.md)); log aggregation and rollback procedures are not documented.
+- `docker-compose.yml` declares `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID` and `NEXT_PUBLIC_GTM_ID` build args without values (taken from the shell/`.env`) and declares no Sentry args.

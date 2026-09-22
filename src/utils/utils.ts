@@ -38,7 +38,7 @@ export function parseNonPassedParams<T extends Record<string, unknown>>(data: T)
   );
 }
 
-export const initCapital = (str: string) => str && str.toLowerCase().replace(/(?:^|\s)[a-z]/g, (m) => m.toUpperCase());
+export const initCapital = (str: string) => str?.toLowerCase().replaceAll(/(?:^|\s)[a-z]/g, (m) => m.toUpperCase());
 
 export const fullName = (user?: Partial<{ first_name: string; last_name: string }>) => {
   return `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
@@ -82,5 +82,18 @@ export function isValidInternalRedirectPath(redirectPath?: string | null): boole
     return parsedUrl.origin === "http://example.com";
   } catch {
     return false;
+  }
+}
+
+// Reads the `exp` claim (seconds since epoch) from a JWT payload without verifying the signature.
+export function getJwtExpiry(token: string | undefined | null): number | null {
+  if (!token) return null;
+
+  try {
+    const payload = token.split(".")[1].replaceAll("-", "+").replaceAll("_", "/");
+    const { exp } = JSON.parse(atob(payload));
+    return typeof exp === "number" ? exp : null;
+  } catch {
+    return null;
   }
 }

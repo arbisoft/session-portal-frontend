@@ -163,6 +163,7 @@ When contributing:
 - follow the existing code style and project structure
 - place tests alongside code when appropriate
 - update documentation when behavior changes
+- instrument new or changed user-facing interactions with `trackEvent` (see [Analytics Tracking](./docs/modules/analytics-tracking.md)) and cover the call in tests
 
 ## Suggested Local Checks
 
@@ -183,7 +184,7 @@ The repository currently documents use of:
 - `.env.local`
 - `example.env.local`
 
-Do not commit secrets or local-only environment values.
+Do not commit secrets or local-only environment values. `SENTRY_AUTH_TOKEN` in particular is a build-time secret; keep it out of `.env.local` commits and provide it through CI secrets.
 
 ## Pull Requests
 
@@ -202,13 +203,13 @@ Steps:
 1. Push your branch to your fork
 2. Open the pull request targeting the `dev` branch of the upstream repository
 3. Fill in the PR template completely
-4. Wait for CI (lint workflow) to pass before requesting review
+4. Wait for CI (the `Build` workflow: lint, coverage tests, SonarQube scan) to pass before requesting review
 
 ## CI and Release
 
 | Event                          | What happens                                                     |
 | ------------------------------ | ---------------------------------------------------------------- |
-| Push or PR to `dev`            | Lint + type check runs automatically                             |
+| Push or PR to `dev`            | Lint + type check, coverage tests and a SonarQube scan run       |
 | PR from `dev` merged to `main` | `release-it` creates a GitHub release and updates `CHANGELOG.md` |
 | GitHub release published       | Docker image built and pushed to AWS ECR; deployment triggered   |
 
