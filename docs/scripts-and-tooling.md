@@ -43,16 +43,7 @@ Configured tools found:
 
 ### Release tooling
 
-`release-it` is configured in `.release-it.json`.
-
-Observed release behavior:
-
-- release commit message: `chore(release): v${version}`
-- GitHub releases enabled with conventional changelog
-- npm publishing disabled
-- Automated via GitHub Actions workflow on PR merge to main from dev
-- changelog written to `CHANGELOG.md`
-- conventional commit sections customized for features, fixes, docs, refactors, tests, CI, and more
+`release-it` (config in `.release-it.json`) automates releases: `npm run release` runs it locally, and `.github/workflows/release.yml` runs it in CI (`npm run release -- --ci`) whenever a `dev` → `main` PR is merged. The `@release-it/conventional-changelog` plugin infers the version bump from conventional commits, updates `CHANGELOG.md`, and `release-it` tags the release as `v<version>` and publishes a GitHub release, which triggers the container build/deploy workflow — see [Deployment and Release](./deployment-and-release.md#operational-gaps) for the `GH_RELEASE_TOKEN` secret this depends on.
 
 The root `README.md` also links directly to `CHANGELOG.md`, making release history part of the main repository navigation.
 
@@ -63,7 +54,8 @@ The root `README.md` also links directly to `CHANGELOG.md`, making release histo
 
 ### Dependency maintenance
 
-- `renovate.json` exists, indicating Renovate-based dependency update automation.
+- `.github/dependabot.yml` configures dependency update automation. Dependabot covers npm, GitHub Actions, and Docker ecosystems (weekly, PRs targeting `dev`), groups minor/patch npm updates, and excludes major-version bumps of `next`/`react`/`react-dom`/`node` from automated PRs.
+- `package.json` pins transitive dependency versions via `overrides`: `react`, `react-dom`, `@types/react`, `@types/react-dom`, and `conventional-changelog-conventionalcommits` (the last one pinned for compatibility with the `conventionalcommits` preset used by release tooling above).
 
 ### Storybook
 

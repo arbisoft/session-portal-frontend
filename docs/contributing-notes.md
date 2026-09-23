@@ -156,17 +156,17 @@ A PR template is defined at `.github/PULL_REQUEST_TEMPLATE.md`. It requires:
 
 The repository uses a two-branch model:
 
-| Branch | Purpose                                                                          |
-| ------ | -------------------------------------------------------------------------------- |
-| `dev`  | Active development target; PRs and lint CI run against this branch               |
-| `main` | Stable/release branch; a PR merge from `dev` → `main` triggers automated release |
+| Branch | Purpose                                                            |
+| ------ | ------------------------------------------------------------------ |
+| `dev`  | Active development target; PRs and lint CI run against this branch |
+| `main` | Stable/release branch                                              |
 
-Contributors should branch off `dev` and open PRs targeting `dev`. The release workflow fires automatically when a `dev` → `main` PR is merged — contributors do not need to run `npm run release` manually.
+Contributors should branch off `dev` and open PRs targeting `dev`. Release automation (`release-it`, configured in `.release-it.json`) runs when a `dev` → `main` PR is merged; it bumps the version, updates `CHANGELOG.md`, tags the commit, and publishes a GitHub release, which triggers the container build/deploy workflow — no manual release step is needed, as long as the `GH_RELEASE_TOKEN` repo secret is set (see `docs/deployment-and-release.md#operational-gaps`).
 
 ## CI Workflows
 
-| Workflow       | Trigger                       | What it runs                                 |
-| -------------- | ----------------------------- | -------------------------------------------- |
-| Lint           | Push or PR to `dev`           | `npm run lint` (ESLint + TypeScript)         |
-| Release        | PR merged from `dev` → `main` | `npm run release -- --ci` via `release-it`   |
-| Build and Push | GitHub release published      | Docker build → ECR push → deployment trigger |
+| Workflow | Trigger | What it runs |
+| --- | --- | --- |
+| Build | Push to `dev`/`main`, or PR to `dev` | `npm run lint`, `npm run test:cov`, `npm audit`, `npm run build`, SonarQube scan |
+| Release | `dev` → `main` PR merged | `release-it`: version bump, changelog, tag, GitHub release |
+| Build and Push | GitHub release published | Docker build → ECR push → deployment trigger |
