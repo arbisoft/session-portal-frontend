@@ -29,13 +29,13 @@ Defined in `jest.config.ts`.
 
 Key settings:
 
-| Setting             | Value                                                            |
-| ------------------- | ---------------------------------------------------------------- |
-| Environment         | `jsdom`                                                          |
-| Setup file          | `jest.setup.ts`                                                  |
-| Coverage provider   | `v8`                                                             |
-| Coverage directory  | `./coverage/`                                                    |
-| Coverage thresholds | branches 80%, functions 80%, lines 80% (statements not enforced) |
+| Setting             | Value                                                  |
+| ------------------- | ------------------------------------------------------ |
+| Environment         | `jsdom`                                                |
+| Setup file          | `jest.setup.ts`                                        |
+| Coverage provider   | `v8`                                                   |
+| Coverage directory  | `./coverage/`                                          |
+| Coverage thresholds | branches 80%, functions 80%, lines 80%, statements 80% |
 
 ### Module mappings
 

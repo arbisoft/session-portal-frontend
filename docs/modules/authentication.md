@@ -22,7 +22,7 @@ Handles all aspects of user identity: route protection, Google OAuth login, toke
 
 ### Login Flow
 
-1. User visits any protected route (`/videos` or `/videos/*`) without a valid cookie.
+1. User visits any protected route (any route other than `/login`, since the middleware fails closed) without a valid cookie.
 2. Middleware reads the `access` HttpOnly cookie. If missing or expired (JWT `exp` check), it redirects to `/login?redirect_to=<original path>`.
 3. `LoginPage` reads `redirect_to` from URL params and validates it with `isValidInternalRedirectPath` to prevent open-redirect attacks.
 4. User clicks "Sign in with Google". `useGoogleLogin` from `@react-oauth/google` opens the Google popup.
@@ -42,7 +42,7 @@ The middleware runs on every non-static request via the Next.js Edge Runtime. Or
 ```
 1. Authenticated user on /login  →  redirect to redirect_to or /videos
 2. Any user on / or /upload-video  →  redirect to /videos
-3. Unauthenticated user on /videos or /videos/*  →  redirect to /login?redirect_to=<path>
+3. Unauthenticated user on any route other than /login (fail-closed: publicRoutes = ["/login"])  →  redirect to /login?redirect_to=<path>
 4. Anything else  →  pass through
 ```
 
