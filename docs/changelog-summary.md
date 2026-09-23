@@ -95,23 +95,12 @@ The root `README.md` also links to `CHANGELOG.md`, so it is now part of the prim
 
 ## Changelog Conventions
 
-Release notes are generated using `release-it` with `@release-it/conventional-changelog`.
-
-Configured changelog sections in `package.json` include:
-
-- Features
-- Bug Fixes
-- Performance Improvements
-- Reverts
-- Documentation
-- Code Refactoring
-- Tests
-- Continuous Integration
+Historical entries above were generated using `release-it` with `@release-it/conventional-changelog`, grouped by conventional-commit type (Features, Bug Fixes, Performance Improvements, Reverts, Documentation, Code Refactoring, Tests, Continuous Integration). This automation is configured in `.release-it.json` and runs via `.github/workflows/release.yml` whenever a `dev` → `main` PR is merged, so `CHANGELOG.md` and the `v${version}` git tag continue to update automatically; the release commit itself (`chore(release): v${version}`) is excluded from the "Features"/"Bug Fixes"/etc. sections by the `conventionalcommits` preset.
 
 ## Versioning Notes
 
-- Latest git tag and `CHANGELOG.md` release is `1.3.6` (2026-09-14).
-- `package.json` still reads `1.2.0`; it has not been bumped by the release tags since `1.2.0`.
+- Latest git tag and `CHANGELOG.md` release is `1.3.6` (2026-09-14); `package.json` matches at `1.3.6`.
+- Each release-it run bumps `package.json`'s `version` field to match the new tag, so the two should not drift going forward.
 - Feature flags reference version thresholds: `darkModeSwitcher` requires `>=1.2.0`, `uploadVideo` requires `>=1.3.0`. Both are currently disabled regardless of version (`enabled: false`).
 
 ## Observation
