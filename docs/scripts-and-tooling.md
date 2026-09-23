@@ -4,24 +4,7 @@
 
 From `package.json`:
 
-| Script                  | Command                                                        | Purpose                          |
-| ----------------------- | -------------------------------------------------------------- | -------------------------------- | ----- | --- | ----- | --------------------------- |
-| `dev`                   | `next dev --turbopack`                                         | Start local development server   |
-| `build`                 | `next build --turbopack`                                       | Create production build          |
-| `build:e2e`             | `cp -n example.env.local .env.local && next build --turbopack` | Build with env bootstrap for E2E |
-| `start`                 | `next start`                                                   | Run built app                    |
-| `typecheck`             | `./node_modules/.bin/tsc --project ./tsconfig.json`            | Run TypeScript checking          |
-| `lint`                  | `eslint && npm run typecheck`                                  | Run linting and type checking    |
-| `prepare`               | `is-ci                                                         |                                  | husky |     | true` | Set up Git hooks outside CI |
-| `release`               | `release-it`                                                   | Create a release                 |
-| `generate:resource`     | `hygen generate resource`                                      | Legacy, see note below (broken)  |
-| `postgenerate:resource` | `npm run lint -- --fix`                                        | Runs after `generate:resource`   |
-| `format:check`          | `prettier --check .`                                           | Check formatting                 |
-| `format`                | `prettier --write .`                                           | Apply formatting                 |
-| `sb`                    | `storybook dev -p 6006`                                        | Start Storybook                  |
-| `build-storybook`       | `storybook build`                                              | Build Storybook static output    |
-| `test`                  | `jest --verbose`                                               | Run Jest tests                   |
-| `test:cov`              | `jest --coverage --verbose`                                    | Run Jest with coverage           |
+| Script | Command | Purpose | | ----------------------- | -------------------------------------------------------------- | -------------------------------- | ----- | --- | ----- | --------------------------- | | `dev` | `next dev --turbopack` | Start local development server | | `build` | `next build --turbopack` | Create production build | | `build:e2e` | `cp -n example.env.local .env.local && next build --turbopack` | Build with env bootstrap for E2E | | `start` | `next start` | Run built app | | `typecheck` | `./node_modules/.bin/tsc --project ./tsconfig.json` | Run TypeScript checking | | `lint` | `eslint && npm run typecheck` | Run linting and type checking | | `prepare` | `is-ci                                                         |                                  | husky |     | true` | Set up Git hooks outside CI | | `release` | `release-it` | Create a release | | `generate:resource` | `hygen generate resource` | Legacy, see note below (broken) | | `postgenerate:resource` | `npm run lint -- --fix` | Runs after `generate:resource` | | `format:check` | `prettier --check .` | Check formatting | | `format` | `prettier --write .` | Apply formatting | | `sb` | `storybook dev -p 6006` | Start Storybook | | `build-storybook` | `storybook build` | Build Storybook static output | | `test` | `jest --verbose` | Run Jest tests | | `test:cov` | `jest --coverage --verbose` | Run Jest with coverage |
 
 ## Tooling Summary
 
