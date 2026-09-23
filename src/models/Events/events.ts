@@ -52,14 +52,7 @@ export interface AllEventResponse {
 }
 
 export type OrderingField =
-  | "-event_time"
-  | "-event_type"
-  | "-is_featured"
-  | "-status"
-  | "event_time"
-  | "event_type"
-  | "is_featured"
-  | "status";
+  "-event_time" | "-event_type" | "-is_featured" | "-status" | "event_time" | "event_type" | "is_featured" | "status";
 
 export type EventsParams = {
   event_time_after?: string;

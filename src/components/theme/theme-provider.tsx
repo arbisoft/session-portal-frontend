@@ -51,7 +51,7 @@ function ThemeProvider(props: PropsWithChildren<{ customTheme?: Theme }>) {
     () =>
       responsiveFontSizes(
         createTheme({
-          shadows: Array(defaultTheme.shadows.length).fill("none") as Shadows,
+          shadows: new Array(defaultTheme.shadows.length).fill("none") as Shadows,
           cssVariables: {
             colorSchemeSelector: "class",
           },

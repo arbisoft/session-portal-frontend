@@ -15,9 +15,7 @@ import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
 import { StyledMenuItem, MenuStack, SidebarContainer, TagsContainer, Text } from "./styled";
 
-const loadingTags: string[] = Array(10)
-  .fill("")
-  .map(() => faker.lorem.words(1));
+const loadingTags: string[] = new Array(10).fill("").map(() => faker.lorem.words(1));
 
 const ALL_VIDEOS_LABEL = "All Videos";
 
