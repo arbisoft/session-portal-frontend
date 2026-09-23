@@ -1,6 +1,6 @@
 <!-- badges -->
 
-![REACT](https://img.shields.io/badge/React%2019.1.0-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![NEXT JS](https://img.shields.io/badge/next%20js%2015.5.6-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) ![TYPESCRIPT](https://img.shields.io/badge/TypeScript%205.9.3-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![MATERIAL UI](https://img.shields.io/badge/Material%20UI%207.3.4-007FFF?style=for-the-badge&logo=mui&logoColor=white) ![PLAYWRIGHT](https://img.shields.io/badge/Playwright%201.43.1-45ba4b?style=for-the-badge&logo=Playwright&logoColor=white) ![ESLINT](https://img.shields.io/badge/eslint%209.38.0-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![GITHUB ACTIONS](https://img.shields.io/badge/Github%20Actions-282a2e?style=for-the-badge&logo=githubactions&logoColor=367cfe)[![Quality Gate Status](https://sonarqube.arbisoft.com/api/project_badges/measure?project=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04&metric=alert_status&token=sqb_9bed7ed9a3961adcacde244816b4c56f8d0b16e4)](https://sonarqube.arbisoft.com/dashboard?id=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04)
+![REACT](https://img.shields.io/badge/React%2019.1.0-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![NEXT JS](https://img.shields.io/badge/next%20js%2015.5.24-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) ![TYPESCRIPT](https://img.shields.io/badge/TypeScript%205.9.3-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![MATERIAL UI](https://img.shields.io/badge/Material%20UI%207.3.4-007FFF?style=for-the-badge&logo=mui&logoColor=white) ![PLAYWRIGHT](https://img.shields.io/badge/Playwright%201.43.1-45ba4b?style=for-the-badge&logo=Playwright&logoColor=white) ![ESLINT](https://img.shields.io/badge/eslint%209.38.0-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![GITHUB ACTIONS](https://img.shields.io/badge/Github%20Actions-282a2e?style=for-the-badge&logo=githubactions&logoColor=367cfe)[![Quality Gate Status](https://sonarqube.arbisoft.com/api/project_badges/measure?project=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04&metric=alert_status&token=sqb_9bed7ed9a3961adcacde244816b4c56f8d0b16e4)](https://sonarqube.arbisoft.com/dashboard?id=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04)
 
 # Arbisoft Sessions Portal Frontend
 
@@ -14,6 +14,8 @@ Frontend application for the Sessions Portal built with Next.js, React, and Type
 - Video listing, filtering, and search flows
 - Video detail pages with recommendations
 - RTK Query-powered data fetching and Redux state management
+- Google Tag Manager analytics events for core interactions
+- Sentry error monitoring with error boundaries and automatic recovery from stale chunks after deploys
 - Storybook and Jest support for UI and test workflows
 
 ## Requirements
@@ -62,23 +64,26 @@ Copy `example.env.local` to `.env.local` and set:
 - `NEXT_PUBLIC_BASE_URL` for the backend API host
 - `NEXT_PUBLIC_CLIENT_ID` for Google OAuth
 - `NEXT_PUBLIC_GTM_ID` for Google Tag Manager
+- `NEXT_PUBLIC_SENTRY_DSN` for Sentry error reporting (leave empty to disable)
+- `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` for source map upload during production builds only (never commit the token)
 
 ## Available Scripts
 
-| Script                      | Purpose                                                |
-| --------------------------- | ------------------------------------------------------ |
-| `npm run dev`               | Start development server                               |
-| `npm run build`             | Create production build                                |
-| `npm run build:e2e`         | Build for CI E2E runs after bootstrapping `.env.local` |
-| `npm run start`             | Start production server                                |
-| `npm run lint`              | Run ESLint and TypeScript checks                       |
-| `npm run typecheck`         | Run TypeScript checks only                             |
-| `npm run test`              | Run Jest tests                                         |
-| `npm run test:cov`          | Run Jest with coverage                                 |
-| `npm run release`           | Run the configured `release-it` release flow           |
-| `npm run generate:resource` | Generate scaffolding with Hygen                        |
-| `npm run sb`                | Start Storybook                                        |
-| `npm run build-storybook`   | Build Storybook                                        |
+| Script                    | Purpose                                                |
+| ------------------------- | ------------------------------------------------------ |
+| `npm run dev`             | Start development server                               |
+| `npm run build`           | Create production build                                |
+| `npm run build:e2e`       | Build for CI E2E runs after bootstrapping `.env.local` |
+| `npm run start`           | Start production server                                |
+| `npm run lint`            | Run ESLint and TypeScript checks                       |
+| `npm run typecheck`       | Run TypeScript checks only                             |
+| `npm run test`            | Run Jest tests                                         |
+| `npm run test:cov`        | Run Jest with coverage                                 |
+| `npm run release`         | Run the configured `release-it` release flow           |
+| `npm run format`          | Format the repo with Prettier                          |
+| `npm run format:check`    | Check formatting with Prettier                         |
+| `npm run sb`              | Start Storybook                                        |
+| `npm run build-storybook` | Build Storybook                                        |
 
 ## Architecture
 
@@ -113,7 +118,10 @@ Containerized deployment details are documented in [`docs/deployment-and-release
 ## Troubleshooting
 
 - If API-backed screens do not load, verify that `.env.local` contains a valid `NEXT_PUBLIC_BASE_URL`.
-- If Google login does not initialize, verify `NEXT_PUBLIC_CLIENT_ID` and `NEXT_PUBLIC_GTM_ID` in `.env.local`.
+- If Google login does not initialize, verify `NEXT_PUBLIC_CLIENT_ID` in `.env.local`.
+- If no events reach GTM, verify `NEXT_PUBLIC_GTM_ID` in `.env.local`.
+- If nothing appears in Sentry, verify `NEXT_PUBLIC_SENTRY_DSN` is set. Source maps are uploaded only on non-development builds with `SENTRY_AUTH_TOKEN`.
+- Commits run lint, coverage tests and a production build (Husky pre-commit), so expect 1 to 2 minutes.
 
 ## Contributing
 
@@ -124,6 +132,8 @@ Please use the fork-based workflow documented in `CONTRIBUTING.md`.
 - Contribution guide: [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 - Changelog: [`CHANGELOG.md`](./CHANGELOG.md)
 - Project docs index: [`docs/README.md`](./docs/README.md)
+- Monitoring and error recovery: [`docs/modules/monitoring-and-error-recovery.md`](./docs/modules/monitoring-and-error-recovery.md)
+- Analytics tracking: [`docs/modules/analytics-tracking.md`](./docs/modules/analytics-tracking.md)
 
 ## Inspiration
 

@@ -29,6 +29,8 @@ This directory contains project documentation generated from the current reposit
 - [Feature Flags](./modules/feature-flags.md) — Version-gated flags with URL override for development
 - [Notification System](./modules/notification-system.md) — Singleton manager, React hook, toast rendering
 - [Error Handling](./modules/error-handling.md) — `parseError` normalizer, 401 logout dispatch
+- [Monitoring and Error Recovery](./modules/monitoring-and-error-recovery.md) — Sentry, error boundaries, stale-chunk reload
+- [Analytics Tracking](./modules/analytics-tracking.md) — GTM `dataLayer` events via `trackEvent`
 - [Data Transforms](./modules/data-transforms.md) — `utils.ts` helper functions for display formatting
 
 ## Related Root-Level Documents

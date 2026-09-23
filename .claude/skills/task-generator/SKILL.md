@@ -60,7 +60,7 @@ Signals for "same piece of work":
 
 Each cluster becomes one task — this is what "identify all distinct pieces of work" means. A large diff can produce many tasks; a small, focused diff can produce just one.
 
-Changes confined to `docs/`, `plans/`, `README.md`, `CLAUDE.md`, `.claude/skills/**`, or `.claude/agents/**` don't get a task of their own — they don't fit Feature/UI-UX/Data-State/Infra, and documenting already-built behavior or adding/editing a Claude Code agent config isn't an unbuilt requirement. Note them in your summary as excluded rather than silently dropping them or forcing them into a category. If a doc/agent-config change is the _only_ staged change, say so and stop rather than generating a task from it.
+Changes confined to `docs/`, `plans/`, `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `.claude/skills/**`, or `.claude/agents/**` don't get a task of their own — they don't fit Feature/UI-UX/Data-State/Infra, and documenting already-built behavior or adding/editing a Claude Code agent config isn't an unbuilt requirement. Note them in your summary as excluded rather than silently dropping them or forcing them into a category. If a doc/agent-config change is the _only_ staged change, say so and stop rather than generating a task from it.
 
 ---
 
@@ -79,7 +79,7 @@ This is a single Next.js frontend app — there is no backend repo, so there's n
 Notes:
 
 - A cluster spanning both a route/feature file **and** a new/changed RTK Query endpoint it exclusively depends on is still one **Feature** task — don't artificially split a single page's UI from the data hook it was built with unless each half is substantial enough to be reviewed as its own unit (e.g. a large new API slice with several endpoints backing multiple future pages deserves its own **Data/State** task, separate from the one page currently consuming it).
-- A pure component-extraction refactor (moving existing JSX to a new file in `src/components/`, no behavior change) with an incidental style tweak riding along (e.g. dropping a shadow class) is still fundamentally structural — categorize by what the component *does*: if it's a reusable primitive extraction with no new business logic, treat it as **UI/UX** only when the change's entire point is visual; otherwise it's a **Feature** task ("extract X into a reusable component").
+- A pure component-extraction refactor (moving existing JSX to a new file in `src/components/`, no behavior change) with an incidental style tweak riding along (e.g. dropping a shadow class) is still fundamentally structural — categorize by what the component _does_: if it's a reusable primitive extraction with no new business logic, treat it as **UI/UX** only when the change's entire point is visual; otherwise it's a **Feature** task ("extract X into a reusable component").
 - `src/app/error.tsx`, `global-error.tsx`, `not-found.tsx` changes with real recovery/retry logic (see `chunkLoadRecovery.ts`) are **Infra**, not UI/UX — the point is resiliency behavior, not visuals.
 - Test-only diffs (`*.test.ts`/`*.test.tsx` with no corresponding source change) don't get their own task — coverage isn't an unbuilt requirement; fold them into whichever cluster they cover.
 

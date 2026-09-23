@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use when reviewing code changes, PRs, or components in Session Portal — Arbisoft's video session/events portal — acting as a senior frontend architect applying Clean Code principles and pragmatic standards; performs structured review across bugs, security, performance, and maintainability for the Next.js 15 App Router + Redux Toolkit (RTK Query) frontend; outputs a severity-tiered report then immediately fixes every finding. Self-heals its own SKILL.md and checklist when cited paths/conventions have drifted from the codebase.
+description: Use when reviewing code changes, PRs, or components in Session Portal — Arbisoft's video session/events portal — acting as a senior frontend architect applying Clean Code principles, SOLID and the project architecture advisory rules (auth/token handling, security headers, dependency hygiene, CI/CD, performance, accessibility, health rating); performs structured review across bugs, security, performance, and maintainability for the Next.js 15 App Router + Redux Toolkit (RTK Query) frontend; outputs a severity-tiered report then immediately fixes every finding. Self-heals its own SKILL.md and checklist when cited paths/conventions have drifted from the codebase.
 ---
 
 # Code Review
@@ -23,6 +23,21 @@ The diff is the starting point, not the boundary of the review. For every change
 - **Architectural fit** — check whether the change is placed where it belongs per the four-layer split (`src/app/` thin routes, `src/features/` page-level business logic, `src/components/` reusable UI primitives with no business logic, `src/redux/` API slices/state) and flag it when it bypasses established layering — e.g. business logic or a `fetch` call inside `src/components/`, or a route file in `src/app/` doing more than composing a feature.
 - **Maintainability & scalability judgment** — assess whether the touched area's overall design is getting better or worse, not just whether the diff is internally correct. A fourth near-duplicate implementation of something that already exists elsewhere is a real finding, not scope creep to wave through.
 
+## Architecture Advisory Rules (apply to every review)
+
+These come from the project's architecture advisory and are also enforced by `.claude/agents/architecture-guardian.md`. Treat violations as findings, and fix them in the Fix Pass. The detailed checks are in `references/checklist.md` (sections 1, 2 and 6).
+
+1. **Layering & SOLID** — one-way dependencies `app → features → components → utils/models/constants`; no circular imports; SRP (components about 250 lines, functions about 50); OCP (extend by adding entries, not editing branching); DIP (depend on selectors, action creators, `baseApi`, `notificationManager`, not on state shapes or string action types).
+2. **Auth & token handling** — the access token lives only in the HttpOnly `access` cookie and never reaches client JS, Redux, `localStorage`, logs or analytics. Browser → backend calls go only through the BFF proxy `src/app/bff/[...path]/route.ts`. The middleware fails closed (`publicRoutes` allowlist). Persisted-state shape changes bump the `redux-persist` `version` and add a migration.
+3. **Security hygiene (OWASP-oriented)** — no dynamic `dangerouslySetInnerHTML`, no wildcard image hosts, no weakened security headers/CSP, no secrets or `NEXT_PUBLIC_*` secrets, no `@ts-ignore` in production code, validated redirects and route-handler input, no leaked backend errors.
+4. **Dependencies & supply chain** — no new dependency without a reason; `npm audit --omit=dev` must not gain high/critical advisories; lockfile changed only via npm; `eslint-config-next`/`@next/*` aligned with the Next major.
+5. **CI/CD & deployment** — `build.yml` keeps lint, `test:cov`, audit, build and Sonar; new env vars are added to `example.env.local`, the Dockerfile and `docs/environment-and-configuration.md`; the image stays multi-stage, non-root, health-checked (`/api/health`).
+6. **Performance** — Server Components by default, `"use client"` as low as possible, `next/dynamic` for heavy UI, `next/image`, virtualized unbounded lists, bounded RTK Query cache.
+7. **Quality attributes** — accessibility (names, keyboard, focus, `alt`), localization-readiness (strings in one place, `date-fns` helpers), reliability (error boundaries, Sentry, `parseError`), supportability (docs updated with behavior changes).
+8. **Testing** — every new or changed module has tests; security-critical paths (`middleware.ts`, `actions.ts`, `customBaseQuery.ts`, `app/api/**`, `app/bff/**`) cover failure cases; thresholds in `jest.config.ts` are never lowered.
+9. **Recommendations must be actionable and evidence-based** — every finding cites `file:line`, and where useful the command output, grep result or metric that proves it. When a fix has real alternatives (for example BFF vs. in-memory token), state the trade-off in one line instead of picking silently.
+10. **Health rating** — end the report with a project-health classification: 🟢 Green (aligned), 🟡 Yellow (targeted debt or risk), 🔴 Red (significant architectural/security risk needing immediate follow-up).
+
 ## Coding Standards (enforced during review and fixes)
 
 - **No over-engineering** — solve the actual problem; no abstractions for hypothetical futures
@@ -43,7 +58,7 @@ The diff is the starting point, not the boundary of the review. For every change
 1. **Understand intent** — read commit messages or the user's stated goal
 2. **Read all changed files** — use Read/Grep to examine every modified file
 3. **Assess codebase-wide impact** — apply the **Review Lens: Beyond the Diff** above: grep the wider codebase for duplicate/similar existing implementations, all consumers of anything changed, and the established pattern for this kind of change elsewhere in the repo. Do not scope this to the diff's own files.
-4. **Load checklist** — read `references/checklist.md` and apply every applicable item
+4. **Load checklist** — read `references/checklist.md` and apply every applicable item, including the section 6 architecture advisory checks and the **Architecture Advisory Rules** above
 5. **Self-check this skill** — while reading the changed files, notice whether any path, convention, or table row cited below (Scope Guidance, Key Project Facts, `references/checklist.md`) has drifted from what's actually in the repo; see **Self-Healing This Skill** below
 6. **Emit report** — structured severity-tiered report (see format below)
 7. **Fix everything** — after the report, immediately apply fixes for all Critical, Warning, and Suggestion findings; do not ask for permission
@@ -69,6 +84,7 @@ The diff is the starting point, not the boundary of the review. For every change
 ---
 
 **Verdict:** ✅ Approved / 🔄 Changes Required / ❌ Blocked
+**Architecture health:** 🟢 Green / 🟡 Yellow / 🔴 Red — [one-line reason]
 ```
 
 - Omit a severity section entirely if it has zero findings
@@ -82,7 +98,7 @@ After emitting the report, apply every finding as a code edit:
 1. Work through findings top-down (Critical → Warning → Suggestion)
 2. Edit the exact file and line cited in the finding
 3. Do not rewrite unrelated code — scope each edit to the finding
-4. Run `npm run lint` (ESLint + TypeScript) after all edits and fix any new errors introduced. If the change touched anything with test coverage (or should have — see checklist), also run `npm run test:cov` and confirm the 80% branch/function/line thresholds still pass — `npm run lint` alone does not catch a coverage regression or a broken test.
+4. Run `npm run lint` (ESLint + TypeScript) after all edits and fix any new errors introduced. If the change touched anything with test coverage (or should have — see checklist), also run `npm run test:cov` and confirm the 80% branch/function/line/statement thresholds still pass — `npm run lint` alone does not catch a coverage regression or a broken test. If the change touched auth, the proxy, the store, `next.config.ts`, dependencies, the Dockerfile or CI, also run `npm run build` and `npm audit --omit=dev`.
 5. If step 4 (Self-check this skill) turned up drift in this SKILL.md or `references/checklist.md`, patch it now too
 6. Summarize fixes applied in a single closing block:
 
@@ -111,9 +127,13 @@ This SKILL.md cites specific file paths and conventions (`src/middleware.ts`, `c
 | `src/features/**` | Page-level business logic lives here, not leaked into `src/components/`; consumes RTK Query hooks rather than hand-rolled `fetch`; loading/error states from queries are handled in the UI |
 | `src/components/**` | Reusable UI primitive only — no business logic, no direct RTK Query/API calls, no route-specific assumptions. Flag any data-fetching or feature-specific branching found here as a layering violation |
 | `src/redux/**/apiSlice.ts` (RTK Query endpoints) | New endpoints go through `baseApi.injectEndpoints`; infinite-scroll-style endpoints (paginated lists) follow the `getEvents`/`recommendation` pattern in `src/redux/events/apiSlice.ts` — `serializeQueryArgs` excludes `page` from the cache key, `merge` resets `results` on `page === 1` and dedupes by `id` otherwise, `forceRefetch` deep-compares args via `lodash/isEqual`; exported hook names follow the existing `use<Name>Query`/`useLazy<Name>Query` convention |
-| `src/redux/customBaseQuery.ts` / `src/redux/login/**` | `401` responses must still dispatch `{ type: "login/logout" }` to reset Redux; error toasts go through `notificationManager`, not a locally re-implemented toast; `showErrorToast` extra-option respected for callers that intentionally suppress it |
-| `src/middleware.ts` | Any new protected route added to `protectedRoutes` (or path-prefix check); JWT expiry check stays local (no network call in Edge Runtime); `REDIRECT_TO_KEY` handling preserved for post-login redirect; redirect target validated via `isValidInternalRedirectPath` before use (open-redirect risk otherwise) |
-| `src/app/login/actions.ts` | Server action still POSTs to `/api/v1/users/login`, sets the HttpOnly `access` cookie server-side, and returns data for the client to dispatch into Redux via `loginActions.login` — auth state must not be set from the client alone |
+| `src/redux/customBaseQuery.ts` / `src/redux/login/**` | Requests still go through the `/bff` BFF (no client-side `Authorization` header); `401` responses must still dispatch `logout()` from `src/redux/login/actions.ts` (never the string `"login/logout"`); no import cycle through the store; error toasts go through `notificationManager`, not a locally re-implemented toast; `showErrorToast` extra-option respected for callers that intentionally suppress it |
+| `src/app/api/**`, `src/app/bff/**` (route handlers, incl. the `/bff` proxy and `/api/health`) | Reads the `access` cookie server-side, fails closed with `401` when it is absent, validates path segments (no `.`/`..`), requires the `x-requested-with` guard header (403 on direct navigation), never forwards `Cookie`/`Set-Cookie`, never leaks backend internals; tests use `/** @jest-environment node */`; the middleware matcher excludes `/api` and `/bff` so the handler must enforce its own auth |
+| `src/middleware.ts` | Fails closed: new public routes must be added to `publicRoutes` deliberately and called out; JWT expiry check stays local (no network call in Edge Runtime) and uses `getJwtExpiry`; `REDIRECT_TO_KEY` handling preserved for post-login redirect; redirect target validated via `isValidInternalRedirectPath` before use (open-redirect risk otherwise); matcher still excludes static files |
+| `src/app/login/actions.ts` | Server action still POSTs to `/api/v1/users/login`, sets the HttpOnly `access` cookie server-side, and returns user info with `access: null, refresh: null` for the client to dispatch into Redux via `loginActions.login` — the token itself must never be returned to the client |
+| `next.config.ts` | Security headers and CSP not weakened; `images.remotePatterns` has no wildcard; new third-party origins added to the CSP; `output: "standalone"` kept |
+| `package.json` / `package-lock.json` | New dependency justified and audited (`npm audit --omit=dev`); no high/critical advisory introduced; lockfile changed only via npm |
+| `Dockerfile` / `.github/workflows/**` | Multi-stage, non-root, `HEALTHCHECK` on `/api/health`; new env vars mirrored in `ARG`/`ENV`; CI keeps lint, `test:cov`, audit, build and Sonar |
 | Forms (`react-hook-form` usage) | No `watch()`, no destructuring `formState` directly, no direct `control` property access, no `useWatch`/`useFieldArray` colocated in the same component as `useForm` — all are `no-restricted-syntax` ESLint errors (see checklist) |
 | `src/constants/featureFlags.ts` / `useFeatureFlags` | New flag follows existing `{ enabled, minVersion }` shape; precedence order preserved (URL query param > config > semver check) |
 | Tests (`*.test.ts(x)`) | Test names start with `"should"` (`it("should …")`/`test("should …")` — ESLint-enforced); new/changed logic keeps the 80% branch/function/line coverage threshold (`npm run test:cov`) from regressing |
@@ -125,7 +145,8 @@ This SKILL.md cites specific file paths and conventions (`src/middleware.ts`, `c
 - **Stack:** Next.js 15 App Router frontend (Turbopack), React 19, Redux Toolkit + RTK Query for state/data-fetching, MUI (`@mui/material`) for some UI, Tailwind-free — styling conventions should match what's already in a given component. No backend lives in this repo; it's a pure frontend consuming a separate API at `NEXT_PUBLIC_BASE_URL`.
 - **Four-layer architecture:** `src/app/` (thin route entry points) → `src/features/` (page-level components with business logic) → `src/components/` (reusable UI primitives, no business logic) → `src/redux/` (RTK Query API slices + login slice + store). Also `src/hooks/` (custom hooks — there is deliberately no `useAuth`; auth is middleware-only), `src/models/` (TypeScript interfaces for API shapes), `src/utils/utils.ts` (pure transform/display helpers).
 - **Route → Feature mapping:** `/` and `/upload-video` → middleware-redirected to `/videos`; `/login` → `LoginPage`; `/videos` → `VideosListingPage`; `/videos/results` → `SearchResultsPage`; `/videos/[videoId]` → `VideoDetail` (slug-based, not numeric ID).
-- **Auth is split across three places, with no `useAuth` hook:** (1) `src/middleware.ts` — Edge Runtime, reads the `access` HttpOnly cookie, validates JWT expiry locally (no network call), redirects unauthenticated requests to `/login?redirect_to=<path>`; (2) `src/app/login/actions.ts` — server action `loginAndSetCookie` POSTs a Google `access_token` to `POST /api/v1/users/login`, sets the HttpOnly cookie, returns data for the client to dispatch `loginActions.login(data)`; (3) `src/redux/customBaseQuery.ts` — any `401` dispatches `{ type: "login/logout" }`, resetting Redux login state. `MainLayoutContainer` does NOT enforce auth — it is purely layout.
+- **Auth is split across four places, with no `useAuth` hook:** (1) `src/middleware.ts` — Edge Runtime, fails closed (only `publicRoutes` are open), reads the `access` HttpOnly cookie, validates JWT expiry locally via `getJwtExpiry` (no network call), redirects unauthenticated requests to `/login?redirect_to=<path>`; (2) `src/app/login/actions.ts` — server action `loginAndSetCookie` POSTs a Google `access_token` to `POST /api/v1/users/login`, sets the HttpOnly cookie, and returns user info with `access`/`refresh` nulled for the client to dispatch `loginActions.login(data)`; (3) `src/app/bff/[...path]/route.ts` — BFF proxy that reads the cookie and attaches the `Bearer` header server-side, so the token never reaches client JS; (4) `src/redux/customBaseQuery.ts` — targets the proxy, and any `401` dispatches `logout()` from `src/redux/login/actions.ts`, resetting Redux login state. `redux-persist` (version 1) stores only user info. `MainLayoutContainer` does NOT enforce auth — it is purely layout.
+- **Delivery & security config:** `next.config.ts` sets security headers and a `Content-Security-Policy-Report-Only`, restricts image hosts to the backend host plus `NEXT_PUBLIC_IMAGE_HOSTS`; `GET /api/health` backs the Docker `HEALTHCHECK`; CI (`build.yml`) runs lint, `test:cov`, `npm audit`, build and Sonar.
 - **RTK Query infinite scroll:** `getEvents` and `recommendation` in `src/redux/events/apiSlice.ts` use a custom accumulation strategy so infinite scroll works without pagination-keyed cache entries — `serializeQueryArgs` excludes `page` from the cache key, `merge` resets `results` to `[]` on `page === 1` and otherwise appends deduped-by-`id`, `forceRefetch` deep-compares args via `lodash/isEqual`. `useVideoQueryManager` resets to `page(1)` on filter change to trigger the reset-and-repopulate path.
 - **Feature flags:** `src/constants/featureFlags.ts` defines `{ enabled, minVersion }` per flag (`darkModeSwitcher`, `uploadVideo`, both currently `enabled: false`). `useFeatureFlags` reads `useSearchParams()` and resolves precedence as URL param > config > semver check; flags can be forced on via `?darkModeSwitcher=true` in development.
 - **Notifications:** `notificationManager` (from `src/components/Notification/notification.tsx`) is a singleton usable outside React — `customBaseQuery` calls it directly for API error toasts. Inside components, use the `useNotification()` hook instead of the singleton directly.
@@ -136,5 +157,6 @@ This SKILL.md cites specific file paths and conventions (`src/middleware.ts`, `c
 
 ## Related skills
 
+- `architecture-guardian` (agent, `.claude/agents/architecture-guardian.md`) — the same architecture rules as an automatic finishing step on every code change; keep its rules and this skill's **Architecture Advisory Rules** in sync.
 - `commit-generator` — for generating the commit message / PR description once review fixes are applied.
 - `documentation-generator` — escalate here if a review reveals project docs are now out of date with the change.

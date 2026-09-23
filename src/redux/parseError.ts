@@ -9,7 +9,7 @@ export type ErrorType = {
 type ErrorStatus = number | string | "FETCH_ERROR" | "PARSING_ERROR" | "TIMEOUT_ERROR" | "CUSTOM_ERROR";
 
 const isErrorAnObject = (err: unknown): err is Record<string, unknown> =>
-  Boolean(err) && typeof err === "object" && Object.keys(err ?? {}).length > 0;
+  err !== null && typeof err === "object" && Object.keys(err).length > 0;
 
 export const parseError = (error: unknown, statusCode: ErrorStatus): ErrorType[] => {
   // Handle server errors with a generic message

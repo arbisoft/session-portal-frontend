@@ -7,7 +7,7 @@ import Script from "next/script";
 import { NotificationProvider } from "@/components/Notification";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 import ThemeProvider from "@/components/theme/theme-provider";
-import { DEFAULT_LANGUAGE, DEFAULT_LANGUAGE_DIR, NODE_ENV, CLIENT_ID, GTM_ID } from "@/constants/constants";
+import { DEFAULT_LANGUAGE, DEFAULT_LANGUAGE_DIR, NODE_ENV, CLIENT_ID, GTM_ID, HOTJAR_ID } from "@/constants/constants";
 import { Providers } from "@/redux/store/provider";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode; pa
                 __html: `
                 (function(h,o,t,j,a,r){
                     h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-                    h._hjSettings={hjid:6412285,hjsv:6};
+                    h._hjSettings={hjid:${Number(HOTJAR_ID)},hjsv:6};
                     a=o.getElementsByTagName('head')[0];
                     r=o.createElement('script');r.async=1;
                     r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;

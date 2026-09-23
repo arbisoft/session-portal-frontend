@@ -22,7 +22,7 @@ Handles all aspects of user identity: route protection, Google OAuth login, toke
 
 ### Login Flow
 
-1. User visits any protected route (`/videos` or `/videos/*`) without a valid cookie.
+1. User visits any protected route (any route other than `/login`, since the middleware fails closed) without a valid cookie.
 2. Middleware reads the `access` HttpOnly cookie. If missing or expired (JWT `exp` check), it redirects to `/login?redirect_to=<original path>`.
 3. `LoginPage` reads `redirect_to` from URL params and validates it with `isValidInternalRedirectPath` to prevent open-redirect attacks.
 4. User clicks "Sign in with Google". `useGoogleLogin` from `@react-oauth/google` opens the Google popup.
@@ -42,7 +42,7 @@ The middleware runs on every non-static request via the Next.js Edge Runtime. Or
 ```
 1. Authenticated user on /login  →  redirect to redirect_to or /videos
 2. Any user on / or /upload-video  →  redirect to /videos
-3. Unauthenticated user on /videos or /videos/*  →  redirect to /login?redirect_to=<path>
+3. Unauthenticated user on any route other than /login (fail-closed: publicRoutes = ["/login"])  →  redirect to /login?redirect_to=<path>
 4. Anything else  →  pass through
 ```
 
@@ -55,11 +55,11 @@ Token validation is local (no network call): the middleware decodes the JWT payl
 1. Deletes the `access` cookie via Next.js `cookies()` API
 2. Calls `redirect("/login")` — this is a server-side redirect
 
-The `customBaseQuery` also triggers a client-side logout: any `401` response dispatches `{ type: "login/logout" }`, which resets the Redux login state to `initialState` (all null fields).
+The `customBaseQuery` also triggers a client-side logout: any `401` response dispatches `logout()` (from `src/redux/login/actions.ts`), which resets the Redux login state to `initialState` (all null fields).
 
 ### Session Persistence
 
-`redux-persist` persists only the `login.session` key to `localStorage`:
+`redux-persist` persists only the `login.session` key to `localStorage`. Because tokens are `null` in client state, only the user profile is stored (state version 1 migrates away any legacy persisted tokens):
 
 - persist key: `session-portal`
 - whitelist: `["login"]`
@@ -68,7 +68,7 @@ The `customBaseQuery` also triggers a client-side logout: any `401` response dis
 
 ### Token Usage
 
-`customBaseQuery` reads `selectAccessToken` from Redux state and injects `Authorization: Bearer <token>` into every API request when an access token is present.
+The token never reaches client JS. `customBaseQuery` sends requests to the BFF proxy (`src/app/bff/[...path]/route.ts`), which reads the HttpOnly `access` cookie and injects `Authorization: Bearer <token>` server-side. The proxy returns `401` when the cookie is missing.
 
 ## Key Edge Cases
 

@@ -4,8 +4,9 @@ import * as Sentry from "@sentry/nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { BASE_URL } from "@/constants/constants";
+import { ACCESS_COOKIE_NAME, BASE_URL } from "@/constants/constants";
 import { LoginResponse } from "@/models/Auth";
+import { getJwtExpiry } from "@/utils/utils";
 
 // Server action for login - sets auth cookie
 export async function loginAndSetCookie(formData: FormData): Promise<LoginResponse> {
@@ -36,30 +37,21 @@ export async function loginAndSetCookie(formData: FormData): Promise<LoginRespon
       throw new Error("Login response did not include an access token");
     }
 
-    // Decode JWT to get expiry
-    let maxAge = 60 * 60 * 24 * 7; // default 7 days
-    try {
-      const payload = data.access.split(".")[1];
-      const decodedPayload = JSON.parse(atob(payload));
-      const currentTime = Math.floor(Date.now() / 1000);
-      maxAge = decodedPayload.exp - currentTime;
-      // Ensure minimum 1 hour
-      maxAge = Math.max(maxAge, 60 * 60);
-    } catch {
-      // If decoding fails, use default
-    }
+    // Derive cookie lifetime from the JWT expiry (minimum 1 hour, default 7 days)
+    const exp = getJwtExpiry(data.access);
+    const maxAge = exp === null ? 60 * 60 * 24 * 7 : Math.max(exp - Math.floor(Date.now() / 1000), 60 * 60);
 
     // Set HttpOnly cookie with the access token
     const cookieStore = await cookies();
-    cookieStore.set("access", data.access, {
+    cookieStore.set(ACCESS_COOKIE_NAME, data.access, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
       maxAge,
     });
-    // Return the full response data for client-side localStorage storage
-    return data;
+    // Tokens stay in the HttpOnly cookie; only the profile is returned to the client.
+    return { ...data, access: null, refresh: null };
   } catch (error) {
     if (error instanceof Error) {
       throw error;
@@ -75,7 +67,7 @@ export async function loginAndSetCookie(formData: FormData): Promise<LoginRespon
 // Server action for logout - clears auth cookie
 export async function logoutAndClearCookie() {
   const cookieStore = await cookies();
-  cookieStore.delete("access");
+  cookieStore.delete(ACCESS_COOKIE_NAME);
 
   // Redirect to login page
   redirect("/login");

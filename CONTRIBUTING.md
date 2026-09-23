@@ -163,6 +163,7 @@ When contributing:
 - follow the existing code style and project structure
 - place tests alongside code when appropriate
 - update documentation when behavior changes
+- instrument new or changed user-facing interactions with `trackEvent` (see [Analytics Tracking](./docs/modules/analytics-tracking.md)) and cover the call in tests
 
 ## Suggested Local Checks
 
@@ -183,7 +184,7 @@ The repository currently documents use of:
 - `.env.local`
 - `example.env.local`
 
-Do not commit secrets or local-only environment values.
+Do not commit secrets or local-only environment values. `SENTRY_AUTH_TOKEN` in particular is a build-time secret; keep it out of `.env.local` commits and provide it through CI secrets.
 
 ## Pull Requests
 
@@ -202,14 +203,14 @@ Steps:
 1. Push your branch to your fork
 2. Open the pull request targeting the `dev` branch of the upstream repository
 3. Fill in the PR template completely
-4. Wait for CI (lint workflow) to pass before requesting review
+4. Wait for CI (the `Build` workflow: lint, coverage tests, SonarQube scan) to pass before requesting review
 
 ## CI and Release
 
-| Event                          | What happens                                                     |
-| ------------------------------ | ---------------------------------------------------------------- |
-| Push or PR to `dev`            | Lint + type check runs automatically                             |
-| PR from `dev` merged to `main` | `release-it` creates a GitHub release and updates `CHANGELOG.md` |
-| GitHub release published       | Docker image built and pushed to AWS ECR; deployment triggered   |
+| Event | What happens |
+| --- | --- |
+| Push to `dev`/`main`, or PR to `dev` | Lint + type check, coverage tests, `npm audit`, a production build, and a SonarQube scan run |
+| `dev` → `main` PR merged | `release-it` bumps the version, updates `CHANGELOG.md`, tags and publishes a GitHub release |
+| GitHub release published | Docker image built and pushed to AWS ECR; deployment triggered |
 
-Contributors do not need to run `npm run release` manually.
+Merging a `dev` → `main` PR is what triggers the release: `.github/workflows/release.yml` runs `release-it` (config in `.release-it.json`), which infers the version bump from conventional commits, updates `CHANGELOG.md`, tags the commit as `v<version>`, and publishes a GitHub release. That release publish triggers the image build/deploy workflow above. This relies on a `GH_RELEASE_TOKEN` repo secret rather than the default `GITHUB_TOKEN` — see `docs/deployment-and-release.md#operational-gaps` for why.
