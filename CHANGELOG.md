@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.3.7](https://github.com/arbisoft/session-portal-frontend/compare/1.3.6...v1.3.7) (2026-09-23)
+
+### Features
+
+* **api:** proxy API calls through BFF and keep auth token server-side ([f14022d](https://github.com/arbisoft/session-portal-frontend/commit/f14022d10f7f66e2e558d25e7f30a2e63a175a10))
+* **build:** add security headers and restrict image hosts ([41edc9b](https://github.com/arbisoft/session-portal-frontend/commit/41edc9b3eeefd6a7b54b0d3083167cc5b7233a72))
+
+### Bug Fixes
+
+* **test:** restore correct theme snapshot lost during dev rebase merge ([c1c714b](https://github.com/arbisoft/session-portal-frontend/commit/c1c714b93452011ff08354af825cec1a7fc86084))
+
+### Documentation
+
+* **claude:** add architecture-guardian agent and refresh skills ([eb59af2](https://github.com/arbisoft/session-portal-frontend/commit/eb59af2f6980b945cbf64f6096f638e23807278f))
+* correct stale module documentation to match current behavior ([29a0d78](https://github.com/arbisoft/session-portal-frontend/commit/29a0d785a77a4f8c6a3320283ae317275da8683d))
+* **docs:** add project reference and contribution documentation ([b683c52](https://github.com/arbisoft/session-portal-frontend/commit/b683c52b84bd2a254105e1739287d6bfddadcec2))
+* refresh project documentation and changelog ([3078815](https://github.com/arbisoft/session-portal-frontend/commit/30788152e53d8030d9ef918c46a3503024d9c972))
+
+### Code Refactoring
+
+* **auth:** implement secure server-side authentication using middleware and server actions ([6461e3e](https://github.com/arbisoft/session-portal-frontend/commit/6461e3ec3ff04197271c58e5a320a472462caa2a))
+
+### Tests
+
+* raise coverage for layout, monitoring and analytics ([c9c7056](https://github.com/arbisoft/session-portal-frontend/commit/c9c70562cd57bb025648aaaea58ab60f0fc168d2))
+
+### Continuous Integration
+
+* update build workflow ([b046711](https://github.com/arbisoft/session-portal-frontend/commit/b0467116fc5b44d4957a68905563fbb2b7d8b496))
+
+Release PR: [#181](https://github.com/arbisoft/session-portal-frontend/pull/181)
+
 ## 1.3.6 (2026-09-14)
 
 - feat(analytics): [ASP-319] instrument GA event tracking across core user interactions ([7530418](https://github.com/arbisoft/session-portal-frontend/commit/7530418))
