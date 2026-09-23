@@ -37,7 +37,7 @@ Authentication is handled by middleware in `src/middleware.ts` and server action
 
 The middleware intercepts requests to enforce authentication:
 
-1. Protects routes: `/videos` and `/videos/*` require valid authentication
+1. Fails closed: every route requires valid authentication except `/login` (`publicRoutes = ["/login"]`)
 2. Redirects unauthenticated users to `/login` with `redirect_to` parameter
 3. Redirects authenticated users away from `/login` to validated `redirect_to` or `/videos`
 4. Redirects root path `/` and `/upload-video` to `/videos`

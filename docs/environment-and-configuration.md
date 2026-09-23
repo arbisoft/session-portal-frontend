@@ -49,7 +49,7 @@ This value is used for:
 - `productionBrowserSourceMaps: false`
 - Emotion compiler support
 - standalone build output (`output: "standalone"`)
-- `images.remotePatterns: [{ hostname: "*" }]` — all external image hostnames are allowed (intentionally permissive for development convenience)
+- `images.remotePatterns` — restricted to the `NEXT_PUBLIC_BASE_URL` host plus any hosts listed in `NEXT_PUBLIC_IMAGE_HOSTS`, not a wildcard
 - build-time ESLint suppression via `ignoreDuringBuilds: true`
 - Sentry wrapper (`withSentryConfig`) applied for every `NODE_ENV` except `development`
 

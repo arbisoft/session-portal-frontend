@@ -207,10 +207,10 @@ Steps:
 
 ## CI and Release
 
-| Event                          | What happens                                                     |
-| ------------------------------ | ---------------------------------------------------------------- |
-| Push or PR to `dev`            | Lint + type check, coverage tests and a SonarQube scan run       |
-| PR from `dev` merged to `main` | `release-it` creates a GitHub release and updates `CHANGELOG.md` |
-| GitHub release published       | Docker image built and pushed to AWS ECR; deployment triggered   |
+| Event | What happens |
+| --- | --- |
+| Push to `dev`/`main`, or PR to `dev` | Lint + type check, coverage tests, `npm audit`, a production build, and a SonarQube scan run |
+| `dev` → `main` PR merged | `release-it` bumps the version, updates `CHANGELOG.md`, tags and publishes a GitHub release |
+| GitHub release published | Docker image built and pushed to AWS ECR; deployment triggered |
 
-Contributors do not need to run `npm run release` manually.
+Merging a `dev` → `main` PR is what triggers the release: `.github/workflows/release.yml` runs `release-it` (config in `.release-it.json`), which infers the version bump from conventional commits, updates `CHANGELOG.md`, tags the commit as `v<version>`, and publishes a GitHub release. That release publish triggers the image build/deploy workflow above. This relies on a `GH_RELEASE_TOKEN` repo secret rather than the default `GITHUB_TOKEN` — see `docs/deployment-and-release.md#operational-gaps` for why.

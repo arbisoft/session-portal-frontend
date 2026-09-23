@@ -16,12 +16,14 @@ Shows ephemeral toast notifications anywhere in the app — including from outsi
 
 The system exposes two ways to trigger a notification:
 
-1. **React hook** (`useNotification`): used inside React components.
+1. **React hook** (`useNotification`): used inside React components. It returns the `NotificationManager` instance itself — call methods on it directly, don't destructure them, since `showNotification`/`hideNotification` are plain class methods and lose their `this` binding if detached from the instance.
 
    ```ts
-   const { showNotification } = useNotification();
-   showNotification({ message: "Login failed", severity: "error" });
+   const notification = useNotification();
+   notification.showNotification({ message: "Login failed", severity: "error" });
    ```
+
+   Destructuring (`const { showNotification } = useNotification()`) compiles but throws at call time (`this.state` is `undefined` inside the detached method) — see `src/features/UploadVideo/videoPicker.tsx` for the correct call-on-instance pattern.
 
 2. **Singleton manager** (`notificationManager`): used outside React, such as in `customBaseQuery`.
    ```ts
@@ -29,7 +31,7 @@ The system exposes two ways to trigger a notification:
    notificationManager.showNotification({ message: errors[0].message, severity: "error" });
    ```
 
-Both paths call the same `NotificationManager` instance.
+Both paths call methods on the same `NotificationManager` instance.
 
 ### `NotificationManager` (Singleton)
 
