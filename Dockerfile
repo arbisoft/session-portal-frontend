@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 # Stage 1: Install dependencies
-FROM node:22.14.0-alpine AS deps
+FROM node:22.23.2-alpine AS deps
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --prefer-offline --no-audit --progress=false
 
 # Stage 2: Build the Next.js app
-FROM node:22.14.0-alpine AS builder
+FROM node:22.23.2-alpine AS builder
 
 ARG NEXT_PUBLIC_BASE_URL
 ARG NEXT_PUBLIC_CLIENT_ID
@@ -42,7 +42,7 @@ RUN --mount=type=secret,id=sentry_auth,required=false \
     SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_auth 2>/dev/null || true)" npm run build
 
 # Stage 3: Lightweight runtime image
-FROM node:22.14.0-alpine AS runner
+FROM node:22.23.2-alpine AS runner
 
 ARG UID=1001
 ARG GID=1001
