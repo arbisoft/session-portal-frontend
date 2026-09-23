@@ -61,4 +61,4 @@ A tab opened before a deploy may request a chunk hash the server no longer has. 
 
 ## Tests
 
-`src/instrumentation.test.ts`, `src/instrumentation-client.test.ts`, `src/app/error.test.tsx`, and `src/utils/chunkLoadRecovery.test.ts`. `global-error.tsx` and `not-found.tsx` have no dedicated test file.
+`src/instrumentation.test.ts`, `src/instrumentation-client.test.ts`, `src/instrumentation-client.production.test.ts`, `src/app/error.test.tsx`, and `src/utils/chunkLoadRecovery.test.ts`. `global-error.tsx` and `not-found.tsx` have no dedicated test file.

@@ -60,7 +60,7 @@ Signals for "same piece of work":
 
 Each cluster becomes one task — this is what "identify all distinct pieces of work" means. A large diff can produce many tasks; a small, focused diff can produce just one.
 
-Changes confined to `docs/`, `plans/`, `README.md`, `CLAUDE.md`, `.claude/skills/**`, or `.claude/agents/**` don't get a task of their own — they don't fit Feature/UI-UX/Data-State/Infra, and documenting already-built behavior or adding/editing a Claude Code agent config isn't an unbuilt requirement. Note them in your summary as excluded rather than silently dropping them or forcing them into a category. If a doc/agent-config change is the _only_ staged change, say so and stop rather than generating a task from it.
+Changes confined to `docs/`, `plans/`, `README.md`, `CONTRIBUTING.md`, `CLAUDE.md`, `.claude/skills/**`, or `.claude/agents/**` don't get a task of their own — they don't fit Feature/UI-UX/Data-State/Infra, and documenting already-built behavior or adding/editing a Claude Code agent config isn't an unbuilt requirement. Note them in your summary as excluded rather than silently dropping them or forcing them into a category. If a doc/agent-config change is the _only_ staged change, say so and stop rather than generating a task from it.
 
 ---
 
