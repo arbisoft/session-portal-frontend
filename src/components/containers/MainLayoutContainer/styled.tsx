@@ -17,7 +17,7 @@ export const MainContainer = styled(Container, {
 })<MainContainerProps>(({ theme, isSidebarAvailable = true }) => ({
   position: "relative",
   display: "flex",
-  gap: theme.spacing(4),
+  gap: theme.spacing(3),
   paddingTop: theme.spacing(containerTopSpacingMobile),
   paddingInline: theme.spacing(0),
 
@@ -59,7 +59,7 @@ export const ContentContainer = styled(Box)(({ theme }) => ({
 
 export const RightSidebar = styled(Box)({
   flexShrink: 0,
-  width: 300,
+  width: 360,
 });
 
 export const StyledDrawer = styled(Drawer)(({ theme }) => ({
