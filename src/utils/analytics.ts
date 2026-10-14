@@ -43,6 +43,7 @@ export const GA_EVENTS = {
   VIDEO_FULLSCREEN_CHANGE: "video_fullscreen_change",
   VIDEO_PLAYBACK_RATE_CHANGE: "video_playback_rate_change",
   VIDEO_COMPLETE: "video_complete",
+  VIDEO_WATCH_THRESHOLD: "video_watch_threshold",
   VIDEO_PLAY_ERROR: "video_play_error",
   RECOMMENDATIONS_LOAD_MORE: "recommendations_load_more",
   FEATURED_SLIDER_NAVIGATE: "featured_slider_navigate",

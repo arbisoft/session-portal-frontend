@@ -8,6 +8,7 @@ import {
   MediaProvider,
   useMediaState,
   Poster,
+  Track,
   type MediaPlayerInstance,
   type MediaVolumeChange,
   PlayButton,
@@ -23,15 +24,18 @@ import { VideoPlayerProps } from "./types";
 import "./styles.css";
 
 const VideoPlayer: FC<VideoPlayerProps> = ({
+  captionsFile,
   className,
   crossOrigin = true,
   height,
   onVideoEnded,
+  onWatchThreshold,
   playsInline = true,
   posterAlt,
   posterSrc,
   title,
   videoSrc,
+  watchThresholdSeconds = 30,
   width = "70%",
 }) => {
   const player = useRef<MediaPlayerInstance>(null);
@@ -50,6 +54,30 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   }, [onVideoEnded, videoLabel]);
 
   const isPaused = useMediaState("paused", player);
+
+  const accumulatedTimeRef = useRef(0);
+  const hasCountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!onWatchThreshold || hasCountedRef.current) return;
+
+    const interval = setInterval(() => {
+      if (!isPaused) {
+        accumulatedTimeRef.current += 1;
+        if (accumulatedTimeRef.current >= watchThresholdSeconds) {
+          hasCountedRef.current = true;
+          trackEvent(GA_EVENTS.VIDEO_WATCH_THRESHOLD, ANALYTICS_CATEGORY.VIDEO_PLAYER, {
+            title: videoLabel,
+            threshold_seconds: watchThresholdSeconds,
+          });
+          onWatchThreshold();
+          clearInterval(interval);
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, onWatchThreshold, videoLabel, watchThresholdSeconds]);
 
   return (
     <div style={{ width, height }}>
@@ -87,6 +115,16 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
       >
         <MediaProvider>
           <Poster className="vds-poster" src={posterSrc} alt={posterAlt} />
+          {captionsFile && (
+            <Track
+              src={captionsFile}
+              kind="subtitles"
+              label="English"
+              language="en"
+              type={captionsFile.split(/[?#]/)[0].toLowerCase().endsWith(".srt") ? "srt" : "vtt"}
+              default
+            />
+          )}
         </MediaProvider>
 
         {isPaused && (
@@ -96,7 +134,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         )}
 
         {/* Layouts */}
-        <DefaultVideoLayout icons={defaultLayoutIcons} />
+        <DefaultVideoLayout icons={defaultLayoutIcons} noAudioGain />
       </MediaPlayer>
     </div>
   );

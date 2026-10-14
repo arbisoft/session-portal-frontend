@@ -102,6 +102,12 @@ export const eventsApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Playlist"],
     }),
+    incrementViewCount: builder.mutation<{ view_count: number }, string>({
+      query: (slug) => ({
+        url: `/events/videoasset/${slug}/view/`,
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -110,6 +116,7 @@ export const {
   useEventTagsQuery,
   useEventTypesQuery,
   useGetEventsQuery,
+  useIncrementViewCountMutation,
   useLazyEventDetailQuery,
   useLazyEventTagsQuery,
   useLazyEventTypesQuery,
