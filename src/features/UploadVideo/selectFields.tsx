@@ -188,11 +188,11 @@ const TagsAutocomplete = ({ onChange, error }: TagsAutocompleteProps) => {
           </li>
         );
       }}
-      renderTags={(value: (Tag | string)[], getTagProps) =>
+      renderValue={(value: (Tag | string)[], getItemProps) =>
         value.map((option, index) => {
           const label = typeof option === "string" ? option.replace(/^#+/, "") : option.name;
-          const { key, ...tagProps } = getTagProps({ index });
-          return <Chip key={key} label={`#${label}`} size="small" {...tagProps} />;
+          const { key, ...itemProps } = getItemProps({ index });
+          return <Chip key={key} label={`#${label}`} size="small" {...itemProps} />;
         })
       }
       fullWidth
