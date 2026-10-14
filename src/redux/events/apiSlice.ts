@@ -1,6 +1,7 @@
 import isEqual from "lodash/isEqual";
 import omit from "lodash/omit";
 
+import { events, users } from "@/endpoints";
 import {
   AllEventResponse,
   Event,
@@ -52,16 +53,18 @@ export const eventsApi = baseApi.injectEndpoints({
     }),
     allTags: builder.query<Tag[], void>({
       query: () => ({
-        url: "/events/tags/",
+        url: events.tagsEndpoint,
         method: "GET",
       }),
+      providesTags: ["Tag"],
     }),
     createTag: builder.mutation<Tag, { name: string }>({
       query: (body) => ({
-        url: "/events/tags/",
+        url: events.tagsEndpoint,
         method: "POST",
         body,
       }),
+      invalidatesTags: ["Tag"],
     }),
     getEvents: builder.query<AllEventResponse, EventsParams>({
       query: (params) => ({
@@ -143,13 +146,15 @@ export const eventsApi = baseApi.injectEndpoints({
         params.presenter_ids.forEach((id) => formData.append("presenter_ids", String(id)));
         params.tags?.forEach((id) => formData.append("tags", String(id)));
         if (params.thumbnail) formData.append("thumbnail", params.thumbnail);
-        return { url: "/events/", method: "POST", body: formData };
+        return { url: events.createEvent, method: "POST", body: formData };
       },
+      invalidatesTags: ["Event", "Playlist", "Tag"],
     }),
     searchUsers: builder.query<UserSearchResult[], string>({
       query: (q) => ({
-        url: `/users/search/?q=${encodeURIComponent(q)}`,
+        url: users.searchUsers,
         method: "GET",
+        params: { q },
       }),
     }),
   }),

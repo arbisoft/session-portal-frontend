@@ -61,14 +61,14 @@ App-level special files: `src/app/error.tsx` (route error boundary), `src/app/gl
 
 ## Feature Modules
 
-| Feature folder      | Main responsibility inferred                                                       |
-| ------------------- | ---------------------------------------------------------------------------------- |
-| `HomePage`          | Startup route behavior and auth redirect shell                                     |
-| `LoginPage`         | Login screen and Google OAuth initiation                                           |
+| Feature folder | Main responsibility inferred |
+| --- | --- |
+| `HomePage` | Startup route behavior and auth redirect shell |
+| `LoginPage` | Login screen and Google OAuth initiation |
 | `VideosListingPage` | Browsing videos, featured content, filters, virtualized list with infinite loading |
-| `SearchResultsPage` | Search-specific result presentation                                                |
-| `VideoDetail`       | Player page with metadata and recommendations                                      |
-| `UploadVideo`       | Upload-related UI flow                                                             |
+| `SearchResultsPage` | Search-specific result presentation |
+| `VideoDetail` | Player page with metadata and recommendations |
+| `UploadVideo` | Staff-only upload flow: file picker, upload progress, metadata form (`form.tsx`, `fields.tsx`, `selectFields.tsx`) |
 
 ## Component Organization Pattern
 
