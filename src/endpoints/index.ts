@@ -1,5 +1,3 @@
-import * as events from "./events";
-import * as login from "./login";
-import * as users from "./users";
-
-export { events, login, users };
+export * as events from "./events";
+export * as login from "./login";
+export * as users from "./users";
