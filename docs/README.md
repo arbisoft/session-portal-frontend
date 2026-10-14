@@ -24,7 +24,7 @@ This directory contains project documentation generated from the current reposit
 
 - [Authentication](./modules/authentication.md) — Google OAuth login, middleware route protection, token lifecycle
 - [Video Listing](./modules/video-listing.md) — Filtering, sorting, featured slider, infinite scroll cache strategy
-- [Video Detail](./modules/video-detail.md) — Player, metadata, tags, recommendations infinite scroll
+- [Video Detail](./modules/video-detail.md) — Player, captions, view counting, metadata, tags, recommendations infinite scroll
 - [Upload Video](./modules/upload-video.md) — Staff-only upload flow, background upload with progress, queued publish
 - [Search Results](./modules/search-results.md) — Text search, virtualized results, lazy query
 - [Feature Flags](./modules/feature-flags.md) — Version-gated flags with URL override for development
