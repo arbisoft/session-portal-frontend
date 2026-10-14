@@ -15,6 +15,7 @@ export const DEFAULT_THUMBNAIL = "/assets/images/temp-youtube-logo.webp";
 export const DEFAULT_LANGUAGE = "en";
 export const DEFAULT_LANGUAGE_DIR = "ltr";
 export const ALLOWED_TYPES = ["video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"];
+export const MAX_VIDEO_FILE_SIZE_BYTES = 1024 ** 3;
 export const REDIRECT_TO_KEY = "redirect_to";
 export const ACCESS_COOKIE_NAME = "access";
 export const API_PROXY_PREFIX = "/bff";

@@ -40,7 +40,7 @@ The middleware intercepts requests to enforce authentication:
 1. Fails closed: every route requires valid authentication except `/login` (`publicRoutes = ["/login"]`)
 2. Redirects unauthenticated users to `/login` with `redirect_to` parameter
 3. Redirects authenticated users away from `/login` to validated `redirect_to` or `/videos`
-4. Redirects root path `/` and `/upload-video` to `/videos`
+4. Redirects root path `/` to `/videos`
 
 ### Server Actions (`actions.ts`)
 
@@ -107,13 +107,12 @@ Recognized search params:
 
 ## Upload Flow
 
-The upload route (`/upload-video`) is redirected to `/videos` by `src/middleware.ts` regardless of feature flag state. The feature is also gated behind `uploadVideo` in `src/constants/featureFlags.ts` (currently `enabled: false`).
+The upload route (`/upload-video`) is available to authenticated staff users only. `FileUpload` reads `selectIsStaff` and redirects everyone else to `/videos`; the Navbar menu entry is gated the same way. There is no feature flag.
 
-When the route eventually becomes accessible:
-
-- `FileUpload` toggles between `VideoPicker` (file selection) and `VideoForm` (metadata entry) based on selected file state
-- `VideoForm` collects: title, presenter, event date, description, related videos, playlists, thumbnail
-- Backend submission is not yet implemented; `VideoForm.onSubmit` currently returns the form data without making an API call
+- `FileUpload` toggles between `VideoPicker` (file selection and validation) and `VideoForm` (metadata entry) based on selected file state
+- Selecting a file starts the upload immediately (`useVideoUpload`, XHR through the BFF proxy)
+- `VideoForm` collects: title, presenters, event date, description, thumbnail, playlists, tags. Submitting before the upload finishes queues the publish until the video asset id is available
+- Publishing calls `createEvent` (creating new tags first via `createTag`), then navigates to the new video detail page
 
 ## Feature Flag URL Override
 
@@ -121,7 +120,6 @@ When the route eventually becomes accessible:
 
 ```
 /videos?darkModeSwitcher=true
-/login?uploadVideo=true
 ```
 
 | URL value            | Effect                                            |

@@ -9,6 +9,7 @@ export const ANALYTICS_CATEGORY = {
   VIDEO_CARD: "video_card",
   VIDEO_PLAYER: "video_player",
   RECOMMENDATIONS: "recommendations",
+  UPLOAD_VIDEO: "upload_video",
 } as const;
 
 type AnalyticsCategory = (typeof ANALYTICS_CATEGORY)[keyof typeof ANALYTICS_CATEGORY];
@@ -47,6 +48,14 @@ export const GA_EVENTS = {
   VIDEO_PLAY_ERROR: "video_play_error",
   RECOMMENDATIONS_LOAD_MORE: "recommendations_load_more",
   FEATURED_SLIDER_NAVIGATE: "featured_slider_navigate",
+  UPLOAD_FILE_SELECTED: "upload_file_selected",
+  UPLOAD_FILE_REJECTED: "upload_file_rejected",
+  UPLOAD_VIDEO_COMPLETED: "upload_video_completed",
+  UPLOAD_VIDEO_FAILED: "upload_video_failed",
+  UPLOAD_THUMBNAIL_SELECT: "upload_thumbnail_select",
+  UPLOAD_PUBLISH_SUBMIT: "upload_publish_submit",
+  UPLOAD_PUBLISH_SUCCESS: "upload_publish_success",
+  UPLOAD_PUBLISH_FAILED: "upload_publish_failed",
 } as const;
 
 export const trackEvent = (event: string, category: AnalyticsCategory, params?: AnalyticsEventParams): void => {

@@ -61,7 +61,42 @@ describe("api proxy route", () => {
 
     await POST(buildRequest("/bff/events/x", { method: "POST", cookie: "tok", body: "{}" }), ctx(["events", "x"]));
 
-    expect(mockFetch.mock.calls[0][1].body).toBeInstanceOf(ArrayBuffer);
+    expect(await new Response(mockFetch.mock.calls[0][1].body).text()).toBe("{}");
+  });
+
+  it("should stream the POST body with half duplex and forward its content-length", async () => {
+    mockFetch.mockResolvedValue(new Response(null, { status: 201 }));
+    const payload = "x".repeat(1024);
+    const request = new NextRequest("http://localhost/bff/events/videoassets", {
+      method: "POST",
+      headers: {
+        cookie: "access=tok",
+        "content-type": "multipart/form-data; boundary=b",
+        "content-length": String(payload.length),
+        "x-requested-with": "session-portal",
+      },
+      body: payload,
+    });
+
+    await POST(request, ctx(["events", "videoassets"]));
+
+    const options = mockFetch.mock.calls[0][1];
+    expect(options.duplex).toBe("half");
+    expect(options.headers.get("content-length")).toBe(String(payload.length));
+    expect(await new Response(options.body).text()).toBe(payload);
+  });
+
+  it("should send no body or duplex option for a POST without a body", async () => {
+    mockFetch.mockResolvedValue(new Response(null, { status: 200 }));
+
+    await POST(
+      buildRequest("/bff/events/videoasset/a/view", { method: "POST", cookie: "tok" }),
+      ctx(["events", "videoasset", "a", "view"])
+    );
+
+    const options = mockFetch.mock.calls[0][1];
+    expect(options.body).toBeUndefined();
+    expect(options.duplex).toBeUndefined();
   });
 
   it("should clear the access cookie when the upstream rejects the token", async () => {
