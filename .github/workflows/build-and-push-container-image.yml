@@ -4,11 +4,37 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options:
+          - stage
+          - prod
+        default: stage
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment || 'prod' }}
     steps:
+      - name: Resolve Image Tag
+        id: meta
+        env:
+          TARGET_ENV: ${{ inputs.environment }}
+          STAGING_WORKFLOW_ID: ${{ secrets.GH_TRIGGER_WORKFLOW_ID_STAGING }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "release" ]; then
+            echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$TARGET_ENV" = "stage" ] && [ -z "$STAGING_WORKFLOW_ID" ]; then
+            echo "GH_TRIGGER_WORKFLOW_ID_STAGING is not set"
+            exit 1
+          fi
+          echo "tag=$TARGET_ENV-$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+
       - name: Checkout Code
         uses: actions/checkout@v4.2.2
 
@@ -39,7 +65,7 @@ jobs:
           secrets: |
             sentry_auth=${{ secrets.SENTRY_AUTH_TOKEN }}
           push: true
-          tags: ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:${{ github.ref_name }}, ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:latest
+          tags: ${{ secrets.CONTAINER_IMAGE_REPO }}/session-portal-frontend:${{ steps.meta.outputs.tag }}${{ github.event_name == 'release' && format(', {0}/session-portal-frontend:latest', secrets.CONTAINER_IMAGE_REPO) || '' }}
 
       - name: Create Temporary Deployment Token
         uses: actions/create-github-app-token@v2.0.6
@@ -56,7 +82,7 @@ jobs:
         env:
           OWNER: ${{ secrets.GH_TRIGGER_OWNER }}
           REPO: ${{ secrets.GH_TRIGGER_REPO }}
-          WORKFLOW_ID: ${{ secrets.GH_TRIGGER_WORKFLOW_ID }}
+          WORKFLOW_ID: ${{ inputs.environment == 'stage' && secrets.GH_TRIGGER_WORKFLOW_ID_STAGING || secrets.GH_TRIGGER_WORKFLOW_ID }}
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |
@@ -65,5 +91,5 @@ jobs:
               repo: process.env.REPO,
               workflow_id: process.env.WORKFLOW_ID,
               ref: 'main',
-              inputs: { 'frontend_version': '${{ github.ref_name }}' }
+              inputs: { 'frontend_version': '${{ steps.meta.outputs.tag }}' }
             });
