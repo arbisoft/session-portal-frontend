@@ -48,6 +48,8 @@ export const GA_EVENTS = {
   VIDEO_PLAY_ERROR: "video_play_error",
   RECOMMENDATIONS_LOAD_MORE: "recommendations_load_more",
   FEATURED_SLIDER_NAVIGATE: "featured_slider_navigate",
+  VIDEO_VIEW_COUNTED: "video_view_counted",
+  VIDEO_VIEW_COUNT_FAILED: "video_view_count_failed",
   UPLOAD_FILE_SELECTED: "upload_file_selected",
   UPLOAD_FILE_REJECTED: "upload_file_rejected",
   UPLOAD_VIDEO_COMPLETED: "upload_video_completed",

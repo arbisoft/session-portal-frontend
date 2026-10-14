@@ -59,20 +59,18 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   const hasCountedRef = useRef(false);
 
   useEffect(() => {
-    if (!onWatchThreshold || hasCountedRef.current) return;
+    if (!onWatchThreshold || isPaused || hasCountedRef.current) return;
 
     const interval = setInterval(() => {
-      if (!isPaused) {
-        accumulatedTimeRef.current += 1;
-        if (accumulatedTimeRef.current >= watchThresholdSeconds) {
-          hasCountedRef.current = true;
-          trackEvent(GA_EVENTS.VIDEO_WATCH_THRESHOLD, ANALYTICS_CATEGORY.VIDEO_PLAYER, {
-            title: videoLabel,
-            threshold_seconds: watchThresholdSeconds,
-          });
-          onWatchThreshold();
-          clearInterval(interval);
-        }
+      accumulatedTimeRef.current += 1;
+      if (accumulatedTimeRef.current >= watchThresholdSeconds) {
+        hasCountedRef.current = true;
+        trackEvent(GA_EVENTS.VIDEO_WATCH_THRESHOLD, ANALYTICS_CATEGORY.VIDEO_PLAYER, {
+          title: videoLabel,
+          threshold_seconds: watchThresholdSeconds,
+        });
+        onWatchThreshold();
+        clearInterval(interval);
       }
     }, 1000);
 
