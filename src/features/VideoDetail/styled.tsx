@@ -11,10 +11,13 @@ export const StyledTitleSection = styled(Box, {
     align-items: flex-start;
     display: flex;
     justify-content: space-between;
-    padding-top: ${theme.spacing(3)};
+    padding-top: ${theme.spacing(2)};
     width: 100%;
 
     h4 {
+      font-size: ${pxToRem(20)};
+      font-weight: 700;
+      line-height: 1.3;
       text-transform: capitalize;
     }
   `
@@ -24,16 +27,31 @@ export const StyledDetailSection = styled(Box, {
   name: "StyledDetailSection",
 })(
   ({ theme }) => css`
-    padding-top: ${theme.spacing()};
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: ${theme.spacing(0.5)} ${theme.spacing(1)};
+    padding-top: ${theme.spacing(1)};
     width: 100%;
 
+    &::after {
+      display: none;
+    }
+
     h6,
-    p {
-      font-size: ${pxToRem(16)};
+    p,
+    time {
+      font-size: ${pxToRem(14)};
       font-style: normal;
       font-weight: 500;
       line-height: normal;
       text-transform: capitalize;
+    }
+
+    time::before {
+      content: "·";
+      margin-right: ${theme.spacing(1)};
+      opacity: 0.6;
     }
   `
 );
@@ -42,7 +60,7 @@ export const StyledNotesSection = styled(Box, {
   name: "StyledNotesSection",
 })(
   ({ theme }) => css`
-    padding-top: ${theme.spacing(3)};
+    padding-top: ${theme.spacing(2)};
     width: 100%;
 
     h5 {

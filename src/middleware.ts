@@ -32,7 +32,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/videos", request.url));
   }
 
-  if (pathname === "/" || pathname === "/upload-video") {
+  if (pathname === "/") {
     return NextResponse.redirect(new URL("/videos", request.url));
   }
 

@@ -34,6 +34,7 @@ describe("Redux Store", () => {
           first_name: null,
           full_name: null,
           last_name: null,
+          is_staff: false,
         },
       },
       error: null,
@@ -51,6 +52,22 @@ describe("Redux Store", () => {
 
   it("should leave persisted state without a login session untouched when migrating to v1", () => {
     expect(migrations[1]({})).toEqual({});
+  });
+
+  it("should default is_staff to false for sessions persisted before the field existed when migrating to v2", () => {
+    const state = { login: { session: { user_info: { full_name: "Ada" } } } };
+
+    expect(migrations[2](state)).toEqual({ login: { session: { user_info: { full_name: "Ada", is_staff: false } } } });
+  });
+
+  it("should keep an existing is_staff value when migrating to v2", () => {
+    const state = { login: { session: { user_info: { is_staff: true } } } };
+
+    expect(migrations[2](state)).toEqual({ login: { session: { user_info: { is_staff: true } } } });
+  });
+
+  it("should leave persisted state without user info untouched when migrating to v2", () => {
+    expect(migrations[2]({})).toEqual({});
   });
 
   it("should initialize the store with default state", () => {

@@ -99,6 +99,8 @@ Available hooks:
 | `useFeatureFlags`      | Feature flag resolution with URL override support           |
 | `useDebounce`          | Debounced value for search inputs                           |
 | `useSidebar`           | Fetches tags and playlists for the navigation sidebar       |
+| `useVideoUpload`       | Uploads a video file through `/bff` with progress and abort |
+| `useCloseOnScroll`     | Closes a popup when a given scroll container scrolls        |
 
 ## Authentication Architecture
 
@@ -107,7 +109,7 @@ Authentication is implemented across several pieces:
 - Google sign-in starts in `src/features/LoginPage/loginPage.tsx`
 - login calls the `loginAndSetCookie` Next.js server action, which POSTs to `POST /api/v1/users/login` and sets an HttpOnly cookie
 - the access token stays in the HttpOnly cookie only; the server action returns user info with `access`/`refresh` set to `null`
-- only user info is held in Redux and persisted via `redux-persist` (state version 1 migration scrubs legacy persisted tokens)
+- only user info is held in Redux and persisted via `redux-persist` (persist version 2: migration 1 scrubs legacy persisted tokens, migration 2 defaults `is_staff` to `false`)
 - all API calls go through the BFF proxy `src/app/bff/[...path]/route.ts`, which reads the cookie and attaches the `Bearer` header server-side (re-adding the trailing slash the backend expects); it returns `403` unless the request carries the `x-requested-with: session-portal` header that `customBaseQuery` sets, so opening a proxy URL directly in the address bar is refused (this deters casual access only; the authenticated user can still replay requests)
 - route protection is handled entirely by `src/middleware.ts` (JWT cookie validation, no `useAuth` hook)
 - unauthorized API responses (`401`) dispatch `logout()` (from `src/redux/login/actions.ts`) in `customBaseQuery`
@@ -151,7 +153,7 @@ Route protection is handled by `src/middleware.ts`, which runs on every request 
 | Rule | Behavior |
 | --- | --- |
 | Authenticated user visits `/login` | Redirected to `redirect_to` param (if valid internal path) or `/videos` |
-| Any user visits `/` or `/upload-video` | Redirected to `/videos` |
+| Any user visits `/` | Redirected to `/videos` |
 | Unauthenticated user visits any route except `/login` (fail closed, `publicRoutes`) | Redirected to `/login?redirect_to=<original path>` |
 | Paths under `/api`, `/bff`, `/_next`, or ending in a static file extension (png, svg, json, …) | Excluded by the matcher (the proxy route enforces its own 401) |
 
@@ -170,9 +172,11 @@ Cross-cutting concerns that sit outside the feature layers:
 
 Details: [Monitoring and Error Recovery](./modules/monitoring-and-error-recovery.md), [Analytics Tracking](./modules/analytics-tracking.md).
 
-## Upload Feature Status
+## Upload Feature
 
-The upload UI (`/upload-video`) is behind a feature flag (`uploadVideo: { enabled: false }` in `src/constants/featureFlags.ts`). The route and `FileUpload` component exist, but the backend submission is not yet implemented — `VideoForm` currently uses placeholder/hardcoded data. The middleware redirects `/upload-video` to `/videos` unconditionally regardless of feature flag state.
+The upload UI (`/upload-video`) is for staff only. It is gated by the user's `is_staff` flag (`selectIsStaff`, persisted in the `login` slice; persisted-state migration v2 defaults it to `false`), not by a feature flag. The Navbar entry and the `FileUpload` component redirect non-staff users to `/videos`. This is a UI convenience only: the backend must enforce staff permissions on `/events/videoassets/` and `/events/`.
+
+The video file is uploaded with `XMLHttpRequest` (for progress events) in `src/hooks/useVideoUpload.ts` through the BFF proxy with the `x-requested-with` guard header. The metadata form (`VideoForm`, `fields.tsx`, `selectFields.tsx`) publishes through the `createEvent`, `createTag` and `searchUsers` RTK Query endpoints. Client-side validation allows MP4, MOV, AVI and WebM files up to `MAX_VIDEO_FILE_SIZE_BYTES` (1 GB). The BFF proxy streams request bodies to the backend (`duplex: "half"`, with `content-length` forwarded) instead of buffering them, so large uploads are not held in server memory. Any reverse proxy in front of the app still needs a body-size limit that allows 1 GB; this is not verifiable from the repository.
 
 ## Security Headers and Deployment
 

@@ -77,6 +77,7 @@ Three GitHub Actions workflows are defined in `.github/workflows/`:
 - Runs `npm run build` with `NEXT_PUBLIC_BASE_URL=https://example.invalid` (a placeholder value so the production build compiles in CI without a real backend)
 - Runs the SonarQube scan (`SonarSource/sonarqube-scan-action`) using `SONAR_TOKEN` and `SONAR_HOST_URL` secrets; config is in `sonar-project.properties` (sources and tests under `src`, coverage from `coverage/lcov.info`)
 - The Sonar quality-gate check step is present but commented out, so a red gate does not fail the job
+- To fix what Sonar reports, use the `sonarqube-fixer` agent (`.claude/agents/sonarqube-fixer.md`). It reads the issues for the branch or PR through the Sonar Web API using `SONAR_HOST_URL` and `SONAR_TOKEN` from the local environment, then fixes them and runs lint and tests
 
 ### Release (`release.yml`)
 

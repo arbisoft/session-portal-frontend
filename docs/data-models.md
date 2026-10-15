@@ -19,9 +19,12 @@ type LoginResponse = {
     first_name: string | null;
     full_name: string | null;
     last_name: string | null;
+    is_staff: boolean;
   };
 };
 ```
+
+`is_staff` drives the staff-only upload entry point (`selectIsStaff` in `src/redux/login/selectors.ts`).
 
 ### `LoginParams`
 
@@ -39,6 +42,7 @@ Represents the detailed video asset response:
 
 ```ts
 interface EventDetail {
+  captions_file?: string;
   duration: number;
   event: Event;
   file_size: number;
@@ -46,6 +50,7 @@ interface EventDetail {
   thumbnail: string;
   title: string;
   video_file: string;
+  view_count: number;
 }
 ```
 
@@ -110,6 +115,36 @@ interface Tag {
 }
 
 interface Playlist extends Tag {}
+```
+
+### Upload Models
+
+```ts
+interface VideoAssetUploadResponse {
+  id: number;
+  title: string;
+  video_file: string;
+  status: string;
+}
+
+interface UserSearchResult {
+  id: number;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+}
+
+interface EventCreateParams {
+  title: string;
+  description: string;
+  event_time: string;
+  playlists: number[];
+  presenter_ids: number[];
+  video_asset_id: number;
+  thumbnail?: File;
+  tags?: number[];
+}
 ```
 
 ### Query Parameter Models

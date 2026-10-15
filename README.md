@@ -134,6 +134,7 @@ Please use the fork-based workflow documented in `CONTRIBUTING.md`.
 - Project docs index: [`docs/README.md`](./docs/README.md)
 - Monitoring and error recovery: [`docs/modules/monitoring-and-error-recovery.md`](./docs/modules/monitoring-and-error-recovery.md)
 - Analytics tracking: [`docs/modules/analytics-tracking.md`](./docs/modules/analytics-tracking.md)
+- Staff video upload: [`docs/modules/upload-video.md`](./docs/modules/upload-video.md)
 
 ## Inspiration
 

@@ -8,7 +8,7 @@ import { Provider, useDispatch, useSelector } from "react-redux";
 import { logoutAndClearCookie } from "@/app/login/actions";
 import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import { fireEvent, screen, waitFor, render, RenderOptions, act } from "@/jest/utils/testUtils";
-import { selectUserInfo } from "@/redux/login/selectors";
+import { selectIsStaff, selectUserInfo } from "@/redux/login/selectors";
 import { loginActions } from "@/redux/login/slice";
 import { persistor } from "@/redux/store/configureStore";
 import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
@@ -80,10 +80,15 @@ describe("Navbar Component", () => {
     avatar: "https://example.com/avatar.jpg",
   };
 
+  const mockSelectors = (isStaff: boolean) =>
+    (useSelector as unknown as jest.Mock).mockImplementation((selector) => {
+      if (selector === selectUserInfo) return mockUserInfo;
+      if (selector === selectIsStaff) return isStaff;
+      return undefined;
+    });
+
   beforeEach(() => {
-    (useSelector as unknown as jest.Mock).mockImplementation((selector) =>
-      selector === selectUserInfo ? mockUserInfo : undefined
-    );
+    mockSelectors(false);
 
     (useDispatch as unknown as jest.Mock).mockReturnValue(mockDispatch);
     (useSearchParams as jest.Mock).mockReturnValue({
@@ -213,20 +218,16 @@ describe("Navbar Component", () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
-  it("hides Upload Video button when feature flag is disabled", () => {
-    (useFeatureFlags as jest.Mock).mockReturnValue({
-      isFeatureEnabled: () => false,
-    });
+  it("hides Upload a video menu item for non-staff users", () => {
+    mockSelectors(false);
 
     customRender(<Navbar />);
 
-    expect(screen.queryByText("Upload Video")).not.toBeInTheDocument();
+    expect(screen.queryByText("Upload a video")).not.toBeInTheDocument();
   });
 
-  it("shows Upload Video button when feature flag is enabled", () => {
-    (useFeatureFlags as jest.Mock).mockReturnValue({
-      isFeatureEnabled: (feature: string) => feature === "uploadVideo",
-    });
+  it("shows Upload a video menu item for staff users", () => {
+    mockSelectors(true);
 
     customRender(<Navbar />);
 
@@ -234,9 +235,7 @@ describe("Navbar Component", () => {
   });
 
   it("tracks nav_upload_video_click when Upload a video is clicked", () => {
-    (useFeatureFlags as jest.Mock).mockReturnValue({
-      isFeatureEnabled: (feature: string) => feature === "uploadVideo",
-    });
+    mockSelectors(true);
 
     customRender(<Navbar />);
 

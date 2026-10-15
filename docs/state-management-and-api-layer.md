@@ -16,6 +16,9 @@ Current reducer composition includes:
 - storage: web local storage in the browser
 - noop storage fallback for non-browser execution
 - persist key: `session-portal`
+- version: `2`, with migrations in `src/redux/store/configureStore.tsx`
+  - v1 scrubs legacy `access`/`refresh` tokens persisted by v0
+  - v2 defaults `user_info.is_staff` to `false` for sessions persisted before the field existed (staff users get the real value on next login)
 - whitelist: `login`
 - transform filter: only `session` is persisted from the login slice
 
@@ -148,6 +151,18 @@ Example response shape:
 | `useEventTypesQuery`               | `/events/event_types/`                     | Event type list                 |
 | `useRecommendationQuery`           | `/events/recommendations/{id}/`            | Recommendations for a video     |
 | `usePlaylistsQuery`                | `/events/playlists/?linked_to_events=True` | Playlist list                   |
+| `useAllTagsQuery`                  | `/events/tags/`                            | All tags (upload form)          |
+| `useSearchUsersQuery` / lazy       | `/users/search/?q=`                        | Presenter search (upload form)  |
+
+### Available mutations
+
+| Hook | Endpoint | Purpose | Invalidates |
+| --- | --- | --- | --- |
+| `useIncrementViewCountMutation` | `POST /events/videoasset/{slug}/view/` | Record a view after the watch threshold | - |
+| `useCreateTagMutation` | `POST /events/tags/` | Create a tag from the upload form | `Tag` |
+| `useCreateEventMutation` | `POST /events/` (multipart) | Publish an uploaded video as an event | `Event`, `Playlist`, `Tag` |
+
+The video file itself is not an RTK Query endpoint: `src/hooks/useVideoUpload.ts` uploads it with `XMLHttpRequest` through `/bff` to get progress events.
 
 Example event detail request:
 
@@ -192,6 +207,6 @@ type ErrorType = {
 
 ## Notes and Gaps
 
-- RTK Query tags are configured, but the current codebase does not yet use `invalidatesTags` for automatic cache invalidation on mutations.
+- `invalidatesTags` is used only by the upload-related mutations (`createTag`, `createEvent`); `incrementViewCount` does not invalidate anything, so `view_count` in the cached detail is refreshed only on refetch (the page shows the mutation's response instead).
 - Only frontend-visible API paths are documented here; backend response contracts may be broader than the inferred model types.
 - The repository does not include canonical backend error response examples, so exact non-`401` error payload shapes should be confirmed from the backend service.

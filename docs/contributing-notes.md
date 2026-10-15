@@ -170,3 +170,11 @@ Contributors should branch off `dev` and open PRs targeting `dev`. Release autom
 | Build | Push to `dev`/`main`, or PR to `dev` | `npm run lint`, `npm run test:cov`, `npm audit`, `npm run build`, SonarQube scan |
 | Release | `dev` → `main` PR merged | `release-it`: version bump, changelog, tag, GitHub release |
 | Build and Push | GitHub release published | Docker build → ECR push → deployment trigger |
+
+## Documentation Expectations
+
+Changes to code, configuration, dependencies, CI or Docker files must update the matching docs in the same pull request (the mapping is in `.claude/skills/update-project-docs/SKILL.md`, "Project Doc Map"). In Claude Code sessions this is automated:
+
+- `CLAUDE.md` requires the `update-project-docs` → `documentation-generator` → `documentation-reviewer` pipeline after every code or config change.
+- A `Stop` hook (`.claude/hooks/docs-sync-check.mjs`, registered in `.claude/settings.json`) asks for the pipeline once when source files changed but no documentation did.
+- Do not hand-edit `CHANGELOG.md`; `release-it` generates it.

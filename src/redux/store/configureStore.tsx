@@ -43,11 +43,20 @@ export const migrations = {
     }
     return persisted as never;
   },
+  // v2: user_info gained is_staff; sessions persisted before it default to non-staff until the next login.
+  2: (state: unknown) => {
+    const persisted = state as { login?: { session?: { user_info?: Record<string, unknown> | null } } };
+    const userInfo = persisted?.login?.session?.user_info;
+    if (userInfo && userInfo.is_staff === undefined) {
+      userInfo.is_staff = false;
+    }
+    return persisted as never;
+  },
 };
 
 const persistConfig = {
   key: "session-portal",
-  version: 1,
+  version: 2,
   migrate: createMigrate(migrations),
   storage,
   transforms: [loginFilter],
