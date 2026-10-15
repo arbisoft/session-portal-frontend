@@ -17,6 +17,10 @@ Reports runtime errors and performance data to Sentry, shows fallback UI when re
 | Root error boundary                         | `src/app/global-error.tsx`                                    |
 | 404 page                                    | `src/app/not-found.tsx`                                       |
 | Stale-chunk recovery                        | `src/utils/chunkLoadRecovery.ts`                              |
+| API proxy error capture                     | `src/app/bff/[...path]/route.ts`                              |
+| Unparseable API response capture            | `src/redux/customBaseQuery.ts`                                |
+| Unreadable upload response capture          | `src/hooks/useVideoUpload.ts`                                 |
+| Reporting helpers and request scrubber      | `src/utils/monitoring.ts`                                     |
 
 ## Configuration
 
@@ -38,6 +42,16 @@ All three are read through `src/constants/constants.ts`.
 - `src/instrumentation.ts` loads the server or edge config depending on `NEXT_RUNTIME`.
 - `onRequestError` forwards server errors to Sentry **except** Next.js control-flow errors. `redirect()` and `notFound()` throw errors whose `digest` starts with `NEXT_REDIRECT;` or equals `NEXT_NOT_FOUND`; these are dropped so they do not show up as issues.
 - `next.config.ts` wraps the config with `withSentryConfig` only when `NODE_ENV` is not `development`, so local dev never uploads source maps.
+
+### Handled errors captured explicitly
+
+Errors that the code catches and turns into a response or a toast never reach `onRequestError` or an error boundary, so these places report them to Sentry directly. None of them include the query string, tokens or response bodies. Code under `src/redux` and `src/hooks` reports through `reportHandledError` / `reportHandledMessage` in `src/utils/monitoring.ts` instead of importing `@sentry/nextjs` itself.
+
+`sendDefaultPii` is `true`, so the SDK attaches the incoming request to server events. `sentry.server.config.ts` and `sentry.edge.config.ts` therefore pass `scrubRequestData` as both `beforeSend` and `beforeSendTransaction` (traces carry the same request data), which drops the `Cookie` / `Authorization` headers (the BFF request carries the HttpOnly access token), parsed cookies, the query string and the request body.
+
+- **BFF proxy** (`src/app/bff/[...path]/route.ts`, via the `monitoring.ts` helpers): a failed upstream `fetch` is captured as an exception before the proxy returns `502`, and any upstream `5xx` is captured as a message (`method`, `path` and `status` only). Because both RTK Query calls and XHR uploads go through the proxy, this is the single place that sees backend `5xx` responses.
+- **`customBaseQuery`**: a `PARSING_ERROR` (for example an HTML error page from a gateway in front of the app) is captured with the endpoint path. Ordinary `4xx` and `5xx` statuses are not captured here, to avoid duplicating the proxy report.
+- **`useVideoUpload`**: a `201` response whose body is not valid JSON is captured, since it would otherwise only show the user a generic error.
 
 ### Error boundaries
 
@@ -61,4 +75,4 @@ A tab opened before a deploy may request a chunk hash the server no longer has. 
 
 ## Tests
 
-`src/instrumentation.test.ts`, `src/instrumentation-client.test.ts`, `src/instrumentation-client.production.test.ts`, `src/app/error.test.tsx`, and `src/utils/chunkLoadRecovery.test.ts`. `global-error.tsx` and `not-found.tsx` have no dedicated test file.
+`src/instrumentation.test.ts`, `src/instrumentation-client.test.ts`, `src/instrumentation-client.production.test.ts`, `src/app/error.test.tsx`, `src/utils/chunkLoadRecovery.test.ts`, `src/utils/monitoring.test.ts`, and the capture assertions in `src/app/bff/[...path]/route.test.ts`, `src/redux/customBaseQuery.test.ts` and `src/hooks/useVideoUpload.test.tsx`. `global-error.tsx` and `not-found.tsx` have no dedicated test file.

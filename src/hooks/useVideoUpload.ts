@@ -8,6 +8,7 @@ import { API_PROXY_GUARD_HEADER, API_PROXY_GUARD_VALUE, API_PROXY_PREFIX } from 
 import { events } from "@/endpoints";
 import { VideoAssetUploadResponse } from "@/models/Events";
 import { logout } from "@/redux/login/actions";
+import { reportHandledMessage } from "@/utils/monitoring";
 
 export type VideoUploadState = {
   uploadProgress: number;
@@ -65,10 +66,16 @@ export const useVideoUpload = (): VideoUploadState => {
           return;
         }
 
-        const asset = request.status === 201 ? parseUploadResponse(request.responseText) : null;
+        const isCreated = request.status === 201;
+        const asset = isCreated ? parseUploadResponse(request.responseText) : null;
         if (asset) {
           setVideoAssetId(asset.id);
         } else {
+          // Other failures are user-facing statuses or backend 5xx (reported by the BFF proxy); a 201 whose body
+          // cannot be read is a contract break that would otherwise leave no trace.
+          if (isCreated) {
+            reportHandledMessage("Video asset upload returned an unreadable response", { source: "video_upload" });
+          }
           setError("Upload failed. Please try again.");
         }
       };

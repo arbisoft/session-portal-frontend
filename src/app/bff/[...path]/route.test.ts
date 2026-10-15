@@ -3,6 +3,13 @@ import { NextRequest } from "next/server";
 
 import { GET, POST } from "./route";
 
+const mockCaptureException = jest.fn();
+const mockCaptureMessage = jest.fn();
+jest.mock("@sentry/nextjs", () => ({
+  captureException: (...args: unknown[]) => mockCaptureException(...args),
+  captureMessage: (...args: unknown[]) => mockCaptureMessage(...args),
+}));
+
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
@@ -19,7 +26,11 @@ const buildRequest = (url: string, init: { method?: string; cookie?: string; bod
 const ctx = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
 describe("api proxy route", () => {
-  beforeEach(() => mockFetch.mockReset());
+  beforeEach(() => {
+    mockFetch.mockReset();
+    mockCaptureException.mockClear();
+    mockCaptureMessage.mockClear();
+  });
 
   it("should return 403 for direct browser navigation without the guard header", async () => {
     const response = await GET(buildRequest("/bff/events/all", { cookie: "tok", omitGuard: true }), ctx(["events", "all"]));
@@ -117,11 +128,34 @@ describe("api proxy route", () => {
     expect(response.headers.get("set-cookie")).toBeNull();
   });
 
+  it("should report upstream 5xx responses to Sentry without the query string", async () => {
+    mockFetch.mockResolvedValue(new Response("{}", { status: 503 }));
+
+    await GET(buildRequest("/bff/events/all?search=secret", { cookie: "tok" }), ctx(["events", "all"]));
+
+    expect(mockCaptureMessage).toHaveBeenCalledWith(
+      "Upstream API responded with 503",
+      expect.objectContaining({ extra: { method: "GET", path: "/events/all", status: 503 } })
+    );
+  });
+
+  it("should not report upstream 4xx responses to Sentry", async () => {
+    mockFetch.mockResolvedValue(new Response("{}", { status: 404 }));
+
+    await GET(buildRequest("/bff/events/all", { cookie: "tok" }), ctx(["events", "all"]));
+
+    expect(mockCaptureMessage).not.toHaveBeenCalled();
+  });
+
   it("should return 502 when the upstream is unreachable", async () => {
     mockFetch.mockRejectedValue(new Error("down"));
 
     const response = await GET(buildRequest("/bff/events/all", { cookie: "tok" }), ctx(["events", "all"]));
 
     expect(response.status).toBe(502);
+    expect(mockCaptureException).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "down" }),
+      expect.objectContaining({ extra: { method: "GET", path: "/events/all" } })
+    );
   });
 });

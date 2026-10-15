@@ -7,6 +7,11 @@ import { logout } from "@/redux/login/actions";
 
 import { useVideoUpload } from "./useVideoUpload";
 
+const mockCaptureMessage = jest.fn();
+jest.mock("@sentry/nextjs", () => ({
+  captureMessage: (...args: unknown[]) => mockCaptureMessage(...args),
+}));
+
 jest.mock("react-redux", () => ({
   ...jest.requireActual("react-redux"),
   useDispatch: jest.fn(),
@@ -41,6 +46,7 @@ describe("useVideoUpload", () => {
   beforeEach(() => {
     MockXhr.instances = [];
     dispatch.mockClear();
+    mockCaptureMessage.mockClear();
     (useDispatch as unknown as jest.Mock).mockReturnValue(dispatch);
     global.XMLHttpRequest = MockXhr as unknown as typeof XMLHttpRequest;
   });
@@ -107,6 +113,10 @@ describe("useVideoUpload", () => {
 
     expect(result.current.videoAssetId).toBeNull();
     expect(result.current.error).toBe("Upload failed. Please try again.");
+    expect(mockCaptureMessage).toHaveBeenCalledWith(
+      "Video asset upload returned an unreadable response",
+      expect.objectContaining({ tags: { source: "video_upload" } })
+    );
   });
 
   it("should report a generic error for a failed response", () => {
@@ -120,6 +130,7 @@ describe("useVideoUpload", () => {
     });
 
     expect(result.current.error).toBe("Upload failed. Please try again.");
+    expect(mockCaptureMessage).not.toHaveBeenCalled();
   });
 
   it("should log the user out when the session has expired", () => {
