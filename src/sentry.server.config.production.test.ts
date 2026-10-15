@@ -15,4 +15,13 @@ describe("sentry.server.config in production", () => {
 
     expect(mockSentryInit).toHaveBeenCalledWith(expect.objectContaining({ tracesSampleRate: 0.1 }));
   });
+
+  it("should scrub request data from error and transaction events", () => {
+    const { scrubRequestData } = require("@/utils/monitoring");
+    require("../sentry.server.config");
+
+    expect(mockSentryInit).toHaveBeenCalledWith(
+      expect.objectContaining({ beforeSend: scrubRequestData, beforeSendTransaction: scrubRequestData })
+    );
+  });
 });

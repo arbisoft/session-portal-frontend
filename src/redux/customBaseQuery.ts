@@ -3,6 +3,7 @@ import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from "@reduxjs/toolk
 
 import { notificationManager } from "@/components/Notification";
 import { API_PROXY_GUARD_HEADER, API_PROXY_GUARD_VALUE, API_PROXY_PREFIX } from "@/constants/constants";
+import { reportHandledError } from "@/utils/monitoring";
 
 import { logout } from "./login/actions";
 import { parseError } from "./parseError";
@@ -32,6 +33,15 @@ const customBaseQuery: BaseQueryFn<FetchArgs, unknown, FetchBaseQueryError, Extr
   if (result.error) {
     if (result.error.status === 401) {
       api.dispatch(logout());
+    }
+
+    // A non-JSON body (for example an HTML error page from a gateway) is invisible to the user and to the
+    // BFF proxy, which only reports requests that reach it.
+    if (result.error.status === "PARSING_ERROR") {
+      reportHandledError(new Error(`API response could not be parsed (HTTP ${result.error.originalStatus})`), {
+        source: "rtk_query",
+        extra: { endpoint: request.url.split("?")[0] },
+      });
     }
 
     if (options.showErrorToast) {
