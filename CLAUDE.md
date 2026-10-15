@@ -108,6 +108,10 @@ Custom GA events are pushed to the GTM `dataLayer` via `trackEvent`/`GA_EVENTS`/
 
 **Any task that adds or changes code, config, dependencies, CI or Docker files must invoke the `architecture-guardian` agent (`.claude/agents/architecture-guardian.md`) before being considered done** (and before `ga-event-tracker`). It enforces the layering, auth/token, security-header, dependency, testing and accessibility rules from the architecture advisory. Do this automatically.
 
+## SonarQube Fixer
+
+CI scans every push to `dev`/`main` and every PR to `dev` with SonarQube. When the user asks to fix Sonar issues or a failed quality gate, invoke the `sonarqube-fixer` agent (`.claude/agents/sonarqube-fixer.md`). It reads the open issues for the branch or PR from the Sonar Web API (needs `SONAR_HOST_URL` and `SONAR_TOKEN` in the environment, or an exported issue list), fixes them in place, and verifies with lint and tests. It does not run on every task, never suppresses issues to get green, and never writes to the Sonar server. Run `architecture-guardian` on the resulting diff.
+
 ## Documentation Pipeline
 
 **Any task that adds or changes code, config, dependencies, CI or Docker files must run the documentation skills, in order, after `architecture-guardian` and `ga-event-tracker` and before being considered done:**
