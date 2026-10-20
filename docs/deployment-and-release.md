@@ -16,7 +16,7 @@ The Docker build is **multi-stage**:
 ### Stage 2: builder
 
 - Base: `node:22.14.0-alpine`
-- Accepts build args: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` (all exported as `ENV`)
+- Accepts build args: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_HOTJAR_ID`, `NEXT_PUBLIC_IMAGE_HOSTS`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` (all exported as `ENV`)
 - Runs `npm run build` with an optional BuildKit secret `sentry_auth` exposed as `SENTRY_AUTH_TOKEN` for source map upload
 - Reuses deps/node_modules from stage 1
 - Copies source, builds with `npm run build`
@@ -90,7 +90,7 @@ Three GitHub Actions workflows are defined in `.github/workflows/`:
 
 - Triggers when a GitHub release is published, or on manual `workflow_dispatch`
 - Authenticates to AWS ECR using `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` secrets
-- Builds the Docker image with `UID`, `GID`, `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` as build args, and `SENTRY_AUTH_TOKEN` as the `sentry_auth` build secret
+- Builds the Docker image with `UID`, `GID`, `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_IMAGE_HOSTS`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` as build args (`NEXT_PUBLIC_IMAGE_HOSTS` must list any image host that differs from the `NEXT_PUBLIC_BASE_URL` host, otherwise `/_next/image` returns 400), and `SENTRY_AUTH_TOKEN` as the `sentry_auth` build secret
 - Pushes to ECR with two tags: the release tag and `latest`
 - Triggers downstream deployment via a GitHub App token dispatching a workflow in a separate deployment repository
 

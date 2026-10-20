@@ -21,3 +21,4 @@ README.md
 !sentry.server.config.ts
 !sentry.edge.config.ts
 !next.config.ts
+!jest.setup.ts

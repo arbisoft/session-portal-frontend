@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { config, middleware } from "./middleware";
+import { config, proxy } from "./proxy";
 
 // Mock NextResponse
 jest.mock("next/server", () => ({
@@ -10,7 +10,7 @@ jest.mock("next/server", () => ({
   },
 }));
 
-describe("Middleware", () => {
+describe("Proxy", () => {
   const mockNextResponse = require("next/server").NextResponse;
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
@@ -36,7 +36,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos");
@@ -50,7 +50,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: "invalid.token" })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos");
@@ -66,7 +66,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: expiredToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos");
@@ -82,7 +82,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.next).toHaveBeenCalled();
   });
@@ -95,7 +95,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
@@ -107,7 +107,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("redirect_to", "/upload-video");
@@ -122,7 +122,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).not.toHaveBeenCalled();
     expect(mockNextResponse.next).toHaveBeenCalled();
@@ -136,7 +136,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/123", req.url));
   });
@@ -149,7 +149,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/456", req.url));
   });
@@ -162,7 +162,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
@@ -175,7 +175,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
@@ -187,7 +187,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalled();
     expect(mockNextResponse.next).not.toHaveBeenCalled();
@@ -200,7 +200,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos/123?filter=recent");

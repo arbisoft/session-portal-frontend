@@ -54,7 +54,7 @@ Key settings:
 Current test suite includes unit tests for:
 
 - Utility functions (`src/utils/utils.ts`)
-- Middleware authentication (`src/middleware.ts`)
+- Proxy authentication (`src/proxy.ts`)
 - Feature pages: HomePage, LoginPage, VideosListingPage, SearchResultsPage, VideoDetail
 - Redux slices and API integrations
 - Reusable components (Navbar, Sidebar, etc.)
@@ -81,7 +81,7 @@ Examples found in the repository:
 - `src/components/ReadMore/readMore.test.tsx`
 - `src/components/Select/select.test.tsx`
 - `src/hooks/useNavigation.test.ts`
-- `src/middleware.test.ts`
+- `src/proxy.test.ts`
 - `src/redux/parseError.test.ts`
 - `src/utils/utils.test.ts`
 

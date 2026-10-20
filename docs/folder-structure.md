@@ -36,7 +36,7 @@ src/
 ├── hooks/       # Reusable custom hooks
 ├── instrumentation.ts        # Server/edge Sentry registration and onRequestError
 ├── instrumentation-client.ts # Browser Sentry init and global chunk-load handlers
-├── middleware.ts             # Edge auth redirect middleware
+├── proxy.ts                  # Auth redirect proxy (formerly middleware)
 ├── jest/        # Test utilities
 ├── models/      # TypeScript domain models
 ├── redux/       # Store, slices, API, selectors, error handling
