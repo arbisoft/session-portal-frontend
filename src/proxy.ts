@@ -2,10 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { ACCESS_COOKIE_NAME, REDIRECT_TO_KEY } from "./constants/constants";
-import { getJwtExpiry, isValidInternalRedirectPath } from "./utils/utils";
-
-// Fail closed: every route requires authentication unless listed here.
-const publicRoutes = ["/login"];
+import { getJwtExpiry, isPublicRoute, isValidInternalRedirectPath } from "./utils/utils";
 
 // Expiry-only gate (no signature check): the backend enforces real authorization.
 function isValidToken(token: string | undefined): boolean {
@@ -16,7 +13,7 @@ function isValidToken(token: string | undefined): boolean {
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const token = request.cookies.get(ACCESS_COOKIE_NAME)?.value;
-  const isProtectedRoute = !publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+  const isProtectedRoute = !isPublicRoute(pathname);
 
   if (isValidToken(token) && pathname === "/login") {
     const redirectTo =

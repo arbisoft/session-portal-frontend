@@ -2,21 +2,23 @@
 
 ## Responsibility
 
-Handles all aspects of user identity: route protection, Google OAuth login, token storage, session persistence, and logout.
+Handles all aspects of user identity: route protection, Google OAuth login, server-side session verification, token storage, session persistence, and logout.
 
 ## Where It Lives
 
-| Concern             | File                                                 |
-| ------------------- | ---------------------------------------------------- |
-| Route protection    | `src/proxy.ts`                                       |
-| Login server action | `src/app/login/actions.ts`                           |
-| Login UI            | `src/features/LoginPage/loginPage.tsx`               |
-| Redux state         | `src/redux/login/slice.ts`                           |
-| Redux selectors     | `src/redux/login/selectors.ts`                       |
-| Login API mutation  | `src/redux/login/apiSlice.ts`                        |
-| Session persistence | `src/redux/store/configureStore.tsx`                 |
-| Token injection     | `src/redux/customBaseQuery.ts`                       |
-| Security util       | `src/utils/utils.ts` (`isValidInternalRedirectPath`) |
+| Concern              | File                                                                         |
+| -------------------- | ---------------------------------------------------------------------------- |
+| Route protection     | `src/proxy.ts`                                                               |
+| Login server action  | `src/app/login/actions.ts`                                                   |
+| Login UI             | `src/features/LoginPage/loginPage.tsx`                                       |
+| Redux state          | `src/redux/login/slice.ts`                                                   |
+| Redux selectors      | `src/redux/login/selectors.ts`                                               |
+| Login API mutation   | `src/redux/login/apiSlice.ts`                                                |
+| Session verification | `src/features/AuthSession/authSession.tsx` (mounted in `src/app/layout.tsx`) |
+| Current user query   | `src/redux/login/apiSlice.ts` (`getMe`, `useLazyGetMeQuery`)                 |
+| Session persistence  | `src/redux/store/configureStore.tsx`                                         |
+| Token injection      | `src/redux/customBaseQuery.ts`                                               |
+| Security util        | `src/utils/utils.ts` (`isValidInternalRedirectPath`, `isPublicRoute`)        |
 
 ## How It Works
 
@@ -35,6 +37,18 @@ Handles all aspects of user identity: route protection, Google OAuth login, toke
 7. Client dispatches `loginActions.login(data)` to update Redux state with session data (access token, refresh token, user info).
 8. Client navigates to `redirect_to` (if valid) or `/videos`.
 
+### Session Verification (`GET /users/me`)
+
+The proxy only checks the cookie's expiry locally, so a revoked, malformed or deactivated-user token still passes it. `AuthSession` closes that gap:
+
+1. On load, and on every pathname change to a non-public route (`isPublicRoute`), it calls `verifySession()` (`useLazyGetMeQuery`). The lazy trigger always sends a request, so a cached result or a cached `401` from an earlier session is never reused. The effect cleanup aborts the in-flight request, so a superseded navigation, an unmount or a logout can never write a stale user into Redux (an aborted request carries no `status` and is treated like any other non-`401` failure).
+2. The request goes through the BFF proxy (`/bff/users/me`), which attaches `Authorization: Bearer <cookie>`. The backend validates the token with `JWTAuthentication`.
+3. On success, the `getMe` fulfilled matcher in `src/redux/login/slice.ts` stores the user in `login.currentUser` and syncs `first_name`, `last_name`, `full_name` and `is_staff` into `session.user_info` (the avatar from login is kept). `currentUser` is not persisted, so it is only set once the backend accepted the token in this page load.
+4. On `401`, `customBaseQuery` resets Redux login state and the BFF proxy clears the `access` cookie; `AuthSession` then replaces the route with `/login?redirect_to=<path+query>` (omitted when the path fails `isValidInternalRedirectPath`).
+5. Any other failure (network error, 5xx) keeps the session: it is not proof of a bad token. No error toast is shown for this query (`showErrorToast: false`).
+
+Read the verified user with `selectCurrentUser`, `selectIsAuthenticated` and `selectUserRole` from `src/redux/login/selectors.ts`.
+
 ### Proxy Route Protection
 
 The proxy runs on every non-static request (Next.js 16 `proxy.ts`, Node.js runtime). Order of evaluation:
@@ -42,7 +56,7 @@ The proxy runs on every non-static request (Next.js 16 `proxy.ts`, Node.js runti
 ```
 1. Authenticated user on /login  →  redirect to redirect_to or /videos
 2. Any user on /  →  redirect to /videos
-3. Unauthenticated user on any route other than /login (fail-closed: publicRoutes = ["/login"])  →  redirect to /login?redirect_to=<path>
+3. Unauthenticated user on any route other than /login (fail-closed: `PUBLIC_ROUTES = ["/login"]`, checked with `isPublicRoute`)  →  redirect to /login?redirect_to=<path>
 4. Anything else  →  pass through
 ```
 
@@ -72,14 +86,16 @@ The token never reaches client JS. `customBaseQuery` sends requests to the BFF p
 
 ## Key Edge Cases
 
-| Scenario                          | Behavior                                                          |
-| --------------------------------- | ----------------------------------------------------------------- |
-| Expired JWT cookie                | Proxy rejects, redirects to `/login`                              |
-| External URL in `redirect_to`     | `isValidInternalRedirectPath` rejects it; redirects to `/videos`  |
-| Google popup closed without login | `onError` shows a notification; user stays on `/login`            |
-| API returns 401                   | `customBaseQuery` dispatches logout; Redux state cleared          |
-| Server-side rendering (no window) | `redux-persist` uses no-op storage to avoid crashes               |
-| Login fails at backend            | Server action throws; client catches and shows error notification |
+| Scenario                           | Behavior                                                          |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| Expired JWT cookie                 | Proxy rejects, redirects to `/login`                              |
+| External URL in `redirect_to`      | `isValidInternalRedirectPath` rejects it; redirects to `/videos`  |
+| Google popup closed without login  | `onError` shows a notification; user stays on `/login`            |
+| API returns 401                    | `customBaseQuery` dispatches logout; Redux state cleared          |
+| `/users/me` returns 401            | `AuthSession` redirects to `/login?redirect_to=<path>`            |
+| `/users/me` fails with 5xx/network | Session kept; verified again on the next navigation               |
+| Server-side rendering (no window)  | `redux-persist` uses no-op storage to avoid crashes               |
+| Login fails at backend             | Server action throws; client catches and shows error notification |
 
 ## `isValidInternalRedirectPath` Rules
 

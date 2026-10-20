@@ -38,7 +38,7 @@ src/app/          → thin route entry points (page.tsx files)
 src/features/     → page-level components with all business logic
 src/components/   → reusable UI primitives (no business logic)
 src/redux/        → RTK Query API slices + login slice + store
-src/hooks/        → custom hooks (no auth hook — auth is proxy-only)
+src/hooks/        → custom hooks (no auth hook — see Authentication)
 src/models/       → TypeScript interfaces for API shapes
 src/utils/utils.ts → pure transform/display helpers
 ```
@@ -54,13 +54,14 @@ src/utils/utils.ts → pure transform/display helpers
 
 ## Authentication
 
-Auth has no `useAuth` hook. It is split across three places:
+Auth has no `useAuth` hook. It is split across four places:
 
 1. **`src/proxy.ts`** — Node.js runtime (Next 16 proxy), runs on every request. Reads the `access` HttpOnly cookie, validates JWT expiry locally (no network call), and redirects unauthenticated requests to `/login?redirect_to=<path>`.
 2. **`src/app/login/actions.ts`** — Next.js server action `loginAndSetCookie`. POSTs Google `access_token` to `POST /api/v1/users/login`, sets the HttpOnly cookie, returns data. The client then dispatches `loginActions.login(data)` to update Redux.
 3. **`src/redux/customBaseQuery.ts`** — sends all API calls to the BFF proxy `src/app/bff/[...path]/route.ts`, which reads the HttpOnly cookie and attaches the `Bearer` token server-side. The token never reaches client JS, Redux or `localStorage`. Any `401` response dispatches `logout()` (from `src/redux/login/actions.ts`), resetting Redux login state.
+4. **`src/features/AuthSession`** — client component mounted in `src/app/layout.tsx` (renders nothing). On load and on every navigation to a non-public route it calls `GET /users/me` through the BFF (`useLazyGetMeQuery`, always a fresh request) to validate the Bearer token with the backend. On success the user lands in `login.currentUser` (`selectCurrentUser`, `selectIsAuthenticated`, `selectUserRole`) and `session.user_info` is synced; on `401` it redirects to `/login?redirect_to=<path>`; other failures keep the session.
 
-The proxy fails closed: every route needs auth unless listed in `publicRoutes`.
+The proxy fails closed: every route needs auth unless listed in `PUBLIC_ROUTES` (`src/constants/constants.ts`, checked with `isPublicRoute`).
 
 `MainLayoutContainer` does NOT enforce auth — it is purely layout.
 
