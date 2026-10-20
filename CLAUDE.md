@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev          # Start dev server (Turbopack)
-npm run build        # Production build (Turbopack)
+npm run dev          # Start dev server (Turbopack, default bundler)
+npm run build        # Production build (Turbopack, default bundler)
 npm run lint         # ESLint + TypeScript check
 npm run typecheck    # TypeScript only
 npm run test         # Jest (all tests)
@@ -31,21 +31,21 @@ npx jest --testNamePattern="should parse error"
 
 ## Architecture
 
-The app is a Next.js 15 App Router frontend with four distinct layers:
+The app is a Next.js 16 App Router frontend with four distinct layers:
 
 ```
 src/app/          → thin route entry points (page.tsx files)
 src/features/     → page-level components with all business logic
 src/components/   → reusable UI primitives (no business logic)
 src/redux/        → RTK Query API slices + login slice + store
-src/hooks/        → custom hooks (no auth hook — auth is middleware-only)
+src/hooks/        → custom hooks (no auth hook — auth is proxy-only)
 src/models/       → TypeScript interfaces for API shapes
 src/utils/utils.ts → pure transform/display helpers
 ```
 
 **Route → Feature mapping:**
 
-- `/` → middleware redirects to `/videos`
+- `/` → proxy redirects to `/videos`
 - `/upload-video` → `UploadVideo` (staff only: the navbar entry is gated on `selectIsStaff`; uploads go through the BFF proxy)
 - `/login` → `LoginPage`
 - `/videos` → `VideosListingPage`
@@ -56,11 +56,11 @@ src/utils/utils.ts → pure transform/display helpers
 
 Auth has no `useAuth` hook. It is split across three places:
 
-1. **`src/middleware.ts`** — Edge Runtime, runs on every request. Reads the `access` HttpOnly cookie, validates JWT expiry locally (no network call), and redirects unauthenticated requests to `/login?redirect_to=<path>`.
+1. **`src/proxy.ts`** — Node.js runtime (Next 16 proxy), runs on every request. Reads the `access` HttpOnly cookie, validates JWT expiry locally (no network call), and redirects unauthenticated requests to `/login?redirect_to=<path>`.
 2. **`src/app/login/actions.ts`** — Next.js server action `loginAndSetCookie`. POSTs Google `access_token` to `POST /api/v1/users/login`, sets the HttpOnly cookie, returns data. The client then dispatches `loginActions.login(data)` to update Redux.
 3. **`src/redux/customBaseQuery.ts`** — sends all API calls to the BFF proxy `src/app/bff/[...path]/route.ts`, which reads the HttpOnly cookie and attaches the `Bearer` token server-side. The token never reaches client JS, Redux or `localStorage`. Any `401` response dispatches `logout()` (from `src/redux/login/actions.ts`), resetting Redux login state.
 
-The middleware fails closed: every route needs auth unless listed in `publicRoutes`.
+The proxy fails closed: every route needs auth unless listed in `publicRoutes`.
 
 `MainLayoutContainer` does NOT enforce auth — it is purely layout.
 

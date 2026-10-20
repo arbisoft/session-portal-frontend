@@ -27,7 +27,7 @@ useEventDetailQuery(videoId ?? skipToken);
 useRecommendationQuery(videoId ? { id: videoId, page } : skipToken);
 ```
 
-Authentication is not checked in the component: the middleware gates the route and the BFF proxy attaches the token server-side.
+Authentication is not checked in the component: the proxy gates the route and the BFF proxy attaches the token server-side.
 
 `videoId` comes from Next.js route params (`useParams<{ videoId: string }>()`). The route segment is `[videoId]`, which maps to the video's `slug` field (not numeric ID) — links are constructed as `/videos/${video.slug}`.
 

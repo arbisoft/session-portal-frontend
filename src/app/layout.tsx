@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: { children: React.ReactNode; params: { language: string } }) {
   return (
-    <html lang={DEFAULT_LANGUAGE} dir={DEFAULT_LANGUAGE_DIR}>
+    <html lang={DEFAULT_LANGUAGE} dir={DEFAULT_LANGUAGE_DIR} suppressHydrationWarning>
       <head>
         <meta name="apple-mobile-web-app-title" content="Arbisoft Session Portal" />
         {NODE_ENV === "production" && (
@@ -44,10 +44,10 @@ export default function RootLayout({ children }: { children: React.ReactNode; pa
         )}
       </head>
       <body>
+        <InitColorSchemeScript />
         <GoogleOAuthProvider clientId={CLIENT_ID}>
           <Providers>
             <ThemeProvider>
-              <InitColorSchemeScript />
               <CssBaseline />
               <NotificationProvider>{children}</NotificationProvider>
             </ThemeProvider>

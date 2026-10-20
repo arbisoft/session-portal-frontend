@@ -43,7 +43,7 @@ Object keys are capitalized with `lodash/capitalize`. Nested objects and arrays 
 
 Every API response passes through `customBaseQuery`. On error:
 
-1. **401 Unauthorized**: dispatches `logout()` to Redux. This resets the login slice to `initialState`, clearing user info. The user will be redirected to `/login` on the next navigation attempt (handled by middleware).
+1. **401 Unauthorized**: dispatches `logout()` to Redux. This resets the login slice to `initialState`, clearing user info. The user will be redirected to `/login` on the next navigation attempt (handled by the proxy).
 
 2. **Any error** (when `showErrorToast` is not explicitly set to `false`): calls `parseError(result.error.data, result.error.status)` and passes `errors[0].message` to `notificationManager.showNotification`.
 
