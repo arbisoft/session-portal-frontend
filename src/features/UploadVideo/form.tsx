@@ -1,261 +1,289 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
-import { faker } from "@faker-js/faker";
 import { yupResolver } from "@hookform/resolvers/yup";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CopyAllOutlined from "@mui/icons-material/CopyAllOutlined";
-import KeyboardTabOutlinedIcon from "@mui/icons-material/KeyboardTabOutlined";
-import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
-import CardMedia from "@mui/material/CardMedia";
-import Checkbox from "@mui/material/Checkbox";
+import CircularProgress from "@mui/material/CircularProgress";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import InputLabel from "@mui/material/InputLabel";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Controller, FieldValues, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import Button from "@/components/Button";
+import { useNotification } from "@/components/Notification";
+import useNavigation from "@/hooks/useNavigation";
+import { Tag } from "@/models/Events";
+import { useCreateEventMutation, useCreateTagMutation } from "@/redux/events/apiSlice";
+import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
-import { ImportContainer, InputContainer, StyledCard, ThumbnailUploaderButtons } from "./styled";
+import { DescriptionField, EventDateField, FORM_SCROLL_CONTAINER_ID, FormCardHeader, FormValues, TitleField } from "./fields";
+import { PlaylistsField, PresenterField, TagsField } from "./selectFields";
+import { InputContainer, StyledCard, ThumbnailUploaderButtons } from "./styled";
 
 const schema = yup
   .object({
-    title: yup.string().required(),
-    presenter: yup.string().required(),
-    event_date: yup.date().required(),
-    description: yup.string().required(),
-    related_videos: yup.array().required(),
-    playlists: yup.array().required(),
+    title: yup.string().required("Title is required"),
+    event_date: yup.date().required("Event date is required"),
+    description: yup.string().required("Description is required"),
+    presenter_ids: yup.array().of(yup.number().required()).min(1, "At least one presenter is required").default([]),
+    playlists: yup.array().of(yup.number().required()).default([]),
+    tags: yup.array().default([]),
   })
   .required();
 
-const VideoForm = () => {
-  const {
-    control,
-    handleSubmit,
-    // eslint-disable-next-line no-restricted-syntax
-    formState: { errors },
-    watch,
-  } = useForm({
+type VideoFormProps = {
+  uploadProgress: number;
+  isUploading: boolean;
+  videoAssetId: number | null;
+  uploadError: string | null;
+};
+
+const VideoForm = ({ uploadProgress, isUploading, videoAssetId, uploadError }: VideoFormProps) => {
+  const { navigateTo } = useNavigation();
+  const notification = useNotification();
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState<string | null>(null);
+  const [pendingData, setPendingData] = useState<FormValues | null>(null);
+  const createdTagIdsRef = useRef(new Map<string, number>());
+  const [createEvent, { isLoading: isPublishing }] = useCreateEventMutation();
+  const [createTag] = useCreateTagMutation();
+
+  const { control, handleSubmit } = useForm<FormValues>({
     resolver: yupResolver(schema),
     defaultValues: {
       title: "",
-      presenter: "",
       event_date: undefined,
       description: "",
-      related_videos: [],
+      presenter_ids: [],
       playlists: [],
+      tags: [],
     },
   });
 
-  // eslint-disable-next-line no-restricted-syntax
-  const formValues = watch();
-
-  const onSubmit = (data: FieldValues) => {
-    return data;
+  const handleFileUploadClick = () => {
+    thumbnailInputRef.current?.click();
   };
+
+  useEffect(() => {
+    if (!thumbnail) {
+      setThumbnailPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(thumbnail);
+    setThumbnailPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [thumbnail]);
+
+  const handleThumbnailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = event.target.files?.[0];
+    if (selected && !selected.type.startsWith("image/")) {
+      notification.showNotification({ message: "Thumbnail must be an image file", severity: "error" });
+      return;
+    }
+    if (selected) {
+      trackEvent(GA_EVENTS.UPLOAD_THUMBNAIL_SELECT, ANALYTICS_CATEGORY.UPLOAD_VIDEO, { option: "custom" });
+      setThumbnail(selected);
+    }
+  };
+
+  const handleAutoGenerated = () => {
+    trackEvent(GA_EVENTS.UPLOAD_THUMBNAIL_SELECT, ANALYTICS_CATEGORY.UPLOAD_VIDEO, { option: "auto_generated" });
+    setThumbnail(null);
+    if (thumbnailInputRef.current) thumbnailInputRef.current.value = "";
+  };
+
+  const publish = useCallback(
+    async (data: FormValues, assetId: number) => {
+      let stage: "create_tag" | "create_event" = "create_tag";
+      try {
+        const selectedTags = data.tags;
+        const existingTagIds: number[] = selectedTags.filter((t): t is Tag => typeof t !== "string").map((t) => t.id);
+        const newTagNames = new Set(
+          selectedTags.filter((t): t is string => typeof t === "string").map((name) => name.replace(/^#+/, "").trim())
+        );
+        const newTagIds = await Promise.all(
+          [...newTagNames].map(async (name) => {
+            const createdTagId = createdTagIdsRef.current.get(name);
+            if (createdTagId !== undefined) return createdTagId;
+
+            const { id } = await createTag({ name }).unwrap();
+            createdTagIdsRef.current.set(name, id);
+            return id;
+          })
+        );
+
+        stage = "create_event";
+        const event = await createEvent({
+          title: data.title,
+          description: data.description,
+          event_time: data.event_date.toISOString(),
+          playlists: data.playlists,
+          presenter_ids: data.presenter_ids,
+          video_asset_id: assetId,
+          thumbnail: thumbnail ?? undefined,
+          tags: [...existingTagIds, ...newTagIds],
+        }).unwrap();
+
+        trackEvent(GA_EVENTS.UPLOAD_PUBLISH_SUCCESS, ANALYTICS_CATEGORY.UPLOAD_VIDEO);
+        notification.showNotification({ message: "Event published successfully!", severity: "success" });
+        navigateTo("videoDetail", { id: event.slug });
+      } catch {
+        // The API error toast is already shown by customBaseQuery.
+        trackEvent(GA_EVENTS.UPLOAD_PUBLISH_FAILED, ANALYTICS_CATEGORY.UPLOAD_VIDEO, { reason: stage });
+      }
+    },
+    [createEvent, createTag, thumbnail, notification, navigateTo]
+  );
+
+  useEffect(() => {
+    if (!pendingData) return;
+    if (uploadError) {
+      trackEvent(GA_EVENTS.UPLOAD_PUBLISH_FAILED, ANALYTICS_CATEGORY.UPLOAD_VIDEO, { reason: "upload_failed" });
+      setPendingData(null);
+      return;
+    }
+    if (videoAssetId) {
+      setPendingData(null);
+      publish(pendingData, videoAssetId);
+    }
+  }, [videoAssetId, uploadError, pendingData, publish]);
+
+  const onSubmit = async (data: FormValues) => {
+    // Only counts and flags are reported; no titles, descriptions, tag names or presenter details.
+    trackEvent(GA_EVENTS.UPLOAD_PUBLISH_SUBMIT, ANALYTICS_CATEGORY.UPLOAD_VIDEO, {
+      queued: !videoAssetId,
+      has_custom_thumbnail: !!thumbnail,
+      presenter_count: data.presenter_ids.length,
+      playlist_count: data.playlists.length,
+      tag_count: data.tags.length,
+      new_tag_count: data.tags.filter((t) => typeof t === "string").length,
+    });
+    if (!videoAssetId) {
+      setPendingData(data);
+      return;
+    }
+    await publish(data, videoAssetId);
+  };
+
+  let progressLabel = "Ready to publish";
+  if (pendingData && isUploading) {
+    progressLabel = `Uploading ${uploadProgress}%… (will auto-publish when done)`;
+  } else if (uploadError) {
+    progressLabel = uploadError;
+  } else if (isUploading) {
+    progressLabel = `Uploading ${uploadProgress}%…`;
+  }
+
+  const isQueued = !!pendingData;
+  let publishButtonLabel = "Publish";
+  if (isPublishing) {
+    publishButtonLabel = "Publishing…";
+  } else if (isQueued) {
+    publishButtonLabel = "Queued…";
+  }
 
   return (
     <StyledCard>
-      <CardHeader title={formValues.title ? formValues.title : "Upload Video"} />
+      <FormCardHeader control={control} />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent>
-          <ImportContainer>
-            <Autocomplete
-              options={[
-                { title: "The Shawshank Redemption", year: 1994 },
-                { title: "The Godfather", year: 1972 },
-              ]}
-              disableCloseOnSelect
-              getOptionLabel={(option) => option.title}
-              renderInput={(params) => <TextField {...params} placeholder="Import session details from  workstream" />}
-              size="medium"
-              fullWidth
-            />
-            <Button variant="contained" startIcon={<KeyboardTabOutlinedIcon />}>
-              Import
-            </Button>
-          </ImportContainer>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minHeight: 0 }}
+      >
+        <CardContent id={FORM_SCROLL_CONTAINER_ID} sx={{ flex: 1, overflowY: "auto", minHeight: 0 }}>
           <Grid container spacing={2}>
             <Grid size={7}>
-              <Controller
-                name="title"
-                control={control}
-                render={({ field }) => (
-                  <InputContainer>
-                    <InputLabel>Title</InputLabel>
-                    <TextField {...field} variant="outlined" fullWidth />
-                    <Typography color="error">{errors?.title?.message}</Typography>
-                  </InputContainer>
-                )}
-              />
-              <Controller
-                name="presenter"
-                control={control}
-                render={({ field }) => (
-                  <InputContainer>
-                    <InputLabel>Presenter</InputLabel>
-                    <TextField {...field} variant="outlined" fullWidth />
-                    <Typography color="error">{errors?.presenter?.message}</Typography>
-                  </InputContainer>
-                )}
-              />
-              <Controller
-                name="event_date"
-                control={control}
-                render={({ field }) => (
-                  <InputContainer>
-                    <InputLabel>Event Date</InputLabel>
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <DatePicker value={field.value} onChange={field.onChange} />
-                    </LocalizationProvider>
-                    <Typography color="error">{errors?.event_date?.message}</Typography>
-                  </InputContainer>
-                )}
-              />
-              <Controller
-                name="related_videos"
-                control={control}
-                render={() => (
-                  <InputContainer>
-                    <InputLabel>Related Videos</InputLabel>
-                    <Autocomplete
-                      multiple
-                      id="checkboxes-tags-demo"
-                      options={[
-                        { title: "The Shawshank Redemption", year: 1994 },
-                        { title: "The Godfather", year: 1972 },
-                      ]}
-                      disableCloseOnSelect
-                      getOptionLabel={(option) => option.title}
-                      renderOption={(props, option, { selected }) => {
-                        const { key, ...optionProps } = props;
-                        return (
-                          <li key={key} {...optionProps}>
-                            <Checkbox
-                              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                              checkedIcon={<CheckBoxIcon fontSize="small" />}
-                              checked={selected}
-                            />
-                            {option.title}
-                          </li>
-                        );
-                      }}
-                      fullWidth
-                      renderInput={(params) => <TextField {...params} placeholder="Choose related videos" />}
-                    />
-                    <Typography color="error">{errors?.related_videos?.message}</Typography>
-                  </InputContainer>
-                )}
-              />
-              <Controller
-                name="description"
-                control={control}
-                render={({ field }) => (
-                  <InputContainer>
-                    <InputLabel>Description</InputLabel>
-                    <TextField multiline rows={4} {...field} fullWidth />
-                    <Typography color="error">{errors?.description?.message}</Typography>
-                  </InputContainer>
-                )}
-              />
+              <TitleField control={control} />
+              <PresenterField control={control} />
+              <EventDateField control={control} />
+              <DescriptionField control={control} />
+
               <InputContainer>
                 <InputLabel>Thumbnail</InputLabel>
-                <Typography variant="bodySmall">Set a thumbnail that stands out and draws viewers attention.</Typography>
                 <ThumbnailUploaderButtons>
-                  <Button variant="outlined" startIcon={<AddPhotoAlternateOutlinedIcon />}>
-                    File upload
-                  </Button>
-                  <Button variant="outlined" startIcon={<AutoAwesomeOutlinedIcon />}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<AutoAwesomeOutlinedIcon />}
+                    onClick={handleAutoGenerated}
+                    sx={
+                      !thumbnail
+                        ? { borderColor: "#fff", color: "#fff" }
+                        : { borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.3)" }
+                    }
+                  >
                     auto-generated
                   </Button>
+                  <Button
+                    variant="outlined"
+                    startIcon={<AddPhotoAlternateOutlinedIcon />}
+                    onClick={handleFileUploadClick}
+                    sx={
+                      thumbnail
+                        ? {
+                            borderColor: "#fff",
+                            color: "#fff",
+                            overflow: "hidden",
+                            backgroundImage: thumbnailPreviewUrl
+                              ? `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url(${thumbnailPreviewUrl})`
+                              : undefined,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                          }
+                        : { borderColor: "rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.3)" }
+                    }
+                  >
+                    {thumbnail ? thumbnail.name : "Upload a file"}
+                  </Button>
                 </ThumbnailUploaderButtons>
+                <input ref={thumbnailInputRef} type="file" hidden accept="image/*" onChange={handleThumbnailChange} />
               </InputContainer>
 
-              <Controller
-                name="playlists"
-                control={control}
-                render={() => (
-                  <InputContainer>
-                    <InputLabel>Playlists</InputLabel>
-                    <Autocomplete
-                      multiple
-                      id="checkboxes-tags-demo"
-                      options={[
-                        { title: "The Shawshank Redemption", year: 1994 },
-                        { title: "The Godfather", year: 1972 },
-                      ]}
-                      disableCloseOnSelect
-                      getOptionLabel={(option) => option.title}
-                      renderOption={(props, option, { selected }) => {
-                        const { key, ...optionProps } = props;
-                        return (
-                          <li key={key} {...optionProps}>
-                            <Checkbox
-                              icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
-                              checkedIcon={<CheckBoxIcon fontSize="small" />}
-                              checked={selected}
-                            />
-                            {option.title}
-                          </li>
-                        );
-                      }}
-                      fullWidth
-                      renderInput={(params) => <TextField {...params} placeholder="Select your related video" />}
-                    />
-                    <Typography color="error">{errors?.playlists?.message}</Typography>
-                  </InputContainer>
-                )}
-              />
+              <PlaylistsField control={control} />
+              <TagsField control={control} />
             </Grid>
+
             <Grid size={5}>
               <Card sx={{ background: "transparent" }}>
-                <CardMedia sx={{ height: 140 }} image={faker.image.urlPicsumPhotos()} title="green iguana" />
-                <CardContent sx={{ paddingX: 0 }}>
-                  <Box display="flex" alignItems="flex-start" justifyContent="space-between">
-                    <Box>
-                      <Typography gutterBottom variant="h5" component="div">
-                        Video Link
-                      </Typography>
-                      <Typography gutterBottom sx={{ color: "text.secondary" }}>
-                        https://arbisoft.com/allhand/W_s.....
-                      </Typography>
-                    </Box>
-                    <IconButton aria-label="settings">
-                      <CopyAllOutlined />
-                    </IconButton>
-                  </Box>
-                  <Typography gutterBottom variant="h5" component="div">
-                    Original File Name
+                <Box
+                  sx={{
+                    alignItems: "center",
+                    background: "#000",
+                    borderRadius: "12px",
+                    display: "flex",
+                    height: 162,
+                    justifyContent: "center",
+                  }}
+                >
+                  <Typography variant="bodySmall" color="textSecondary">
+                    {isUploading ? `Uploading video… ${uploadProgress}%` : "Upload complete"}
                   </Typography>
-                  <Typography sx={{ color: "text.secondary" }}>podsessionepisode1.mp4</Typography>
-                </CardContent>
+                </Box>
               </Card>
             </Grid>
           </Grid>
         </CardContent>
+
         <CardActions>
           <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
-            <Typography color="textSecondary" variant="bodyLarge">
-              Uploading 80% ... 4 mins left
+            <Typography role="status" sx={{ color: uploadError ? "error.main" : "#fff", fontSize: "14px" }}>
+              {progressLabel}
             </Typography>
-            <Button type="submit" variant="contained">
-              Publish
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={(!videoAssetId && !isUploading) || isPublishing || isQueued}
+              startIcon={isPublishing || isQueued ? <CircularProgress size={16} color="inherit" /> : undefined}
+              sx={{ backgroundColor: "#fff", color: "#3c3e42", "&:hover": { backgroundColor: "#e0e0e0" } }}
+            >
+              {publishButtonLabel}
             </Button>
           </Box>
         </CardActions>

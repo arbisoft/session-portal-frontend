@@ -101,7 +101,7 @@ Historical entries above were generated using `release-it` with `@release-it/con
 
 - Latest git tag and `CHANGELOG.md` release is `1.3.6` (2026-09-14); `package.json` matches at `1.3.6`.
 - Each release-it run bumps `package.json`'s `version` field to match the new tag, so the two should not drift going forward.
-- Feature flags reference version thresholds: `darkModeSwitcher` requires `>=1.2.0`, `uploadVideo` requires `>=1.3.0`. Both are currently disabled regardless of version (`enabled: false`).
+- Feature flags reference version thresholds: `darkModeSwitcher` requires `>=1.2.0` and is currently disabled regardless of version (`enabled: false`). The former `uploadVideo` flag was removed; the upload UI is gated by the user's `is_staff` flag.
 
 ## Observation
 

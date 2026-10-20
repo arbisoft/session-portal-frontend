@@ -1,4 +1,4 @@
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs/config";
 import { NextConfig } from "next";
 
 import { ALLOWED_IMAGE_HOSTS, BASE_URL, SENTRY_ORG, SENTRY_PROJECT } from "@/constants/constants";

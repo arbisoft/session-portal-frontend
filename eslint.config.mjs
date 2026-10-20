@@ -15,7 +15,7 @@ export default defineConfig([
   reactPlugin.configs.flat.recommended,
   eslintConfigPrettier,
   {
-    ignores: [".next/", "node_modules/", "dist/", "build/", "coverage/", "public/", "next-env.d.ts"],
+    ignores: [".claude/", ".next/", "node_modules/", "dist/", "build/", "coverage/", "public/", "next-env.d.ts"],
   },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],

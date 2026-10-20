@@ -1,7 +1,19 @@
 import isEqual from "lodash/isEqual";
 import omit from "lodash/omit";
 
-import { EventDetail, Tag, AllEventResponse, EventsParams, Recommendation, Playlist, RecommendationParam } from "@/models/Events";
+import { events, users } from "@/endpoints";
+import {
+  AllEventResponse,
+  Event,
+  EventCreateParams,
+  EventDetail,
+  EventsParams,
+  Playlist,
+  Recommendation,
+  RecommendationParam,
+  Tag,
+  UserSearchResult,
+} from "@/models/Events";
 import { baseApi } from "@/redux/baseApi";
 
 const getEventsCacheKey = (params: Omit<EventsParams, "page">) => {
@@ -38,6 +50,21 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["Tag"],
+    }),
+    allTags: builder.query<Tag[], void>({
+      query: () => ({
+        url: events.tagsEndpoint,
+        method: "GET",
+      }),
+      providesTags: ["Tag"],
+    }),
+    createTag: builder.mutation<Tag, { name: string }>({
+      query: (body) => ({
+        url: events.tagsEndpoint,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Tag"],
     }),
     getEvents: builder.query<AllEventResponse, EventsParams>({
       query: (params) => ({
@@ -108,10 +135,35 @@ export const eventsApi = baseApi.injectEndpoints({
         method: "POST",
       }),
     }),
+    createEvent: builder.mutation<Event, EventCreateParams>({
+      query: (params) => {
+        const formData = new FormData();
+        formData.append("title", params.title);
+        formData.append("description", params.description);
+        formData.append("event_time", params.event_time);
+        formData.append("video_asset_id", String(params.video_asset_id));
+        params.playlists.forEach((id) => formData.append("playlists", String(id)));
+        params.presenter_ids.forEach((id) => formData.append("presenter_ids", String(id)));
+        params.tags?.forEach((id) => formData.append("tags", String(id)));
+        if (params.thumbnail) formData.append("thumbnail", params.thumbnail);
+        return { url: events.createEvent, method: "POST", body: formData };
+      },
+      invalidatesTags: ["Event", "Playlist", "Tag"],
+    }),
+    searchUsers: builder.query<UserSearchResult[], string>({
+      query: (q) => ({
+        url: users.searchUsers,
+        method: "GET",
+        params: { q },
+      }),
+    }),
   }),
 });
 
 export const {
+  useAllTagsQuery,
+  useCreateEventMutation,
+  useCreateTagMutation,
   useEventDetailQuery,
   useEventTagsQuery,
   useEventTypesQuery,
@@ -123,6 +175,8 @@ export const {
   useLazyGetEventsQuery,
   useLazyPlaylistsQuery,
   useLazyRecommendationQuery,
+  useLazySearchUsersQuery,
   usePlaylistsQuery,
   useRecommendationQuery,
+  useSearchUsersQuery,
 } = eventsApi;

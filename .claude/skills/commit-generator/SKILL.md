@@ -126,7 +126,7 @@ Infer scope from modified file paths, using this repo's actual layer structure.
 | `next.config.ts`, `tsconfig.json`, `jest.config.*`                            | build        |
 | `eslint.config.mjs`, `.prettierrc*`, `commitlint.config.*`                    | lint         |
 | `package.json`, `package-lock.json`                                           | deps         |
-| `.claude/skills/`, `CLAUDE.md`                                                | claude       |
+| `.claude/` (skills, agents, hooks, settings), `CLAUDE.md`                     | claude       |
 
 If changes span multiple unrelated scopes, omit the scope or use the most dominant one — don't invent a combined scope.
 

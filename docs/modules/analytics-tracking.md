@@ -20,7 +20,7 @@ trackEvent(event: string, category: AnalyticsCategory, params?: AnalyticsEventPa
 - Calls `sendGTMEvent({ event, event_category: category, ...params })`.
 - `params` values must be `string | number | boolean | undefined`.
 
-Event names are `lower_snake_case` constants in `GA_EVENTS`. Categories are in `ANALYTICS_CATEGORY`: `auth`, `navigation`, `sidebar`, `videos_listing`, `search`, `video_card`, `video_player`, `recommendations`.
+Event names are `lower_snake_case` constants in `GA_EVENTS`. Categories are in `ANALYTICS_CATEGORY`: `auth`, `navigation`, `sidebar`, `videos_listing`, `search`, `video_card`, `video_player`, `recommendations`, `upload_video`.
 
 ## Event Catalog and Call Sites
 
@@ -34,7 +34,11 @@ Event names are `lower_snake_case` constants in `GA_EVENTS`. Categories are in `
 | Search results | `SEARCH_RESULTS_VIEW`, `SEARCH_LOAD_MORE` | `src/features/SearchResultsPage/searchResultsPage.tsx` |
 | Video card / slider | `VIDEO_CARD_CLICK`, `FEATURED_SLIDER_NAVIGATE` | `videoCard.tsx`, `featuredSlider.tsx` |
 | Video player | `VIDEO_PLAY`, `VIDEO_PAUSE`, `VIDEO_SEEK`, `VIDEO_VOLUME_CHANGE`, `VIDEO_FULLSCREEN_CHANGE`, `VIDEO_PLAYBACK_RATE_CHANGE`, `VIDEO_COMPLETE`, `VIDEO_PLAY_ERROR` | `src/components/VideoPlayer/videoPlayer.tsx` |
-| Video detail | `TAG_SELECT`, `RECOMMENDATIONS_LOAD_MORE` | `src/features/VideoDetail/videoDetail.tsx` |
+| Video player (watch time) | `VIDEO_WATCH_THRESHOLD` (`title`, `threshold_seconds`) | `src/components/VideoPlayer/videoPlayer.tsx` |
+| Video detail | `TAG_SELECT`, `RECOMMENDATIONS_LOAD_MORE`, `VIDEO_VIEW_COUNTED`, `VIDEO_VIEW_COUNT_FAILED` | `src/features/VideoDetail/videoDetail.tsx` |
+| Upload video | `UPLOAD_FILE_SELECTED`, `UPLOAD_FILE_REJECTED`, `UPLOAD_VIDEO_COMPLETED`, `UPLOAD_VIDEO_FAILED`, `UPLOAD_THUMBNAIL_SELECT`, `UPLOAD_PUBLISH_SUBMIT`, `UPLOAD_PUBLISH_SUCCESS`, `UPLOAD_PUBLISH_FAILED` | `src/features/UploadVideo/` (`videoPicker.tsx`, `uploadVideo.tsx`, `form.tsx`) |
+
+Upload events send only counts, flags, MIME type and size (never file names, titles, tag names or presenter data).
 
 `src/utils/analytics.ts` is the source of truth for names; params sent with each event are defined at the call sites.
 

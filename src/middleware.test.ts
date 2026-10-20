@@ -100,7 +100,7 @@ describe("Middleware", () => {
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
 
-  it("should redirect upload-video path to /videos", () => {
+  it("should redirect unauthenticated upload-video requests to login", () => {
     const req = {
       nextUrl: { pathname: "/upload-video", search: "" },
       url: "http://localhost:3000/upload-video",
@@ -109,7 +109,23 @@ describe("Middleware", () => {
 
     middleware(req);
 
-    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("redirect_to", "/upload-video");
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(loginUrl);
+  });
+
+  it("should allow authenticated upload-video requests", () => {
+    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
+    const req = {
+      nextUrl: { pathname: "/upload-video", search: "" },
+      url: "http://localhost:3000/upload-video",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    middleware(req);
+
+    expect(mockNextResponse.redirect).not.toHaveBeenCalled();
+    expect(mockNextResponse.next).toHaveBeenCalled();
   });
 
   it("should redirect login page to redirect_to when already authenticated", () => {

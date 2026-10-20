@@ -46,7 +46,7 @@ Size and complexity: keep components under about 250 lines and functions under a
 
 - No `dangerouslySetInnerHTML` with dynamic or user data. The only allowed use is the static Hotjar snippet in `layout.tsx`. Prefer moving IDs to constants or env.
 - No new remote image hosts through wildcards. Use `NEXT_PUBLIC_IMAGE_HOSTS` or the backend host (`next.config.ts`).
-- New third-party scripts, frames or connections must be added to the CSP in `next.config.ts` (currently `Content-Security-Policy-Report-Only`). Say so in the report. Do not weaken security headers or add `'unsafe-eval'` outside development.
+- `next.config.ts` currently sets no CSP or security headers (see `docs/ARCHITECTURE.md`). If one is (re)introduced, new third-party scripts, frames or connections must be added to it. Say so in the report. Do not weaken security headers or add `'unsafe-eval'` outside development.
 - No secrets in the repo, in `NEXT_PUBLIC_*` variables, or in `.env.local` that is committed. `NEXT_PUBLIC_*` is public by definition.
 - No `// @ts-ignore` or `@ts-expect-error` in production code. Fix the type, or isolate the cast with a comment that says why. Test-only hooks stay in `jest.setup.ts`, not in production modules.
 - User-facing errors must not leak stack traces or backend internals. Parse them with `parseError`.

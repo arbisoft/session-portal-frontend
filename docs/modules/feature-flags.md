@@ -15,12 +15,11 @@ Controls whether in-development or version-gated features are visible to users. 
 
 Defined in `src/constants/featureFlags.ts`:
 
-| Flag               | `enabled` | `minVersion` | Purpose                                             |
-| ------------------ | --------- | ------------ | --------------------------------------------------- |
-| `darkModeSwitcher` | `false`   | `1.2.0`      | Shows the theme toggle on the login page            |
-| `uploadVideo`      | `false`   | `1.3.0`      | Reveals the upload video UI (unimplemented backend) |
+| Flag               | `enabled` | `minVersion` | Purpose                                  |
+| ------------------ | --------- | ------------ | ---------------------------------------- |
+| `darkModeSwitcher` | `false`   | `1.2.0`      | Shows the theme toggle on the login page |
 
-Both flags are currently disabled regardless of version. A flag is only active when `enabled: true` AND `package.json` version `>= minVersion`.
+The flag is currently disabled regardless of version. The upload video UI is no longer behind a flag; it is gated by the user's `is_staff` flag. A flag is only active when `enabled: true` AND `package.json` version `>= minVersion`.
 
 ## How It Works
 
@@ -49,7 +48,6 @@ Append the flag name as a query parameter to any page to override it for that se
 
 ```
 /videos?darkModeSwitcher=true
-/login?uploadVideo=true
 ```
 
 The override lasts only for the current page load. Navigating away or refreshing without the param returns to the config value.
@@ -58,10 +56,9 @@ The override lasts only for the current page load. Navigating away or refreshing
 
 ## Where Flags Are Consumed
 
-| Flag               | Consumer                     | Effect                                                        |
-| ------------------ | ---------------------------- | ------------------------------------------------------------- |
-| `darkModeSwitcher` | `LoginPage`                  | Conditionally renders `<ThemeToggle>` in the top-right corner |
-| `uploadVideo`      | Not currently consumed in UI | Feature is always blocked by middleware redirect regardless   |
+| Flag               | Consumer    | Effect                                                        |
+| ------------------ | ----------- | ------------------------------------------------------------- |
+| `darkModeSwitcher` | `LoginPage` | Conditionally renders `<ThemeToggle>` in the top-right corner |
 
 ## Adding a New Flag
 

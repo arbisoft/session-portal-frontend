@@ -2,9 +2,11 @@
 
 This document describes the API endpoints consumed by the Session Portal Frontend. All endpoints are relative to the base URL configured in `NEXT_PUBLIC_BASE_URL` and prefixed with `/api/v1`.
 
+The browser never calls the backend directly. Requests go to the BFF proxy (`/bff/<path>`, `src/app/bff/[...path]/route.ts`), which reads the HttpOnly `access` cookie and attaches the `Authorization: Bearer` header server-side. The documented paths below are the backend paths the proxy forwards to.
+
 ## Authentication
 
-All API requests except login require authentication via Bearer token in the `Authorization` header.
+All API requests except login require a Bearer token. The frontend never handles the token in client code; see the BFF note above.
 
 ### Obtaining Access Token
 
@@ -32,10 +34,13 @@ Authenticate with Google OAuth token.
     "avatar": "string", // User avatar URL
     "first_name": "string",
     "full_name": "string",
-    "last_name": "string"
+    "last_name": "string",
+    "is_staff": false // staff users may upload videos
   }
 }
 ```
+
+The `loginAndSetCookie` server action stores `access` in an HttpOnly cookie and returns the payload to the client with `access` and `refresh` set to `null`.
 
 **Error Responses:**
 
@@ -78,13 +83,71 @@ Retrieve detailed information about a specific video asset/event.
   "status": "string",
   "thumbnail": "string",
   "title": "string",
-  "video_file": "string"
+  "video_file": "string",
+  "captions_file": "string", // optional; .vtt or .srt URL
+  "view_count": 0
 }
 ```
 
 **Error Responses:**
 
 - `404 Not Found`: Video asset not found
+
+### POST /events/videoasset/{slug}/view/
+
+Record a view for a video asset. The frontend calls this once the viewer has accumulated the watch threshold (30 seconds of playing time by default) in the player.
+
+**Parameters:**
+
+- `slug` (path): Video asset slug
+
+**Response:**
+
+```json
+{ "view_count": 0 }
+```
+
+### POST /events/videoassets/
+
+Upload a video file (staff upload flow). Sent as `multipart/form-data` with `XMLHttpRequest` so upload progress can be shown.
+
+**Request Body:** `video_file` (file)
+
+**Response (201 Created):**
+
+```json
+{ "id": 0, "title": "string", "video_file": "string", "status": "string" }
+```
+
+### POST /events/
+
+Create (publish) an event from an uploaded video asset. Sent as `multipart/form-data`.
+
+**Request Body:**
+
+- `title`, `description` (string)
+- `event_time` (ISO 8601 string)
+- `video_asset_id` (number, from the upload response)
+- `playlists` (repeated number field)
+- `presenter_ids` (repeated number field)
+- `tags` (repeated number field, optional)
+- `thumbnail` (file, optional; the backend generates one when omitted)
+
+**Response:** the created `Event` (including its `slug`).
+
+### GET /users/search/
+
+Search users to pick presenters.
+
+**Query Parameters:**
+
+- `q` (required): Search text. The UI searches once at least 2 characters are entered.
+
+**Response (200 OK):**
+
+```json
+[{ "id": 0, "first_name": "string", "last_name": "string", "full_name": "string", "email": "string" }]
+```
 
 ### GET /events/all/
 
@@ -154,6 +217,18 @@ Retrieve list of available tags.
   }
 ]
 ```
+
+### POST /events/tags/
+
+Create a tag (used when a staff user types a new tag in the upload form).
+
+**Request Body:**
+
+```json
+{ "name": "string" }
+```
+
+**Response:** the created `Tag` (`{ "id": 0, "name": "string" }`).
 
 ### GET /events/event_types/
 

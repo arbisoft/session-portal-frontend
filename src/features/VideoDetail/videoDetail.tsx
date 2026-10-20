@@ -31,7 +31,7 @@ const VideoDetail = () => {
   const { navigateTo, getPageUrl } = useNavigation();
 
   const [page, setPage] = useState(1);
-  const [displayedViewCount, setDisplayedViewCount] = useState<number | null>(null);
+  const [countedViews, setCountedViews] = useState<{ videoId: string; viewCount: number } | null>(null);
 
   const [incrementViewCount] = useIncrementViewCountMutation();
 
@@ -53,20 +53,18 @@ const VideoDetail = () => {
     }
   }, [error]);
 
-  useEffect(() => {
-    if (data?.view_count !== null && data?.view_count !== undefined) setDisplayedViewCount(data.view_count);
-  }, [data?.view_count]);
-
   const handleWatchThreshold = useCallback(() => {
     incrementViewCount(videoId)
       .unwrap()
       .then((res) => {
-        setDisplayedViewCount(res.view_count);
+        setCountedViews({ videoId, viewCount: res.view_count });
+        trackEvent(GA_EVENTS.VIDEO_VIEW_COUNTED, ANALYTICS_CATEGORY.VIDEO_PLAYER, { view_count: res.view_count });
       })
       // Errors are already surfaced by customBaseQuery; a failed view count must not become an unhandled rejection.
-      .catch(() => undefined);
+      .catch(() => trackEvent(GA_EVENTS.VIDEO_VIEW_COUNT_FAILED, ANALYTICS_CATEGORY.VIDEO_PLAYER));
   }, [videoId, incrementViewCount]);
 
+  const displayedViewCount = countedViews?.videoId === videoId ? countedViews.viewCount : data?.view_count;
   const dataEvent = data?.event;
   const allRecommendations = recommendationsData?.results ?? [];
 
@@ -114,6 +112,7 @@ const VideoDetail = () => {
         <>
           {data?.video_file && (
             <VideoPlayer
+              key={data.video_file}
               {...{
                 captionsFile: data?.captions_file,
                 crossOrigin: true,
@@ -140,7 +139,7 @@ const VideoDetail = () => {
               <Typography color="textSecondary" component="time" dateTime={dataEvent?.event_time} tabIndex={0}>
                 {format(dataEvent?.event_time ?? "", "MMM dd, yyyy")}
               </Typography>
-              {displayedViewCount !== null && displayedViewCount !== undefined && (
+              {displayedViewCount !== undefined && displayedViewCount !== null && (
                 <Typography color="textSecondary" variant="bodySmall" component="p" tabIndex={0}>
                   {displayedViewCount.toLocaleString()} {displayedViewCount === 1 ? "view" : "views"}
                 </Typography>

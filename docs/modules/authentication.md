@@ -41,7 +41,7 @@ The middleware runs on every non-static request via the Next.js Edge Runtime. Or
 
 ```
 1. Authenticated user on /login  →  redirect to redirect_to or /videos
-2. Any user on / or /upload-video  →  redirect to /videos
+2. Any user on /  →  redirect to /videos
 3. Unauthenticated user on any route other than /login (fail-closed: publicRoutes = ["/login"])  →  redirect to /login?redirect_to=<path>
 4. Anything else  →  pass through
 ```
@@ -59,7 +59,7 @@ The `customBaseQuery` also triggers a client-side logout: any `401` response dis
 
 ### Session Persistence
 
-`redux-persist` persists only the `login.session` key to `localStorage`. Because tokens are `null` in client state, only the user profile is stored (state version 1 migrates away any legacy persisted tokens):
+`redux-persist` persists only the `login.session` key to `localStorage`. Because tokens are `null` in client state, only the user profile is stored (persist version 2: migration 1 scrubs any legacy persisted tokens, migration 2 defaults `user_info.is_staff` to `false` for sessions persisted before the field existed):
 
 - persist key: `session-portal`
 - whitelist: `["login"]`

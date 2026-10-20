@@ -5,12 +5,18 @@ jest.mock("@/components/Notification", () => ({
   notificationManager: { showNotification: (...args: unknown[]) => mockShowNotification(...args) },
 }));
 
+const mockCaptureException = jest.fn();
+jest.mock("@sentry/nextjs", () => ({
+  captureException: (...args: unknown[]) => mockCaptureException(...args),
+}));
+
 const api = (dispatch = jest.fn()) => ({ dispatch, getState: jest.fn(), signal: new AbortController().signal }) as never;
 
 describe("customBaseQuery", () => {
   beforeEach(() => {
     fetchMock.resetMocks();
     mockShowNotification.mockClear();
+    mockCaptureException.mockClear();
   });
 
   it("should call the proxy without a client-side Authorization header and drop trailing slashes", async () => {
@@ -40,5 +46,24 @@ describe("customBaseQuery", () => {
     await customBaseQuery({ url: "/events/all/" }, api(), { showErrorToast: false });
 
     expect(mockShowNotification).not.toHaveBeenCalled();
+  });
+
+  it("should report a response that cannot be parsed, without the query string", async () => {
+    fetchMock.mockResponseOnce("<html>bad gateway</html>", { status: 502 });
+
+    await customBaseQuery({ url: "/events/all/?search=secret" }, api(), {});
+
+    expect(mockCaptureException).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "API response could not be parsed (HTTP 502)" }),
+      expect.objectContaining({ extra: { endpoint: "/events/all" } })
+    );
+  });
+
+  it("should not report ordinary API error statuses", async () => {
+    fetchMock.mockResponseOnce(JSON.stringify({ detail: "bad" }), { status: 400 });
+
+    await customBaseQuery({ url: "/events/all/" }, api(), {});
+
+    expect(mockCaptureException).not.toHaveBeenCalled();
   });
 });
