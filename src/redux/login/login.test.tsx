@@ -21,6 +21,7 @@ describe("Login API and Slice", () => {
           is_staff: false,
         },
       },
+      currentUser: null,
       error: null,
       isLoading: false,
     };
@@ -41,6 +42,7 @@ describe("Login API and Slice", () => {
           is_staff: false,
         },
       },
+      currentUser: null,
       error: null,
       isLoading: false,
     };
@@ -57,6 +59,7 @@ describe("Login API and Slice", () => {
           is_staff: false,
         },
       },
+      currentUser: null,
       error: null,
       isLoading: false,
     };
@@ -175,6 +178,7 @@ describe("Login API and Slice", () => {
           is_staff: false,
         },
       },
+      currentUser: null,
       error: null,
       isLoading: false,
     };
