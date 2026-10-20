@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import MuiButton from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import { useTheme } from "@mui/material/styles";
-import { Meta } from "@storybook/react";
+import { Meta } from "@storybook/nextjs";
 import chunk from "lodash/chunk";
 import startCase from "lodash/startCase";
 

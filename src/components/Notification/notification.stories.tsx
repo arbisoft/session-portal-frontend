@@ -3,7 +3,7 @@ import { FC } from "react";
 
 import Button from "@mui/material/Button";
 import { SnackbarOrigin } from "@mui/material/Snackbar";
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/nextjs";
 
 import { NotificationProvider, useNotification } from "./notification";
 
