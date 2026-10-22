@@ -110,6 +110,10 @@ Custom GA events are pushed to the GTM `dataLayer` via `trackEvent`/`GA_EVENTS`/
 
 **Any task that adds or changes code, config, dependencies, CI or Docker files must invoke the `architecture-guardian` agent (`.claude/agents/architecture-guardian.md`) before being considered done** (and before `ga-event-tracker`). It enforces the layering, auth/token, security-header, dependency, testing and accessibility rules from the architecture advisory. Do this automatically.
 
+## UI Design Guidelines
+
+**Any task that adds or changes rendered UI (a page, feature component, shared component, `styled.tsx`, theme/colors, or any color, typography, spacing, radius or shadow) must invoke the `ui-design-guidelines` agent (`.claude/agents/ui-design-guidelines.md`) before being considered done**, after `architecture-guardian` and before `ga-event-tracker`. It audits the changed UI against the project's visual rules (MUI theme tokens, flat colors, one focal element per page, restrained borders/radius, contextual data) and fixes violations in place. Skip it for changes with no rendered UI surface. Do this automatically — don't wait for the user to ask for a design review.
+
 ## SonarQube Fixer
 
 CI scans every push to `dev`/`main` and every PR to `dev` with SonarQube. When the user asks to fix Sonar issues or a failed quality gate, invoke the `sonarqube-fixer` agent (`.claude/agents/sonarqube-fixer.md`). It reads the open issues for the branch or PR from the Sonar Web API (needs `SONAR_HOST_URL` and `SONAR_TOKEN` in the environment, or an exported issue list), fixes them in place, and verifies with lint and tests. It does not run on every task, never suppresses issues to get green, and never writes to the Sonar server. Run `architecture-guardian` on the resulting diff.
