@@ -1,7 +1,7 @@
 /** @jest-environment node */
 import { NextRequest } from "next/server";
 
-import { GET, POST } from "./route";
+import { DELETE, GET, PATCH, POST } from "./route";
 
 const mockCaptureException = jest.fn();
 const mockCaptureMessage = jest.fn();
@@ -95,6 +95,53 @@ describe("api proxy route", () => {
     expect(options.duplex).toBe("half");
     expect(options.headers.get("content-length")).toBe(String(payload.length));
     expect(await new Response(options.body).text()).toBe(payload);
+  });
+
+  it("should stream an upload chunk with its offset and checksum headers and return upload headers to the client", async () => {
+    mockFetch.mockResolvedValue(
+      new Response("{}", { status: 200, headers: { "upload-offset": "8", "retry-after": "3", "content-length": "2" } })
+    );
+    const chunk = "y".repeat(8);
+    const request = new NextRequest("http://localhost/bff/events/videoassets/abc", {
+      method: "PATCH",
+      headers: {
+        cookie: "access=tok",
+        "content-type": "application/offset+octet-stream",
+        "content-length": String(chunk.length),
+        "upload-offset": "0",
+        "upload-checksum": "sha256 AAAA",
+        "x-requested-with": "session-portal",
+      },
+      body: chunk,
+    });
+
+    const response = await PATCH(request, ctx(["events", "videoassets", "abc"]));
+
+    const [url, options] = mockFetch.mock.calls[0];
+    expect(url).toMatch(/\/api\/v1\/events\/videoassets\/abc\/$/);
+    expect(options.method).toBe("PATCH");
+    expect(options.duplex).toBe("half");
+    expect(options.headers.get("upload-offset")).toBe("0");
+    expect(options.headers.get("upload-checksum")).toBe("sha256 AAAA");
+    expect(options.headers.get("content-type")).toBe("application/offset+octet-stream");
+    expect(options.headers.get("content-length")).toBe(String(chunk.length));
+    expect(await new Response(options.body).text()).toBe(chunk);
+    expect(response.headers.get("upload-offset")).toBe("8");
+    expect(response.headers.get("retry-after")).toBe("3");
+  });
+
+  it("should not forward upload headers the proxy does not know about", async () => {
+    mockFetch.mockResolvedValue(new Response(null, { status: 204 }));
+    const request = new NextRequest("http://localhost/bff/events/videoassets/abc", {
+      method: "DELETE",
+      headers: { cookie: "access=tok", "x-requested-with": "session-portal", "x-forwarded-for": "10.0.0.1" },
+    });
+
+    const response = await DELETE(request, ctx(["events", "videoassets", "abc"]));
+
+    expect(response.status).toBe(204);
+    expect(mockFetch.mock.calls[0][1].method).toBe("DELETE");
+    expect(mockFetch.mock.calls[0][1].headers.get("x-forwarded-for")).toBeNull();
   });
 
   it("should send no body or duplex option for a POST without a body", async () => {

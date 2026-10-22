@@ -1,11 +1,15 @@
-import { ReactNode } from "react";
-
-import { renderHook, act } from "@testing-library/react";
-import { useDispatch } from "react-redux";
+import { act, renderHook } from "@testing-library/react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { logout } from "@/redux/login/actions";
+import { StoredUpload } from "@/services/resumableUpload/storage";
+import { UploadEvent, UploadSnapshot } from "@/services/resumableUpload/types";
+import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
 
 import { useVideoUpload } from "./useVideoUpload";
+
+const mockSendGTMEvent = jest.fn();
+jest.mock("@next/third-parties/google", () => ({ sendGTMEvent: (...args: unknown[]) => mockSendGTMEvent(...args) }));
 
 const mockCaptureMessage = jest.fn();
 jest.mock("@sentry/nextjs", () => ({
@@ -15,165 +19,303 @@ jest.mock("@sentry/nextjs", () => ({
 jest.mock("react-redux", () => ({
   ...jest.requireActual("react-redux"),
   useDispatch: jest.fn(),
+  useSelector: jest.fn(),
 }));
 
-class MockXhr {
-  static instances: MockXhr[] = [];
+type ManagerDeps = {
+  onChange: (snapshot: UploadSnapshot) => void;
+  onEvent: (event: UploadEvent) => void;
+  storage: { load: () => unknown };
+};
 
-  upload: { onprogress?: (event: { lengthComputable: boolean; loaded: number; total: number }) => void } = {};
-  onload?: () => void;
-  onerror?: () => void;
-  status = 0;
-  responseText = "";
-  open = jest.fn();
-  send = jest.fn();
-  setRequestHeader = jest.fn();
-  abort = jest.fn();
+const mockManagers: Array<Record<string, jest.Mock> & { deps: ManagerDeps }> = [];
+let mockStored: StoredUpload | null = null;
 
-  constructor() {
-    MockXhr.instances.push(this);
-  }
-}
+jest.mock("@/services/resumableUpload/uploadManager", () => ({
+  ...jest.requireActual("@/services/resumableUpload/uploadManager"),
+  UploadManager: class {
+    deps: ManagerDeps;
+    start = jest.fn().mockResolvedValue(undefined);
+    pause = jest.fn();
+    resume = jest.fn();
+    cancel = jest.fn().mockResolvedValue(undefined);
+    discardStored = jest.fn().mockResolvedValue(undefined);
+    dispose = jest.fn();
+    peekStored = jest.fn(() => mockStored);
+
+    constructor(deps: ManagerDeps) {
+      this.deps = deps;
+      mockManagers.push(this as never);
+    }
+  },
+}));
 
 const file = new File(["video"], "talk.mp4", { type: "video/mp4" });
-const wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
-const latestRequest = () => MockXhr.instances[MockXhr.instances.length - 1];
+const snapshot = (overrides: Partial<UploadSnapshot> = {}): UploadSnapshot => ({
+  phase: "uploading",
+  confirmedBytes: 10,
+  totalBytes: 100,
+  percent: 10,
+  videoAssetId: null,
+  failure: null,
+  notice: null,
+  resumed: false,
+  stalled: false,
+  ...overrides,
+});
+const manager = () => mockManagers[mockManagers.length - 1];
 
 describe("useVideoUpload", () => {
   const dispatch = jest.fn();
-  const originalXhr = global.XMLHttpRequest;
 
   beforeEach(() => {
-    MockXhr.instances = [];
+    mockManagers.length = 0;
+    mockStored = null;
     dispatch.mockClear();
+    mockSendGTMEvent.mockClear();
     mockCaptureMessage.mockClear();
     (useDispatch as unknown as jest.Mock).mockReturnValue(dispatch);
-    global.XMLHttpRequest = MockXhr as unknown as typeof XMLHttpRequest;
+    (useSelector as unknown as jest.Mock).mockReturnValue({ id: 7 });
   });
 
-  afterEach(() => {
-    global.XMLHttpRequest = originalXhr;
-  });
+  it("should start idle and hand the file to the upload manager", () => {
+    const { result } = renderHook(() => useVideoUpload());
 
-  it("should post the file through the BFF proxy with the guard header", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
-
-    act(() => result.current.startUpload(file));
-
-    const request = latestRequest();
-    expect(request.open).toHaveBeenCalledWith("POST", "/bff/events/videoassets");
-    expect(request.setRequestHeader).toHaveBeenCalledWith("x-requested-with", "session-portal");
-    expect(result.current.isUploading).toBe(true);
-  });
-
-  it("should report upload progress", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
-    act(() => result.current.startUpload(file));
-
-    act(() => latestRequest().upload.onprogress?.({ lengthComputable: true, loaded: 50, total: 200 }));
-
-    expect(result.current.uploadProgress).toBe(25);
-  });
-
-  it("should ignore progress events whose length is not computable", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
-    act(() => result.current.startUpload(file));
-
-    act(() => latestRequest().upload.onprogress?.({ lengthComputable: false, loaded: 50, total: 0 }));
-
-    expect(result.current.uploadProgress).toBe(0);
-  });
-
-  it("should expose the asset id after a successful upload", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
-    act(() => result.current.startUpload(file));
-
-    act(() => {
-      const request = latestRequest();
-      request.status = 201;
-      request.responseText = JSON.stringify({ id: 42, title: "t", video_file: "u", status: "ok" });
-      request.onload?.();
+    expect(result.current).toMatchObject({
+      uploadProgress: 0,
+      isUploading: false,
+      videoAssetId: null,
+      error: null,
+      phase: "idle",
     });
 
-    expect(result.current.videoAssetId).toBe(42);
-    expect(result.current.isUploading).toBe(false);
-    expect(result.current.error).toBeNull();
-  });
-
-  it("should report an error when a successful response is not valid JSON", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
     act(() => result.current.startUpload(file));
 
-    act(() => {
-      const request = latestRequest();
-      request.status = 201;
-      request.responseText = "<html>";
-      request.onload?.();
-    });
+    expect(manager().start).toHaveBeenCalledWith(file);
+  });
 
-    expect(result.current.videoAssetId).toBeNull();
-    expect(result.current.error).toBe("Upload failed. Please try again.");
-    expect(mockCaptureMessage).toHaveBeenCalledWith(
-      "Video asset upload returned an unreadable response",
-      expect.objectContaining({ tags: { source: "video_upload" } })
+  it("should scope the stored upload to the signed-in user", () => {
+    renderHook(() => useVideoUpload());
+
+    const storage = manager().deps.storage as unknown as { save: (record: unknown) => void };
+    storage.save({ sessionId: "s", fingerprint: { name: "a", size: 1, lastModified: 1 }, confirmedBytes: 0, updatedAt: 1 });
+
+    expect(window.localStorage.getItem("upload-video:session:v1:7")).not.toBeNull();
+    window.localStorage.clear();
+  });
+
+  it("should expose confirmed progress while uploading and allow pausing and cancelling", () => {
+    const { result } = renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onChange(snapshot({ percent: 42 })));
+
+    expect(result.current).toMatchObject({
+      uploadProgress: 42,
+      isUploading: true,
+      canPause: true,
+      canResume: false,
+      canCancel: true,
+    });
+  });
+
+  it("should not re-render for byte-level changes that do not change the visible state", () => {
+    let renders = 0;
+    renderHook(() => {
+      renders += 1;
+      return useVideoUpload();
+    });
+    act(() => manager().deps.onChange(snapshot({ percent: 42, confirmedBytes: 420 })));
+    const before = renders;
+
+    act(() => manager().deps.onChange(snapshot({ percent: 42, confirmedBytes: 425 })));
+
+    expect(renders).toBe(before);
+  });
+
+  it("should expose the asset id only once the upload has completed", () => {
+    const { result } = renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onChange(snapshot({ phase: "finalizing", percent: 100 })));
+    expect(result.current).toMatchObject({ videoAssetId: null, isUploading: true, canCancel: false, canPause: false });
+
+    act(() => manager().deps.onChange(snapshot({ phase: "completed", percent: 100, videoAssetId: 42 })));
+    expect(result.current).toMatchObject({ videoAssetId: 42, isUploading: false, error: null });
+  });
+
+  it("should keep an interrupted upload active so a queued publish survives a connection drop", () => {
+    const { result } = renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onChange(snapshot({ phase: "interrupted", notice: "Connection problem. Retrying…" })));
+
+    expect(result.current).toMatchObject({
+      isUploading: true,
+      error: null,
+      notice: "Connection problem. Retrying…",
+      canPause: true,
+      canResume: true,
+    });
+  });
+
+  it("should not offer pause once an interrupted upload has stalled", () => {
+    const { result } = renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onChange(snapshot({ phase: "interrupted", stalled: true })));
+
+    expect(result.current).toMatchObject({ canPause: false, canResume: true });
+  });
+
+  it("should surface a failure as the error message and offer retry only when it is retryable", () => {
+    const { result } = renderHook(() => useVideoUpload());
+
+    act(() =>
+      manager().deps.onChange(
+        snapshot({ phase: "failed", failure: { code: "storage_full", message: "Out of space", retryable: true } })
+      )
     );
+    expect(result.current).toMatchObject({ error: "Out of space", isUploading: false, canResume: true });
+
+    act(() =>
+      manager().deps.onChange(snapshot({ phase: "failed", failure: { code: "rejected", message: "Nope", retryable: false } }))
+    );
+    expect(result.current).toMatchObject({ error: "Nope", canResume: false });
   });
 
-  it("should report a generic error for a failed response", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
-    act(() => result.current.startUpload(file));
+  it("should forward pause, resume and cancel to the manager", () => {
+    const { result } = renderHook(() => useVideoUpload());
 
     act(() => {
-      const request = latestRequest();
-      request.status = 500;
-      request.onload?.();
+      result.current.pauseUpload();
+      result.current.resumeUpload();
+      result.current.cancelUpload();
     });
 
-    expect(result.current.error).toBe("Upload failed. Please try again.");
-    expect(mockCaptureMessage).not.toHaveBeenCalled();
+    expect(manager().pause).toHaveBeenCalled();
+    expect(manager().resume).toHaveBeenCalled();
+    expect(manager().cancel).toHaveBeenCalled();
   });
 
-  it("should log the user out when the session has expired", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
-    act(() => result.current.startUpload(file));
+  it("should expose an unfinished upload from an earlier page load and let it be discarded", () => {
+    mockStored = {
+      sessionId: "s",
+      fingerprint: { name: "talk.mp4", size: 10, lastModified: 1 },
+      confirmedBytes: 4,
+      updatedAt: 1,
+    };
+    const { result } = renderHook(() => useVideoUpload());
+    expect(result.current.pendingUpload).toEqual(mockStored);
 
-    act(() => {
-      const request = latestRequest();
-      request.status = 401;
-      request.onload?.();
-    });
+    act(() => result.current.discardPendingUpload());
 
-    expect(dispatch).toHaveBeenCalledWith(logout());
-    expect(result.current.error).toBe("Your session has expired. Please log in again.");
+    expect(result.current.pendingUpload).toBeNull();
+    expect(manager().discardStored).toHaveBeenCalled();
   });
 
-  it("should report a network error", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
+  it("should hide the pending upload once a file is chosen", () => {
+    mockStored = {
+      sessionId: "s",
+      fingerprint: { name: "talk.mp4", size: 10, lastModified: 1 },
+      confirmedBytes: 4,
+      updatedAt: 1,
+    };
+    const { result } = renderHook(() => useVideoUpload());
+
     act(() => result.current.startUpload(file));
 
-    act(() => latestRequest().onerror?.());
-
-    expect(result.current.error).toBe("Network error during upload.");
-    expect(result.current.isUploading).toBe(false);
+    expect(result.current.pendingUpload).toBeNull();
   });
 
-  it("should abort the previous upload when a new file is selected", () => {
-    const { result } = renderHook(() => useVideoUpload(), { wrapper });
-    act(() => result.current.startUpload(file));
-    const firstRequest = latestRequest();
-
-    act(() => result.current.startUpload(file));
-
-    expect(firstRequest.abort).toHaveBeenCalledTimes(1);
-  });
-
-  it("should abort the in-flight upload on unmount", () => {
-    const { result, unmount } = renderHook(() => useVideoUpload(), { wrapper });
-    act(() => result.current.startUpload(file));
-    const request = latestRequest();
+  it("should stop the manager on unmount without cancelling the server session", () => {
+    const { unmount } = renderHook(() => useVideoUpload());
+    const current = manager();
 
     unmount();
 
-    expect(request.abort).toHaveBeenCalledTimes(1);
+    expect(current.dispose).toHaveBeenCalled();
+    expect(current.cancel).not.toHaveBeenCalled();
+    expect(current.discardStored).not.toHaveBeenCalled();
+  });
+
+  it("should log the user out when the upload is rejected as unauthorized", () => {
+    renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onEvent({ type: "failed", code: "unauthorized" }));
+
+    expect(dispatch).toHaveBeenCalledWith(logout());
+    expect(mockCaptureMessage).not.toHaveBeenCalled();
+  });
+
+  it("should report unexpected failures to Sentry with the failure code only", () => {
+    renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onEvent({ type: "failed", code: "unknown" }));
+
+    expect(mockCaptureMessage).toHaveBeenCalledWith(
+      "Resumable video upload failed",
+      expect.objectContaining({ tags: { source: "video_upload" }, extra: { code: "unknown" } })
+    );
+  });
+
+  it("should not report ordinary user-side failures to Sentry", () => {
+    renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onEvent({ type: "failed", code: "retries_exhausted" }));
+    act(() => manager().deps.onEvent({ type: "failed", code: "expired" }));
+
+    expect(mockCaptureMessage).not.toHaveBeenCalled();
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    [{ type: "started", resumed: true, sizeBytes: 5 * 1024 ** 2 }, GA_EVENTS.UPLOAD_VIDEO_STARTED, { resumed: true, size_mb: 5 }],
+    [{ type: "interrupted", reason: "offline", attempt: 0 }, GA_EVENTS.UPLOAD_VIDEO_INTERRUPTED, { reason: "offline" }],
+    [{ type: "recovered", attempts: 3 }, GA_EVENTS.UPLOAD_VIDEO_RECOVERED, { attempts: 3 }],
+    [{ type: "paused" }, GA_EVENTS.UPLOAD_VIDEO_PAUSED, {}],
+    [{ type: "continued" }, GA_EVENTS.UPLOAD_VIDEO_RESUMED, {}],
+    [{ type: "cancelled" }, GA_EVENTS.UPLOAD_VIDEO_CANCELLED, {}],
+  ] as const)("should track %j without file names or ids", (event, name, params) => {
+    renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onEvent(event as UploadEvent));
+
+    expect(mockSendGTMEvent).toHaveBeenCalledWith({ event: name, event_category: ANALYTICS_CATEGORY.UPLOAD_VIDEO, ...params });
+  });
+
+  it("should not track events that have no analytics meaning", () => {
+    renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onEvent({ type: "completed", durationMs: 1000 }));
+
+    expect(mockSendGTMEvent).not.toHaveBeenCalled();
+  });
+
+  it("should keep the running manager when the current user id arrives later", () => {
+    (useSelector as unknown as jest.Mock).mockReturnValue(null);
+    const { result, rerender } = renderHook(() => useVideoUpload());
+    act(() => result.current.startUpload(file));
+    const running = manager();
+
+    mockStored = {
+      sessionId: "s",
+      fingerprint: { name: "talk.mp4", size: 10, lastModified: 1 },
+      confirmedBytes: 4,
+      updatedAt: 1,
+    };
+    (useSelector as unknown as jest.Mock).mockReturnValue({ id: 7 });
+    rerender();
+
+    expect(mockManagers).toHaveLength(1);
+    expect(running.dispose).not.toHaveBeenCalled();
+    expect(result.current.pendingUpload).toEqual(mockStored);
+  });
+
+  it("should use an anonymous storage scope before the current user is known", () => {
+    (useSelector as unknown as jest.Mock).mockReturnValue(null);
+    renderHook(() => useVideoUpload());
+
+    const storage = manager().deps.storage as unknown as { save: (record: unknown) => void };
+    storage.save({ sessionId: "s", fingerprint: { name: "a", size: 1, lastModified: 1 }, confirmedBytes: 0, updatedAt: 1 });
+
+    expect(window.localStorage.getItem("upload-video:session:v1:anonymous")).not.toBeNull();
+    window.localStorage.clear();
   });
 });

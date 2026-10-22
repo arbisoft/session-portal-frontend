@@ -138,6 +138,7 @@ This SKILL.md cites specific file paths and conventions (`src/proxy.ts`, `custom
 | `src/constants/featureFlags.ts` / `useFeatureFlags` | New flag follows existing `{ enabled, minVersion }` shape; precedence order preserved (URL query param > config > semver check) |
 | Tests (`*.test.ts(x)`) | Test names start with `"should"` (`it("should …")`/`test("should …")` — ESLint-enforced); new/changed logic keeps the 80% branch/function/line coverage threshold (`npm run test:cov`) from regressing |
 | `src/services/runs-on-server-side/**` | Server-only code stays server-only — no leakage into client components; flag any import of this into a `"use client"` file |
+| `src/services/resumableUpload/**` | Browser-side, framework-free upload engine (the opposite of `runs-on-server-side`): no React imports, all requests through `/bff` with the guard header (never `BASE_URL` or an `Authorization` header), the server-confirmed offset stays the source of truth, nothing sensitive (token, file content) is persisted, and ids read back from storage are encoded before joining a URL path |
 | Env var usage (`src/constants/constants.ts`) | New vars follow the `process.env.NEXT_PUBLIC_*` (client-exposed) vs. server-only naming convention correctly — a secret must never be prefixed `NEXT_PUBLIC_` |
 
 ## Key Project Facts to Keep in Mind

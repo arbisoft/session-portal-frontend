@@ -93,15 +93,17 @@ Custom hooks encapsulate navigation, feature flags, query management, and reusab
 
 Available hooks:
 
-| Hook                   | Responsibility                                              |
-| ---------------------- | ----------------------------------------------------------- |
-| `useNavigation`        | Centralised URL construction and programmatic navigation    |
-| `useVideoQueryManager` | URL param → RTK Query args conversion with page reset logic |
-| `useFeatureFlags`      | Feature flag resolution with URL override support           |
-| `useDebounce`          | Debounced value for search inputs                           |
-| `useSidebar`           | Fetches tags and playlists for the navigation sidebar       |
-| `useVideoUpload`       | Uploads a video file through `/bff` with progress and abort |
-| `useCloseOnScroll`     | Closes a popup when a given scroll container scrolls        |
+| Hook                   | Responsibility                                                                    |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `useNavigation`        | Centralised URL construction and programmatic navigation                          |
+| `useVideoQueryManager` | URL param → RTK Query args conversion with page reset logic                       |
+| `useFeatureFlags`      | Feature flag resolution with URL override support                                 |
+| `useDebounce`          | Debounced value for search inputs                                                 |
+| `useSidebar`           | Fetches tags and playlists for the navigation sidebar                             |
+| `useVideoUpload`       | React binding of the resumable upload engine: progress, pause, resume, cancel     |
+| `useUploadRate`        | Average upload speed from progress samples, for the speed and time-left text      |
+| `useLeaveGuard`        | Browser prompt on reload plus interception of in-app link clicks for unsaved work |
+| `usePreventFileDrop`   | Stops a file dropped outside a drop zone from navigating the browser away         |
 
 ## Authentication Architecture
 
@@ -177,7 +179,7 @@ Details: [Monitoring and Error Recovery](./modules/monitoring-and-error-recovery
 
 The upload UI (`/upload-video`) is for staff only. It is gated by the user's `is_staff` flag (`selectIsStaff`, persisted in the `login` slice; persisted-state migration v2 defaults it to `false`), not by a feature flag. The Navbar entry and the `FileUpload` component redirect non-staff users to `/videos`. This is a UI convenience only: the backend must enforce staff permissions on `/events/videoassets/` and `/events/`.
 
-The video file is uploaded with `XMLHttpRequest` (for progress events) in `src/hooks/useVideoUpload.ts` through the BFF proxy with the `x-requested-with` guard header. The metadata form (`VideoForm`, `fields.tsx`, `selectFields.tsx`) publishes through the `createEvent`, `createTag` and `searchUsers` RTK Query endpoints. Client-side validation allows MP4, MOV, AVI and WebM files up to `MAX_VIDEO_FILE_SIZE_BYTES` (1 GB). The BFF proxy streams request bodies to the backend (`duplex: "half"`, with `content-length` forwarded) instead of buffering them, so large uploads are not held in server memory. Any reverse proxy in front of the app still needs a body-size limit that allows 1 GB; this is not verifiable from the repository.
+The video file is uploaded in resumable chunks by the framework-free engine in `src/services/resumableUpload/` (`UploadManager`, bound to React by `src/hooks/useVideoUpload.ts`) through the BFF proxy with the `x-requested-with` guard header. The backend owns the upload session and its confirmed offset, so an upload continues after a lost connection or page reload; see [Upload Video](./modules/upload-video.md). The metadata form (`VideoForm`, `fields.tsx`, `selectFields.tsx`) publishes through the `createEvent`, `createTag` and `searchUsers` RTK Query endpoints. Client-side validation allows MP4, MOV, AVI and WebM files up to `MAX_VIDEO_FILE_SIZE_BYTES` (20 GB). The BFF proxy streams request bodies to the backend (`duplex: "half"`, with `content-length` and the `upload-offset` / `upload-checksum` headers forwarded) instead of buffering them, so chunks are not held in server memory. Any reverse proxy in front of the app or the backend needs a body-size limit of at least the chunk cap (16 MiB by default, not 20 GB); this is not verifiable from the repository.
 
 ## Security Headers and Deployment
 
