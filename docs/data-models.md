@@ -147,6 +147,33 @@ interface VideoAssetUploadResponse {
   status: string;
 }
 
+type UploadSessionStatus = "UPLOADING" | "FINALIZING" | "COMPLETED" | "FAILED" | "CANCELLED" | "EXPIRED";
+
+interface UploadSession {
+  id: string; // UUID
+  filename: string;
+  file_size: number;
+  offset: number; // bytes durably committed by the server; the only position to resume from
+  upload_status: UploadSessionStatus;
+  error_code: string;
+  video_asset_id: number | null; // set once COMPLETED
+  expires_at: string;
+  chunk_size: number; // recommended chunk size in bytes
+  max_chunk_size: number; // largest accepted chunk
+}
+
+interface UploadSessionRequest {
+  filename: string;
+  file_size: number;
+  client_key: string; // idempotency key, replayed creates return the same session
+}
+
+interface UploadErrorBody {
+  code?: string;
+  detail?: string;
+  offset?: number;
+}
+
 interface UserSearchResult {
   id: number;
   first_name: string;
