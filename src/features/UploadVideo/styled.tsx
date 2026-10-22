@@ -1,112 +1,99 @@
 import Box from "@mui/material/Box";
-import { buttonClasses } from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import { cardActionsClasses } from "@mui/material/CardActions";
-import { cardContentClasses } from "@mui/material/CardContent";
 import { cardHeaderClasses } from "@mui/material/CardHeader";
+import { chipClasses } from "@mui/material/Chip";
 import { formLabelClasses } from "@mui/material/FormLabel";
-import { styled, css, alpha } from "@mui/material/styles";
+import { styled, css, alpha, lighten } from "@mui/material/styles";
+
+import { shouldForwardProp } from "@/utils/styleUtils";
+
+// Kept low enough that text.secondary (#908e8e) still reaches 4.5:1 on the tinted card.
+const SURFACE_TINT = 0.08;
 
 export const StyledCard = styled(Card, {
   name: "StyledCard",
 })(
   ({ theme }) => css`
-    background-color: ${alpha(theme.palette.common.white, 0.1)};
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-    width: 700px;
-
-    .first-step.${cardContentClasses.root} {
-      align-items: center;
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      gap: 20px;
-      justify-content: center;
-      text-align: center;
-    }
+    background-color: ${alpha(theme.palette.common.white, SURFACE_TINT)};
+    border-radius: ${theme.spacing(1)};
+    margin-inline: auto;
+    max-width: ${theme.breakpoints.values.lg}px;
+    /* MUI Card defaults to overflow: hidden, which would stop the footer from sticking to the viewport. */
+    overflow: visible;
+    width: 100%;
 
     .${cardHeaderClasses.root} {
-      border-bottom: 1px solid ${alpha(theme.palette.common.white, 0.1)};
+      border-bottom: 1px solid ${theme.palette.divider};
     }
 
     .${cardHeaderClasses.title} {
-      font-size: 24px;
+      font-size: ${theme.typography.h2.fontSize};
       font-weight: 500;
       text-align: left;
-      text-transform: capitalize;
     }
 
     .${cardActionsClasses.root} {
       align-items: center;
-      border-top: 1px solid ${alpha(theme.palette.common.white, 0.1)};
+      /* Opaque (the card tint alone would let scrolled content show through) yet identical to the tinted card. */
+      background-color: ${lighten(theme.palette.background.default, SURFACE_TINT)};
+      border-radius: 0 0 ${theme.spacing(1)} ${theme.spacing(1)};
+      border-top: 1px solid ${theme.palette.divider};
+      bottom: 0;
       box-sizing: border-box;
-      justify-content: center;
-      min-height: 76px;
-      padding: 20px;
+      min-height: ${theme.spacing(9.5)};
+      padding: ${theme.spacing(2, 3)};
+      position: sticky;
+      z-index: 1;
     }
   `
 );
 
-export const StyledIconContainer = styled(Box, {
-  name: "StyledIconContainer",
-})(
-  ({ theme }) => css`
-    align-items: center;
-    background-color: ${alpha(theme.palette.common.black, 0.3)};
-    border-radius: 8px;
-    display: inline-flex;
-    height: 50px;
-    justify-content: center;
-    width: 50px;
-  `
-);
-
-export const ImportContainer = styled(Box, {
-  name: "ImportContainer",
-})(
-  () => css`
-    align-items: center;
-    display: flex;
-    gap: 20px;
-    width: 60%;
-    margin-bottom: 20px;
-  `
-);
+// White "primary action" button used on the dark upload card (Select File, Publish).
+export const inverseButtonSx = {
+  backgroundColor: "common.white",
+  color: "primary.main",
+  "&:hover": { backgroundColor: "grey.300" },
+};
 
 export const InputContainer = styled(Box, {
   name: "InputContainer",
 })(
-  () => css`
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: ${theme.spacing(1)};
+    margin-bottom: ${theme.spacing(2.5)};
 
     .${formLabelClasses.root} {
-      color: #fff;
-      font-size: 14px;
+      color: ${theme.palette.text.primary};
+      font-size: ${theme.typography.bodyMedium.fontSize};
       font-weight: 400;
+    }
+
+    .${formLabelClasses.asterisk} {
+      color: ${theme.palette.text.secondary};
+    }
+
+    .${chipClasses.root} {
+      border-radius: 6px;
     }
   `
 );
 
-export const ThumbnailUploaderButtons = styled(Box, {
-  name: "ThumbnailUploaderButtons",
-})(
-  ({ theme }) => css`
+export const Dropzone = styled(Box, {
+  name: "Dropzone",
+  shouldForwardProp,
+})<{ $isDragOver: boolean }>(
+  ({ theme, $isDragOver }) => css`
+    align-items: center;
+    background-color: ${alpha(theme.palette.common.white, $isDragOver ? 0.12 : 0.03)};
+    border: 2px dashed ${alpha(theme.palette.common.white, $isDragOver ? 0.9 : 0.35)};
+    border-radius: ${theme.spacing(1)};
     display: flex;
-    justify-content: space-between;
-    gap: 10px;
-
-    .${buttonClasses.root} {
-      border-radius: 12px;
-      color: ${theme.palette.common.white};
-      padding: 20px 30px;
-      width: 50%;
-    }
+    flex-direction: column;
+    gap: ${theme.spacing(1.5)};
+    padding: ${theme.spacing(5, 2)};
+    text-align: center;
   `
 );

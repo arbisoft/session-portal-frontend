@@ -19,7 +19,7 @@ Reports runtime errors and performance data to Sentry, shows fallback UI when re
 | Stale-chunk recovery                        | `src/utils/chunkLoadRecovery.ts`                              |
 | API proxy error capture                     | `src/app/bff/[...path]/route.ts`                              |
 | Unparseable API response capture            | `src/redux/customBaseQuery.ts`                                |
-| Unreadable upload response capture          | `src/hooks/useVideoUpload.ts`                                 |
+| Unexpected upload failure capture           | `src/hooks/useVideoUpload.ts`                                 |
 | Reporting helpers and request scrubber      | `src/utils/monitoring.ts`                                     |
 
 ## Configuration
@@ -51,7 +51,7 @@ Errors that the code catches and turns into a response or a toast never reach `o
 
 - **BFF proxy** (`src/app/bff/[...path]/route.ts`, via the `monitoring.ts` helpers): a failed upstream `fetch` is captured as an exception before the proxy returns `502`, and any upstream `5xx` is captured as a message (`method`, `path` and `status` only). Because both RTK Query calls and XHR uploads go through the proxy, this is the single place that sees backend `5xx` responses.
 - **`customBaseQuery`**: a `PARSING_ERROR` (for example an HTML error page from a gateway in front of the app) is captured with the endpoint path. Ordinary `4xx` and `5xx` statuses are not captured here, to avoid duplicating the proxy report.
-- **`useVideoUpload`**: a `201` response whose body is not valid JSON is captured, since it would otherwise only show the user a generic error.
+- **`useVideoUpload`**: an upload that ends with an unknown failure or fails the backend's file verification is captured as "Resumable video upload failed" with the failure code only. Connection problems, expiry, rejection and `401` are expected outcomes and are not captured.
 
 ### Error boundaries
 

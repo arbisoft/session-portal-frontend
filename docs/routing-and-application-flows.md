@@ -111,9 +111,10 @@ Recognized search params:
 
 The upload route (`/upload-video`) is available to authenticated staff users only. `FileUpload` reads `selectIsStaff` and redirects everyone else to `/videos`; the Navbar menu entry is gated the same way. There is no feature flag.
 
-- `FileUpload` toggles between `VideoPicker` (file selection and validation) and `VideoForm` (metadata entry) based on selected file state
-- Selecting a file starts the upload immediately (`useVideoUpload`, XHR through the BFF proxy)
-- `VideoForm` collects: title, presenters, event date, description, thumbnail, playlists, tags. Submitting before the upload finishes queues the publish until the video asset id is available
+- `FileUpload` always renders `VideoForm`: the whole form is visible from the start and the file picker (`VideoPicker`) or the upload status panel (`UploadStatusPanel`) is its "Video" section, depending on whether a file is chosen
+- Selecting a file starts the upload immediately (`useVideoUpload`: resumable chunks through the BFF proxy; pause, resume and cancel are offered while it runs). Cancelling returns to the picker and keeps what was typed
+- `VideoForm` collects: title, presenters, session date, description, thumbnail, playlists, tags. Submitting before the upload finishes queues the publish (it can be cancelled) until the video asset id is available
+- While a video is chosen or the form is edited, leaving the page asks for confirmation (`useLeaveGuard`)
 - Publishing calls `createEvent` (creating new tags first via `createTag`), then navigates to the new video detail page
 
 ## Feature Flag URL Override
