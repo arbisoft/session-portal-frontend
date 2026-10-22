@@ -14,7 +14,7 @@ The repository now includes a dedicated `CONTRIBUTING.md` file at the root. This
 
 Recommended setup based on repository files:
 
-1. Use Node.js 22
+1. Use Node.js 24
 2. Fork the repository to your own GitHub account
 3. Clone your fork locally
 4. Add the original repository as `upstream`

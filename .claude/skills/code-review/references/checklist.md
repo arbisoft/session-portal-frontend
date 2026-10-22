@@ -16,10 +16,10 @@ Apply every applicable item. Mark Critical / Warning / Suggestion per the severi
 
 ## 1. Correctness & Bugs
 
-### Auth & Middleware (Critical)
+### Auth & Proxy (Critical)
 
-- [ ] `src/middleware.ts` fails closed — every route requires auth unless listed in `publicRoutes`; a newly added public route is a security decision and must be called out. New static asset paths need a file extension or a matcher exclusion, otherwise they are redirected to `/login`
-- [ ] JWT validity check (`isValidToken`) stays a local, no-network-call check (Edge Runtime constraint) — don't introduce a `fetch`/API call into middleware; JWT payload decoding goes through the shared `getJwtExpiry` helper in `src/utils/utils.ts`, never re-implemented inline
+- [ ] `src/proxy.ts` fails closed — every route requires auth unless listed in `publicRoutes`; a newly added public route is a security decision and must be called out. New static asset paths need a file extension or a matcher exclusion, otherwise they are redirected to `/login`
+- [ ] JWT validity check (`isValidToken`) stays a local, no-network-call check (keeps every request fast) — don't introduce a `fetch`/API call into the proxy; JWT payload decoding goes through the shared `getJwtExpiry` helper in `src/utils/utils.ts`, never re-implemented inline
 - [ ] Any redirect target read from a query param (`redirect_to`) is validated via `isValidInternalRedirectPath` before being used in a `NextResponse.redirect` — an unvalidated redirect target is an open-redirect vulnerability
 - [ ] `src/app/login/actions.ts`'s server action sets the `access` cookie as HttpOnly server-side and returns `access: null, refresh: null` — the token must never be returned to, stored by, or read from client code
 - [ ] Client-side Redux login state (`loginActions.login`) is only dispatched after the server action returns successfully — not optimistically before the cookie is confirmed set
@@ -122,7 +122,7 @@ This project **has** a test suite (Jest + React Testing Library) with an enforce
 - [ ] New/changed business logic (features, hooks, utils, Redux slices) has a colocated `*.test.ts`/`*.test.tsx` file exercising it
 - [ ] `test()`/`it()` call names start with `"should"` (ESLint-enforced) — flag any that don't
 - [ ] Tests assert behavior (rendered output, dispatched actions, returned values), not implementation details that would break on a harmless refactor
-- [ ] A change to `src/middleware.ts`, `customBaseQuery`, or the RTK Query `merge`/`serializeQueryArgs` logic in `src/redux/events/apiSlice.ts` gets explicit test coverage given how easy these are to silently break (see `src/redux/events/events.test.tsx` for the existing pattern)
+- [ ] A change to `src/proxy.ts`, `customBaseQuery`, or the RTK Query `merge`/`serializeQueryArgs` logic in `src/redux/events/apiSlice.ts` gets explicit test coverage given how easy these are to silently break (see `src/redux/events/events.test.tsx` for the existing pattern)
 - [ ] Run `npm run test:cov` after fixes and confirm the global 80% branch/function/line thresholds still pass — a genuine regression here blocks merge (Critical), not just a Suggestion to "add tests later"
 
 ---

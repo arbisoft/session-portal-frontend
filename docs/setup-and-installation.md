@@ -4,10 +4,16 @@
 
 From the repository configuration:
 
-- Node.js `>=22.0.0 <23.0.0`
+- Node.js `>=24.15.0 <25.0.0`
 - npm `>=10.2.4`
 
-The root `README.md` also recommends using Node.js 22 through `nvm`.
+The root `README.md` also recommends using Node.js 24 through `nvm`.
+
+`.nvmrc` pins Node 24 for `nvm use`, and `.npmrc` sets `engine-strict=true`, so `npm install` fails on a Node version outside the `engines` range in `package.json` instead of only warning. The CI workflows (`.github/workflows/build.yml`, `.github/workflows/release.yml`) and the `Dockerfile` pin Node 24 independently of these files.
+
+### Dependency install scripts
+
+`package.json` has an `allowScripts` field that lists the dependencies allowed to run install-time lifecycle scripts (`preinstall`, `install`, `postinstall`): `@sentry/cli`, `core-js-pure`, `esbuild`, `unrs-resolver` and `fsevents`, each pinned to the reviewed version. With npm 11.19.1 (bundled with Node 24.22.1) this policy is advisory: scripts still run, and `npm install` prints a notice for any dependency with install scripts that is not listed. After adding or upgrading a dependency that has install scripts, review the notice and record the approval with `npm install-scripts approve <pkg>` (`npm install-scripts ls` shows what is pending).
 
 ## Basic Local Setup
 
@@ -25,7 +31,7 @@ This matches the current fork-based contribution workflow documented in `CONTRIB
 The development server script is:
 
 ```bash
-next dev --turbopack
+next dev
 ```
 
 ## Install Playwright Browsers
@@ -62,11 +68,11 @@ This runs ESLint and then TypeScript checking.
 
 ## Node Version Guidance
 
-The root `README.md` includes `nvm` instructions for switching to Node 22:
+The root `README.md` includes `nvm` instructions for switching to Node 24:
 
 ```bash
-nvm install 22
-nvm use 22
+nvm install 24
+nvm use 24
 ```
 
 ## Expected Local Ports
@@ -81,5 +87,5 @@ nvm use 22
 
 - The app expects a local `.env.local` file copied from `example.env.local`.
 - `example.env.local` includes `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, and the Sentry variables (`NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`). Sentry values can stay as placeholders locally; `next dev` does not upload source maps.
-- The repo uses Turbopack in both `dev` and `build` scripts.
+- Next.js 16 uses Turbopack by default for both `dev` and `build`.
 - The exact backend service required for live API calls is not described in the repository, so `.env.local` values must point to a working backend environment.

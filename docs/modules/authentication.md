@@ -8,7 +8,7 @@ Handles all aspects of user identity: route protection, Google OAuth login, toke
 
 | Concern             | File                                                 |
 | ------------------- | ---------------------------------------------------- |
-| Route protection    | `src/middleware.ts`                                  |
+| Route protection    | `src/proxy.ts`                                       |
 | Login server action | `src/app/login/actions.ts`                           |
 | Login UI            | `src/features/LoginPage/loginPage.tsx`               |
 | Redux state         | `src/redux/login/slice.ts`                           |
@@ -22,8 +22,8 @@ Handles all aspects of user identity: route protection, Google OAuth login, toke
 
 ### Login Flow
 
-1. User visits any protected route (any route other than `/login`, since the middleware fails closed) without a valid cookie.
-2. Middleware reads the `access` HttpOnly cookie. If missing or expired (JWT `exp` check), it redirects to `/login?redirect_to=<original path>`.
+1. User visits any protected route (any route other than `/login`, since the proxy fails closed) without a valid cookie.
+2. The proxy reads the `access` HttpOnly cookie. If missing or expired (JWT `exp` check), it redirects to `/login?redirect_to=<original path>`.
 3. `LoginPage` reads `redirect_to` from URL params and validates it with `isValidInternalRedirectPath` to prevent open-redirect attacks.
 4. User clicks "Sign in with Google". `useGoogleLogin` from `@react-oauth/google` opens the Google popup.
 5. On Google success, `LoginPage` calls the `loginAndSetCookie` Next.js server action with the Google `access_token`.
@@ -35,9 +35,9 @@ Handles all aspects of user identity: route protection, Google OAuth login, toke
 7. Client dispatches `loginActions.login(data)` to update Redux state with session data (access token, refresh token, user info).
 8. Client navigates to `redirect_to` (if valid) or `/videos`.
 
-### Middleware Route Protection
+### Proxy Route Protection
 
-The middleware runs on every non-static request via the Next.js Edge Runtime. Order of evaluation:
+The proxy runs on every non-static request (Next.js 16 `proxy.ts`, Node.js runtime). Order of evaluation:
 
 ```
 1. Authenticated user on /login  →  redirect to redirect_to or /videos
@@ -46,7 +46,7 @@ The middleware runs on every non-static request via the Next.js Edge Runtime. Or
 4. Anything else  →  pass through
 ```
 
-Token validation is local (no network call): the middleware decodes the JWT payload from the `access` cookie and checks `exp > now`.
+Token validation is local (no network call): the proxy decodes the JWT payload from the `access` cookie and checks `exp > now`.
 
 ### Logout Flow
 
@@ -74,7 +74,7 @@ The token never reaches client JS. `customBaseQuery` sends requests to the BFF p
 
 | Scenario                          | Behavior                                                          |
 | --------------------------------- | ----------------------------------------------------------------- |
-| Expired JWT cookie                | Middleware rejects, redirects to `/login`                         |
+| Expired JWT cookie                | Proxy rejects, redirects to `/login`                              |
 | External URL in `redirect_to`     | `isValidInternalRedirectPath` rejects it; redirects to `/videos`  |
 | Google popup closed without login | `onError` shows a notification; user stays on `/login`            |
 | API returns 401                   | `customBaseQuery` dispatches logout; Redux state cleared          |

@@ -20,8 +20,8 @@ The repository implements a web application that includes:
 
 | Area                  | Technologies found                                                |
 | --------------------- | ----------------------------------------------------------------- |
-| Framework             | Next.js 15.5.24                                                   |
-| UI                    | React 19.1.0, Material UI 7.3.4, Emotion                          |
+| Framework             | Next.js 16.4.2                                                    |
+| UI                    | React 19.3.1, Material UI 7.3.4, Emotion                          |
 | Language              | TypeScript 5.9.3                                                  |
 | State                 | Redux Toolkit, RTK Query, redux-persist                           |
 | Forms                 | react-hook-form, yup, @hookform/resolvers                         |
@@ -44,14 +44,14 @@ The root `README.md` badges reflect the pinned or minimum declared versions in `
 
 From `package.json`:
 
-- Node.js: `>=22.0.0 <23.0.0`
+- Node.js: `>=24.15.0 <25.0.0`
 - npm: `>=10.2.4`
 
 ## Application Capabilities Seen in Source
 
 | Capability                                      | Evidence                                                                    |
 | ----------------------------------------------- | --------------------------------------------------------------------------- |
-| Auth redirect handling                          | `src/middleware.ts`, `src/app/login/actions.ts`                             |
+| Auth redirect handling                          | `src/proxy.ts`, `src/app/login/actions.ts`                                  |
 | Video listing with filters and infinite loading | `src/features/VideosListingPage/videosListingPage.tsx`                      |
 | Search results page                             | `src/features/SearchResultsPage/searchResultsPage.tsx`                      |
 | Video detail with recommendations               | `src/features/VideoDetail/videoDetail.tsx`                                  |

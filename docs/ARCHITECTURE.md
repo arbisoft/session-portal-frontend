@@ -111,7 +111,7 @@ Authentication is implemented across several pieces:
 - the access token stays in the HttpOnly cookie only; the server action returns user info with `access`/`refresh` set to `null`
 - only user info is held in Redux and persisted via `redux-persist` (persist version 2: migration 1 scrubs legacy persisted tokens, migration 2 defaults `is_staff` to `false`)
 - all API calls go through the BFF proxy `src/app/bff/[...path]/route.ts`, which reads the cookie and attaches the `Bearer` header server-side (re-adding the trailing slash the backend expects); it returns `403` unless the request carries the `x-requested-with: session-portal` header that `customBaseQuery` sets, so opening a proxy URL directly in the address bar is refused (this deters casual access only; the authenticated user can still replay requests)
-- route protection is handled entirely by `src/middleware.ts` (JWT cookie validation, no `useAuth` hook)
+- route protection is handled entirely by `src/proxy.ts` (JWT cookie validation, no `useAuth` hook)
 - unauthorized API responses (`401`) dispatch `logout()` (from `src/redux/login/actions.ts`) in `customBaseQuery`
 
 See [Authentication Module](./modules/authentication.md) for full flow details.
@@ -133,7 +133,7 @@ See [Authentication Module](./modules/authentication.md) for full flow details.
 - optionally renders a persistent left `Sidebar` (tag/playlist navigation)
 - optionally renders a `StyledDrawer` for the same sidebar content on smaller screens (Escape key closes it)
 - optionally renders right sidebar content, used by the video detail page for recommendations
-- does NOT enforce auth — route protection is handled exclusively by middleware
+- does NOT enforce auth — route protection is handled exclusively by the proxy
 
 ## Theming Architecture
 
@@ -146,9 +146,9 @@ Observed characteristics:
 - `InitColorSchemeScript` is included to avoid theme flash during hydration
 - `ThemeToggle` visibility is controlled via feature flags on the login page
 
-## Middleware Architecture
+## Proxy Architecture
 
-Route protection is handled by `src/middleware.ts`, which runs on every request matched by the Next.js Edge Runtime.
+Route protection is handled by `src/proxy.ts`, which runs on every request matched by the Next.js proxy.
 
 | Rule | Behavior |
 | --- | --- |

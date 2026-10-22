@@ -9,7 +9,7 @@ user-invocable: true
 
 ## Purpose
 
-Analyzes the current code changes (staged, unstaged, or a specified diff/range) in the **Session Portal frontend** repo — a Next.js 15 App Router app, no backend in this repository — and breaks them into one or more implementation-ready tasks — the kind you'd paste into Taiga or another tracker — each with a **Title**, **Description**, and **Acceptance Criteria**, categorized by the area of the codebase it touches (**Feature**, **UI/UX**, **Data/State**, **Infra**).
+Analyzes the current code changes (staged, unstaged, or a specified diff/range) in the **Session Portal frontend** repo — a Next.js 16 App Router app, no backend in this repository — and breaks them into one or more implementation-ready tasks — the kind you'd paste into Taiga or another tracker — each with a **Title**, **Description**, and **Acceptance Criteria**, categorized by the area of the codebase it touches (**Feature**, **UI/UX**, **Data/State**, **Infra**).
 
 Every task must read as an unbuilt requirement, not a changelog entry: describe what needs to be implemented, not what was implemented. This is the inverse of the `commit-generator` skill (which summarizes changes that already happened) — reuse its diff-gathering approach but never its past-tense framing.
 
@@ -72,8 +72,8 @@ This is a single Next.js frontend app — there is no backend repo, so there's n
 | --- | --- |
 | A new or changed route/page: `src/app/**/page.tsx` (or `layout.tsx`) + its `src/features/<Name>Page/` component + any hook/component that exists only to support it, with real behavior/logic (not purely visual) | **Feature** |
 | Styling, spacing, layout, color, animation, or visual-hierarchy changes with no new data/logic/behavior — a `src/components/**` primitive, `src/app/**` markup, theme (`src/components/theme/`), or `ThemeToggle`/`Sidebar`/`Navbar` visual tweak | **UI/UX** |
-| `src/redux/**` (RTK Query API slices, `store`, `login` slice, `customBaseQuery.ts`, `parseError.ts`), `src/models/**` (API shape types), `src/hooks/**` when the hook manages state/query orchestration (e.g. `useVideoQueryManager`), or `src/middleware.ts` auth/redirect logic | **Data/State** |
-| `.storybook/**` config and Storybook/tooling dependency upgrades in `package.json` (plus the `*.stories.tsx` import changes they force), `src/instrumentation.ts` / `src/instrumentation-client.ts` (Sentry/monitoring), `next.config.ts`, `Dockerfile`/`.dockerignore`, CI workflows, `src/constants/featureFlags.ts` flag plumbing, env/config wiring, `src/utils/chunkLoadRecovery.ts`-style resiliency utilities | **Infra** |
+| `src/redux/**` (RTK Query API slices, `store`, `login` slice, `customBaseQuery.ts`, `parseError.ts`), `src/models/**` (API shape types), `src/hooks/**` when the hook manages state/query orchestration (e.g. `useVideoQueryManager`), or `src/proxy.ts` auth/redirect logic (Next 16 proxy, formerly `proxy.ts`) | **Data/State** |
+| `.storybook/**` config and Storybook/tooling dependency upgrades in `package.json` (plus the `*.stories.tsx` import changes they force), `src/instrumentation.ts` / `src/instrumentation-client.ts` (Sentry/monitoring), `next.config.ts`, `tsconfig.json`, bundler/framework version bumps in `package.json`, `Dockerfile`/`.dockerignore`, CI workflows, `src/constants/featureFlags.ts` flag plumbing, env/config wiring, `src/utils/chunkLoadRecovery.ts`-style resiliency utilities | **Infra** |
 | A new/changed `src/utils/analytics.ts`-style cross-cutting tracking module plus `trackEvent`/GA event wiring dropped into otherwise-unrelated components across multiple pages (auth, nav, player, listing, search, sidebar, etc.) purely to add instrumentation — no new user-facing behavior | **Infra** |
 
 Notes:
@@ -207,7 +207,7 @@ The skill must:
 
 # Self-Healing This Skill
 
-This SKILL.md cites specific paths and conventions (`src/app/`, `src/features/`, `src/components/`, `src/redux/`, `src/hooks/`, `src/models/`, `src/middleware.ts`, the `ASP-NN` ticket prefix, the categorization table in Step 3). Don't treat it as permanently accurate:
+This SKILL.md cites specific paths and conventions (`src/app/`, `src/features/`, `src/components/`, `src/redux/`, `src/hooks/`, `src/models/`, `src/proxy.ts`, the `ASP-NN` ticket prefix, the categorization table in Step 3). Don't treat it as permanently accurate:
 
 - If a run surfaces a cited path that no longer exists, a layer that's been restructured, or a categorization row that no longer fits how the codebase is organized, that's a stale skill, not a one-off exception.
 - Patch this SKILL.md in the same pass — add or fix the relevant row/example — rather than leaving the correction for a future run to rediscover.

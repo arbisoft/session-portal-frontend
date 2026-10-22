@@ -1,6 +1,6 @@
 <!-- badges -->
 
-![REACT](https://img.shields.io/badge/React%2019.1.0-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![NEXT JS](https://img.shields.io/badge/next%20js%2015.5.24-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) ![TYPESCRIPT](https://img.shields.io/badge/TypeScript%205.9.3-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![MATERIAL UI](https://img.shields.io/badge/Material%20UI%207.3.4-007FFF?style=for-the-badge&logo=mui&logoColor=white) ![PLAYWRIGHT](https://img.shields.io/badge/Playwright%201.43.1-45ba4b?style=for-the-badge&logo=Playwright&logoColor=white) ![ESLINT](https://img.shields.io/badge/eslint%209.38.0-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![GITHUB ACTIONS](https://img.shields.io/badge/Github%20Actions-282a2e?style=for-the-badge&logo=githubactions&logoColor=367cfe)[![Quality Gate Status](https://sonarqube.arbisoft.com/api/project_badges/measure?project=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04&metric=alert_status&token=sqb_9bed7ed9a3961adcacde244816b4c56f8d0b16e4)](https://sonarqube.arbisoft.com/dashboard?id=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04)
+![REACT](https://img.shields.io/badge/React%2019.3.1-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![NEXT JS](https://img.shields.io/badge/next%20js%2016.4.2-000000?style=for-the-badge&logo=nextdotjs&logoColor=white) ![TYPESCRIPT](https://img.shields.io/badge/TypeScript%205.9.3-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![MATERIAL UI](https://img.shields.io/badge/Material%20UI%207.3.4-007FFF?style=for-the-badge&logo=mui&logoColor=white) ![PLAYWRIGHT](https://img.shields.io/badge/Playwright%201.43.1-45ba4b?style=for-the-badge&logo=Playwright&logoColor=white) ![ESLINT](https://img.shields.io/badge/eslint%209.38.0-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![GITHUB ACTIONS](https://img.shields.io/badge/Github%20Actions-282a2e?style=for-the-badge&logo=githubactions&logoColor=367cfe)[![Quality Gate Status](https://sonarqube.arbisoft.com/api/project_badges/measure?project=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04&metric=alert_status&token=sqb_9bed7ed9a3961adcacde244816b4c56f8d0b16e4)](https://sonarqube.arbisoft.com/dashboard?id=arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04)
 
 # Arbisoft Sessions Portal Frontend
 
@@ -20,7 +20,7 @@ Frontend application for the Sessions Portal built with Next.js, React, and Type
 
 ## Requirements
 
-- Node.js 22 LTS
+- Node.js 24 LTS
 - npm 10.2.4 or later
 
 ## Getting Started
@@ -32,11 +32,11 @@ Frontend application for the Sessions Portal built with Next.js, React, and Type
    cd session-portal
    ```
 
-2. Install and use Node.js 22 LTS
+2. Install and use Node.js 24 LTS
 
    ```bash
-   nvm install 22
-   nvm use 22
+   nvm install 24
+   nvm use 24
    ```
 
 3. Install dependencies
@@ -109,7 +109,7 @@ Run with coverage:
 npm run test:cov
 ```
 
-Coverage output is written to `./coverage/`. The test suite includes unit tests for utilities, middleware, Redux state, and feature components with Jest and React Testing Library.
+Coverage output is written to `./coverage/`. The test suite includes unit tests for utilities, proxy, Redux state, and feature components with Jest and React Testing Library.
 
 ## Deployment
 

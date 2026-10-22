@@ -4,24 +4,24 @@
 
 From `package.json`:
 
-| Script                  | Command                                                        | Purpose                          |
-| ----------------------- | -------------------------------------------------------------- | -------------------------------- |
-| `dev`                   | `next dev --turbopack`                                         | Start local development server   |
-| `build`                 | `next build --turbopack`                                       | Create production build          |
-| `build:e2e`             | `cp -n example.env.local .env.local && next build --turbopack` | Build with env bootstrap for E2E |
-| `start`                 | `next start`                                                   | Run built app                    |
-| `typecheck`             | `./node_modules/.bin/tsc --project ./tsconfig.json`            | Run TypeScript checking          |
-| `lint`                  | `eslint && npm run typecheck`                                  | Run linting and type checking    |
-| `prepare`               | `is-ci \|\| husky \|\| true`                                   | Set up Git hooks outside CI      |
-| `release`               | `release-it`                                                   | Create a release                 |
-| `generate:resource`     | `hygen generate resource`                                      | Legacy, see note below (broken)  |
-| `postgenerate:resource` | `npm run lint -- --fix`                                        | Runs after `generate:resource`   |
-| `format:check`          | `prettier --check .`                                           | Check formatting                 |
-| `format`                | `prettier --write .`                                           | Apply formatting                 |
-| `sb`                    | `storybook dev -p 6006`                                        | Start Storybook                  |
-| `build-storybook`       | `storybook build`                                              | Build Storybook static output    |
-| `test`                  | `jest --verbose`                                               | Run Jest tests                   |
-| `test:cov`              | `jest --coverage --verbose`                                    | Run Jest with coverage           |
+| Script                  | Command                                             | Purpose                          |
+| ----------------------- | --------------------------------------------------- | -------------------------------- |
+| `dev`                   | `next dev`                                          | Start local development server   |
+| `build`                 | `next build`                                        | Create production build          |
+| `build:e2e`             | `cp -n example.env.local .env.local && next build`  | Build with env bootstrap for E2E |
+| `start`                 | `next start`                                        | Run built app                    |
+| `typecheck`             | `./node_modules/.bin/tsc --project ./tsconfig.json` | Run TypeScript checking          |
+| `lint`                  | `eslint && npm run typecheck`                       | Run linting and type checking    |
+| `prepare`               | `is-ci \|\| husky \|\| true`                        | Set up Git hooks outside CI      |
+| `release`               | `release-it`                                        | Create a release                 |
+| `generate:resource`     | `hygen generate resource`                           | Legacy, see note below (broken)  |
+| `postgenerate:resource` | `npm run lint -- --fix`                             | Runs after `generate:resource`   |
+| `format:check`          | `prettier --check .`                                | Check formatting                 |
+| `format`                | `prettier --write .`                                | Apply formatting                 |
+| `sb`                    | `storybook dev -p 6006`                             | Start Storybook                  |
+| `build-storybook`       | `storybook build`                                   | Build Storybook static output    |
+| `test`                  | `jest --verbose`                                    | Run Jest tests                   |
+| `test:cov`              | `jest --coverage --verbose`                         | Run Jest with coverage           |
 
 ## Tooling Summary
 
@@ -55,7 +55,8 @@ The root `README.md` also links directly to `CHANGELOG.md`, making release histo
 ### Dependency maintenance
 
 - `.github/dependabot.yml` configures dependency update automation. Dependabot covers npm, GitHub Actions, and Docker ecosystems (weekly, PRs targeting `dev`), groups minor/patch npm updates, and excludes major-version bumps of `next`/`react`/`react-dom`/`node` from automated PRs.
-- `package.json` pins transitive dependency versions via `overrides`: `react`, `react-dom`, `@types/react`, `@types/react-dom`, and `conventional-changelog-conventionalcommits` (the last one pinned for compatibility with the `conventionalcommits` preset used by release tooling above).
+- `package.json` records approved dependency install scripts in `allowScripts` (see [Setup and Installation](./setup-and-installation.md#dependency-install-scripts)); update it with `npm install-scripts approve <pkg>` when a dependency upgrade changes which packages have install scripts.
+- `package.json` has no `overrides` or `resolutions` field; transitive versions come from the lockfile. `@commitlint/config-conventional` and `@release-it/conventional-changelog` both resolve the same `conventional-changelog-conventionalcommits` copy.
 
 ### Storybook
 

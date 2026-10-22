@@ -13,9 +13,8 @@ function isValidToken(token: string | undefined): boolean {
   return exp !== null && exp > Math.floor(Date.now() / 1000);
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  // Get token from cookies
   const token = request.cookies.get(ACCESS_COOKIE_NAME)?.value;
   const isProtectedRoute = !publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`));
 
@@ -37,7 +36,6 @@ export function middleware(request: NextRequest) {
   }
 
   if (isProtectedRoute && !isValidToken(token)) {
-    // Redirect to login with redirect_to parameter
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set(REDIRECT_TO_KEY, pathname.concat(search));
     return NextResponse.redirect(loginUrl);
