@@ -69,7 +69,7 @@ App-level special files: `src/app/error.tsx` (route error boundary), `src/app/gl
 | `VideosListingPage` | Browsing videos, featured content, filters, virtualized list with infinite loading |
 | `SearchResultsPage` | Search-specific result presentation |
 | `VideoDetail` | Player page with metadata and recommendations |
-| `UploadVideo` | Staff-only upload flow: file picker, upload progress, metadata form (`form.tsx`, `fields.tsx`, `selectFields.tsx`) |
+| `UploadVideo` | Staff-only single-page upload form: video dropzone / status panel, metadata fields, thumbnail toggle, sticky publish bar (`form.tsx`, `fields.tsx`, `selectFields.tsx`, `thumbnailField.tsx`, `videoPicker.tsx`, `uploadStatus.tsx`, `publishBar.tsx`) |
 
 ## Component Organization Pattern
 
@@ -117,9 +117,12 @@ These define request/response and domain object shapes used across features and 
 - End-to-end tests live in `playwright-tests/`.
 - Manual mocks live in `__mocks__/`.
 
-## Server-Side Services
+## Services
 
-`src/services/runs-on-server-side/` contains utilities intended for server execution only (not client bundles). These are distinct from Next.js server actions (`src/app/login/actions.ts`) and from the RTK Query API layer.
+`src/services/` holds code that is neither UI nor RTK Query:
+
+- `src/services/runs-on-server-side/` contains utilities intended for server execution only (not client bundles). These are distinct from Next.js server actions (`src/app/login/actions.ts`) and from the RTK Query API layer.
+- `src/services/resumableUpload/` is the opposite: the framework-free, browser-side engine for resumable video uploads (state machine, transport, persistence). It is used through `src/hooks/useVideoUpload.ts`. See [Upload Video](./modules/upload-video.md).
 
 ## Notes
 

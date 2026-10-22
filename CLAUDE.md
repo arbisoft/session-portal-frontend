@@ -39,6 +39,7 @@ src/features/     → page-level components with all business logic
 src/components/   → reusable UI primitives (no business logic)
 src/redux/        → RTK Query API slices + login slice + store
 src/hooks/        → custom hooks (no auth hook — see Authentication)
+src/services/     → non-UI engines: resumableUpload/ (browser), runs-on-server-side/ (server only)
 src/models/       → TypeScript interfaces for API shapes
 src/utils/utils.ts → pure transform/display helpers
 ```
@@ -46,7 +47,7 @@ src/utils/utils.ts → pure transform/display helpers
 **Route → Feature mapping:**
 
 - `/` → proxy redirects to `/videos`
-- `/upload-video` → `UploadVideo` (staff only: the navbar entry is gated on `selectIsStaff`; uploads go through the BFF proxy)
+- `/upload-video` → `UploadVideo` (staff only: the navbar entry is gated on `selectIsStaff`; resumable chunked uploads go through the BFF proxy)
 - `/login` → `LoginPage`
 - `/videos` → `VideosListingPage`
 - `/videos/results` → `SearchResultsPage`

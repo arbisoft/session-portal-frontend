@@ -1,257 +1,191 @@
-import { useEffect } from "react";
+import { Control, useForm, useWatch } from "react-hook-form";
 
-import userEvent from "@testing-library/user-event";
-import { useForm } from "react-hook-form";
+import { customRender as render, fireEvent, screen, within } from "@/jest/utils/testUtils";
 
-import { customRender as render, fireEvent, screen, waitFor } from "@/jest/utils/testUtils";
-
-import { FORM_SCROLL_CONTAINER_ID, FormValues } from "./fields";
+import { FormValues } from "./fields";
 import { PlaylistsField, PresenterField, TagsField } from "./selectFields";
 
 const mockSearchUsers = jest.fn();
-let mockUserSearchState: { data: unknown[]; isFetching: boolean } = { data: [], isFetching: false };
+let mockUsers: { id: number; first_name: string; last_name: string; full_name: string; email: string }[] = [];
+let mockSearching = false;
 
 jest.mock("@/redux/events/apiSlice", () => ({
-  useAllTagsQuery: () => ({
-    data: [
-      { id: 1, name: "react" },
-      { id: 2, name: "testing" },
-    ],
-  }),
-  usePlaylistsQuery: () => ({
-    data: [
-      { id: 10, name: "Frontend" },
-      { id: 11, name: "Backend" },
-    ],
-  }),
-  useLazySearchUsersQuery: () => [mockSearchUsers, mockUserSearchState],
+  useAllTagsQuery: () => ({ data: [{ id: 1, name: "React" }] }),
+  usePlaylistsQuery: () => ({ data: [{ id: 10, name: "Onboarding" }] }),
+  useLazySearchUsersQuery: () => [mockSearchUsers, { data: mockUsers, isFetching: mockSearching }],
 }));
 
-const alice = { id: 1, first_name: "Alice", last_name: "Smith", full_name: "Alice Smith", email: "alice@example.com" };
-const nameless = { id: 2, first_name: "Bob", last_name: "Jones", full_name: "", email: "bob@example.com" };
-
-type HarnessProps = {
-  Field: typeof PresenterField;
-  onSubmit: (values: FormValues) => void;
-  errorField?: keyof FormValues;
+const Values = ({ control }: { control: Control<FormValues> }) => {
+  const presenters = useWatch({ control, name: "presenter_ids" });
+  const playlists = useWatch({ control, name: "playlists" });
+  const tags = useWatch({ control, name: "tags" });
+  return <output data-testid="values">{JSON.stringify({ presenters, playlists, tags })}</output>;
 };
 
-const Harness = ({ Field, onSubmit, errorField }: HarnessProps) => {
-  const { control, handleSubmit, setError } = useForm<FormValues>({
+const Harness = () => {
+  const { control } = useForm<FormValues>({
     defaultValues: { title: "", description: "", presenter_ids: [], playlists: [], tags: [] },
   });
-
-  useEffect(() => {
-    if (errorField) setError(errorField, { message: "Something is wrong" });
-  }, [errorField, setError]);
-
   return (
-    <div id={FORM_SCROLL_CONTAINER_ID} data-testid="scroll-container">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Field control={control} />
-        <button type="submit">submit</button>
-      </form>
-    </div>
+    <>
+      <PresenterField control={control} />
+      <PlaylistsField control={control} />
+      <TagsField control={control} />
+      <Values control={control} />
+    </>
   );
 };
 
-const setup = (Field: HarnessProps["Field"], errorField?: keyof FormValues) => {
-  const onSubmit = jest.fn();
-  const utils = render(<Harness Field={Field} onSubmit={onSubmit} errorField={errorField} />);
-  const submit = async () => {
-    fireEvent.click(screen.getByRole("button", { name: "submit" }));
-    await waitFor(() => expect(onSubmit).toHaveBeenCalled());
-    return onSubmit.mock.calls[0][0] as FormValues;
-  };
-  return { ...utils, onSubmit, submit };
+// Focus first, as a real user does; MUI resets the input text of an unfocused autocomplete.
+const typeInto = (input: HTMLElement, text: string) => {
+  fireEvent.focus(input);
+  fireEvent.change(input, { target: { value: text } });
 };
+
+const values = () => JSON.parse(screen.getByTestId("values").textContent as string);
+const user = (id: number, name: string, email: string) => ({
+  id,
+  first_name: name.split(" ")[0],
+  last_name: name.split(" ")[1] ?? "",
+  full_name: name,
+  email,
+});
 
 describe("PresenterField", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUserSearchState = { data: [], isFetching: false };
+    mockUsers = [user(1, "Ada Lovelace", "ada@arbisoft.com"), user(2, "Ada Lovelace", "ada.l@arbisoft.com")];
+    mockSearching = false;
   });
 
-  it("should not search or open the dropdown for fewer than two characters", async () => {
-    setup(PresenterField);
+  it("should tell the user how many characters are needed and not search before that", () => {
+    render(<Harness />);
+    const input = screen.getByLabelText(/^Presenters/);
 
-    await userEvent.type(screen.getByLabelText("Presenter"), "a");
+    expect(screen.getByText("Type at least 2 characters to search")).toBeInTheDocument();
+    fireEvent.change(input, { target: { value: "a" } });
 
     expect(mockSearchUsers).not.toHaveBeenCalled();
-    expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
   });
 
-  it("should search with the trimmed query and list the matching users", async () => {
-    mockUserSearchState = { data: [alice], isFetching: false };
-    setup(PresenterField);
+  it("should search from two characters and show matches with their email", () => {
+    render(<Harness />);
 
-    await userEvent.type(screen.getByLabelText("Presenter"), "al ");
+    typeInto(screen.getByLabelText(/^Presenters/), "ad");
 
-    expect(mockSearchUsers).toHaveBeenLastCalledWith("al");
-    expect(await screen.findByText(/Alice Smith — alice@example\.com/)).toBeInTheDocument();
+    expect(mockSearchUsers).toHaveBeenCalledWith("ad");
+    expect(screen.getAllByRole("option")).toHaveLength(2);
+    expect(screen.getByText(/ada@arbisoft\.com/)).toBeInTheDocument();
   });
 
-  it("should store the ids of the selected presenters", async () => {
-    mockUserSearchState = { data: [alice, nameless], isFetching: false };
-    const { submit } = setup(PresenterField);
+  it("should say when nobody matches", () => {
+    mockUsers = [];
+    render(<Harness />);
 
-    await userEvent.type(screen.getByLabelText("Presenter"), "bo");
-    await userEvent.click(await screen.findByText(/bob@example\.com/, { selector: "li" }));
+    typeInto(screen.getByLabelText(/^Presenters/), "zz");
 
-    expect((await submit()).presenter_ids).toEqual([2]);
-    // A user without a full name falls back to first and last name for the chip label.
-    expect(screen.getByRole("button", { name: "Bob Jones" })).toBeInTheDocument();
+    expect(screen.getByText("No people found")).toBeInTheDocument();
   });
 
-  it("should mark an already selected presenter as selected when it shows up in later results", async () => {
-    mockUserSearchState = { data: [alice, nameless], isFetching: false };
-    setup(PresenterField);
-    const input = screen.getByLabelText("Presenter");
+  it("should show a loading hint and spinner while searching", () => {
+    mockUsers = [];
+    mockSearching = true;
+    render(<Harness />);
 
-    await userEvent.type(input, "al");
-    await userEvent.click(await screen.findByText(/alice@example\.com/, { selector: "li" }));
-    await userEvent.type(input, "bo");
+    typeInto(screen.getByLabelText(/^Presenters/), "ad");
 
-    const selectedOption = await screen.findByRole("option", { name: /alice@example\.com/ });
-    expect(selectedOption).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByRole("option", { name: /bob@example\.com/ })).toHaveAttribute("aria-selected", "false");
+    expect(screen.getByText("Searching…")).toBeInTheDocument();
   });
 
-  it("should close the dropdown when the form scrolls", async () => {
-    mockUserSearchState = { data: [alice], isFetching: false };
-    setup(PresenterField);
-    await userEvent.type(screen.getByLabelText("Presenter"), "al");
-    expect(await screen.findByRole("listbox")).toBeInTheDocument();
+  it("should add the chosen people to the form and tell same-named people apart by email", () => {
+    render(<Harness />);
+    const input = screen.getByLabelText(/^Presenters/);
 
-    fireEvent.scroll(screen.getByTestId("scroll-container"));
+    fireEvent.change(input, { target: { value: "ad" } });
+    fireEvent.click(screen.getAllByRole("option")[0]);
+    expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
 
-    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
+    fireEvent.change(input, { target: { value: "ad" } });
+    fireEvent.click(screen.getAllByRole("option")[1]);
+
+    expect(values().presenters).toEqual([1, 2]);
+    expect(screen.getByText("Ada Lovelace (ada@arbisoft.com)")).toBeInTheDocument();
+    expect(screen.getByText("Ada Lovelace (ada.l@arbisoft.com)")).toBeInTheDocument();
   });
 
-  it("should close the dropdown on escape", async () => {
-    mockUserSearchState = { data: [alice], isFetching: false };
-    setup(PresenterField);
-    await userEvent.type(screen.getByLabelText("Presenter"), "al");
-    expect(await screen.findByRole("listbox")).toBeInTheDocument();
+  it("should fall back to first and last name when there is no full name", () => {
+    mockUsers = [{ ...user(3, "Grace Hopper", "grace@arbisoft.com"), full_name: "" }];
+    render(<Harness />);
 
-    await userEvent.keyboard("{Escape}");
+    typeInto(screen.getByLabelText(/^Presenters/), "gr");
 
-    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
-  });
-
-  it("should show a spinner while users are being searched", () => {
-    mockUserSearchState = { data: [], isFetching: true };
-    setup(PresenterField);
-
-    expect(screen.getByRole("progressbar")).toBeInTheDocument();
-  });
-
-  it("should display the validation message", async () => {
-    setup(PresenterField, "presenter_ids");
-
-    expect(await screen.findByText("Something is wrong")).toBeInTheDocument();
+    expect(screen.getByRole("option")).toHaveTextContent("Grace Hopper — grace@arbisoft.com");
   });
 });
 
 describe("PlaylistsField", () => {
-  beforeEach(() => jest.clearAllMocks());
+  it("should add a chosen playlist to the form", () => {
+    render(<Harness />);
 
-  it("should list the playlists when opened and keep the list open while selecting several", async () => {
-    const { submit } = setup(PlaylistsField);
+    fireEvent.keyDown(screen.getByLabelText(/^Playlists/), { key: "ArrowDown" });
+    fireEvent.click(screen.getByRole("option", { name: /Onboarding/ }));
 
-    await userEvent.click(screen.getByLabelText("Playlists"));
-    await userEvent.click(await screen.findByRole("option", { name: "Frontend" }));
-    await userEvent.click(screen.getByRole("option", { name: "Backend" }));
-
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
-    expect((await submit()).playlists).toEqual([10, 11]);
-  });
-
-  it("should close the dropdown when the form scrolls", async () => {
-    setup(PlaylistsField);
-    await userEvent.click(screen.getByLabelText("Playlists"));
-    expect(await screen.findByRole("listbox")).toBeInTheDocument();
-
-    fireEvent.scroll(screen.getByTestId("scroll-container"));
-
-    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
-  });
-
-  it("should close the dropdown on escape", async () => {
-    setup(PlaylistsField);
-    await userEvent.click(screen.getByLabelText("Playlists"));
-    expect(await screen.findByRole("listbox")).toBeInTheDocument();
-
-    await userEvent.keyboard("{Escape}");
-
-    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
-  });
-
-  it("should display the validation message", async () => {
-    setup(PlaylistsField, "playlists");
-
-    expect(await screen.findByText("Something is wrong")).toBeInTheDocument();
+    expect(values().playlists).toEqual([10]);
   });
 });
 
+const chipLabels = () => Array.from(document.querySelectorAll(".MuiChip-label")).map((el) => el.textContent);
+
 describe("TagsField", () => {
-  beforeEach(() => jest.clearAllMocks());
+  const addTag = (text: string) => {
+    const input = screen.getByLabelText(/^Tags/);
+    fireEvent.change(input, { target: { value: text } });
+    fireEvent.keyDown(input, { key: "Enter" });
+  };
 
-  it("should offer existing tags with a hash prefix and keep the list open while selecting", async () => {
-    const { submit } = setup(TagsField);
+  it("should explain how to create a tag", () => {
+    render(<Harness />);
 
-    await userEvent.click(screen.getByLabelText("Tags"));
-    await userEvent.click(await screen.findByText("#react"));
-    await userEvent.click(screen.getByText("#testing", { selector: "li" }));
-
-    expect(screen.getByRole("listbox")).toBeInTheDocument();
-    expect((await submit()).tags).toEqual([
-      { id: 1, name: "react" },
-      { id: 2, name: "testing" },
-    ]);
+    expect(screen.getByText("Press Enter to create a new tag")).toBeInTheDocument();
   });
 
-  it("should show an existing tag as a hashed chip", async () => {
-    setup(TagsField);
+  it("should create a new tag without the leading hash", () => {
+    render(<Harness />);
 
-    await userEvent.click(screen.getByLabelText("Tags"));
-    await userEvent.click(await screen.findByText("#react"));
+    addTag("#brand-new");
 
-    expect(screen.getByText("#react", { selector: ".MuiChip-label" })).toBeInTheDocument();
+    expect(values().tags).toEqual(["brand-new"]);
+    expect(chipLabels()).toEqual(["#brand-new"]);
   });
 
-  it("should accept a new free-text tag and strip leading hashes from its chip", async () => {
-    const { submit } = setup(TagsField);
+  it("should reuse an existing tag typed in another case instead of creating a duplicate", () => {
+    render(<Harness />);
 
-    await userEvent.type(screen.getByLabelText("Tags"), "##brand-new{Enter}");
+    addTag("react");
 
-    expect(screen.getByText("#brand-new", { selector: ".MuiChip-label" })).toBeInTheDocument();
-    expect((await submit()).tags).toEqual(["##brand-new"]);
+    expect(values().tags).toEqual([{ id: 1, name: "React" }]);
+    expect(chipLabels()).toEqual(["#React"]);
   });
 
-  it("should close the dropdown when the form scrolls", async () => {
-    setup(TagsField);
-    await userEvent.click(screen.getByLabelText("Tags"));
-    expect(await screen.findByRole("listbox")).toBeInTheDocument();
+  it("should ignore a tag that is only a hash and duplicates of one already added", () => {
+    render(<Harness />);
 
-    fireEvent.scroll(screen.getByTestId("scroll-container"));
+    addTag("#");
+    addTag("fresh");
+    addTag("FRESH");
 
-    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
+    expect(values().tags).toEqual(["fresh"]);
   });
 
-  it("should close the dropdown on escape", async () => {
-    setup(TagsField);
-    await userEvent.click(screen.getByLabelText("Tags"));
-    expect(await screen.findByRole("listbox")).toBeInTheDocument();
+  it("should pick an existing tag from the list and allow removing it", () => {
+    render(<Harness />);
 
-    await userEvent.keyboard("{Escape}");
+    fireEvent.keyDown(screen.getByLabelText(/^Tags/), { key: "ArrowDown" });
+    fireEvent.click(screen.getByRole("option", { name: /React/ }));
+    expect(values().tags).toEqual([{ id: 1, name: "React" }]);
 
-    await waitFor(() => expect(screen.queryByRole("listbox")).not.toBeInTheDocument());
-  });
+    fireEvent.click(within(document.querySelector(".MuiChip-root") as HTMLElement).getByTestId("CancelIcon"));
 
-  it("should display the validation message", async () => {
-    setup(TagsField, "tags");
-
-    expect(await screen.findByText("Something is wrong")).toBeInTheDocument();
+    expect(values().tags).toEqual([]);
   });
 });

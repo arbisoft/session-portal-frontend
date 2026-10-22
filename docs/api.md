@@ -129,9 +129,21 @@ Record a view for a video asset. The frontend calls this once the viewer has acc
 { "view_count": 0 }
 ```
 
+### Resumable upload (staff)
+
+The upload UI sends the video in chunks through these endpoints, which share the `/events/videoassets/` path with the single-request upload below (a JSON body on `POST /events/videoassets/` starts a resumable session; multipart stays the single-request upload). All staff only, through the BFF; the `x-requested-with` guard header is required). The protocol is described in the backend's `UPLOADS.md`. `UploadSession` is in [Data Models](./data-models.md).
+
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /events/videoassets/` | Body `{ filename, file_size, client_key }`. `201` with a new `UploadSession`, or `200` with the existing one when `client_key` is replayed |
+| `GET /events/videoassets/{id}/` | Authoritative status: `offset` (confirmed bytes), `upload_status`, `video_asset_id` once `COMPLETED` |
+| `PATCH /events/videoassets/{id}/` | Append a chunk. Headers `Content-Type: application/offset+octet-stream`, `Upload-Offset`, optional `Upload-Checksum: sha256 <base64>`. Errors carry `{ code, detail, offset? }` |
+| `POST /events/videoassets/{id}/finalize/` | Re-queue server-side finalization (`202`) |
+| `DELETE /events/videoassets/{id}/` | Cancel and delete the partial file (`204`) |
+
 ### POST /events/videoassets/
 
-Upload a video file (staff upload flow). Sent as `multipart/form-data` with `XMLHttpRequest` so upload progress can be shown.
+Single-request upload of a whole video file, selected by a `multipart/form-data` body. No longer used by the upload UI (it cannot resume), but still available. A JSON body on this path creates a resumable session instead (see above).
 
 **Request Body:** `video_file` (file)
 

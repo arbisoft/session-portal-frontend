@@ -1,24 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { ReactNode } from "react";
 
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CardHeader from "@mui/material/CardHeader";
 import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Control, Controller, useFormState, useWatch } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 
-import { useCloseOnScroll } from "@/hooks/useCloseOnScroll";
 import { Tag } from "@/models/Events";
 
 import { InputContainer } from "./styled";
-
-export const FORM_SCROLL_CONTAINER_ID = "upload-form-scroll";
 
 export type FormValues = {
   title: string;
@@ -31,29 +27,48 @@ export type FormValues = {
 
 export type FieldProps = { control: Control<FormValues> };
 
-export const FormCardHeader = ({ control }: FieldProps) => {
-  const title = useWatch({ control, name: "title" });
-  return <CardHeader title={title || "Upload Video"} />;
+type FieldLabelProps = {
+  /** Omit for groups of controls, which are named through aria-labelledby on the group instead. */
+  htmlFor?: string;
+  id?: string;
+  children: ReactNode;
+  optional?: boolean;
 };
 
-export const TitleField = ({ control }: FieldProps) => {
-  const { errors } = useFormState({ control });
-  return (
-    <Controller
-      name="title"
-      control={control}
-      render={({ field }) => (
-        <InputContainer>
-          <InputLabel htmlFor="upload-title">Title</InputLabel>
-          <TextField {...field} id="upload-title" variant="outlined" fullWidth error={!!errors?.title} />
-          <Typography color="error" variant="bodySmall">
-            {errors?.title?.message}
-          </Typography>
-        </InputContainer>
-      )}
-    />
-  );
-};
+/** Required fields get the label asterisk; optional ones say so, so nobody has to guess. */
+export const FieldLabel = ({ htmlFor, id, children, optional = false }: FieldLabelProps) => (
+  <InputLabel id={id} htmlFor={htmlFor} required={!optional}>
+    {children}
+    {optional && (
+      <Typography component="span" variant="bodySmall" color="textSecondary">
+        {" "}
+        (optional)
+      </Typography>
+    )}
+  </InputLabel>
+);
+
+export const TitleField = ({ control }: FieldProps) => (
+  <Controller
+    name="title"
+    control={control}
+    render={({ field: { ref, ...field }, fieldState }) => (
+      <InputContainer>
+        <FieldLabel htmlFor="upload-title">Title</FieldLabel>
+        <TextField
+          {...field}
+          id="upload-title"
+          inputRef={ref}
+          variant="outlined"
+          fullWidth
+          error={!!fieldState.error}
+          helperText={fieldState.error?.message}
+          slotProps={{ htmlInput: { "aria-required": true } }}
+        />
+      </InputContainer>
+    )}
+  />
+);
 
 export const OptionCheckbox = ({ checked }: { checked: boolean }) => (
   <Checkbox
@@ -63,71 +78,53 @@ export const OptionCheckbox = ({ checked }: { checked: boolean }) => (
   />
 );
 
-type EventDateInputProps = { value: Date | undefined; onChange: (date: Date | null) => void; error: boolean };
-
-const EventDateInput = ({ value, onChange, error }: EventDateInputProps) => {
-  const [open, setOpen] = useState(false);
-
-  useCloseOnScroll(FORM_SCROLL_CONTAINER_ID, () => setOpen(false));
-
-  return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <DatePicker
-        value={value ?? null}
-        onChange={onChange}
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
-        slotProps={{
-          textField: { id: "upload-event-date", onClick: () => setOpen(true), error },
-        }}
-      />
-    </LocalizationProvider>
-  );
-};
-
-export const EventDateField = ({ control }: FieldProps) => {
-  const { errors } = useFormState({ control });
-  return (
-    <Controller
-      name="event_date"
-      control={control}
-      render={({ field }) => (
-        <InputContainer>
-          <InputLabel htmlFor="upload-event-date">Event Date</InputLabel>
-          <EventDateInput value={field.value} onChange={field.onChange} error={!!errors?.event_date} />
-          <Typography color="error" variant="bodySmall">
-            {errors?.event_date?.message}
-          </Typography>
-        </InputContainer>
-      )}
-    />
-  );
-};
-
-export const DescriptionField = ({ control }: FieldProps) => {
-  const { errors } = useFormState({ control });
-  return (
-    <Controller
-      name="description"
-      control={control}
-      render={({ field }) => (
-        <InputContainer>
-          <InputLabel htmlFor="upload-description">Description</InputLabel>
-          <TextField
-            id="upload-description"
-            multiline
-            minRows={4}
-            {...field}
-            fullWidth
-            error={!!errors?.description}
-            sx={{ "& textarea": { resize: "vertical" } }}
+export const EventDateField = ({ control }: FieldProps) => (
+  <Controller
+    name="event_date"
+    control={control}
+    render={({ field, fieldState }) => (
+      <InputContainer>
+        <FieldLabel htmlFor="upload-event-date">Session date</FieldLabel>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            value={field.value ?? null}
+            onChange={field.onChange}
+            onClose={field.onBlur}
+            inputRef={field.ref}
+            slotProps={{
+              textField: {
+                id: "upload-event-date",
+                error: !!fieldState.error,
+                helperText: fieldState.error?.message,
+              },
+            }}
           />
-          <Typography color="error" variant="bodySmall">
-            {errors?.description?.message}
-          </Typography>
-        </InputContainer>
-      )}
-    />
-  );
-};
+        </LocalizationProvider>
+      </InputContainer>
+    )}
+  />
+);
+
+export const DescriptionField = ({ control }: FieldProps) => (
+  <Controller
+    name="description"
+    control={control}
+    render={({ field: { ref, ...field }, fieldState }) => (
+      <InputContainer>
+        <FieldLabel htmlFor="upload-description">Description</FieldLabel>
+        <TextField
+          {...field}
+          id="upload-description"
+          inputRef={ref}
+          multiline
+          minRows={4}
+          fullWidth
+          error={!!fieldState.error}
+          helperText={fieldState.error?.message}
+          sx={{ "& textarea": { resize: "vertical" } }}
+          slotProps={{ htmlInput: { "aria-required": true } }}
+        />
+      </InputContainer>
+    )}
+  />
+);
