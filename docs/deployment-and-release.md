@@ -10,12 +10,12 @@ The Docker build is **multi-stage**:
 
 ### Stage 1: deps
 
-- Base: `node:22.14.0-alpine`
+- Base: `node:24.22.1-alpine`
 - Copies `package*.json`, runs `npm ci`
 
 ### Stage 2: builder
 
-- Base: `node:22.14.0-alpine`
+- Base: `node:24.22.1-alpine`
 - Accepts build args: `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_HOTJAR_ID`, `NEXT_PUBLIC_IMAGE_HOSTS`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT` (all exported as `ENV`)
 - Runs `npm run build` with an optional BuildKit secret `sentry_auth` exposed as `SENTRY_AUTH_TOKEN` for source map upload
 - Reuses deps/node_modules from stage 1
@@ -24,7 +24,7 @@ The Docker build is **multi-stage**:
 
 ### Stage 3: runner (production)
 
-- Base: `node:22.14.0-alpine`
+- Base: `node:24.22.1-alpine`
 - Non-root user (`app`)
 - Copies standalone, static, public
 - Env: `NODE_ENV=production`, `PORT=4200`, `HOSTNAME=0.0.0.0`, `NEXT_TELEMETRY_DISABLED=1`

@@ -20,7 +20,7 @@ Frontend application for the Sessions Portal built with Next.js, React, and Type
 
 ## Requirements
 
-- Node.js 22 LTS
+- Node.js 24 LTS
 - npm 10.2.4 or later
 
 ## Getting Started
@@ -32,7 +32,7 @@ Frontend application for the Sessions Portal built with Next.js, React, and Type
    cd session-portal
    ```
 
-2. Install and use Node.js 22 LTS
+2. Install and use Node.js 24 LTS
 
    ```bash
    nvm install

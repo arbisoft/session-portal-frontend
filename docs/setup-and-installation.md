@@ -68,19 +68,12 @@ This runs ESLint and then TypeScript checking.
 
 ## Node Version Guidance
 
-<<<<<<< HEAD The root `README.md` includes `nvm` instructions for switching to Node 22:
-
-````bash
-nvm install 22
-nvm use 22
-=======
 The root `README.md` includes `nvm` instructions for switching to the Node version pinned in `.nvmrc`:
 
 ```bash
 nvm install
 nvm use
->>>>>>> aa58064 (build(deps): pin Node to 24.22.1 and read CI version from .nvmrc)
-````
+```
 
 ## Expected Local Ports
 
