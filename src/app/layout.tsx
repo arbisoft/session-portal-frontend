@@ -8,6 +8,7 @@ import { NotificationProvider } from "@/components/Notification";
 import InitColorSchemeScript from "@/components/theme/init-color-scheme-script";
 import ThemeProvider from "@/components/theme/theme-provider";
 import { DEFAULT_LANGUAGE, DEFAULT_LANGUAGE_DIR, NODE_ENV, CLIENT_ID, GTM_ID, HOTJAR_ID } from "@/constants/constants";
+import AuthSession from "@/features/AuthSession";
 import { Providers } from "@/redux/store/provider";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -49,7 +50,10 @@ export default function RootLayout({ children }: { children: React.ReactNode; pa
           <Providers>
             <ThemeProvider>
               <CssBaseline />
-              <NotificationProvider>{children}</NotificationProvider>
+              <NotificationProvider>
+                <AuthSession />
+                {children}
+              </NotificationProvider>
             </ThemeProvider>
           </Providers>
         </GoogleOAuthProvider>

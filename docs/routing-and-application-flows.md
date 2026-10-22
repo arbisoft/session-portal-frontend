@@ -37,10 +37,12 @@ Authentication is handled by the proxy in `src/proxy.ts` and server actions in `
 
 The proxy intercepts requests to enforce authentication:
 
-1. Fails closed: every route requires valid authentication except `/login` (`publicRoutes = ["/login"]`)
+1. Fails closed: every route requires valid authentication except `/login` (`PUBLIC_ROUTES = ["/login"]` in `src/constants/constants.ts`)
 2. Redirects unauthenticated users to `/login` with `redirect_to` parameter
 3. Redirects authenticated users away from `/login` to validated `redirect_to` or `/videos`
 4. Redirects root path `/` to `/videos`
+
+The proxy only checks the cookie's expiry. `AuthSession` (mounted in the root layout) then verifies the token with `GET /users/me` on load and on every navigation to a non-public route, and redirects to `/login?redirect_to=<path>` on `401` (see [Authentication](./modules/authentication.md#session-verification-get-usersme)).
 
 ### Server Actions (`actions.ts`)
 

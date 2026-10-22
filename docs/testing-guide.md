@@ -55,6 +55,7 @@ Current test suite includes unit tests for:
 
 - Utility functions (`src/utils/utils.ts`)
 - Proxy authentication (`src/proxy.ts`)
+- Session verification (`src/features/AuthSession`): protected vs public routes, `401` redirect, kept session on 5xx/network errors, aborted in-flight verification
 - Feature pages: HomePage, LoginPage, VideosListingPage, SearchResultsPage, VideoDetail
 - Redux slices and API integrations
 - Reusable components (Navbar, Sidebar, etc.)

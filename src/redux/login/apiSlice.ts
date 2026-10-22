@@ -1,5 +1,5 @@
-import { login } from "@/endpoints";
-import { LoginResponse, LoginParams } from "@/models/Auth";
+import { login, users } from "@/endpoints";
+import { CurrentUser, LoginResponse, LoginParams } from "@/models/Auth";
 import { baseApi } from "@/redux/baseApi";
 
 export const loginApi = baseApi.injectEndpoints({
@@ -11,7 +11,12 @@ export const loginApi = baseApi.injectEndpoints({
         body: { auth_token },
       }),
     }),
+    // Validates the session against the backend. Failures are handled by the auth session verifier, so no toast.
+    getMe: builder.query<CurrentUser, void>({
+      query: () => ({ url: users.me }),
+      extraOptions: { showErrorToast: false },
+    }),
   }),
 });
 
-export const { useLoginMutation } = loginApi;
+export const { useLoginMutation, useLazyGetMeQuery } = loginApi;
