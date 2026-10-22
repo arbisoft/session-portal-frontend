@@ -98,7 +98,7 @@ Infer scope from modified file paths, using this repo's actual layer structure.
 | `src/app/upload-video/`                                                       | upload       |
 | `src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx`      | app          |
 | `src/app/` (other, layout/page shells)                                        | app          |
-| `src/proxy.ts`                                                           | auth         |
+| `src/proxy.ts`                                                                | auth         |
 | `src/features/LoginPage/`                                                     | login        |
 | `src/features/VideoDetail/`                                                   | video        |
 | `src/features/SearchResultsPage/`                                             | search       |
