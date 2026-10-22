@@ -8,17 +8,17 @@ This guide is based on the current repository files, especially `README.md`, and
 
 Before contributing, make sure you have:
 
-- Node.js 22 LTS
+- Node.js 24 LTS
 - npm installed
 - `nvm` installed if you want to manage Node versions easily
 
-The project currently expects Node 22.
+The project currently expects Node 24.
 
 ### Using `nvm`
 
 ```sh
-nvm install 22
-nvm use 22
+nvm install 24
+nvm use 24
 ```
 
 To verify:

@@ -55,7 +55,8 @@ The root `README.md` also links directly to `CHANGELOG.md`, making release histo
 ### Dependency maintenance
 
 - `.github/dependabot.yml` configures dependency update automation. Dependabot covers npm, GitHub Actions, and Docker ecosystems (weekly, PRs targeting `dev`), groups minor/patch npm updates, and excludes major-version bumps of `next`/`react`/`react-dom`/`node` from automated PRs.
-- `package.json` pins transitive dependency versions via `overrides`: `react`, `react-dom`, `@types/react`, `@types/react-dom`, and `conventional-changelog-conventionalcommits` (the last one pinned for compatibility with the `conventionalcommits` preset used by release tooling above).
+- `package.json` records approved dependency install scripts in `allowScripts` (see [Setup and Installation](./setup-and-installation.md#dependency-install-scripts)); update it with `npm install-scripts approve <pkg>` when a dependency upgrade changes which packages have install scripts.
+- `package.json` has no `overrides` or `resolutions` field; transitive versions come from the lockfile. `@commitlint/config-conventional` and `@release-it/conventional-changelog` both resolve the same `conventional-changelog-conventionalcommits` copy.
 
 ### Storybook
 

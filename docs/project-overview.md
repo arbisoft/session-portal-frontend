@@ -44,7 +44,7 @@ The root `README.md` badges reflect the pinned or minimum declared versions in `
 
 From `package.json`:
 
-- Node.js: `>=22.0.0 <23.0.0`
+- Node.js: `>=24.15.0 <25.0.0`
 - npm: `>=10.2.4`
 
 ## Application Capabilities Seen in Source
