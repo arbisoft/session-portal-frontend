@@ -1,37 +1,47 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Ref, useState } from "react";
 
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
 import CircularProgress from "@mui/material/CircularProgress";
-import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import { Controller, useFormState } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
-import { useCloseOnScroll } from "@/hooks/useCloseOnScroll";
-import { Tag } from "@/models/Events";
+import { Tag, UserSearchResult } from "@/models/Events";
 import { useAllTagsQuery, useLazySearchUsersQuery, usePlaylistsQuery } from "@/redux/events/apiSlice";
+import { normalizeTagSelection } from "@/utils/tags";
 
-import { FieldProps, FORM_SCROLL_CONTAINER_ID, OptionCheckbox } from "./fields";
+import { FieldLabel, FieldProps, OptionCheckbox } from "./fields";
 import { InputContainer } from "./styled";
 
-type PresenterAutocompleteProps = {
-  onChange: (ids: number[]) => void;
-  error?: boolean;
+const MIN_SEARCH_LENGTH = 2;
+
+type AutocompleteFieldProps<T> = {
+  value: T;
+  onChange: (value: T) => void;
+  onBlur: () => void;
+  inputRef: Ref<unknown>;
+  error?: string;
 };
 
-const PresenterAutocomplete = ({ onChange, error }: PresenterAutocompleteProps) => {
+const presenterName = (user: UserSearchResult) => user.full_name || `${user.first_name} ${user.last_name}`.trim();
+
+const PresenterAutocomplete = ({ onChange, onBlur, inputRef, error }: Omit<AutocompleteFieldProps<number[]>, "value">) => {
+  const [selected, setSelected] = useState<UserSearchResult[]>([]);
   const [presenterQuery, setPresenterQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchUsers, { data: userResults = [], isFetching: isSearchingUsers }] = useLazySearchUsersQuery();
 
-  useCloseOnScroll(FORM_SCROLL_CONTAINER_ID, () => setDropdownOpen(false));
+  const canSearch = presenterQuery.trim().length >= MIN_SEARCH_LENGTH;
+  // Selected people stay in the options so the controlled value never points at a user the latest search dropped.
+  const options = [...selected, ...userResults.filter((user) => !selected.some((chosen) => chosen.id === user.id))];
 
-  const handlePresenterInputChange = (_: React.SyntheticEvent, value: string) => {
+  const handleInputChange = (_: React.SyntheticEvent, value: string, reason: string) => {
     setPresenterQuery(value);
-    if (value.trim().length >= 2) {
+    // "reset" fires when an option is picked or the field is cleared; the list should not re-open for it.
+    if (reason === "reset") return;
+    if (value.trim().length >= MIN_SEARCH_LENGTH) {
       searchUsers(value.trim());
       setDropdownOpen(true);
     } else {
@@ -39,35 +49,61 @@ const PresenterAutocomplete = ({ onChange, error }: PresenterAutocompleteProps) 
     }
   };
 
+  const noOptionsText = canSearch ? "No people found" : `Type at least ${MIN_SEARCH_LENGTH} characters to search`;
+
   return (
     <Autocomplete
       id="upload-presenter"
       multiple
-      options={userResults}
-      getOptionLabel={(option) => option.full_name || `${option.first_name} ${option.last_name}`}
+      value={selected}
+      options={options}
+      getOptionLabel={presenterName}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       loading={isSearchingUsers}
+      loadingText="Searching…"
+      noOptionsText={noOptionsText}
       open={dropdownOpen}
       onClose={() => setDropdownOpen(false)}
       filterOptions={(x) => x}
       inputValue={presenterQuery}
-      onInputChange={handlePresenterInputChange}
-      onChange={(_, selected) => onChange(selected.map((u) => u.id))}
-      renderOption={(props, option, { selected }) => {
+      onInputChange={handleInputChange}
+      onChange={(_, next) => {
+        setSelected(next);
+        onChange(next.map((user) => user.id));
+      }}
+      onBlur={onBlur}
+      renderOption={(props, option, { selected: isSelected }) => {
         const { key, ...optionProps } = props;
         return (
           <li key={key} {...optionProps}>
-            <OptionCheckbox checked={selected} />
-            {option.full_name} — {option.email}
+            <OptionCheckbox checked={isSelected} />
+            {presenterName(option)} — {option.email}
           </li>
         );
       }}
+      renderValue={(value, getItemProps) =>
+        value.map((user, index) => {
+          const { key, ...itemProps } = getItemProps({ index });
+          // Two people can share a name; the email tells them apart.
+          const hasSameName = value.some((other) => other.id !== user.id && presenterName(other) === presenterName(user));
+          return (
+            <Chip
+              key={key}
+              label={hasSameName ? `${presenterName(user)} (${user.email})` : presenterName(user)}
+              size="small"
+              {...itemProps}
+            />
+          );
+        })
+      }
       fullWidth
       renderInput={(params) => (
         <TextField
           {...params}
+          inputRef={inputRef}
           placeholder="Search by name or email"
-          error={error}
+          error={!!error}
+          helperText={error ?? `Type at least ${MIN_SEARCH_LENGTH} characters to search`}
           slotProps={{
             input: {
               ...params.InputProps,
@@ -78,6 +114,7 @@ const PresenterAutocomplete = ({ onChange, error }: PresenterAutocompleteProps) 
                 </>
               ),
             },
+            htmlInput: { ...params.inputProps, "aria-required": true },
           }}
         />
       )}
@@ -85,32 +122,26 @@ const PresenterAutocomplete = ({ onChange, error }: PresenterAutocompleteProps) 
   );
 };
 
-export const PresenterField = ({ control }: FieldProps) => {
-  const { errors } = useFormState({ control });
-  return (
-    <Controller
-      name="presenter_ids"
-      control={control}
-      render={({ field }) => (
-        <InputContainer>
-          <InputLabel htmlFor="upload-presenter">Presenter</InputLabel>
-          <PresenterAutocomplete onChange={field.onChange} error={!!errors?.presenter_ids} />
-          <Typography color="error" variant="bodySmall">
-            {errors?.presenter_ids?.message}
-          </Typography>
-        </InputContainer>
-      )}
-    />
-  );
-};
+export const PresenterField = ({ control }: FieldProps) => (
+  <Controller
+    name="presenter_ids"
+    control={control}
+    render={({ field, fieldState }) => (
+      <InputContainer>
+        <FieldLabel htmlFor="upload-presenter">Presenters</FieldLabel>
+        <PresenterAutocomplete
+          onChange={field.onChange}
+          onBlur={field.onBlur}
+          inputRef={field.ref}
+          error={fieldState.error?.message}
+        />
+      </InputContainer>
+    )}
+  />
+);
 
-type PlaylistsAutocompleteProps = { onChange: (ids: number[]) => void; error: boolean };
-
-const PlaylistsAutocomplete = ({ onChange, error }: PlaylistsAutocompleteProps) => {
+const PlaylistsAutocomplete = ({ onChange, onBlur, inputRef }: Omit<AutocompleteFieldProps<number[]>, "value" | "error">) => {
   const { data: playlists = [] } = usePlaylistsQuery();
-  const [open, setOpen] = useState(false);
-
-  useCloseOnScroll(FORM_SCROLL_CONTAINER_ID, () => setOpen(false));
 
   return (
     <Autocomplete
@@ -118,12 +149,10 @@ const PlaylistsAutocomplete = ({ onChange, error }: PlaylistsAutocompleteProps) 
       multiple
       options={playlists}
       disableCloseOnSelect
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       onChange={(_, selected) => onChange(selected.map((p) => p.id))}
+      onBlur={onBlur}
       renderOption={(props, option, { selected }) => {
         const { key, ...optionProps } = props;
         return (
@@ -134,51 +163,45 @@ const PlaylistsAutocomplete = ({ onChange, error }: PlaylistsAutocompleteProps) 
         );
       }}
       fullWidth
-      renderInput={(params) => <TextField {...params} placeholder="Select playlists" error={error} />}
+      renderInput={(params) => <TextField {...params} inputRef={inputRef} placeholder="Select playlists" />}
     />
   );
 };
 
-export const PlaylistsField = ({ control }: FieldProps) => {
-  const { errors } = useFormState({ control });
-  return (
-    <Controller
-      name="playlists"
-      control={control}
-      render={({ field }) => (
-        <InputContainer>
-          <InputLabel htmlFor="upload-playlists">Playlists</InputLabel>
-          <PlaylistsAutocomplete onChange={field.onChange} error={!!errors?.playlists} />
-          <Typography color="error" variant="bodySmall">
-            {errors?.playlists?.message}
-          </Typography>
-        </InputContainer>
-      )}
-    />
-  );
-};
+export const PlaylistsField = ({ control }: FieldProps) => (
+  <Controller
+    name="playlists"
+    control={control}
+    render={({ field }) => (
+      <InputContainer>
+        <FieldLabel htmlFor="upload-playlists" optional>
+          Playlists
+        </FieldLabel>
+        <PlaylistsAutocomplete onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} />
+      </InputContainer>
+    )}
+  />
+);
 
-type TagsAutocompleteProps = { onChange: (tags: (Tag | string)[]) => void; error: boolean };
+type TagValue = (Tag | string)[];
 
-const TagsAutocomplete = ({ onChange, error }: TagsAutocompleteProps) => {
+const TagsAutocomplete = ({ value, onChange, onBlur, inputRef }: Omit<AutocompleteFieldProps<TagValue>, "error">) => {
   const { data: allTags = [] } = useAllTagsQuery();
-  const [open, setOpen] = useState(false);
-
-  useCloseOnScroll(FORM_SCROLL_CONTAINER_ID, () => setOpen(false));
 
   return (
     <Autocomplete
       id="upload-tags"
       multiple
       freeSolo
+      value={value}
       options={allTags}
       disableCloseOnSelect
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
       getOptionLabel={(option) => (typeof option === "string" ? option : option.name)}
-      isOptionEqualToValue={(option, value) => typeof option !== "string" && typeof value !== "string" && option.id === value.id}
-      onChange={(_, selected) => onChange(selected)}
+      isOptionEqualToValue={(option, selected) =>
+        typeof option !== "string" && typeof selected !== "string" && option.id === selected.id
+      }
+      onChange={(_, selected) => onChange(normalizeTagSelection(selected, allTags))}
+      onBlur={onBlur}
       renderOption={(props, option, { selected }) => {
         const { key, ...optionProps } = props;
         const label = typeof option === "string" ? option : option.name;
@@ -188,9 +211,9 @@ const TagsAutocomplete = ({ onChange, error }: TagsAutocompleteProps) => {
           </li>
         );
       }}
-      renderValue={(value: (Tag | string)[], getItemProps) =>
-        value.map((option, index) => {
-          const label = typeof option === "string" ? option.replace(/^#+/, "") : option.name;
+      renderValue={(selected: TagValue, getItemProps) =>
+        selected.map((option, index) => {
+          const label = typeof option === "string" ? option : option.name;
           const { key, ...itemProps } = getItemProps({ index });
           return <Chip key={key} label={`#${label}`} size="small" {...itemProps} />;
         })
@@ -199,30 +222,26 @@ const TagsAutocomplete = ({ onChange, error }: TagsAutocompleteProps) => {
       renderInput={(params) => (
         <TextField
           {...params}
+          inputRef={inputRef}
           placeholder="Search or create tags"
-          error={error}
-          slotProps={{ input: { ...params.InputProps } }}
+          helperText="Press Enter to create a new tag"
         />
       )}
     />
   );
 };
 
-export const TagsField = ({ control }: FieldProps) => {
-  const { errors } = useFormState({ control });
-  return (
-    <Controller
-      name="tags"
-      control={control}
-      render={({ field }) => (
-        <InputContainer>
-          <InputLabel htmlFor="upload-tags">Tags</InputLabel>
-          <TagsAutocomplete onChange={field.onChange} error={!!errors?.tags} />
-          <Typography color="error" variant="bodySmall">
-            {errors?.tags?.message as string}
-          </Typography>
-        </InputContainer>
-      )}
-    />
-  );
-};
+export const TagsField = ({ control }: FieldProps) => (
+  <Controller
+    name="tags"
+    control={control}
+    render={({ field }) => (
+      <InputContainer>
+        <FieldLabel htmlFor="upload-tags" optional>
+          Tags
+        </FieldLabel>
+        <TagsAutocomplete value={field.value} onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} />
+      </InputContainer>
+    )}
+  />
+);
