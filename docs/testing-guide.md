@@ -25,7 +25,7 @@ npm run test:cov
 
 ## Jest Configuration
 
-Defined in `jest.config.ts`.
+Defined in `jest.config.ts`. It imports `next/jest.js` (with the explicit extension, and an `eslint-disable-next-line import/extensions` comment) because Node 24 loads the TypeScript config natively as ESM, where the extensionless `next/jest` specifier does not resolve.
 
 Key settings:
 

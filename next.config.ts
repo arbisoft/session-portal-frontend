@@ -62,10 +62,7 @@ export default process.env.NODE_ENV === "development"
         // https://vercel.com/docs/cron-jobs
         automaticVercelMonitors: true,
 
-        // Tree-shaking options for reducing bundle size
-        treeshake: {
-          // Automatically tree-shake Sentry logger statements to reduce bundle size
-          removeDebugLogging: true,
-        },
+        // `treeshake.removeDebugLogging` is intentionally not set: on Turbopack builds Sentry 11 injects
+        // `compiler.define.__SENTRY_DEBUG__` as a boolean, which Next 15's config schema rejects (it expects strings).
       },
     });

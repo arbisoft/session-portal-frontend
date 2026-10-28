@@ -14,7 +14,7 @@ type ScrubbableEvent = {
 
 const SENSITIVE_HEADERS = new Set(["cookie", "authorization", "proxy-authorization", "set-cookie"]);
 
-// `sendDefaultPii` makes the SDK attach the incoming request (Cookie header, parsed cookies, query string) to every
+// By default (`dataCollection`) the SDK attaches the incoming request (Cookie header, parsed cookies, query string) to every
 // event. For the BFF proxy that Cookie header carries the HttpOnly access token, so it is removed before sending.
 export function scrubRequestData<T extends ScrubbableEvent>(event: T): T {
   const { request } = event;

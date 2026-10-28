@@ -6,8 +6,6 @@ import { scrubRequestData } from "@/utils/monitoring";
 Sentry.init({
   dsn: SENTRY_DSN,
   tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1,
-  enableLogs: true,
-  sendDefaultPii: true,
   beforeSend: scrubRequestData,
   beforeSendTransaction: scrubRequestData,
 });
