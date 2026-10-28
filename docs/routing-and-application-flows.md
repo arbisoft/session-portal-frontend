@@ -39,7 +39,7 @@ The proxy intercepts requests to enforce authentication:
 
 1. Fails closed: every route requires valid authentication except `/login` (`publicRoutes = ["/login"]`)
 2. Redirects unauthenticated users to `/login` with `redirect_to` parameter
-3. Redirects authenticated users away from `/login` to validated `redirect_to` or `/videos`
+3. Redirects authenticated users to a validated `redirect_to` on any route (e.g. `/videos?redirect_to=/videos/it`), and away from `/login` to `/videos` when none is given
 4. Redirects root path `/` to `/videos`
 
 ### Server Actions (`actions.ts`)

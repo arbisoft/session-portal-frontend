@@ -152,7 +152,8 @@ Route protection is handled by `src/proxy.ts`, which runs on every request match
 
 | Rule | Behavior |
 | --- | --- |
-| Authenticated user visits `/login` | Redirected to `redirect_to` param (if valid internal path) or `/videos` |
+| Authenticated user visits any route with a valid `redirect_to` param | Redirected to `redirect_to` (valid internal path only) |
+| Authenticated user visits `/login` without a valid `redirect_to` | Redirected to `/videos` |
 | Any user visits `/` | Redirected to `/videos` |
 | Unauthenticated user visits any route except `/login` (fail closed, `publicRoutes`) | Redirected to `/login?redirect_to=<original path>` |
 | Paths under `/api`, `/bff`, `/_next`, or ending in a static file extension (png, svg, json, …) | Excluded by the matcher (the proxy route enforces its own 401) |

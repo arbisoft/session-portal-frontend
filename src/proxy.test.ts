@@ -12,6 +12,7 @@ jest.mock("next/server", () => ({
 
 describe("Proxy", () => {
   const mockNextResponse = require("next/server").NextResponse;
+  const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -75,7 +76,6 @@ describe("Proxy", () => {
 
   it("should allow access to protected route with valid token", () => {
     // Valid token: exp in future
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/videos", search: "" },
       url: "http://localhost:3000/videos",
@@ -88,7 +88,6 @@ describe("Proxy", () => {
   });
 
   it("should redirect login page to /videos when user has valid token", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "" },
       url: "http://localhost:3000/login",
@@ -115,7 +114,6 @@ describe("Proxy", () => {
   });
 
   it("should allow authenticated upload-video requests", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/upload-video", search: "" },
       url: "http://localhost:3000/upload-video",
@@ -129,7 +127,6 @@ describe("Proxy", () => {
   });
 
   it("should redirect login page to redirect_to when already authenticated", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "?redirect_to=%2Fvideos%2F123" },
       url: "http://localhost:3000/login?redirect_to=%2Fvideos%2F123",
@@ -142,7 +139,6 @@ describe("Proxy", () => {
   });
 
   it("should read redirect_to from nextUrl.searchParams when available", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "", searchParams: new URLSearchParams("redirect_to=%2Fvideos%2F456") },
       url: "http://localhost:3000/login?redirect_to=%2Fvideos%2F456",
@@ -155,7 +151,6 @@ describe("Proxy", () => {
   });
 
   it("should fall back to /videos when nextUrl has no search string and no searchParams", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login" },
       url: "http://localhost:3000/login",
@@ -168,7 +163,6 @@ describe("Proxy", () => {
   });
 
   it("should ignore external redirect_to on login and fallback to /videos", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "?redirect_to=%2F%2Fevil.com" },
       url: "http://localhost:3000/login?redirect_to=%2F%2Fevil.com",
@@ -178,6 +172,80 @@ describe("Proxy", () => {
     proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
+  });
+
+  it("should redirect any route with a valid redirect_to when authenticated", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2Fvideos%2Fit" },
+      url: "http://localhost:3000/videos?redirect_to=%2Fvideos%2Fit",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/it", req.url));
+  });
+
+  it("should honor redirect_to on the root path instead of dropping it", () => {
+    const req = {
+      nextUrl: { pathname: "/", search: "?redirect_to=%2Fvideos%2Fit" },
+      url: "http://localhost:3000/?redirect_to=%2Fvideos%2Fit",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/it", req.url));
+  });
+
+  it("should ignore an external redirect_to on a non-login route when authenticated", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2F%2Fevil.com" },
+      url: "http://localhost:3000/videos?redirect_to=%2F%2Fevil.com",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).not.toHaveBeenCalled();
+    expect(mockNextResponse.next).toHaveBeenCalled();
+  });
+
+  it("should keep a nested redirect_to in the target so a self-referencing value is unwrapped one level", () => {
+    const target = "/videos?redirect_to=/videos";
+    const req = {
+      nextUrl: { pathname: "/videos", search: `?redirect_to=${encodeURIComponent(target)}` },
+      url: `http://localhost:3000/videos?redirect_to=${encodeURIComponent(target)}`,
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL(target, req.url));
+  });
+
+  it("should end the redirect chain once the innermost redirect_to has been unwrapped", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2Fvideos" },
+      url: "http://localhost:3000/videos?redirect_to=%2Fvideos",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
+  });
+
+  it("should redirect to /login when redirect_to targets it, so the /login hop resolves to /videos", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2Flogin" },
+      url: "http://localhost:3000/videos?redirect_to=%2Flogin",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/login", req.url));
   });
 
   it("should fail closed and redirect unlisted routes to login without a token", () => {

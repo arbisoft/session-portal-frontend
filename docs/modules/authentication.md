@@ -40,7 +40,7 @@ Handles all aspects of user identity: route protection, Google OAuth login, toke
 The proxy runs on every non-static request (Next.js 16 `proxy.ts`, Node.js runtime). Order of evaluation:
 
 ```
-1. Authenticated user on /login  →  redirect to redirect_to or /videos
+1. Authenticated user on any route with a valid redirect_to  →  redirect to redirect_to; on /login without one  →  /videos
 2. Any user on /  →  redirect to /videos
 3. Unauthenticated user on any route other than /login (fail-closed: publicRoutes = ["/login"])  →  redirect to /login?redirect_to=<path>
 4. Anything else  →  pass through
@@ -72,14 +72,15 @@ The token never reaches client JS. `customBaseQuery` sends requests to the BFF p
 
 ## Key Edge Cases
 
-| Scenario                          | Behavior                                                          |
-| --------------------------------- | ----------------------------------------------------------------- |
-| Expired JWT cookie                | Proxy rejects, redirects to `/login`                              |
-| External URL in `redirect_to`     | `isValidInternalRedirectPath` rejects it; redirects to `/videos`  |
-| Google popup closed without login | `onError` shows a notification; user stays on `/login`            |
-| API returns 401                   | `customBaseQuery` dispatches logout; Redux state cleared          |
-| Server-side rendering (no window) | `redux-persist` uses no-op storage to avoid crashes               |
-| Login fails at backend            | Server action throws; client catches and shows error notification |
+| Scenario | Behavior |
+| --- | --- |
+| Expired JWT cookie | Proxy rejects, redirects to `/login` |
+| External URL in `redirect_to` | `isValidInternalRedirectPath` rejects it; `/login` redirects to `/videos`, other routes render normally |
+| Nested `redirect_to` (`/videos?redirect_to=/videos`) | Each hop unwraps one level, so the chain always terminates |
+| Google popup closed without login | `onError` shows a notification; user stays on `/login` |
+| API returns 401 | `customBaseQuery` dispatches logout; Redux state cleared |
+| Server-side rendering (no window) | `redux-persist` uses no-op storage to avoid crashes |
+| Login fails at backend | Server action throws; client catches and shows error notification |
 
 ## `isValidInternalRedirectPath` Rules
 
