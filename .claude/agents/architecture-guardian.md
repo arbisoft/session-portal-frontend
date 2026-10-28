@@ -37,7 +37,7 @@ Size and complexity: keep components under about 250 lines and functions under a
 - The access token lives only in the HttpOnly `access` cookie (`ACCESS_COOKIE_NAME`). It must never reach client JS, Redux, `localStorage` or `sessionStorage`, logs or analytics events. `loginAndSetCookie` returns `access: null, refresh: null`. Keep it that way.
 - Client code calls the backend only through RTK Query, whose base query targets the BFF proxy `/bff/*` (`src/app/bff/[...path]/route.ts`). The proxy requires the `x-requested-with` guard header (constants `API_PROXY_GUARD_*`), which only `customBaseQuery` sets. Any new client that calls the proxy must send it. Never add a client-side `fetch` to `BASE_URL` with an `Authorization` header. Never read the token in the browser to gate UI. Authentication status comes from the middleware.
 - New server-side code that calls the backend on the user's behalf goes through a server action or route handler that reads the cookie via `next/headers`.
-- `src/middleware.ts` fails closed. Every route requires auth unless it is in `publicRoutes`. Adding a public route is a security decision: call it out in your report. New static asset paths need a file extension or an entry in the matcher exclusions.
+- `src/proxy.ts` fails closed. Every route requires auth unless it is in `publicRoutes`. Adding a public route is a security decision: call it out in your report. New static asset paths need a file extension or an entry in the matcher exclusions.
 - `redux-persist` may persist only non-sensitive UI or profile data. Changing the persisted shape means bumping `version` and adding a migration in `configureStore.tsx`.
 - Use the `logout` action from `redux/login/actions.ts`. Never dispatch the string `"login/logout"`.
 - Every new redirect target must be checked with `isValidInternalRedirectPath`.
@@ -68,7 +68,7 @@ Size and complexity: keep components under about 250 lines and functions under a
 
 ### 6. Testing (enforced by the 80% gate)
 
-- Every new or changed module gets tests in a sibling `*.test.ts(x)` file, and test names start with `should`. Cover the failure paths for security-critical code (`middleware.ts`, `actions.ts`, `customBaseQuery.ts`, `app/api/**`). Route handler tests use `/** @jest-environment node */`.
+- Every new or changed module gets tests in a sibling `*.test.ts(x)` file, and test names start with `should`. Cover the failure paths for security-critical code (`proxy.ts`, `actions.ts`, `customBaseQuery.ts`, `app/api/**`). Route handler tests use `/** @jest-environment node */`.
 - New pure helpers go in `utils` with unit tests. New components get a test, plus a story when the neighboring components have one.
 - Do not lower thresholds in `jest.config.ts` or add files to `coveragePathIgnorePatterns` to get green.
 

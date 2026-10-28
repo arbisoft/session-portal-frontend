@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { config, middleware } from "./middleware";
+import { config, proxy } from "./proxy";
 
 // Mock NextResponse
 jest.mock("next/server", () => ({
@@ -10,8 +10,9 @@ jest.mock("next/server", () => ({
   },
 }));
 
-describe("Middleware", () => {
+describe("Proxy", () => {
   const mockNextResponse = require("next/server").NextResponse;
+  const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,7 +25,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
@@ -36,7 +37,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos");
@@ -50,7 +51,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: "invalid.token" })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos");
@@ -66,7 +67,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => ({ value: expiredToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos");
@@ -75,27 +76,25 @@ describe("Middleware", () => {
 
   it("should allow access to protected route with valid token", () => {
     // Valid token: exp in future
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/videos", search: "" },
       url: "http://localhost:3000/videos",
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.next).toHaveBeenCalled();
   });
 
   it("should redirect login page to /videos when user has valid token", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "" },
       url: "http://localhost:3000/login",
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
@@ -107,7 +106,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("redirect_to", "/upload-video");
@@ -115,69 +114,138 @@ describe("Middleware", () => {
   });
 
   it("should allow authenticated upload-video requests", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/upload-video", search: "" },
       url: "http://localhost:3000/upload-video",
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).not.toHaveBeenCalled();
     expect(mockNextResponse.next).toHaveBeenCalled();
   });
 
   it("should redirect login page to redirect_to when already authenticated", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "?redirect_to=%2Fvideos%2F123" },
       url: "http://localhost:3000/login?redirect_to=%2Fvideos%2F123",
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/123", req.url));
   });
 
   it("should read redirect_to from nextUrl.searchParams when available", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "", searchParams: new URLSearchParams("redirect_to=%2Fvideos%2F456") },
       url: "http://localhost:3000/login?redirect_to=%2Fvideos%2F456",
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/456", req.url));
   });
 
   it("should fall back to /videos when nextUrl has no search string and no searchParams", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login" },
       url: "http://localhost:3000/login",
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
   });
 
   it("should ignore external redirect_to on login and fallback to /videos", () => {
-    const validToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjIwMDAwMDAwMDB9.invalid";
     const req = {
       nextUrl: { pathname: "/login", search: "?redirect_to=%2F%2Fevil.com" },
       url: "http://localhost:3000/login?redirect_to=%2F%2Fevil.com",
       cookies: { get: jest.fn(() => ({ value: validToken })) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
+  });
+
+  it("should redirect any route with a valid redirect_to when authenticated", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2Fvideos%2Fit" },
+      url: "http://localhost:3000/videos?redirect_to=%2Fvideos%2Fit",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/it", req.url));
+  });
+
+  it("should honor redirect_to on the root path instead of dropping it", () => {
+    const req = {
+      nextUrl: { pathname: "/", search: "?redirect_to=%2Fvideos%2Fit" },
+      url: "http://localhost:3000/?redirect_to=%2Fvideos%2Fit",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos/it", req.url));
+  });
+
+  it("should ignore an external redirect_to on a non-login route when authenticated", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2F%2Fevil.com" },
+      url: "http://localhost:3000/videos?redirect_to=%2F%2Fevil.com",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).not.toHaveBeenCalled();
+    expect(mockNextResponse.next).toHaveBeenCalled();
+  });
+
+  it("should keep a nested redirect_to in the target so a self-referencing value is unwrapped one level", () => {
+    const target = "/videos?redirect_to=/videos";
+    const req = {
+      nextUrl: { pathname: "/videos", search: `?redirect_to=${encodeURIComponent(target)}` },
+      url: `http://localhost:3000/videos?redirect_to=${encodeURIComponent(target)}`,
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL(target, req.url));
+  });
+
+  it("should end the redirect chain once the innermost redirect_to has been unwrapped", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2Fvideos" },
+      url: "http://localhost:3000/videos?redirect_to=%2Fvideos",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/videos", req.url));
+  });
+
+  it("should redirect to /login when redirect_to targets it, so the /login hop resolves to /videos", () => {
+    const req = {
+      nextUrl: { pathname: "/videos", search: "?redirect_to=%2Flogin" },
+      url: "http://localhost:3000/videos?redirect_to=%2Flogin",
+      cookies: { get: jest.fn(() => ({ value: validToken })) },
+    } as unknown as NextRequest;
+
+    proxy(req);
+
+    expect(mockNextResponse.redirect).toHaveBeenCalledWith(new URL("/login", req.url));
   });
 
   it("should fail closed and redirect unlisted routes to login without a token", () => {
@@ -187,7 +255,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     expect(mockNextResponse.redirect).toHaveBeenCalled();
     expect(mockNextResponse.next).not.toHaveBeenCalled();
@@ -200,7 +268,7 @@ describe("Middleware", () => {
       cookies: { get: jest.fn(() => undefined) },
     } as unknown as NextRequest;
 
-    middleware(req);
+    proxy(req);
 
     const expectedUrl = new URL("/login", req.url);
     expectedUrl.searchParams.set("redirect_to", "/videos/123?filter=recent");

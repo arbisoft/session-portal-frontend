@@ -32,7 +32,7 @@ Lets staff users upload a video file, describe it, and publish it as an event. T
 
 - The Navbar shows "Upload a video" only when `selectIsStaff` is `true`.
 - `FileUpload` redirects non-staff users to `/videos` and renders nothing.
-- The middleware only requires a valid session for `/upload-video` (like every non-public route).
+- The proxy only requires a valid session for `/upload-video` (like every non-public route).
 - This is a UI convenience. The backend must enforce staff permission on `POST /events/videoassets/` and `POST /events/`; that is not verifiable from this repository.
 - Sessions persisted before `is_staff` existed default to non-staff (persist migration v2) until the next login.
 

@@ -31,15 +31,15 @@ It provides:
 
 ## Authentication Flow
 
-Authentication is handled by middleware in `src/middleware.ts` and server actions in `src/app/login/actions.ts`.
+Authentication is handled by the proxy in `src/proxy.ts` and server actions in `src/app/login/actions.ts`.
 
-### Middleware Rules (`middleware.ts`)
+### Proxy Rules (`proxy.ts`)
 
-The middleware intercepts requests to enforce authentication:
+The proxy intercepts requests to enforce authentication:
 
 1. Fails closed: every route requires valid authentication except `/login` (`publicRoutes = ["/login"]`)
 2. Redirects unauthenticated users to `/login` with `redirect_to` parameter
-3. Redirects authenticated users away from `/login` to validated `redirect_to` or `/videos`
+3. Redirects authenticated users to a validated `redirect_to` on any route (e.g. `/videos?redirect_to=/videos/it`), and away from `/login` to `/videos` when none is given
 4. Redirects root path `/` to `/videos`
 
 ### Server Actions (`actions.ts`)

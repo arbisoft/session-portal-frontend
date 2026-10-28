@@ -15,10 +15,6 @@ const getHostname = (url: string) => {
 const imageHostnames = [getHostname(BASE_URL), ...ALLOWED_IMAGE_HOSTS].filter((host): host is string => Boolean(host));
 
 const nextConfig: NextConfig = {
-  // Lint runs in CI and the pre-commit hook (`npm run lint`), so it is skipped during `next build`.
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: imageHostnames.map((hostname) => ({ hostname })),
   },

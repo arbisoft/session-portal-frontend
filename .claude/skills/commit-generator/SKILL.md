@@ -9,7 +9,7 @@ user-invocable: true
 
 ## Purpose
 
-This skill analyzes git staged changes in the **Session Portal frontend** repo — a Next.js 15 App Router app, no backend in this repository — splits them into separate logical commits when they cover unrelated work, creates those commits, and generates:
+This skill analyzes git staged changes in the **Session Portal frontend** repo — a Next.js 16 App Router app, no backend in this repository — splits them into separate logical commits when they cover unrelated work, creates those commits, and generates:
 
 1. High-quality **semantic commit messages** (one per logical group, actually committed)
 2. A single **PR title**
@@ -98,7 +98,7 @@ Infer scope from modified file paths, using this repo's actual layer structure.
 | `src/app/upload-video/`                                                       | upload       |
 | `src/app/error.tsx`, `src/app/global-error.tsx`, `src/app/not-found.tsx`      | app          |
 | `src/app/` (other, layout/page shells)                                        | app          |
-| `src/middleware.ts`                                                           | auth         |
+| `src/proxy.ts`                                                                | auth         |
 | `src/features/LoginPage/`                                                     | login        |
 | `src/features/VideoDetail/`                                                   | video        |
 | `src/features/SearchResultsPage/`                                             | search       |
@@ -182,7 +182,7 @@ Analyze the diff and detect:
 - RTK Query API slice changes (`src/redux/events/`, `src/redux/login/`) — flag if the infinite-scroll accumulation strategy (`serializeQueryArgs`/`merge`/`forceRefetch`, see `CLAUDE.md`) was touched without updating both `getEvents` and `recommendation` consistently
 - feature flag changes (`src/constants/featureFlags.ts`) — flag if a flag's `enabled` default changed without a corresponding note in the PR
 - UI changes
-- auth/session changes (`src/middleware.ts`, `src/app/login/actions.ts`, `src/redux/customBaseQuery.ts`)
+- auth/session changes (`src/proxy.ts`, `src/app/login/actions.ts`, `src/redux/customBaseQuery.ts`)
 - bug fixes
 
 ### Code Improvements
@@ -344,7 +344,7 @@ If detected:
 
 Remind the reviewer to confirm `serializeQueryArgs` still excludes `page`, `merge` still resets on `page === 1` and dedupes by `id` otherwise, and `forceRefetch` still deep-compares args — per the accumulation strategy documented in `CLAUDE.md`.
 
-### Auth changes (`src/middleware.ts`, `src/app/login/actions.ts`, `src/redux/customBaseQuery.ts`)
+### Auth changes (`src/proxy.ts`, `src/app/login/actions.ts`, `src/redux/customBaseQuery.ts`)
 
 Mention cookie/JWT expiry handling, the `redirect_to` flow, and whether the `401` → `logout()` dispatch path was touched.
 
@@ -484,7 +484,7 @@ The skill must:
 
 # Self-Healing This Skill
 
-This SKILL.md cites specific paths and conventions (`src/app/`, `src/features/`, `src/components/`, `src/redux/`, `src/hooks/`, `src/models/`, `src/middleware.ts`, the `ASP-NN` ticket prefix, the scope table in Step 3, the reviewer-notes triggers in Step 9). Don't treat it as permanently accurate:
+This SKILL.md cites specific paths and conventions (`src/app/`, `src/features/`, `src/components/`, `src/redux/`, `src/hooks/`, `src/models/`, `src/proxy.ts`, the `ASP-NN` ticket prefix, the scope table in Step 3, the reviewer-notes triggers in Step 9). Don't treat it as permanently accurate:
 
 - If a run surfaces a cited path that no longer exists, a layer that's been restructured, or a scope row that no longer fits how the codebase is organized, that's a stale skill, not a one-off exception.
 - Patch this SKILL.md in the same pass — add or fix the relevant row/example — rather than leaving the correction for a future run to rediscover.

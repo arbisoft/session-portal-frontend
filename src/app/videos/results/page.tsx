@@ -4,8 +4,7 @@ import dynamic from "next/dynamic";
 const SearchResultsPage = dynamic(() => import("@/features/SearchResultsPage"));
 
 type Props = {
-  params: { language: string; search: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 };
 
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {

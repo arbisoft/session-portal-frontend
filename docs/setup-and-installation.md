@@ -31,7 +31,7 @@ This matches the current fork-based contribution workflow documented in `CONTRIB
 The development server script is:
 
 ```bash
-next dev --turbopack
+next dev
 ```
 
 ## Install Playwright Browsers
@@ -68,19 +68,12 @@ This runs ESLint and then TypeScript checking.
 
 ## Node Version Guidance
 
-<<<<<<< HEAD The root `README.md` includes `nvm` instructions for switching to Node 22:
-
-````bash
-nvm install 22
-nvm use 22
-=======
 The root `README.md` includes `nvm` instructions for switching to the Node version pinned in `.nvmrc`:
 
 ```bash
 nvm install
 nvm use
->>>>>>> aa58064 (build(deps): pin Node to 24.22.1 and read CI version from .nvmrc)
-````
+```
 
 ## Expected Local Ports
 
@@ -94,5 +87,5 @@ nvm use
 
 - The app expects a local `.env.local` file copied from `example.env.local`.
 - `example.env.local` includes `NEXT_PUBLIC_BASE_URL`, `NEXT_PUBLIC_CLIENT_ID`, `NEXT_PUBLIC_GTM_ID`, and the Sentry variables (`NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`). Sentry values can stay as placeholders locally; `next dev` does not upload source maps.
-- The repo uses Turbopack in both `dev` and `build` scripts.
+- Next.js 16 uses Turbopack by default for both `dev` and `build`.
 - The exact backend service required for live API calls is not described in the repository, so `.env.local` values must point to a working backend environment.

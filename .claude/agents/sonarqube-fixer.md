@@ -69,7 +69,7 @@ Read each affected file in full before editing. Fix the root cause with the smal
 - **Behavior-preserving.** A Sonar fix is not a feature. If the correct fix changes behavior (for example a real bug whose fix changes output), make it, add a test that pins the new behavior, and call it out in the report.
 - **Match the surrounding code.** Double quotes, sorted imports (`import/order`), max line 130, `@/` alias, `no-console` (only `warn`/`error`), React Hook Form restrictions, test names start with `should`. See `CLAUDE.md`.
 - **Respect the layering** from `.claude/agents/architecture-guardian.md`. Extracting a helper for complexity goes in `src/utils/` (pure) or next to the component, not into a layer that would invert the dependency direction. Never move auth or token handling client-side to satisfy a rule.
-- **No suppression to get green.** Do not add `// NOSONAR`, `eslint-disable`, `@ts-ignore` or `@ts-expect-error`, do not edit `sonar-project.properties` exclusions, and do not lower coverage thresholds. The one allowed exception is a genuine false positive or a framework constraint (the existing example is `src/middleware.ts`: Next needs a plain regex literal). In that case use `// NOSONAR <rule> - <reason>` on that line, exactly like that example, and list it in the report under "Suppressed".
+- **No suppression to get green.** Do not add `// NOSONAR`, `eslint-disable`, `@ts-ignore` or `@ts-expect-error`, do not edit `sonar-project.properties` exclusions, and do not lower coverage thresholds. The one allowed exception is a genuine false positive or a framework constraint (the existing example is `src/proxy.ts`: Next needs a plain regex literal). In that case use `// NOSONAR <rule> - <reason>` on that line, exactly like that example, and list it in the report under "Suppressed".
 - **Tests stay green and covered.** Changed code needs coverage (the repo gate is 80%). If a fix leaves new branches untested, extend the sibling `*.test.ts(x)`; for larger gaps use the `generate-jest-tests` skill's patterns.
 
 ### Common rules in this stack
@@ -87,7 +87,7 @@ Verify the rule text with `api/rules/show` when unsure, since rule behavior chan
 | `typescript:S6759` props should be read-only | Wrap the props type in `Readonly<...>`. |
 | `typescript:S6478` component defined inside another component | Hoist it to module scope and pass what it needs as props. |
 | `typescript:S6481`, `S6479` context value or list key problems | Memoize the context value, use stable ids as keys, not the index. |
-| `typescript:S7764`, `S7780` and other modernization rules | Apply the suggested API (`globalThis`, `String.raw`) unless a framework constraint forbids it (see the middleware exception). |
+| `typescript:S7764`, `S7780` and other modernization rules | Apply the suggested API (`globalThis`, `String.raw`) unless a framework constraint forbids it (see the proxy exception). |
 | `typescript:S5852`, `S2245` hotspots (regex backtracking, `Math.random`) | Do not fix blind. Report them, with a proposed change, for a human review. |
 | `typescript:S2068`, `S6418` hard-coded credential or secret | Move to env or `src/constants/constants.ts`. Never commit a real secret. If one is committed, say so loudly: it must be rotated. |
 | `typescript:S1192` duplicated string literal | Extract a constant in the module, or in `constants/` when shared. |
@@ -105,7 +105,7 @@ npm run lint
 npx jest <test files next to the files you changed>
 ```
 
-When you changed more than a handful of files, extracted shared helpers, or touched `middleware.ts`, `customBaseQuery.ts`, `actions.ts` or `app/bff/**`, also run `npm run test:cov` and `npm run build`.
+When you changed more than a handful of files, extracted shared helpers, or touched `proxy.ts`, `customBaseQuery.ts`, `actions.ts` or `app/bff/**`, also run `npm run test:cov` and `npm run build`.
 
 If a fix breaks a test, fix the cause. If the test encoded the old buggy behavior, update it and say so. Never delete or skip a test to get green.
 

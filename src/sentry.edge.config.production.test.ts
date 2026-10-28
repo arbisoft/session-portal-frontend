@@ -21,7 +21,11 @@ describe("sentry.edge.config in production", () => {
     require("../sentry.edge.config");
 
     expect(mockSentryInit).toHaveBeenCalledWith(
-      expect.objectContaining({ beforeSend: scrubRequestData, beforeSendTransaction: scrubRequestData })
+      expect.objectContaining({
+        beforeSend: scrubRequestData,
+        beforeSendTransaction: scrubRequestData,
+        traceLifecycle: "static",
+      })
     );
   });
 });

@@ -132,7 +132,7 @@ Verify this table against `git ls-files docs README.md CONTRIBUTING.md CHANGELOG
 | `src/features/<Name>/**` | `docs/modules/<module>.md` (see `docs/README.md` index), `docs/routing-and-application-flows.md`, `docs/folder-structure.md` |
 | `src/components/**` | `docs/components-and-ui-system.md` |
 | `src/hooks/**`, `src/utils/**` | `docs/ARCHITECTURE.md` (hooks table), `docs/modules/data-transforms.md` |
-| `src/middleware.ts`, `src/app/login/**`, `src/redux/login/**`, `src/redux/store/**` | `docs/modules/authentication.md`, `docs/ARCHITECTURE.md`, `docs/state-management-and-api-layer.md` |
+| `src/proxy.ts`, `src/app/login/**`, `src/redux/login/**`, `src/redux/store/**` | `docs/modules/authentication.md`, `docs/ARCHITECTURE.md`, `docs/state-management-and-api-layer.md` |
 | `src/utils/analytics.ts` | `docs/modules/analytics-tracking.md` |
 | `src/constants/featureFlags.ts` | `docs/modules/feature-flags.md` |
 | `package.json` scripts, `jest.config.ts` | `docs/scripts-and-tooling.md`, `docs/testing-guide.md`, `README.md` |
