@@ -35,8 +35,8 @@ Frontend application for the Sessions Portal built with Next.js, React, and Type
 2. Install and use Node.js 22 LTS
 
    ```bash
-   nvm install 22
-   nvm use 22
+   nvm install
+   nvm use
    ```
 
 3. Install dependencies

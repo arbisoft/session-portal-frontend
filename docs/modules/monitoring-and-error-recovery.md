@@ -37,17 +37,17 @@ All three are read through `src/constants/constants.ts`.
 
 ### Sentry initialization
 
-- Traces sample rate is `0.1` in production and `1` otherwise. `enableLogs` and `sendDefaultPii` are on.
+- Traces sample rate is `0.1` in production and `1` otherwise. No `enableLogs` or `sendDefaultPii` option is passed: `@sentry/nextjs` 11 removed both (log sending is not gated by an option, and request data collection is controlled by `dataCollection`, whose defaults collect user info, cookies and headers).
 - The browser config also enables Session Replay: `replaysSessionSampleRate: 0.1` and `replaysOnErrorSampleRate: 1.0`.
 - `src/instrumentation.ts` loads the server or edge config depending on `NEXT_RUNTIME`.
 - `onRequestError` forwards server errors to Sentry **except** Next.js control-flow errors. `redirect()` and `notFound()` throw errors whose `digest` starts with `NEXT_REDIRECT;` or equals `NEXT_NOT_FOUND`; these are dropped so they do not show up as issues.
-- `next.config.ts` wraps the config with `withSentryConfig` only when `NODE_ENV` is not `development`, so local dev never uploads source maps.
+- `next.config.ts` wraps the config with `withSentryConfig` only when `NODE_ENV` is not `development`, so local dev never uploads source maps. It deliberately does not set `webpack.treeshake.removeDebugLogging`: on Turbopack builds Sentry 11 would inject `compiler.define.__SENTRY_DEBUG__` as a boolean, which Next 15's config schema rejects with an "Invalid next.config.ts options" warning. Restore it once Next accepts boolean defines.
 
 ### Handled errors captured explicitly
 
 Errors that the code catches and turns into a response or a toast never reach `onRequestError` or an error boundary, so these places report them to Sentry directly. None of them include the query string, tokens or response bodies. Code under `src/redux` and `src/hooks` reports through `reportHandledError` / `reportHandledMessage` in `src/utils/monitoring.ts` instead of importing `@sentry/nextjs` itself.
 
-`sendDefaultPii` is `true`, so the SDK attaches the incoming request to server events. `sentry.server.config.ts` and `sentry.edge.config.ts` therefore pass `scrubRequestData` as both `beforeSend` and `beforeSendTransaction` (traces carry the same request data), which drops the `Cookie` / `Authorization` headers (the BFF request carries the HttpOnly access token), parsed cookies, the query string and the request body.
+With the default `dataCollection`, the SDK attaches the incoming request to server events. `sentry.server.config.ts` and `sentry.edge.config.ts` therefore pass `scrubRequestData` as both `beforeSend` and `beforeSendTransaction` (traces carry the same request data), which drops the `Cookie` / `Authorization` headers (the BFF request carries the HttpOnly access token), parsed cookies, the query string and the request body.
 
 - **BFF proxy** (`src/app/bff/[...path]/route.ts`, via the `monitoring.ts` helpers): a failed upstream `fetch` is captured as an exception before the proxy returns `502`, and any upstream `5xx` is captured as a message (`method`, `path` and `status` only). Because both RTK Query calls and XHR uploads go through the proxy, this is the single place that sees backend `5xx` responses.
 - **`customBaseQuery`**: a `PARSING_ERROR` (for example an HTML error page from a gateway in front of the app) is captured with the endpoint path. Ordinary `4xx` and `5xx` statuses are not captured here, to avoid duplicating the proxy report.

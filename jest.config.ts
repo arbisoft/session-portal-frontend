@@ -1,5 +1,7 @@
 import type { Config } from "jest";
-import nextJest from "next/jest";
+// Node 24 loads this file natively as ESM, which requires the explicit extension
+// eslint-disable-next-line import/extensions
+import nextJest from "next/jest.js";
 
 const createJestConfig = nextJest({
   // Provide the path to your Next.js app to load next.config.ts and .env files in your test environment
@@ -27,4 +29,4 @@ const config: Config = {
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config);
+export default createJestConfig(config as Parameters<typeof createJestConfig>[0]);

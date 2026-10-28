@@ -4,10 +4,16 @@
 
 From the repository configuration:
 
-- Node.js `>=22.0.0 <23.0.0`
+- Node.js `>=24.22.1 <25.0.0`
 - npm `>=10.2.4`
 
-The root `README.md` also recommends using Node.js 22 through `nvm`.
+The root `README.md` also recommends using Node.js 24 through `nvm`.
+
+`.nvmrc` pins Node 24.22.1 (the first 24.x release with the Brotli decoder fix for CVE-2026-111497, "Node2Shell") for `nvm use`, and `.npmrc` sets `engine-strict=true`, so `npm install` fails on a Node version outside the `engines` range in `package.json` instead of only warning. The CI workflows (`.github/workflows/build.yml`, `.github/workflows/release.yml`) read their Node version from `.nvmrc`; the `Dockerfile` pins `node:24.22.1-alpine` separately, so bump it together with `.nvmrc` and `engines`.
+
+### Dependency install scripts
+
+`package.json` has an `allowScripts` field that lists the dependencies allowed to run install-time lifecycle scripts (`preinstall`, `install`, `postinstall`): `@sentry/cli`, `core-js-pure`, `esbuild`, `unrs-resolver` and `fsevents`, each pinned to the reviewed version. With npm 11.19.1 (bundled with Node 24.22.1) this policy is advisory: scripts still run, and `npm install` prints a notice for any dependency with install scripts that is not listed. After adding or upgrading a dependency that has install scripts, review the notice and record the approval with `npm install-scripts approve <pkg>` (`npm install-scripts ls` shows what is pending).
 
 ## Basic Local Setup
 
@@ -62,12 +68,19 @@ This runs ESLint and then TypeScript checking.
 
 ## Node Version Guidance
 
-The root `README.md` includes `nvm` instructions for switching to Node 22:
+<<<<<<< HEAD The root `README.md` includes `nvm` instructions for switching to Node 22:
 
-```bash
+````bash
 nvm install 22
 nvm use 22
-```
+=======
+The root `README.md` includes `nvm` instructions for switching to the Node version pinned in `.nvmrc`:
+
+```bash
+nvm install
+nvm use
+>>>>>>> aa58064 (build(deps): pin Node to 24.22.1 and read CI version from .nvmrc)
+````
 
 ## Expected Local Ports
 

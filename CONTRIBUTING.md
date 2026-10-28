@@ -12,13 +12,13 @@ Before contributing, make sure you have:
 - npm installed
 - `nvm` installed if you want to manage Node versions easily
 
-The project currently expects Node 22.
+The project currently expects Node 24.22.1 or a later 24.x release (see `.nvmrc`).
 
 ### Using `nvm`
 
 ```sh
-nvm install 22
-nvm use 22
+nvm install
+nvm use
 ```
 
 To verify:
