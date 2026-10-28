@@ -86,3 +86,58 @@ describe("VideoPicker analytics", () => {
     expect(onFileSelect).toHaveBeenCalledWith(undefined);
   });
 });
+
+describe("VideoPicker interactions", () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it("should open the native file dialog when Select File is clicked", () => {
+    const { input, getByRole } = setup();
+    const click = jest.spyOn(input, "click").mockImplementation(() => undefined);
+
+    fireEvent.click(getByRole("button", { name: "Select File" }));
+
+    expect(click).toHaveBeenCalledTimes(1);
+  });
+
+  it("should prompt to drop the file while dragging over and reset when the drag leaves", () => {
+    const { getByText, getByRole } = setup();
+    const dropZone = getByText("Drag and drop a video file to upload");
+
+    fireEvent.dragOver(dropZone);
+    expect(getByRole("button", { name: "Drop File Here" })).toBeInTheDocument();
+
+    fireEvent.dragLeave(dropZone);
+    expect(getByRole("button", { name: "Select File" })).toBeInTheDocument();
+  });
+
+  it("should accept a valid dropped file and reset the drag state", () => {
+    const { getByText, getByRole, onFileSelect } = setup();
+    const dropZone = getByText("Drag and drop a video file to upload");
+    const file = makeFile("talk.webm", "video/webm", 2 * 1024 ** 2);
+
+    fireEvent.dragOver(dropZone);
+    fireEvent.drop(dropZone, { dataTransfer: { files: [file] } });
+
+    expect(onFileSelect).toHaveBeenCalledWith(file);
+    expect(getByRole("button", { name: "Select File" })).toBeInTheDocument();
+  });
+
+  it("should notify the user when an unsupported file type is chosen", () => {
+    const { input } = setup();
+
+    fireEvent.change(input, { target: { files: [makeFile("doc.pdf", "application/pdf")] } });
+
+    expect(mockShowNotification).toHaveBeenCalledWith({
+      message: "Only MP4, MOV, AVI, and WebM video files are allowed",
+      severity: "error",
+    });
+  });
+
+  it("should notify the user when the file is larger than the limit", () => {
+    const { input } = setup();
+
+    fireEvent.change(input, { target: { files: [makeFile("big.mp4", "video/mp4", MAX_VIDEO_FILE_SIZE_BYTES + 1)] } });
+
+    expect(mockShowNotification).toHaveBeenCalledWith({ message: "Video files must be 1GB or smaller", severity: "error" });
+  });
+});
