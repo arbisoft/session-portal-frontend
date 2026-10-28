@@ -10,6 +10,7 @@ jest.mock("@next/third-parties/google", () => ({ sendGTMEvent: jest.fn() }));
 const mockCreateEvent = jest.fn();
 const mockCreateTag = jest.fn();
 const mockNavigateTo = jest.fn();
+let mockIsPublishing = false;
 const mockNotification = { showNotification: jest.fn() };
 
 jest.mock("@/hooks/useNavigation", () => ({
@@ -22,7 +23,7 @@ jest.mock("@/components/Notification", () => ({
 }));
 
 jest.mock("@/redux/events/apiSlice", () => ({
-  useCreateEventMutation: () => [mockCreateEvent, { isLoading: false }],
+  useCreateEventMutation: () => [mockCreateEvent, { isLoading: mockIsPublishing }],
   useCreateTagMutation: () => [mockCreateTag],
 }));
 
@@ -75,6 +76,7 @@ const eventsSent = () => (sendGTMEvent as jest.Mock).mock.calls.map(([payload]) 
 describe("VideoForm analytics", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsPublishing = false;
     global.URL.createObjectURL = jest.fn(() => "blob:preview");
     global.URL.revokeObjectURL = jest.fn();
     mockCreateTag.mockReturnValue({ unwrap: () => Promise.resolve({ id: 77 }) });
@@ -220,5 +222,40 @@ describe("VideoForm analytics", () => {
       })
     );
     expect(mockCreateEvent).not.toHaveBeenCalled();
+  });
+
+  it("should open the thumbnail file picker when Upload a file is clicked", () => {
+    const { container } = render(<VideoForm {...baseProps} />);
+    const click = jest
+      .spyOn(container.querySelector("input[type=file]") as HTMLInputElement, "click")
+      .mockImplementation(() => undefined);
+
+    fireEvent.click(screen.getByRole("button", { name: "Upload a file" }));
+
+    expect(click).toHaveBeenCalledTimes(1);
+  });
+
+  it("should queue the publish while uploading and publish automatically once the upload finishes", async () => {
+    const { rerender } = render(<VideoForm {...baseProps} videoAssetId={null} isUploading uploadProgress={30} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "fill form" }));
+    fireEvent.click(screen.getByRole("button", { name: "Publish" }));
+
+    const queued = await screen.findByRole("button", { name: "Queued…" });
+    expect(queued).toBeDisabled();
+    expect(screen.getByRole("status")).toHaveTextContent("Uploading 30%… (will auto-publish when done)");
+    expect(mockCreateEvent).not.toHaveBeenCalled();
+
+    rerender(<VideoForm {...baseProps} videoAssetId={42} isUploading={false} />);
+
+    await waitFor(() => expect(mockCreateEvent).toHaveBeenCalledTimes(1));
+    expect(mockNavigateTo).toHaveBeenCalled();
+  });
+
+  it("should disable the button and show Publishing… while the event is being created", () => {
+    mockIsPublishing = true;
+    render(<VideoForm {...baseProps} />);
+
+    expect(screen.getByRole("button", { name: "Publishing…" })).toBeDisabled();
   });
 });

@@ -65,18 +65,6 @@ export const StyledIconContainer = styled(Box, {
   `
 );
 
-export const ImportContainer = styled(Box, {
-  name: "ImportContainer",
-})(
-  () => css`
-    align-items: center;
-    display: flex;
-    gap: 20px;
-    width: 60%;
-    margin-bottom: 20px;
-  `
-);
-
 export const InputContainer = styled(Box, {
   name: "InputContainer",
 })(
