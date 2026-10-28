@@ -21,7 +21,11 @@ describe("sentry.server.config in production", () => {
     require("../sentry.server.config");
 
     expect(mockSentryInit).toHaveBeenCalledWith(
-      expect.objectContaining({ beforeSend: scrubRequestData, beforeSendTransaction: scrubRequestData })
+      expect.objectContaining({
+        beforeSend: scrubRequestData,
+        beforeSendTransaction: scrubRequestData,
+        traceLifecycle: "static",
+      })
     );
   });
 });
