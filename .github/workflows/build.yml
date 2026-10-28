@@ -32,7 +32,7 @@ jobs:
       - run: npm run build
         env:
           NEXT_PUBLIC_BASE_URL: https://example.invalid
-      - uses: SonarSource/sonarqube-scan-action@v6
+      - uses: SonarSource/sonarqube-scan-action@v8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
