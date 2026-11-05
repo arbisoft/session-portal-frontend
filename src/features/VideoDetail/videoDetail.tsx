@@ -29,7 +29,7 @@ type RecommendationsContext = { isFetching: boolean };
 
 const RecommendationsFooter = ({ context }: { context?: RecommendationsContext }) =>
   context?.isFetching ? (
-    <Box mt={2} sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: "16px" }}>
       {Array.from({ length: 3 }).map((_, idx) => (
         <Skeleton key={idx} variant="rounded" width="100%" height={90} />
       ))}

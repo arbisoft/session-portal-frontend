@@ -89,7 +89,7 @@ export default function LoginPage() {
 
   return (
     <LoginContainer>
-      <Box position="fixed" top={8} right={8}>
+      <Box sx={{ position: "fixed", top: 8, right: 8 }}>
         {isDarkModeVisible && (
           <span data-testid="theme-toggle">
             <ThemeToggle />

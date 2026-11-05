@@ -21,7 +21,7 @@ The repository implements a web application that includes:
 | Area                  | Technologies found                                                |
 | --------------------- | ----------------------------------------------------------------- |
 | Framework             | Next.js 16.4.2                                                    |
-| UI                    | React 19.3.1, Material UI 7.3.4, Emotion                          |
+| UI                    | React 19.3.1, Material UI 9.5.0, Emotion                          |
 | Language              | TypeScript 5.9.3                                                  |
 | State                 | Redux Toolkit, RTK Query, redux-persist                           |
 | Forms                 | react-hook-form, yup, @hookform/resolvers                         |

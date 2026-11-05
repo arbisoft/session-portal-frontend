@@ -128,7 +128,7 @@ const ColorComponent: FC<{
           <Grid size={{ md: 3 }} key={key}>
             {val.map((button, index) => {
               return (
-                <Box key={index} marginBottom={4}>
+                <Box key={index} sx={{ marginBottom: (muiTheme) => muiTheme.spacing(4) }}>
                   <Button
                     {...button}
                     {...(variant && {
