@@ -6,6 +6,9 @@
   --brand-color: #f5f5f5;
   --focus-color: #4e9cf6;
 
+  --seek-gradient-start: #1d4ed8;
+  --seek-gradient-end: var(--focus-color);
+
   --audio-brand: var(--brand-color);
   --audio-focus-ring-color: var(--focus-color);
   --audio-border-radius: 2px;
@@ -24,6 +27,15 @@
 
   [data-preview] .vds-captions {
     opacity: 1;
+  }
+
+  .vds-time-slider .vds-slider-track-fill {
+    background: linear-gradient(90deg, var(--seek-gradient-start) 0%, var(--seek-gradient-end) 100%);
+  }
+
+  .vds-time-slider .vds-slider-thumb {
+    background: var(--seek-gradient-start);
+    border-color: var(--seek-gradient-start);
   }
 
   .vds-google-cast-button,
@@ -56,4 +68,13 @@
       }
     }
   }
+}
+
+/*
+ * Vidstack's default layout has no prop to remove the "Announcements" toggle from the Accessibility
+ * menu. Menus can be portaled outside `.player`, so this rule is intentionally not nested.
+ * Announcements stay enabled (the toggle defaults to on); only the control is hidden.
+ */
+.vds-menu-item:has(> .vds-menu-checkbox[aria-label="Announcements"]) {
+  display: none;
 }

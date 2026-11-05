@@ -23,11 +23,15 @@ import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { VideoPlayerProps } from "./types";
 import "./styles.css";
 
+const DEFAULT_CONTROLS_DELAY_MS = 3000;
+
 const VideoPlayer: FC<VideoPlayerProps> = ({
   captionsFile,
   className,
+  controlsDelay = DEFAULT_CONTROLS_DELAY_MS,
   crossOrigin = true,
   height,
+  keyTarget = "document",
   onVideoEnded,
   onWatchThreshold,
   playsInline = true,
@@ -81,6 +85,8 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
     <div style={{ width, height }}>
       <MediaPlayer
         className={clsx("player", className)}
+        controlsDelay={controlsDelay}
+        keyTarget={keyTarget}
         crossOrigin={crossOrigin}
         playsInline={playsInline}
         ref={player}
