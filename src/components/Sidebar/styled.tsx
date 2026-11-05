@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import { chipClasses } from "@mui/material/Chip";
 import MenuItem from "@mui/material/MenuItem";
+import MenuList from "@mui/material/MenuList";
 import Stack from "@mui/material/Stack";
 import { styled, css } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
@@ -30,6 +31,22 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   padding: theme.spacing(1.5),
   color: theme.palette.common.white,
 })) as typeof MenuItem;
+
+export const HomeRow = styled(Box, {
+  name: "HomeRow",
+})(({ theme }) => ({
+  alignItems: "center",
+  display: "flex",
+  gap: theme.spacing(0.5),
+}));
+
+// MUI 9 MenuItems must live inside a MenuList. This one only provides that context for the Home link, so it is
+// presentational: the filter button next to it must not end up inside a role="menu".
+export const HomeMenuList = styled(MenuList)({
+  flex: 1,
+  minWidth: 0,
+  padding: 0,
+});
 
 export const Text = styled(Typography)({
   lineHeight: 1.2,

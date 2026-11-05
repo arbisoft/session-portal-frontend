@@ -69,7 +69,7 @@ Observed sequence:
 - featured video slider when no tag/playlist/search/year filter is active
 - lazy event loading through RTK Query
 - virtualized scrolling with infinite loading using `react-virtuoso`
-- sort/year filtering
+- sort/year filtering (controlled from the sidebar Home item, not from the page itself)
 - retry handling for failed loads
 - empty states for no results
 

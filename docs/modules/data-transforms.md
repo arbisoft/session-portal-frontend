@@ -61,7 +61,7 @@ Returns `true` when `pathname` equals, or is nested under, an entry of `PUBLIC_R
 
 Returns an array of `{ value: string, label: string }` objects from the current year down to `startYear`. The current year's label is `"This Year"`.
 
-Used by `DateFilterDropdown` to populate the year select options. Start year is hardcoded to `2020` at the call site.
+Used by `useVideoFilters` to populate the year select options. Start year is hardcoded to `2020` at the call site.
 
 ### `trimTextLength(text: string, length: number)`
 

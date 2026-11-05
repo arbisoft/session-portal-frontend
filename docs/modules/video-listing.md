@@ -2,18 +2,18 @@
 
 ## Responsibility
 
-Displays all published session videos with filtering, sorting, featured content, and virtualized infinite scroll.
+Displays all published session videos with filtering, sorting, featured content, and virtualized infinite scroll. The sort and year controls are not on this page: they live on the **Home** item of the sidebar (see _Filter/Sort Navigation_).
 
 ## Where It Lives
 
-| Concern               | File                                                    |
-| --------------------- | ------------------------------------------------------- |
-| Page component        | `src/features/VideosListingPage/videosListingPage.tsx`  |
-| Filter/sort UI        | `src/features/VideosListingPage/DateFilterDropdown.tsx` |
-| Query parameter logic | `src/hooks/useVideoQueryManager.ts`                     |
-| Default API params    | `src/features/VideosListingPage/types.ts`               |
-| RTK Query endpoint    | `src/redux/events/apiSlice.ts` (`getEvents`)            |
-| Route                 | `src/app/videos/page.tsx`                               |
+| Concern | File |
+| --- | --- |
+| Page component | `src/features/VideosListingPage/videosListingPage.tsx` |
+| Filter/sort UI | `src/components/FilterSortMenu/filterSortMenu.tsx` (opened from the Home item in `src/components/Sidebar/sidebar.tsx`) |
+| Query parameter logic | `src/hooks/useVideoQueryManager.ts` |
+| Default API params | `src/features/VideosListingPage/types.ts` |
+| RTK Query endpoint | `src/redux/events/apiSlice.ts` (`getEvents`) |
+| Route | `src/app/videos/page.tsx` |
 
 ## How It Works
 
@@ -100,7 +100,14 @@ The `getEvents` endpoint uses a custom cache accumulation strategy to support in
 
 ### Filter/Sort Navigation
 
-Changing sort or year filter calls `navigateTo("videos", newParams)`, which updates the URL. This triggers `useVideoQueryManager` to reset page to 1 and recompute `apiParams`. The "clear" handler preserves `tag`, `playlist`, and `search` while dropping `order` and `year`.
+The filter button on the sidebar's **Home** item (the former "All Videos" item) opens `FilterSortMenu`. The menu is controlled by the URL: `useVideoFilters` (`src/hooks/useVideoFilters.ts`) reads `order` and `year` from the query string and exposes `setSort`, `setYear` and `clearFilters`, each of which calls `navigateTo("videos", newParams)`. That updates the URL, which makes `useVideoQueryManager` reset the page to 1 and recompute `apiParams`.
+
+- On `/videos` the current view (`tag`, `playlist`, `search`) and the other filter are kept when one filter changes.
+- From any other page (video detail, search results) choosing a filter goes to the plain listing with only that filter, because the sidebar is shown there too.
+- On other pages the menu shows the defaults (Newest first, no year), since `order` and `year` are only read on `/videos`.
+- The drawer's sidebar stops click propagation on the filter button so the drawer (which closes on any click inside it) stays mounted while the menu is open; picking a menu item then closes both. Ids come from `useId` because the sidebar is mounted in both the desktop column and the drawer.
+- "Clear All Filters" keeps `tag`, `playlist` and `search` and drops `order` and `year`.
+- The listing page itself renders no filter control. Selecting a sort (even "Newest first") sets `order`, which hides the featured slider.
 
 ### Page Title Logic
 
