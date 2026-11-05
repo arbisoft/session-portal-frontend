@@ -33,7 +33,7 @@ const PublishBar = ({ control, status, isDisabled, isPublishing, isQueued, onCan
   const isError = hasFieldErrors || status.isError;
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="space-between" gap={2} width="100%" flexWrap="wrap">
+    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 2, width: "100%", flexWrap: "wrap" }}>
       <Typography
         role={isError ? "alert" : "status"}
         color={isError ? "error" : "textPrimary"}
@@ -45,7 +45,7 @@ const PublishBar = ({ control, status, isDisabled, isPublishing, isQueued, onCan
           <span aria-hidden> · {status.percent}%</span>
         )}
       </Typography>
-      <Box display="flex" gap={1} flexWrap="wrap">
+      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
         {isQueued && (
           <Button variant="outlined" onClick={onCancelQueued}>
             Cancel queued publish

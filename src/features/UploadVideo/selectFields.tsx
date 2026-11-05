@@ -105,16 +105,17 @@ const PresenterAutocomplete = ({ onChange, onBlur, inputRef, error }: Omit<Autoc
           error={!!error}
           helperText={error ?? `Type at least ${MIN_SEARCH_LENGTH} characters to search`}
           slotProps={{
+            ...params.slotProps,
             input: {
-              ...params.InputProps,
+              ...params.slotProps.input,
               endAdornment: (
                 <>
                   {isSearchingUsers ? <CircularProgress color="inherit" size={16} /> : null}
-                  {params.InputProps.endAdornment}
+                  {params.slotProps.input.endAdornment}
                 </>
               ),
             },
-            htmlInput: { ...params.inputProps, "aria-required": true },
+            htmlInput: { ...params.slotProps.htmlInput, "aria-required": true },
           }}
         />
       )}
