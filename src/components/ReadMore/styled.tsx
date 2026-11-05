@@ -10,6 +10,12 @@ export const StyledReadMore = styled(Typography, { name: "Logo" })(() => {
     .hidden {
       display: none;
     }
+    .clamped {
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: var(--read-more-max-lines);
+      display: -webkit-box;
+      overflow: hidden;
+    }
     .show-more-button {
       cursor: pointer;
       display: block;
