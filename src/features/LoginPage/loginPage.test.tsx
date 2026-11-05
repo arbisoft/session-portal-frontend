@@ -53,6 +53,12 @@ jest.mock("@/utils/analytics", () => ({
   trackEvent: (...args: unknown[]) => mockTrackEvent(...args),
 }));
 
+const mockGetLocationSearch = jest.fn(() => "");
+
+jest.mock("@/utils/browserLocation", () => ({
+  getLocationSearch: () => mockGetLocationSearch(),
+}));
+
 const mockNavigateTo = jest.fn();
 
 jest.mock("@/hooks/useNavigation", () => ({
@@ -212,15 +218,7 @@ describe("LoginPage", () => {
   it("falls back to window location search for redirect_to and navigates correctly", async () => {
     mockGet.mockReturnValue(null);
 
-    const originalLocation = window.location;
-
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: {
-        ...originalLocation,
-        search: "?redirect_to=%2Fvideos%2F777",
-      },
-    });
+    mockGetLocationSearch.mockReturnValue("?redirect_to=%2Fvideos%2F777");
 
     let successHandler!: (param: object) => Promise<void>;
 
@@ -237,12 +235,6 @@ describe("LoginPage", () => {
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/videos/777");
-    });
-
-    // restore
-    Object.defineProperty(window, "location", {
-      configurable: true,
-      value: originalLocation,
     });
   });
 

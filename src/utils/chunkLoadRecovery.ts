@@ -1,3 +1,5 @@
+import { reloadPage } from "./browserLocation";
+
 const CHUNK_LOAD_ERROR_RELOADED_KEY = "chunk-load-error-reloaded";
 
 // A stale client (open before a new deploy) requests a chunk hash that no longer
@@ -15,6 +17,6 @@ export function recoverFromChunkLoadError(error: Error): boolean {
   }
 
   sessionStorage.setItem(CHUNK_LOAD_ERROR_RELOADED_KEY, "true");
-  window.location.reload();
+  reloadPage();
   return true;
 }

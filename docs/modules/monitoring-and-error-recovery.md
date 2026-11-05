@@ -17,6 +17,7 @@ Reports runtime errors and performance data to Sentry, shows fallback UI when re
 | Root error boundary                         | `src/app/global-error.tsx`                                    |
 | 404 page                                    | `src/app/not-found.tsx`                                       |
 | Stale-chunk recovery                        | `src/utils/chunkLoadRecovery.ts`                              |
+| `window.location` wrappers (mockable)       | `src/utils/browserLocation.ts`                                |
 | API proxy error capture                     | `src/app/bff/[...path]/route.ts`                              |
 | Unparseable API response capture            | `src/redux/customBaseQuery.ts`                                |
 | Unexpected upload failure capture           | `src/hooks/useVideoUpload.ts`                                 |
@@ -64,7 +65,7 @@ With the default `dataCollection`, the SDK attaches the incoming request to serv
 A tab opened before a deploy may request a chunk hash the server no longer has. Re-rendering does not refetch the build manifest, so a hard reload is required.
 
 1. `isChunkLoadError(error)` matches `Failed to load chunk`, `ChunkLoadError`, or `error.name === "ChunkLoadError"`.
-2. `recoverFromChunkLoadError(error)` reloads the page **once per browser session**. It records `chunk-load-error-reloaded` in `sessionStorage` before reloading, so a broken deploy cannot cause a reload loop. It returns `true` if it reloaded.
+2. `recoverFromChunkLoadError(error)` reloads the page **once per browser session**. It records `chunk-load-error-reloaded` in `sessionStorage` before reloading, so a broken deploy cannot cause a reload loop. It returns `true` if it reloaded. The reload goes through `reloadPage()` in `src/utils/browserLocation.ts` rather than calling `window.location.reload()` directly (see Tests).
 3. It is called from `error.tsx` and, for failures that happen outside React's render tree (for example a route prefetch `import()`), from `window` `unhandledrejection` and `error` listeners in `src/instrumentation-client.ts`.
 
 ## Edge Cases
@@ -76,3 +77,5 @@ A tab opened before a deploy may request a chunk hash the server no longer has. 
 ## Tests
 
 `src/instrumentation.test.ts`, `src/instrumentation-client.test.ts`, `src/instrumentation-client.production.test.ts`, `src/app/error.test.tsx`, `src/utils/chunkLoadRecovery.test.ts`, `src/utils/monitoring.test.ts`, and the capture assertions in `src/app/bff/[...path]/route.test.ts`, `src/redux/customBaseQuery.test.ts` and `src/hooks/useVideoUpload.test.tsx`. `global-error.tsx` and `not-found.tsx` have no dedicated test file.
+
+Tests for the reload path mock `@/utils/browserLocation` (`reloadPage`) because `window.location` is not redefinable under jsdom 30; see [testing-guide.md](../testing-guide.md).
