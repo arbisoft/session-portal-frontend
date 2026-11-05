@@ -1,3 +1,5 @@
+import userEvent from "@testing-library/user-event";
+
 import { act, customRender, screen, fireEvent } from "@/jest/utils/testUtils";
 
 import ReadMore from "./readMore";
@@ -32,15 +34,15 @@ describe("ReadMore Component", () => {
     expect(screen.getByTestId("hidden-text")).toHaveClass("hidden");
   });
 
-  it("toggles expansion with keyboard (Enter and Space keys)", () => {
+  it("toggles expansion with keyboard (Enter and Space keys)", async () => {
     customRender(<ReadMore text={text} amountOfWords={5} showMoreText="Read more" showLessText="Read less" />);
 
-    const showMoreButton = screen.getByTestId("show-more-button");
+    screen.getByTestId("show-more-button").focus();
 
-    fireEvent.keyDown(showMoreButton, { key: "Enter" });
+    await userEvent.keyboard("{Enter}");
     expect(screen.getByTestId("hidden-text")).not.toHaveClass("hidden");
 
-    fireEvent.keyDown(showMoreButton, { key: " " });
+    await userEvent.keyboard(" ");
     expect(screen.getByTestId("hidden-text")).toHaveClass("hidden");
   });
 
@@ -115,14 +117,15 @@ describe("ReadMore line clamp mode", () => {
     expect(screen.getByTestId("clamped-text")).toHaveClass("clamped");
   });
 
-  it("should toggle the clamped text with the Enter and Space keys", () => {
+  it("should toggle the clamped text with the Enter and Space keys", async () => {
     mockHeights(200, 80);
     customRender(<ReadMore text={longText} maxLines={4} showMoreText="Show More" showLessText="Show Less" />);
+    screen.getByTestId("show-more-button").focus();
 
-    fireEvent.keyDown(screen.getByTestId("show-more-button"), { key: "Enter" });
+    await userEvent.keyboard("{Enter}");
     expect(screen.getByTestId("clamped-text")).not.toHaveClass("clamped");
 
-    fireEvent.keyDown(screen.getByTestId("show-more-button"), { key: " " });
+    await userEvent.keyboard(" ");
     expect(screen.getByTestId("clamped-text")).toHaveClass("clamped");
   });
 
@@ -173,13 +176,14 @@ describe("ReadMore line clamp mode", () => {
     expect(screen.getByTestId("clamped-text")).toHaveClass("clamped");
   });
 
-  it("should call onToggle with the new expanded state on click and keyboard toggles", () => {
+  it("should call onToggle with the new expanded state on click and keyboard toggles", async () => {
     mockHeights(200, 80);
     const onToggle = jest.fn();
     customRender(<ReadMore text={longText} maxLines={4} showMoreText="Show More" showLessText="Show Less" onToggle={onToggle} />);
 
     fireEvent.click(screen.getByTestId("show-more-button"));
-    fireEvent.keyDown(screen.getByTestId("show-more-button"), { key: "Enter" });
+    screen.getByTestId("show-more-button").focus();
+    await userEvent.keyboard("{Enter}");
 
     expect(onToggle).toHaveBeenNthCalledWith(1, true);
     expect(onToggle).toHaveBeenNthCalledWith(2, false);

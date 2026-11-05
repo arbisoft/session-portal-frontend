@@ -90,6 +90,8 @@ It has two modes:
 - **Word limit** (default): shows the first `amountOfWords` words (default 36) and hides the rest behind a toggle.
 - **Line clamp** (`maxLines`): clamps the text to that many lines with CSS (`-webkit-line-clamp`, driven by the `--read-more-max-lines` custom property). The "Show More / Show Less" toggle only appears when the text actually overflows; overflow is re-measured on window resize, and the component collapses again when `text` changes. The full text always stays in the DOM, so screen readers read it even while clamped. The video detail page uses `maxLines={4}`.
 
+The toggle is a native `<button type="button">` with `aria-expanded` (restyled to look like a link via `.show-more-button`), so Enter and Space work without custom key handlers. Do not replace it with a `role="button"` span (Sonar `typescript:S6819`).
+
 Both modes accept an optional `onToggle(isExpanded)` callback fired on click or keyboard toggle, so features can attach analytics without business logic living in the component (the video detail page tracks `video_description_toggle` this way).
 
 ## Video Presentation Components

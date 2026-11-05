@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useLayoutEffect, CSSProperties, KeyboardEvent } from "react";
+import { useState, useMemo, useRef, useLayoutEffect, CSSProperties } from "react";
 
 import { StyledReadMore } from "./styled";
 import { ReadMoreProps } from "./types";
@@ -12,18 +12,11 @@ const useExpandToggle = (onToggle?: ReadMoreProps["onToggle"]) => {
     setIsExpanded(!isExpanded);
   };
 
-  const handleKeyboard = (e: KeyboardEvent<HTMLSpanElement>) => {
-    if (e.key === " " || e.key === "Enter") {
-      e.preventDefault();
-      toggleExpand();
-    }
-  };
-
-  return { isExpanded, toggleExpand, handleKeyboard };
+  return { isExpanded, toggleExpand };
 };
 
 const LineClampedReadMore = ({ className, text, maxLines = 4, showMoreText, showLessText, onToggle }: ReadMoreProps) => {
-  const { isExpanded, toggleExpand, handleKeyboard } = useExpandToggle(onToggle);
+  const { isExpanded, toggleExpand } = useExpandToggle(onToggle);
   const [canExpand, setCanExpand] = useState(false);
   const textRef = useRef<HTMLSpanElement>(null);
 
@@ -50,24 +43,22 @@ const LineClampedReadMore = ({ className, text, maxLines = 4, showMoreText, show
         {text}
       </span>
       {canExpand && (
-        <span
+        <button
+          type="button"
           className="show-more-button"
           data-testid="show-more-button"
-          role="button"
-          tabIndex={0}
           aria-expanded={isExpanded}
-          onKeyDown={handleKeyboard}
           onClick={toggleExpand}
         >
           {isExpanded ? showLessText : showMoreText}
-        </span>
+        </button>
       )}
     </StyledReadMore>
   );
 };
 
 const WordLimitedReadMore = ({ className, text, amountOfWords = 36, showMoreText, showLessText, onToggle }: ReadMoreProps) => {
-  const { isExpanded, toggleExpand, handleKeyboard } = useExpandToggle(onToggle);
+  const { isExpanded, toggleExpand } = useExpandToggle(onToggle);
 
   const { visibleText, hiddenText, canExpand } = useMemo(() => {
     const words = text.split(" ");
@@ -88,17 +79,15 @@ const WordLimitedReadMore = ({ className, text, amountOfWords = 36, showMoreText
           <span data-testid="hidden-text" className={!isExpanded ? "hidden" : ""} aria-hidden={!isExpanded}>
             {" " + hiddenText}
           </span>
-          <span
+          <button
+            type="button"
             className="show-more-button"
             data-testid="show-more-button"
-            role="button"
-            tabIndex={0}
             aria-expanded={isExpanded}
-            onKeyDown={handleKeyboard}
             onClick={toggleExpand}
           >
             {isExpanded ? showLessText : showMoreText}
-          </span>
+          </button>
         </>
       )}
     </StyledReadMore>
