@@ -100,10 +100,12 @@ Available hooks:
 | `useFeatureFlags`      | Feature flag resolution with URL override support                                 |
 | `useDebounce`          | Debounced value for search inputs                                                 |
 | `useSidebar`           | Fetches tags and playlists for the navigation sidebar                             |
+| `useVideoFilters`      | URL-driven sort/year filter state and navigation for the sidebar Home filter      |
 | `useVideoUpload`       | React binding of the resumable upload engine: progress, pause, resume, cancel     |
 | `useUploadRate`        | Average upload speed from progress samples, for the speed and time-left text      |
 | `useLeaveGuard`        | Browser prompt on reload plus interception of in-app link clicks for unsaved work |
 | `usePreventFileDrop`   | Stops a file dropped outside a drop zone from navigating the browser away         |
+| `useCloseOnScroll`     | Closes a popup when a given scroll container scrolls                              |
 
 ## Authentication Architecture
 
