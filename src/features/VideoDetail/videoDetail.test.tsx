@@ -367,6 +367,8 @@ describe("VideoDetail description toggle analytics", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPresenters = [];
+    mockDetailState = buildDetailState();
+    mockRecommendationState = { data: { results: [], next: null }, isFetching: false };
     Object.defineProperty(HTMLElement.prototype, "scrollHeight", { configurable: true, value: 200 });
     Object.defineProperty(HTMLElement.prototype, "clientHeight", { configurable: true, value: 80 });
   });
@@ -415,6 +417,8 @@ describe("VideoDetail presenters", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPresenters = [];
+    mockDetailState = buildDetailState();
+    mockRecommendationState = { data: { results: [], next: null }, isFetching: false };
   });
 
   it("should link each presenter name to search results filtered by that name", () => {
