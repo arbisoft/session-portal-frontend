@@ -56,6 +56,13 @@ Key settings:
 - `InitColorSchemeScript` emits its inline `<script>` only during the server render and hydration. A client-side `render()` produces an empty fragment; use `renderToString` from `react-dom/server` to test the script (see `src/components/theme/theme-provider.test.tsx`).
 - Drawer and other transition-based closing is asynchronous. Wrap the `aria-hidden` assertion in `waitFor`.
 
+## Mocking `window` and `window.location` (jsdom 30)
+
+`jest-environment-jsdom` 30 makes `window.location` and `window` non-configurable, so `Object.defineProperty(window, "location", ...)` and `jest.spyOn(global, "window", "get")` throw.
+
+- **Reload / search string:** code calls `reloadPage()` / `getLocationSearch()` from `src/utils/browserLocation.ts`; tests `jest.mock("@/utils/browserLocation", ...)` (see `chunkLoadRecovery.test.ts`, `error.test.tsx`, `loginPage.test.tsx`).
+- **SSR branches (`typeof window === "undefined"`):** put the test in its own file with a `@jest-environment node` docblock (see `src/utils/analytics.ssr.test.ts`).
+
 ## Test Coverage
 
 Current test suite includes unit tests for:

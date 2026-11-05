@@ -54,7 +54,7 @@ The proxy only checks the cookie's expiry. `AuthSession` (mounted in the root la
 Observed sequence:
 
 1. User visits `/login`
-2. `LoginPage` reads `redirect_to` from URL params or window.location.search
+2. `LoginPage` reads `redirect_to` from URL params, falling back to `getLocationSearch()` (`src/utils/browserLocation.ts`, a wrapper over `window.location.search`)
 3. `redirect_to` is validated using `isValidInternalRedirectPath` (prevents external redirects)
 4. `LoginPage` invokes Google OAuth using `useGoogleLogin`
 5. On success, the frontend sends the Google `access_token` as `auth_token`

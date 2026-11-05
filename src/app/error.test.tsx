@@ -10,6 +10,12 @@ jest.mock("@sentry/nextjs", () => ({
 
 const mockBack = jest.fn();
 
+const mockReload = jest.fn();
+
+jest.mock("@/utils/browserLocation", () => ({
+  reloadPage: () => mockReload(),
+}));
+
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(() => ({ back: mockBack })),
 }));
@@ -32,15 +38,9 @@ jest.mock("@/components/EmptyState", () => ({
 }));
 
 describe("Error", () => {
-  const mockReload = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
     sessionStorage.clear();
-    Object.defineProperty(window, "location", {
-      value: { reload: mockReload },
-      writable: true,
-    });
   });
 
   it("should report the error to Sentry", () => {
