@@ -43,5 +43,9 @@
   "prettier.bracketSameLine": false,
   "prettier.configPath": ".prettierrc",
   "prettier.proseWrap": "preserve",
-  "prettier.requireConfig": false
+  "prettier.requireConfig": false,
+  "sonarlint.connectedMode.project": {
+    "connectionId": "https://sonarqube.arbisoft.com",
+    "projectKey": "arbisoft_session-portal-frontend_d2b5e707-30b0-49ec-ba34-60f87a22bc04"
+  }
 }
