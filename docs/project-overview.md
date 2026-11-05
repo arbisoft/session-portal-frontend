@@ -52,6 +52,7 @@ From `package.json`:
 | Capability                                      | Evidence                                                                    |
 | ----------------------------------------------- | --------------------------------------------------------------------------- |
 | Auth redirect handling                          | `src/proxy.ts`, `src/app/login/actions.ts`                                  |
+| Backend session verification (`/users/me`)      | `src/features/AuthSession/authSession.tsx`                                  |
 | Video listing with filters and infinite loading | `src/features/VideosListingPage/videosListingPage.tsx`                      |
 | Search results page                             | `src/features/SearchResultsPage/searchResultsPage.tsx`                      |
 | Video detail with recommendations               | `src/features/VideoDetail/videoDetail.tsx`                                  |

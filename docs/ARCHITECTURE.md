@@ -17,12 +17,12 @@ App Router pages
 
 `src/app/layout.tsx` wires the top-level providers and cross-cutting concerns:
 
+- `InitColorSchemeScript` (first child of `<body>`; `<html>` carries `suppressHydrationWarning` because the script sets the color-scheme class before hydration)
 - `GoogleOAuthProvider`
 - Redux `Providers`
 - Custom MUI `ThemeProvider`
-- `InitColorSchemeScript`
 - `CssBaseline`
-- `NotificationProvider`
+- `NotificationProvider`, which wraps `AuthSession` (session verification, renders nothing) and the page `children`
 - Google Tag Manager injection
 - Hotjar initialization script
 
@@ -49,6 +49,7 @@ Feature modules in `src/features/` contain page-level behavior and orchestration
 
 Observed features:
 
+- `AuthSession` (renders nothing; verifies the session with `GET /users/me`)
 - `HomePage`
 - `LoginPage`
 - `VideosListingPage`
@@ -111,7 +112,7 @@ Authentication is implemented across several pieces:
 - the access token stays in the HttpOnly cookie only; the server action returns user info with `access`/`refresh` set to `null`
 - only user info is held in Redux and persisted via `redux-persist` (persist version 2: migration 1 scrubs legacy persisted tokens, migration 2 defaults `is_staff` to `false`)
 - all API calls go through the BFF proxy `src/app/bff/[...path]/route.ts`, which reads the cookie and attaches the `Bearer` header server-side (re-adding the trailing slash the backend expects); it returns `403` unless the request carries the `x-requested-with: session-portal` header that `customBaseQuery` sets, so opening a proxy URL directly in the address bar is refused (this deters casual access only; the authenticated user can still replay requests)
-- route protection is handled entirely by `src/proxy.ts` (JWT cookie validation, no `useAuth` hook)
+- route protection is handled by `src/proxy.ts` (JWT cookie expiry validation, no `useAuth` hook); `src/features/AuthSession` additionally validates the token with the backend via `GET /users/me` on load and on every navigation to a protected route, and redirects to `/login` on `401`
 - unauthorized API responses (`401`) dispatch `logout()` (from `src/redux/login/actions.ts`) in `customBaseQuery`
 
 See [Authentication Module](./modules/authentication.md) for full flow details.
@@ -155,7 +156,7 @@ Route protection is handled by `src/proxy.ts`, which runs on every request match
 | Authenticated user visits any route with a valid `redirect_to` param | Redirected to `redirect_to` (valid internal path only) |
 | Authenticated user visits `/login` without a valid `redirect_to` | Redirected to `/videos` |
 | Any user visits `/` | Redirected to `/videos` |
-| Unauthenticated user visits any route except `/login` (fail closed, `publicRoutes`) | Redirected to `/login?redirect_to=<original path>` |
+| Unauthenticated user visits any route except `/login` (fail closed, `PUBLIC_ROUTES`) | Redirected to `/login?redirect_to=<original path>` |
 | Paths under `/api`, `/bff`, `/_next`, or ending in a static file extension (png, svg, json, …) | Excluded by the matcher (the proxy route enforces its own 401) |
 
 Token validation reads the `access` HttpOnly cookie set by the `loginAndSetCookie` server action. It decodes the JWT payload to check expiry (`exp` claim) without a network call.

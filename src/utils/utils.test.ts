@@ -11,6 +11,7 @@ import {
   getQueryValue,
   transformVideoToCardData,
   isValidInternalRedirectPath,
+  isPublicRoute,
 } from "./utils";
 
 describe("parseNonPassedParams", () => {
@@ -357,5 +358,18 @@ describe("getJwtExpiry", () => {
     expect(getJwtExpiry(undefined)).toBeNull();
     expect(getJwtExpiry("garbage")).toBeNull();
     expect(getJwtExpiry(token({ sub: "1" }))).toBeNull();
+  });
+});
+
+describe("isPublicRoute", () => {
+  it("should accept the login route and its sub-paths", () => {
+    expect(isPublicRoute("/login")).toBe(true);
+    expect(isPublicRoute("/login/callback")).toBe(true);
+  });
+
+  it("should reject protected routes and look-alike prefixes", () => {
+    expect(isPublicRoute("/videos")).toBe(false);
+    expect(isPublicRoute("/loginx")).toBe(false);
+    expect(isPublicRoute("/")).toBe(false);
   });
 });

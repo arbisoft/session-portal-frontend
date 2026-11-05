@@ -18,7 +18,7 @@ Apply every applicable item. Mark Critical / Warning / Suggestion per the severi
 
 ### Auth & Proxy (Critical)
 
-- [ ] `src/proxy.ts` fails closed — every route requires auth unless listed in `publicRoutes`; a newly added public route is a security decision and must be called out. New static asset paths need a file extension or a matcher exclusion, otherwise they are redirected to `/login`
+- [ ] `src/proxy.ts` fails closed — every route requires auth unless listed in `PUBLIC_ROUTES` (`src/constants/constants.ts`, checked with `isPublicRoute`); a newly added public route is a security decision and must be called out. New static asset paths need a file extension or a matcher exclusion, otherwise they are redirected to `/login`
 - [ ] JWT validity check (`isValidToken`) stays a local, no-network-call check (keeps every request fast) — don't introduce a `fetch`/API call into the proxy; JWT payload decoding goes through the shared `getJwtExpiry` helper in `src/utils/utils.ts`, never re-implemented inline
 - [ ] Any redirect target read from a query param (`redirect_to`) is validated via `isValidInternalRedirectPath` before being used in a `NextResponse.redirect` — an unvalidated redirect target is an open-redirect vulnerability
 - [ ] `src/app/login/actions.ts`'s server action sets the `access` cookie as HttpOnly server-side and returns `access: null, refresh: null` — the token must never be returned to, stored by, or read from client code

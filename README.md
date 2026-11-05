@@ -10,7 +10,7 @@ Frontend application for the Sessions Portal built with Next.js, React, and Type
 
 ## Features
 
-- Google OAuth-based login
+- Google OAuth-based login with backend session verification on every protected navigation
 - Video listing, filtering, and search flows
 - Video detail pages with recommendations
 - RTK Query-powered data fetching and Redux state management

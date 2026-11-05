@@ -26,6 +26,7 @@ describe("Redux Store", () => {
     expect(store.getState().login).toBeDefined();
     store.dispatch(loginActions.logout());
     expect(store.getState().login).toEqual({
+      currentUser: null,
       session: {
         refresh: null,
         access: null,

@@ -98,14 +98,21 @@ These actions complement client-side Redux state management by handling secure s
 
 - `selectUserInfo`
 - `selectIsLoading`
+- `selectIsStaff`
+- `selectCurrentUser` (server-verified user from `/users/me`, `null` until verified)
+- `selectIsAuthenticated`
+- `selectUserRole`
 
 ### Login API
 
-`src/redux/login/apiSlice.ts` injects a mutation:
+`src/redux/login/apiSlice.ts` injects a mutation and a query:
 
-| Hook               | Method | Endpoint       |
-| ------------------ | ------ | -------------- |
-| `useLoginMutation` | `POST` | `/users/login` |
+| Hook                | Method | Endpoint       |
+| ------------------- | ------ | -------------- |
+| `useLoginMutation`  | `POST` | `/users/login` |
+| `useLazyGetMeQuery` | `GET`  | `/users/me/`   |
+
+`getMe` runs with `showErrorToast: false`. On success the login slice stores the result in `currentUser` (not persisted) and syncs the profile fields of `session.user_info`; `logout` resets both. `AuthSession` triggers it with the lazy hook.
 
 Request body:
 

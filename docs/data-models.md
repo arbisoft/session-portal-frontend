@@ -26,6 +26,26 @@ type LoginResponse = {
 
 `is_staff` drives the staff-only upload entry point (`selectIsStaff` in `src/redux/login/selectors.ts`).
 
+### `CurrentUser`
+
+Response of `GET /users/me/`:
+
+```ts
+type UserRole = "admin" | "staff" | "user";
+
+type CurrentUser = {
+  id: number;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  is_staff: boolean;
+};
+```
+
+Held in `login.currentUser` (`selectCurrentUser`); not persisted.
+
 ### `LoginParams`
 
 ```ts

@@ -11,3 +11,15 @@ export type LoginResponse = {
 };
 
 export type LoginParams = { auth_token: string };
+
+export type UserRole = "admin" | "staff" | "user";
+
+export type CurrentUser = {
+  id: number;
+  first_name: string;
+  last_name: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  is_staff: boolean;
+};

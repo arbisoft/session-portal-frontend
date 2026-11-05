@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 
-import { BASE_URL, DEFAULT_THUMBNAIL } from "@/constants/constants";
+import { BASE_URL, DEFAULT_THUMBNAIL, PUBLIC_ROUTES } from "@/constants/constants";
 import { Event } from "@/models/Events";
 
 export function formatDateTime(event_time: string) {
@@ -69,6 +69,10 @@ export const transformVideoToCardData = (video: Event) => ({
   video_file: video.video_file ? BASE_URL.concat(video.video_file) : undefined,
   description: video.description,
 });
+
+export function isPublicRoute(pathname: string): boolean {
+  return PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
+}
 
 export function isValidInternalRedirectPath(redirectPath?: string | null): boolean {
   if (typeof redirectPath !== "string" || redirectPath.length === 0) return false;

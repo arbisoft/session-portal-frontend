@@ -53,6 +53,10 @@ Used to clean API request params before they are passed to RTK Query, preventing
 
 Security guard that validates a redirect target is an internal path. See [authentication module](./authentication.md#isvalidinternalredirectpath-rules) for the full rule set.
 
+### `isPublicRoute(pathname)`
+
+Returns `true` when `pathname` equals, or is nested under, an entry of `PUBLIC_ROUTES` (`src/constants/constants.ts`, currently `["/login"]`). Shared by `src/proxy.ts` (fail-closed route protection) and `AuthSession` (skips session verification on public routes).
+
 ### `generateYearList(startYear: number)`
 
 Returns an array of `{ value: string, label: string }` objects from the current year down to `startYear`. The current year's label is `"This Year"`.

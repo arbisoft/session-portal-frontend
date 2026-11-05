@@ -46,6 +46,28 @@ The `loginAndSetCookie` server action stores `access` in an HttpOnly cookie and 
 
 - `401 Unauthorized`: Invalid Google token
 
+### GET /users/me/
+
+Validate the Bearer token and return the authenticated user. The frontend calls it from `AuthSession` on load and on every navigation to a protected route. The backend uses `JWTAuthentication` only (no session authentication), so only a valid, unexpired access token for an active user is accepted.
+
+**Response (200 OK):**
+
+```json
+{
+  "id": 1,
+  "first_name": "string",
+  "last_name": "string",
+  "full_name": "string", // falls back to the backend username when no name is set
+  "email": "string",
+  "role": "admin | staff | user", // superuser → admin, staff → staff, otherwise user
+  "is_staff": false
+}
+```
+
+**Error Responses:**
+
+- `401 Unauthorized`: missing, malformed, expired or refresh token, or deactivated user
+
 ## Events API
 
 ### GET /events/videoasset/{id}/

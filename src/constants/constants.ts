@@ -17,6 +17,8 @@ export const DEFAULT_LANGUAGE_DIR = "ltr";
 export const ALLOWED_TYPES = ["video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"];
 export const MAX_VIDEO_FILE_SIZE_BYTES = 1024 ** 3;
 export const REDIRECT_TO_KEY = "redirect_to";
+// Fail closed: every route requires authentication unless listed here (see src/proxy.ts).
+export const PUBLIC_ROUTES = ["/login"];
 export const ACCESS_COOKIE_NAME = "access";
 export const API_PROXY_PREFIX = "/bff";
 export const ALLOWED_IMAGE_HOSTS = (process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? "").split(",").filter(Boolean);

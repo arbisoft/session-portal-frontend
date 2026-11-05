@@ -2,7 +2,7 @@ import { renderHook, waitFor, act } from "@/jest/utils/testUtils";
 
 import { Providers } from "../store/provider";
 
-import { useCreateEventMutation, useCreateTagMutation, useSearchUsersQuery } from "./apiSlice";
+import { useAllTagsQuery, useCreateEventMutation, useCreateTagMutation, useSearchUsersQuery } from "./apiSlice";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => <Providers>{children}</Providers>;
 
@@ -20,6 +20,19 @@ describe("events upload endpoints", () => {
     const request = fetchMock.mock.calls[0][0] as Request;
     expect(request.url).toContain("/bff/users/search?q=ab");
     expect(request.headers.get("Authorization")).toBeNull();
+  });
+
+  it("should fetch every tag from the tags endpoint with a GET request", async () => {
+    fetchMock.mockResponseOnce(JSON.stringify([{ id: 1, name: "react" }]));
+
+    const { result } = renderHook(() => useAllTagsQuery(), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    const request = fetchMock.mock.calls[0][0] as Request;
+    expect(request.method).toBe("GET");
+    expect(request.url).toContain("/bff/events/tags");
+    expect(request.url).not.toContain("linked_to_events");
+    expect(result.current.data).toEqual([{ id: 1, name: "react" }]);
   });
 
   it("should create a tag with a POST request", async () => {

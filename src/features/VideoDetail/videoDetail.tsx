@@ -25,6 +25,17 @@ import { fullName, transformVideoToCardData } from "@/utils/utils";
 import SkeletonLoader from "./skeletonLoader";
 import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
+type RecommendationsContext = { isFetching: boolean };
+
+const RecommendationsFooter = ({ context }: { context?: RecommendationsContext }) =>
+  context?.isFetching ? (
+    <Box mt={2} sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      {Array.from({ length: 3 }).map((_, idx) => (
+        <Skeleton key={idx} variant="rounded" width="100%" height={90} />
+      ))}
+    </Box>
+  ) : null;
+
 const VideoDetail = () => {
   const { videoId } = useParams<{ videoId: string }>();
 
@@ -64,7 +75,8 @@ const VideoDetail = () => {
       .catch(() => trackEvent(GA_EVENTS.VIDEO_VIEW_COUNT_FAILED, ANALYTICS_CATEGORY.VIDEO_PLAYER));
   }, [videoId, incrementViewCount]);
 
-  const displayedViewCount = countedViews?.videoId === videoId ? countedViews.viewCount : data?.view_count;
+  const countedViewCount = countedViews?.videoId === videoId ? countedViews?.viewCount : undefined;
+  const displayedViewCount = countedViewCount ?? data?.view_count;
   const dataEvent = data?.event;
   const allRecommendations = recommendationsData?.results ?? [];
 
@@ -92,16 +104,8 @@ const VideoDetail = () => {
                 setPage((prev) => prev + 1);
               }
             }}
-            components={{
-              Footer: () =>
-                isRecommendationsFetching ? (
-                  <Box mt={2} sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                    {Array.from({ length: 3 }).map((_, idx) => (
-                      <Skeleton key={idx} variant="rounded" width="100%" height={90} />
-                    ))}
-                  </Box>
-                ) : null,
-            }}
+            context={{ isFetching: isRecommendationsFetching }}
+            components={{ Footer: RecommendationsFooter }}
           />
         </Box>
       }

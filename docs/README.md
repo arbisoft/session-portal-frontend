@@ -22,7 +22,7 @@ This directory contains project documentation generated from the current reposit
 
 ## Business Logic Modules
 
-- [Authentication](./modules/authentication.md) — Google OAuth login, proxy route protection, token lifecycle
+- [Authentication](./modules/authentication.md) — Google OAuth login, proxy route protection, backend session verification (`/users/me`), token lifecycle
 - [Video Listing](./modules/video-listing.md) — Filtering, sorting, featured slider, infinite scroll cache strategy
 - [Video Detail](./modules/video-detail.md) — Player, captions, view counting, metadata, tags, recommendations infinite scroll
 - [Upload Video](./modules/upload-video.md) — Staff-only upload flow, background upload with progress, queued publish

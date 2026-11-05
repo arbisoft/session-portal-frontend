@@ -63,6 +63,7 @@ App-level special files: `src/app/error.tsx` (route error boundary), `src/app/gl
 
 | Feature folder | Main responsibility inferred |
 | --- | --- |
+| `AuthSession` | Verifies the session with `GET /users/me` on load and navigation; redirects to `/login` on `401` |
 | `HomePage` | Startup route behavior and auth redirect shell |
 | `LoginPage` | Login screen and Google OAuth initiation |
 | `VideosListingPage` | Browsing videos, featured content, filters, virtualized list with infinite loading |
