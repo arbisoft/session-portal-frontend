@@ -41,7 +41,7 @@ src/
 ├── models/      # TypeScript domain models
 ├── redux/       # Store, slices, API, selectors, error handling
 ├── services/    # Service utilities, including server-side helpers
-└── utils/       # General utilities (`utils.ts`, `analytics.ts`, `chunkLoadRecovery.ts`, `styleUtils.ts`)
+└── utils/       # General utilities (`utils.ts`, `analytics.ts`, `browserLocation.ts`, `chunkLoadRecovery.ts`, `styleUtils.ts`)
 ```
 
 ## Route Files

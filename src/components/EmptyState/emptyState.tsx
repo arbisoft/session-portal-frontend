@@ -35,14 +35,14 @@ const EmptyState: FC<EmptyStateProps> = ({
           <Image width={image.width} height={image.height} src={image.src} alt={image.alt} />
         )}
       </ImageContainer>
-      <Box maxWidth={462}>
+      <Box sx={{ maxWidth: 462 }}>
         {heading && (
           <Heading variant="h4" className={emptyStateClasses.heading}>
             {heading}
           </Heading>
         )}
         {typeof text === "string" ? (
-          <Typography className={emptyStateClasses.text} fontWeight={300}>
+          <Typography className={emptyStateClasses.text} sx={{ fontWeight: 300 }}>
             {text}
           </Typography>
         ) : (

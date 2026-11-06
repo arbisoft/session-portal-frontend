@@ -106,13 +106,21 @@ When `captions_file` is present, `VideoPlayer` renders a default "English" `Trac
 
 `VideoPlayer` accumulates playing time (paused time does not count). After `watchThresholdSeconds` (default 30) it fires the `video_watch_threshold` analytics event and calls `onWatchThreshold` once per mounted player. `VideoDetail` then calls `useIncrementViewCountMutation` (`POST /events/videoasset/{slug}/view/`) and shows the returned `view_count`; until then it shows `data.view_count`. A failed request is swallowed (errors are already toasted by `customBaseQuery`) and reported through the `video_view_count_failed` analytics event.
 
+### Presenters
+
+Each presenter in `dataEvent.presenters` renders as a `PresenterLink` (`src/features/VideoDetail/styled.tsx`, a styled `next/link`), separated by commas. The link goes to `/videos/results?search=<full name>` (built with `getPageUrl("searchResult", { search })`), so the user lands on search results for that name. The backend `search` filter is fuzzy and also matches presenter full names, so results can include videos that only mention the name. Presenters with an empty name are not rendered. Clicking a presenter fires `presenter_link_click` with only `source: "video_detail"`; the name, email and id are never sent.
+
+### Description
+
+The session description renders through `ReadMore` with `maxLines={4}`: it is clamped to four lines and gets a "Show More" / "Show Less" toggle only when it overflows (short descriptions show no toggle).
+
 ### Tags
 
 Tags from `dataEvent.tags` render as `Chip` components. Each chip links to `/videos?tag=<tagname>`, which takes the user to the listing page pre-filtered to that tag.
 
 ### Accessibility
 
-The session details are wrapped in an `<article aria-label="Session details for <title>">`. Metadata fields (title, presenters, date) all have `tabIndex={0}` for keyboard navigation.
+The session details are wrapped in an `<article aria-label="Session details for <title>">`. Metadata fields (title, date, view count) have `tabIndex={0}` for keyboard navigation. The presenters paragraph has no `tabIndex`; the presenter links are its focusable elements and show an underline on hover and `:focus-visible`.
 
 ## Key Edge Cases
 

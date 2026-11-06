@@ -110,7 +110,7 @@ const VideoPicker: FC<VideoPickerProps> = ({ onFileSelect, pendingUpload, onDisc
   };
 
   return (
-    <Box display="flex" flexDirection="column" gap={2}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Dropzone $isDragOver={dragOver} onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}>
         <CloudUploadOutlinedIcon aria-hidden fontSize="large" />
         <Typography>{dragOver ? "Drop the video to start uploading" : "Drag and drop a video here"}</Typography>

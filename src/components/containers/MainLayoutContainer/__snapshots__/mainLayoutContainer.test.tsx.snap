@@ -52,7 +52,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             >
               <label
                 for="navbar-search-input"
-                style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;"
+                style="position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden;"
               >
                 Search sessions
               </label>
@@ -71,7 +71,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </div>
               <button
                 aria-label="Clear search"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-sl1li0-MuiButtonBase-root-MuiIconButton-root"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeSmall css-tyhjtd-MuiButtonBase-root-MuiIconButton-root"
                 data-testid="cancelIcon"
                 tabindex="0"
                 type="button"
@@ -90,7 +90,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </button>
               <button
                 aria-label="Submit search"
-                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-7m40xq-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1j7hdpr-MuiButtonBase-root-MuiIconButton-root-SearchIconWrapper-root"
                 data-testid="SearchIconButton"
                 tabindex="0"
                 type="submit"
@@ -116,7 +116,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               aria-expanded="false"
               aria-haspopup="true"
               aria-label="Open account settings"
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-euwqad-MuiButtonBase-root-MuiIconButton-root"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeLarge css-118m2gr-MuiButtonBase-root-MuiIconButton-root"
               data-mui-internal-clone-element="true"
               data-testid="avatar-btn"
               id="avatar-btn"
@@ -124,7 +124,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               type="button"
             >
               <div
-                class="MuiAvatar-root MuiAvatar-rounded MuiAvatar-colorDefault css-5ta4e5-MuiAvatar-root"
+                class="MuiAvatar-root MuiAvatar-rounded MuiAvatar-colorDefault css-qek4uv-MuiAvatar-root"
               >
                 <svg
                   aria-hidden="true"
@@ -155,6 +155,65 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
         <div
           class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
         >
+          <div
+            class="MuiBox-root css-1fcp6w-HomeRow-root"
+          >
+            <ul
+              class="MuiList-root MuiList-padding css-eyvtph-MuiList-root"
+              role="none"
+              tabindex="-1"
+            >
+              <a
+                class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
+                data-testid="sidebar-item-All"
+                href="/videos"
+                role="link"
+                tabindex="0"
+              >
+                <img
+                  alt=""
+                  aria-hidden="true"
+                  data-nimg="1"
+                  data-testid="sidebar-item-icon"
+                  decoding="async"
+                  height="12"
+                  loading="lazy"
+                  src="/assets/images/sidebar-item-icon.svg"
+                  style="color: transparent;"
+                  width="18"
+                />
+                <p
+                  class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+                  title="Home"
+                >
+                  Home
+                </p>
+              </a>
+            </ul>
+            <button
+              aria-expanded="false"
+              aria-haspopup="menu"
+              aria-label="Filter and sort videos"
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-7vlqis-MuiButtonBase-root-MuiIconButton-root"
+              data-testid="sidebar-filter-button"
+              id="_r_3a_-filter-button"
+              tabindex="0"
+              title="Filter and sort"
+              type="button"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
+                data-testid="FilterListIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M10 18h4v-2h-4zM3 6v2h18V6zm3 7h12v-2H6z"
+                />
+              </svg>
+            </button>
+          </div>
           <ul
             aria-label="Video playlists"
             class="MuiList-root MuiList-padding css-zym0s0-MuiList-root"
@@ -162,33 +221,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
             tabindex="-1"
           >
             <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
-              data-testid="sidebar-item-All"
-              href="/videos"
-              role="menuitem"
-              tabindex="0"
-            >
-              <img
-                alt=""
-                aria-hidden="true"
-                data-nimg="1"
-                data-testid="sidebar-item-icon"
-                decoding="async"
-                height="12"
-                loading="lazy"
-                src="/assets/images/sidebar-item-icon.svg"
-                style="color: transparent;"
-                width="18"
-              />
-              <p
-                class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
-                title="All Videos"
-              >
-                All Videos
-              </p>
-            </a>
-            <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-1"
               href="/videos?playlist=Test-1"
               role="menuitem"
@@ -214,7 +247,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </p>
             </a>
             <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-2"
               href="/videos?playlist=Test-2"
               role="menuitem"
@@ -240,7 +273,7 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
               </p>
             </a>
             <a
-              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
               data-testid="sidebar-item-Test-3"
               href="/videos?playlist=Test-3"
               role="menuitem"
@@ -274,42 +307,42 @@ exports[`MainLayoutContainer should matches snapshot for UI consistency 1`] = `
           >
             <a
               aria-current="false"
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable css-ehrr9u-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-1"
               href="/videos?tag=Test-1"
               role="link"
               tabindex="0"
             >
               <span
-                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+                class="MuiChip-label css-19m61dl-MuiChip-label"
               >
                 #Test-1
               </span>
             </a>
             <a
               aria-current="false"
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable css-ehrr9u-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-2"
               href="/videos?tag=Test-2"
               role="link"
               tabindex="0"
             >
               <span
-                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+                class="MuiChip-label css-19m61dl-MuiChip-label"
               >
                 #Test-2
               </span>
             </a>
             <a
               aria-current="false"
-              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
+              class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable css-ehrr9u-MuiButtonBase-root-MuiChip-root"
               data-testid="sidebar-tags-Test-3"
               href="/videos?tag=Test-3"
               role="link"
               tabindex="0"
             >
               <span
-                class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+                class="MuiChip-label css-19m61dl-MuiChip-label"
               >
                 #Test-3
               </span>

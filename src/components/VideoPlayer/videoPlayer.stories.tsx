@@ -8,6 +8,19 @@ const meta: Meta<VideoPlayerProps> = {
   component: VideoPlayer,
   tags: ["autodocs"],
   argTypes: {
+    controlsDelay: {
+      control: { type: "number", min: 500, step: 500 },
+      description:
+        "Milliseconds of user inactivity during playback before the controls auto-hide. " +
+        "Controls stay visible while the video is paused. Defaults to 3000.",
+    },
+    keyTarget: {
+      control: { type: "select", options: ["document", "player"] },
+      description:
+        "Where keyboard shortcuts (arrow keys seek, space/k play-pause, m, f, c) are listened for. " +
+        "Use document (default) to listen wherever focus is on the page, " +
+        "or player to listen only while focus is inside the player.",
+    },
     crossOrigin: {
       control: {
         type: "select",

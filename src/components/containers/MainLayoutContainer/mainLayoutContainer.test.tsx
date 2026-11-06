@@ -13,6 +13,7 @@ jest.mock("next/navigation", () => ({
 
 const mockNavigateTo = jest.fn();
 jest.mock("@/hooks/useNavigation", () => ({
+  ...jest.requireActual("@/hooks/useNavigation"),
   __esModule: true,
   default: () => ({
     navigateTo: mockNavigateTo,
@@ -188,7 +189,7 @@ describe("MainLayoutContainer", () => {
     });
   });
 
-  test("should closes the drawer when Escape key is pressed", () => {
+  test("should close the drawer when Escape key is pressed", async () => {
     render(
       <MainLayoutContainer shouldShowDrawer={true}>
         <div>Content</div>
@@ -204,6 +205,8 @@ describe("MainLayoutContainer", () => {
     const presentationBox = screen.getByRole("presentation");
     fireEvent.keyDown(presentationBox, { key: "Escape" });
 
-    expect(drawer).toHaveAttribute("aria-hidden", "true");
+    await waitFor(() => {
+      expect(drawer).toHaveAttribute("aria-hidden", "true");
+    });
   });
 });

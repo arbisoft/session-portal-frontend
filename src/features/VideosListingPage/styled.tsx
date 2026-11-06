@@ -1,7 +1,6 @@
 import Box from "@mui/material/Box";
-import { buttonClasses } from "@mui/material/Button";
 import { stackClasses } from "@mui/material/Stack";
-import { styled, css, alpha } from "@mui/material/styles";
+import { styled, css } from "@mui/material/styles";
 import { typographyClasses } from "@mui/material/Typography";
 
 import { pxToRem } from "@/utils/styleUtils";
@@ -43,35 +42,3 @@ export const FilterBox = styled(Box, {
     }
   `
 );
-
-export const DropdownContainer = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing(0.5),
-
-  [`.${buttonClasses.root}`]: {
-    backgroundColor: theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.2) : theme.palette.primary.main,
-    borderColor: theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.3) : theme.palette.secondary.main,
-    color: theme.palette.secondary.contrastText,
-    fontSize: pxToRem(14),
-    fontWeight: 600,
-
-    "&:hover": {
-      borderColor: theme.palette.mode === "dark" ? alpha(theme.palette.common.white, 0.5) : theme.palette.secondary.main,
-    },
-  },
-
-  [`>.${typographyClasses.root}`]: {
-    fontSize: pxToRem(14),
-  },
-
-  [theme.breakpoints.up("sm")]: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: theme.spacing(1.5),
-
-    [`>.${typographyClasses.root}`]: {
-      fontSize: pxToRem(16),
-    },
-  },
-}));

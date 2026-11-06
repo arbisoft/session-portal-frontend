@@ -30,7 +30,7 @@ const loaderCards: string[] = Array.from({ length: 5 }, () => faker.lorem.word()
 const LoaderSkeleton = () => (
   <SearchCardLoadingState>
     <Skeleton width={400} height={242} variant="rounded" />
-    <Box width="calc( 100% - 400px )">
+    <Box sx={{ width: "calc( 100% - 400px )" }}>
       <Skeleton width="100%" height={30} />
       <Skeleton width={250} height={30} />
       <br />
@@ -94,7 +94,7 @@ const SearchResultsPage = () => {
         }
       }}
       itemContent={(_, event) => (
-        <Box pb={4} height={isLargeScreen ? 260 : undefined}>
+        <Box sx={{ pb: 4, height: isLargeScreen ? 260 : undefined }}>
           <VideoCard
             data={{
               description: event.description,
@@ -138,7 +138,7 @@ const SearchResultsPage = () => {
         </FilterBox>
       )}
 
-      <Box width="100%" height="100%">
+      <Box sx={{ width: "100%", height: "100%" }}>
         <SearchResultsContainer>{renderResults()}</SearchResultsContainer>
       </Box>
     </MainLayoutContainer>

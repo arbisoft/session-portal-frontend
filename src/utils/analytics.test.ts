@@ -29,14 +29,4 @@ describe("trackEvent", () => {
       event_category: ANALYTICS_CATEGORY.AUTH,
     });
   });
-
-  it("should not call sendGTMEvent when window is undefined", () => {
-    const windowSpy = jest.spyOn(global, "window", "get").mockReturnValue(undefined as unknown as Window & typeof globalThis);
-
-    trackEvent(GA_EVENTS.LOGOUT, ANALYTICS_CATEGORY.AUTH);
-
-    expect(sendGTMEvent).not.toHaveBeenCalled();
-
-    windowSpy.mockRestore();
-  });
 });

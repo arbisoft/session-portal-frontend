@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import { chipClasses } from "@mui/material/Chip";
 import { styled, css, alpha } from "@mui/material/styles";
+import Link from "next/link";
 
 import { pxToRem } from "@/utils/styleUtils";
 
@@ -55,6 +56,18 @@ export const StyledDetailSection = styled(Box, {
     }
   `
 );
+
+export const PresenterLink = styled(Link, {
+  name: "PresenterLink",
+})`
+  color: inherit;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+  }
+`;
 
 export const StyledNotesSection = styled(Box, {
   name: "StyledNotesSection",

@@ -122,7 +122,7 @@ describe("VideoCard", () => {
     );
 
     const card = screen.getByTestId("video-card");
-    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
+    expect(getComputedStyle(card).backgroundColor).toBe("rgba(0, 0, 0, 0)");
   });
 
   it("should render the featured card outlined in light mode", () => {
@@ -141,6 +141,6 @@ describe("VideoCard", () => {
     );
 
     const card = screen.getByTestId("video-card");
-    expect(getComputedStyle(card).backgroundColor).toBe("transparent");
+    expect(getComputedStyle(card).backgroundColor).toBe("rgba(0, 0, 0, 0)");
   });
 });

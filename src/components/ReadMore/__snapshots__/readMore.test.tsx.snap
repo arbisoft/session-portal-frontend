@@ -3,7 +3,7 @@
 exports[`ReadMore Component should match snapshot 1`] = `
 <DocumentFragment>
   <p
-    class="MuiTypography-root MuiTypography-bodySmall css-1xg564j-MuiTypography-root-Logo-root"
+    class="MuiTypography-root MuiTypography-bodySmall css-1gx3dd9-MuiTypography-root-Logo-root"
     tabindex="0"
   >
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
@@ -17,15 +17,14 @@ exports[`ReadMore Component should match snapshot 1`] = `
     >
        accumsan arcu in nunc pharetra, ac consectetur nulla bibendum.
     </span>
-    <span
+    <button
       aria-expanded="false"
       class="show-more-button"
       data-testid="show-more-button"
-      role="button"
-      tabindex="0"
+      type="button"
     >
       Read more
-    </span>
+    </button>
   </p>
 </DocumentFragment>
 `;

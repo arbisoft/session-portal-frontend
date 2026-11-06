@@ -42,8 +42,12 @@ interface Publisher {
   last_name: string;
 }
 
-interface Presenter extends Publisher {
+/** Mirrors the backend `EventPresenterSerializer`: the user's id is `user_id`, not `id`. */
+interface Presenter {
   email: string;
+  first_name: string;
+  last_name: string;
+  user_id: number;
 }
 
 export interface AllEventResponse {
@@ -55,6 +59,8 @@ export interface AllEventResponse {
 
 export type OrderingField =
   "-event_time" | "-event_type" | "-is_featured" | "-status" | "event_time" | "event_type" | "is_featured" | "status";
+
+export type SortOption = "newest" | "oldest";
 
 export type EventsParams = {
   event_time_after?: string;

@@ -295,7 +295,7 @@ describe("eventsApi endpoints", () => {
           video_duration: 3351,
           presenters: [
             {
-              id: 1,
+              user_id: 1,
               first_name: "Qaisar ",
               last_name: "Irfan",
               email: "qaisar.irfan@arbisoft.com",
@@ -330,7 +330,7 @@ describe("eventsApi endpoints", () => {
           video_duration: 3351,
           presenters: [
             {
-              id: 1,
+              user_id: 1,
               first_name: "Qaisar ",
               last_name: "Irfan",
               email: "qaisar.irfan@arbisoft.com",
@@ -364,7 +364,7 @@ describe("eventsApi endpoints", () => {
           video_duration: 3351,
           presenters: [
             {
-              id: 1,
+              user_id: 1,
               first_name: "Qaisar ",
               last_name: "Irfan",
               email: "qaisar.irfan@arbisoft.com",
@@ -401,7 +401,7 @@ describe("eventsApi endpoints", () => {
           video_duration: 3351,
           presenters: [
             {
-              id: 1,
+              user_id: 1,
               first_name: "Shaheer",
               last_name: "Alam",
               email: "shaheer.alam@arbisoft.com",

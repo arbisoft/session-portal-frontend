@@ -13,6 +13,11 @@ const meta: Meta<ReadMoreProps> = {
       control: "number",
       description: "The number of words to show before truncating the text",
     },
+    maxLines: {
+      control: "number",
+      description: `Clamp the text to this many lines instead of truncating by word count. 
+        The toggle only appears when the text actually overflows. Overrides amountOfWords.`,
+    },
     className: {
       control: "text",
       description: "Additional CSS class for the component",
@@ -42,6 +47,13 @@ export const Default: Story = {
     showMoreText: "Show More",
     showLessText: "Show Less",
     amountOfWords: 36,
+  },
+};
+
+export const ClampedToFourLines: Story = {
+  args: {
+    ...Default.args,
+    maxLines: 4,
   },
 };
 

@@ -289,6 +289,30 @@ describe("VideoPlayer", () => {
       expect(container).toHaveStyle({ width: "70%" });
     });
 
+    it("should auto-hide controls after 3000ms of inactivity by default", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      expect(getMediaPlayerProps().controlsDelay).toBe(3000);
+    });
+
+    it("should listen for keyboard shortcuts on the document by default so arrow keys seek from anywhere on the page", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      expect(getMediaPlayerProps().keyTarget).toBe("document");
+    });
+
+    it("should allow scoping keyboard shortcuts to the player", () => {
+      render(<VideoPlayer {...defaultProps} keyTarget="player" />);
+
+      expect(getMediaPlayerProps().keyTarget).toBe("player");
+    });
+
+    it("should pass a custom controlsDelay to the media player", () => {
+      render(<VideoPlayer {...defaultProps} controlsDelay={5000} />);
+
+      expect(getMediaPlayerProps().controlsDelay).toBe(5000);
+    });
+
     it("handles missing poster props gracefully", () => {
       const propsWithoutPoster = {
         ...defaultProps,
