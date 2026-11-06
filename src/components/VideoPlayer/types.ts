@@ -14,6 +14,7 @@ export interface VideoPlayerProps {
   posterSrc: string;
   title: string;
   videoSrc: string;
+  videoType?: "video/mp4" | "video/webm" | "video/ogg";
   watchThresholdSeconds?: number;
   width?: string;
 }

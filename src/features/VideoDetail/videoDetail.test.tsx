@@ -17,9 +17,16 @@ let mockVideoId: string | undefined = "my-video";
 
 const buildDetailState = (overrides: Record<string, unknown> = {}) => ({
   data: {
-    video_file: "https://cdn.example.com/video.mp4",
+    video_file: "/api/v1/events/videoasset/my-video/stream/",
     view_count: 3,
-    event: { title: "A session", presenters: [], event_time: "2025-01-01T00:00:00Z", description: "d", tags: [] },
+    event: {
+      title: "A session",
+      slug: "my-video",
+      presenters: [],
+      event_time: "2025-01-01T00:00:00Z",
+      description: "d",
+      tags: [],
+    },
   },
   isFetching: false,
   isLoading: false,
@@ -71,9 +78,9 @@ jest.mock("@/components/containers/MainLayoutContainer", () => ({
 
 jest.mock("@/components/VideoPlayer", () => ({
   __esModule: true,
-  default: ({ onWatchThreshold, posterSrc }: { onWatchThreshold: () => void; posterSrc: string }) => {
+  default: ({ onWatchThreshold, posterSrc, videoSrc }: { onWatchThreshold: () => void; posterSrc: string; videoSrc: string }) => {
     mockWatchThreshold = onWatchThreshold;
-    return <div data-testid="video-player" data-poster={posterSrc} />;
+    return <div data-testid="video-player" data-poster={posterSrc} data-src={videoSrc} />;
   },
 }));
 
@@ -184,6 +191,12 @@ describe("VideoDetail", () => {
       render(<VideoDetail />);
 
       expect(screen.queryByText(/views?$/)).not.toBeInTheDocument();
+    });
+
+    it("should play from the authenticated same-origin stream and never from the backend media URL", () => {
+      render(<VideoDetail />);
+
+      expect(screen.getByTestId("video-player")).toHaveAttribute("data-src", "/bff/video/my-video");
     });
 
     it("should skip the video player when the event has no video file", () => {

@@ -75,6 +75,10 @@ Title-cases every word in a string using a lowercase + regex replace approach. N
 
 Normalises Next.js route params that may be `string | string[] | undefined` to a single `string`. Returns `""` for undefined. Used in route page files.
 
+### `getVideoStreamUrl(slug: string)`
+
+Returns `/bff/video/<encoded slug>` (`API_PROXY_PREFIX` + `/video/` + `encodeURIComponent(slug)`), the same-origin, cookie-authenticated route a `<video>` element plays from because it cannot send the proxy guard header. Used by `VideoDetail` for `videoSrc`; see `docs/api.md` for the route.
+
 ## Upload helpers (`src/utils/upload.ts`, `src/utils/tags.ts`)
 
 Pure helpers behind the [Upload Video](./upload-video.md) page. Besides the resumable-upload helpers (error classification, retry delay, fingerprints, checksums), the page uses:

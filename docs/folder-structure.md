@@ -57,6 +57,13 @@ Routes visible from `src/app/`:
 | `/videos/results`   | `src/app/videos/results/page.tsx`   |
 | `/upload-video`     | `src/app/upload-video/page.tsx`     |
 
+Route handlers (not pages; `src/proxy.ts` excludes `/bff/` from its auth redirect, so each handler checks the cookie itself):
+
+| Path | File | Purpose |
+| --- | --- | --- |
+| `/bff/<path>` | `src/app/bff/[...path]/route.ts` | Generic API proxy: attaches the Bearer token and enforces the guard header |
+| `/bff/video/<slug>` | `src/app/bff/video/[slug]/route.ts` | Cookie-authenticated, Range-aware video stream for the `<video>` element |
+
 App-level special files: `src/app/error.tsx` (route error boundary), `src/app/global-error.tsx` (root error boundary), `src/app/not-found.tsx` (404).
 
 ## Feature Modules
