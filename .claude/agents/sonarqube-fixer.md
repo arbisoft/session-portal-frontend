@@ -15,7 +15,7 @@ Scope is the issues Sonar reports, nothing else. Do not refactor unrelated code,
 
 1. Read `sonar-project.properties` for `sonar.projectKey`, `sonar.sources`, `sonar.exclusions` and `sonar.javascript.lcov.reportPaths`. Use what is there now, not what this file remembers.
 2. Read the Sonar step in `.github/workflows/build.yml` to confirm the secret names (`SONAR_TOKEN`, `SONAR_HOST_URL`) and which branches and PRs get scanned.
-3. Read the `package.json` scripts (`lint`, `typecheck`, `test`, `test:cov`) and `CLAUDE.md` for the current ESLint rules. If any path or name cited below no longer exists, fix this file to match and say so in the report.
+3. Read the `package.json` scripts (`lint`, `typecheck`, `test`, `test:cov`) and `CLAUDE.md` for the current ESLint rules. If any path or name cited below no longer exists, fix this file to match and say so in the report, per `.claude/references/self-healing.md`.
 
 ## Step 1 — Get the issues
 

@@ -1,0 +1,131 @@
+{
+  "purpose": "Research ledger for the claude-config-maintainer agent. Committed. Do not hand-edit researched versions; use `node .claude/scripts/config-audit.mjs --update-state <pkg...>` after actually researching a package.",
+  "staleAfterDays": 30,
+  "lastResearchAt": "2026-11-06T13:28:52.906Z",
+  "tracked": [
+    "next",
+    "react",
+    "@mui/material",
+    "@reduxjs/toolkit",
+    "jest",
+    "storybook",
+    "typescript",
+    "eslint",
+    "eslint-plugin-react-hooks",
+    "@sentry/nextjs",
+    "react-hook-form",
+    "@vidstack/react",
+    "@playwright/test",
+    "@testing-library/react",
+    "release-it",
+    "husky"
+  ],
+  "researched": {
+    "next": {
+      "version": "16.4.3",
+      "checkedAt": "2026-11-06"
+    },
+    "@mui/material": {
+      "version": "9.5.0",
+      "checkedAt": "2026-11-06"
+    },
+    "jest": {
+      "version": "30.5.2",
+      "checkedAt": "2026-11-06"
+    },
+    "@reduxjs/toolkit": {
+      "version": "2.13.0",
+      "checkedAt": "2026-11-06"
+    },
+    "@sentry/nextjs": {
+      "version": "11.10.0",
+      "checkedAt": "2026-11-06"
+    },
+    "eslint-plugin-react-hooks": {
+      "version": "7.1.1",
+      "checkedAt": "2026-11-06"
+    },
+    "storybook": {
+      "version": "10.6.5",
+      "checkedAt": "2026-11-06"
+    },
+    "eslint": {
+      "version": "9.39.1",
+      "checkedAt": "2026-11-06"
+    },
+    "@testing-library/react": {
+      "version": "16.3.3",
+      "checkedAt": "2026-11-06"
+    },
+    "react": {
+      "version": "19.3.1",
+      "checkedAt": "2026-11-06"
+    }
+  },
+  "allowedUnresolvedSymbols": [
+    "BackdropProps",
+    "GridLegacy",
+    "PageProps",
+    "PaperProps",
+    "TransitionComponent",
+    "TransitionProps",
+    "UPPER_SNAKE_CASE",
+    "ViewTransition",
+    "boxShadow",
+    "cacheComponents",
+    "cacheLife",
+    "cacheTag",
+    "componentsProps",
+    "dataLayer",
+    "disableEscapeKeyDown",
+    "genMockFromModule",
+    "maxPages",
+    "minimumCacheTTL",
+    "pageParams",
+    "reactCompiler",
+    "skipMiddlewareUrlNormalize",
+    "textRange",
+    "toThrowError",
+    "updateTag",
+    "useAuth",
+    "useEffectEvent"
+  ],
+  "allowedUnresolvedNote": "Backticked identifiers the audit may not find in the repo: external APIs (dataLayer, boxShadow, textRange, Jest/MUI names) or names that are mentioned because they are intentionally absent (useAuth). Remove an entry if the name starts appearing in docs for a different reason.",
+  "candidates": [
+    {
+      "topic": "RTK Query build.infiniteQuery instead of the custom merge/serializeQueryArgs accumulation",
+      "source": "https://redux.js.org/toolkit/rtk-query/usage/infinite-queries",
+      "decision": "declined",
+      "reason": "CLAUDE.md documents the custom accumulation as the intended design; migrating changes cache shape (pages/pageParams) and every caller. Needs a product/engineering decision.",
+      "date": "2026-11-06"
+    },
+    {
+      "topic": "Enable reactCompiler in next.config.ts",
+      "source": "https://nextjs.org/docs/app/guides/upgrading/version-16",
+      "decision": "candidate",
+      "reason": "Stable but opt-in; raises build time and surfaces eslint-plugin-react-hooks v7 compiler diagnostics. Application change, not a config change.",
+      "date": "2026-11-06"
+    },
+    {
+      "topic": "Enable cacheComponents (Cache Components / PPR)",
+      "source": "https://nextjs.org/docs/app/guides/upgrading/version-16",
+      "decision": "candidate",
+      "reason": "Not a rename-only change; can surface build errors for uncached data outside Suspense. The app is client-driven behind a BFF.",
+      "date": "2026-11-06"
+    },
+    {
+      "topic": "Turn on react-hooks/exhaustive-deps in eslint.config.mjs",
+      "source": "https://react.dev/reference/eslint-plugin-react-hooks",
+      "decision": "candidate",
+      "reason": "Currently off by choice; enabling would flag existing code. Reviewers check dependencies by hand until decided.",
+      "date": "2026-11-06"
+    },
+    {
+      "topic": "Upgrade ESLint 9 to 10",
+      "source": "https://eslint.org/docs/latest/use/migrate-to-10.0.0",
+      "decision": "candidate",
+      "reason": "eslint-config-next 16.4+ supports ESLint 10, but the migration guide says nothing about eslint-plugin-import / react / react-hooks compatibility. Dependency change; verify plugin peer ranges first.",
+      "date": "2026-11-06"
+    }
+  ]
+}
