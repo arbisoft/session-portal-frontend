@@ -52,7 +52,7 @@ jest.mock("@vidstack/react", () => {
     HTMLAttributes<HTMLDivElement> & {
       children?: React.ReactNode;
       className?: string;
-      src?: string;
+      src?: string | { src: string; type: string };
       title?: string;
     }
   >(({ children, className, src, title, ...props }, ref) => {
@@ -60,7 +60,13 @@ jest.mock("@vidstack/react", () => {
     capturedMediaPlayerProps = props;
 
     return (
-      <div data-testid="media-player" className={className} data-src={src} data-title={title}>
+      <div
+        data-testid="media-player"
+        className={className}
+        data-src={src && typeof src === "object" ? src.src : src}
+        data-type={src && typeof src === "object" ? src.type : undefined}
+        data-title={title}
+      >
         {children}
       </div>
     );
@@ -203,6 +209,20 @@ describe("VideoPlayer", () => {
       const mediaPlayer = screen.getByTestId("media-player");
       expect(mediaPlayer).toHaveAttribute("data-src", "https://example.com/video.mp4");
       expect(mediaPlayer).toHaveAttribute("data-title", "Test Video");
+    });
+
+    it("should pass an explicit MIME type so extension-less stream URLs are recognised", () => {
+      render(<VideoPlayer {...defaultProps} videoSrc="/bff/video/my-video" />);
+
+      const mediaPlayer = screen.getByTestId("media-player");
+      expect(mediaPlayer).toHaveAttribute("data-src", "/bff/video/my-video");
+      expect(mediaPlayer).toHaveAttribute("data-type", "video/mp4");
+    });
+
+    it("should use the provided video type instead of the default", () => {
+      render(<VideoPlayer {...defaultProps} videoType="video/webm" />);
+
+      expect(screen.getByTestId("media-player")).toHaveAttribute("data-type", "video/webm");
     });
   });
 
