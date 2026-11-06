@@ -3,6 +3,7 @@ name: commit-generator
 description: "Analyzes git staged changes in the Session Portal frontend repo, splits unrelated changes into separate logical commits with semantic messages, actually creates those commits, and generates a structured Pull Request title + description covering all of them. Self-heals its own scope/path tables when the repo's folder layout has moved on."
 argument-hint: "Provide a brief description of the changes you made, or simply ask to generate a commit message and PR description based on your staged changes."
 user-invocable: true
+disable-model-invocation: true
 ---
 
 # Session Portal Commit and PR Generator
@@ -485,8 +486,4 @@ The skill must:
 
 # Self-Healing This Skill
 
-This SKILL.md cites specific paths and conventions (`src/app/`, `src/features/`, `src/components/`, `src/redux/`, `src/hooks/`, `src/models/`, `src/proxy.ts`, the `ASP-NN` ticket prefix, the scope table in Step 3, the reviewer-notes triggers in Step 9). Don't treat it as permanently accurate:
-
-- If a run surfaces a cited path that no longer exists, a layer that's been restructured, or a scope row that no longer fits how the codebase is organized, that's a stale skill, not a one-off exception.
-- Patch this SKILL.md in the same pass — add or fix the relevant row/example — rather than leaving the correction for a future run to rediscover.
-- Only fix what you actually observed drifting during this run; don't speculatively rewrite sections you didn't touch.
+Follow `.claude/references/self-healing.md`. Skill-specific: the scope table in Step 3 and the reviewer-notes triggers in Step 9 cite `src/` layer paths, `src/proxy.ts` and the `ASP-NN` ticket prefix. If a run shows a scope row that no longer fits the folder layout, add or fix the row in the same pass.

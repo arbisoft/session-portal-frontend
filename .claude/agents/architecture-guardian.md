@@ -35,8 +35,9 @@ Size and complexity: keep components under about 250 lines and functions under a
 ### 2. Auth and token handling (security-critical)
 
 - The access token lives only in the HttpOnly `access` cookie (`ACCESS_COOKIE_NAME`). It must never reach client JS, Redux, `localStorage` or `sessionStorage`, logs or analytics events. `loginAndSetCookie` returns `access: null, refresh: null`. Keep it that way.
-- Client code calls the backend only through RTK Query, whose base query targets the BFF proxy `/bff/*` (`src/app/bff/[...path]/route.ts`). The proxy requires the `x-requested-with` guard header (constants `API_PROXY_GUARD_*`), which only `customBaseQuery` sets. Any new client that calls the proxy must send it. Never add a client-side `fetch` to `BASE_URL` with an `Authorization` header. Never read the token in the browser to gate UI. Authentication status comes from the middleware.
+- Client code calls the backend only through RTK Query, whose base query targets the BFF proxy `/bff/*` (`src/app/bff/[...path]/route.ts`). The proxy requires the `x-requested-with` guard header (constants `API_PROXY_GUARD_*`), which only `customBaseQuery` sets. Any new client that calls the proxy must send it. Never add a client-side `fetch` to `BASE_URL` with an `Authorization` header. Never read the token in the browser to gate UI. Authentication status comes from `src/proxy.ts` (cookie and local JWT expiry) and `AuthSession` (`GET /users/me`).
 - New server-side code that calls the backend on the user's behalf goes through a server action or route handler that reads the cookie via `next/headers`.
+- **Sanctioned exception, browser-native media loads.** A `<video>` or `<img>` element cannot send the guard header, so `src/app/bff/video/[slug]/route.ts` is a dedicated route handler outside the generic proxy. A new route of this kind is acceptable only if all of these hold: it answers safe methods only (`GET` / `HEAD`); it authenticates from the HttpOnly cookie server-side and answers `401` without it; it validates path input against a strict pattern; it forwards only an allow-list of request headers (such as `range`) and copies back only an allow-list of response headers (never `set-cookie` or CORS from upstream); it uses `redirect: "manual"` and `cache: "no-store"`, sends `accept-encoding: identity` upstream so forwarded `content-length` and Range offsets stay valid, and sets its own `Cache-Control: private, no-cache` instead of passing the upstream value through (the bytes are per-user); it clears the cookie when upstream returns `401`; it reports 5xx and network failures through `src/utils/monitoring.ts`; and it has a `/** @jest-environment node */` test for each of those. Any other client call to the backend still goes through `/bff/[...path]` with the guard header. Report every new exception route as a security decision.
 - `src/proxy.ts` fails closed. Every route requires auth unless it is in `PUBLIC_ROUTES` (`src/constants/constants.ts`, checked with `isPublicRoute`). Adding a public route is a security decision: call it out in your report. New static asset paths need a file extension or an entry in the matcher exclusions.
 - `redux-persist` may persist only non-sensitive UI or profile data. Changing the persisted shape means bumping `version` and adding a migration in `configureStore.tsx`.
 - Use the `logout` action from `redux/login/actions.ts`. Never dispatch the string `"login/logout"`.
@@ -81,6 +82,20 @@ Size and complexity: keep components under about 250 lines and functions under a
 - Feature flags go through `src/constants/featureFlags.ts`. Never ship behavior-changing code without a flag when it is risky.
 - Conventional commits. Never commit to `main`. Target `dev`.
 
+### 8. Framework currency (Next.js 16, React 19, MUI 9)
+
+Verified against the official upgrade guides for the installed majors. Check the diff against these; re-verify with `package.json` before enforcing.
+
+- Request APIs are async: `await cookies()`, `await headers()`, and `params` / `searchParams` are Promises (synchronous access was removed in Next 16). Type them with the route's `RouteContext` or `PageProps` helpers.
+- The network boundary file is `src/proxy.ts` on the Node.js runtime. Do not add `middleware.ts`, an `edge` runtime export or `skipMiddlewareUrlNormalize`. If Sentry's `tunnelRoute` is ever enabled, exclude that route in the proxy matcher.
+- `next lint` and the `eslint` key in `next.config.ts` are removed. Lint runs through the ESLint CLI (`npm run lint`). Turbopack is the default bundler, and a custom `webpack` config fails `next build` unless `--webpack` is passed.
+- Caching APIs: `revalidateTag(tag, profile)` takes a second argument, `updateTag` is for read-your-writes inside Server Actions, `cacheLife` / `cacheTag` are stable without the `unstable_` prefix. `cacheComponents` and `reactCompiler` are opt-in and are not a rename-only change; do not enable them inside an unrelated task, report them as candidates.
+- Images: keep `remotePatterns` (`images.domains` is deprecated). Defaults changed: `minimumCacheTTL` is 4 hours, `qualities` is `[75]`, local images with query strings need `images.localPatterns`, and at most 3 redirects are followed.
+- Parallel-route slots need an explicit `default.tsx`.
+- React 19.2 provides `useEffectEvent`, `Activity` and `ViewTransition`. Prefer `useEffectEvent` over disabling dependency lint or stuffing refs. `eslint-plugin-react-hooks` v7 adds compiler-backed rules (`set-state-in-effect`, `refs`, `purity`, `immutability`); `exhaustive-deps` is currently off in `eslint.config.mjs`, so reviewers check effect dependencies by hand.
+- MUI 9 styling and API rules live in `ui-design-guidelines.md`; do not duplicate them here.
+- RTK Query 2.x offers `build.infiniteQuery` (`pages` / `pageParams`, `maxPages`). The repo deliberately uses the custom `merge` accumulation described in `CLAUDE.md`. Do not migrate it as a side effect of another task; raise it as a candidate.
+
 ## Procedure
 
 1. **List the change.** Run `git status --short` and `git diff HEAD --stat`. Read each changed or new file in full. Read the neighbors when placement matters.
@@ -106,4 +121,6 @@ Size and complexity: keep components under about 250 lines and functions under a
 
 ## Self-maintenance
 
-If a rule above cites a path, symbol or convention that no longer exists in the codebase, verify against the current code, fix this file to match, and mention it in your report. Do not silently ignore stale rules.
+Follow `.claude/references/self-healing.md`. If a rule above cites a path, symbol or convention that no longer exists in the codebase, verify against the current code, fix this file to match, and mention it in your report. Do not silently ignore stale rules. Security rules (sections 2, 3, 7) are corrected for wording and paths only; weakening one needs a human decision.
+
+This file is the single owner of the architecture, security, dependency and CI rules. `code-review`, `sonarqube-fixer` and the `CLAUDE.md` pipeline link here; they must not restate these rules.
