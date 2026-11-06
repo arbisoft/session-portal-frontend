@@ -4,6 +4,8 @@ This document describes the API endpoints consumed by the Session Portal Fronten
 
 The browser never calls the backend directly. Requests go to the BFF proxy (`/bff/<path>`, `src/app/bff/[...path]/route.ts`), which reads the HttpOnly `access` cookie and attaches the `Authorization: Bearer` header server-side. The documented paths below are the backend paths the proxy forwards to.
 
+Video bytes use a second route, `/bff/video/<slug>` (`src/app/bff/video/[slug]/route.ts`), because a `<video>` element cannot send the guard header. It authenticates with the same HttpOnly cookie, forwards `Range`/`If-Range` (requesting an identity encoding so offsets stay valid), always answers `Cache-Control: private, no-cache`, and proxies the backend's `GET /events/videoasset/<slug>/stream/` (returns 200/206/416 and requires a valid token on every request). `video_file` fields in API responses are that stream path, never a `/media/` URL.
+
 ## Authentication
 
 All API requests except login require a Bearer token. The frontend never handles the token in client code; see the BFF note above.
