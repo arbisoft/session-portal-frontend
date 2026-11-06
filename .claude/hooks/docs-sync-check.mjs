@@ -1,8 +1,22 @@
 #!/usr/bin/env node
-// Stop hook: when source/config files changed but no documentation did, ask the agent to run the
-// documentation pipeline once. Skills cannot be invoked from a hook, so this blocks the stop with a reason.
-import { execFileSync } from "node:child_process";
+// Stop hook. Blocks the stop (once per situation) when:
+//   1. source/config files changed but no documentation did -> run the documentation pipeline;
+//   2. the Claude config audit reports errors             -> run claude-config-maintainer;
+//   3. a code change has not been reviewed for config impact -> run claude-config-maintainer.
+// Skills and agents cannot be invoked from a hook, so it blocks the stop with a reason instead.
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
+
+import {
+  behaviorFingerprint,
+  changedFiles,
+  isBehaviorFile,
+  isDocFile,
+  projectRoot,
+  readReviewState,
+  runAudit,
+  writeReviewState,
+} from "../scripts/config-audit.mjs";
 
 const readStdin = () => {
   try {
@@ -15,40 +29,48 @@ const readStdin = () => {
 const input = readStdin();
 if (input.stop_hook_active) process.exit(0);
 
-let porcelain = "";
-try {
-  porcelain = execFileSync("git", ["status", "--porcelain"], {
-    cwd: process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd(),
-    encoding: "utf8",
-  });
-} catch {
-  process.exit(0);
+const root = process.env.CLAUDE_PROJECT_DIR || input.cwd || projectRoot;
+const changed = changedFiles(root);
+if (changed.length === 0) process.exit(0);
+
+const preview = (files) => {
+  const extra = files.length > 8 ? " and " + (files.length - 8) + " more" : "";
+  return files.slice(0, 8).join(", ") + extra;
+};
+const reasons = [];
+
+const behaviorChanges = changed.filter(isBehaviorFile);
+if (behaviorChanges.length > 0 && !changed.some(isDocFile)) {
+  reasons.push(
+    `Code or configuration changed (${preview(behaviorChanges)}) but no documentation did. Run the documentation pipeline now, in order: ` +
+      "update-project-docs, then documentation-generator, then documentation-reviewer. " +
+      'If the docs already match the code, say "Documentation is already synchronized" and finish.'
+  );
 }
 
-const changedFiles = porcelain
-  .split("\n")
-  .filter(Boolean)
-  .map((line) => line.slice(3).split(" -> ").pop().replace(/^"|"$/g, ""));
+const touchesClaudeConfig = changed.some((file) => file === "CLAUDE.md" || file.startsWith(".claude/"));
+if (behaviorChanges.length > 0 || touchesClaudeConfig) {
+  const review = readReviewState(root);
+  const fingerprint = behaviorFingerprint(root);
+  const errors = runAudit(root).findings.filter((finding) => finding.severity === "error");
 
-const isDocFile = (file) => /^(docs\/|README\.md$|CONTRIBUTING\.md$|CHANGELOG\.md$)/.test(file);
-const isTestOrStory = (file) => /\.(test|stories)\.[jt]sx?$|\.snap$/.test(file);
-const isBehaviorFile = (file) =>
-  /^(src\/|next\.config\.|package\.json$|Dockerfile$|example\.env\.local$|\.github\/)/.test(file) && !isTestOrStory(file);
+  const auditKey = createHash("sha256").update(fingerprint).update(JSON.stringify(errors)).digest("hex");
+  if (errors.length > 0 && review.askedAudit !== auditKey) {
+    const lines = errors.slice(0, 6).map((error) => `${error.file}:${error.line} ${error.message}`);
+    reasons.push(
+      `The Claude config audit found ${errors.length} error(s): ${lines.join("; ")}${errors.length > 6 ? "; ..." : ""}. ` +
+        "Invoke the claude-config-maintainer agent to fix them (it runs node .claude/scripts/config-audit.mjs)."
+    );
+    writeReviewState(root, { askedAudit: auditKey });
+  } else if (behaviorChanges.length > 0 && review.reviewed !== fingerprint && review.asked !== fingerprint) {
+    reasons.push(
+      "This code change has not been reviewed for Claude config impact. Invoke the claude-config-maintainer agent as the final step; " +
+        'if nothing needs updating it will say so and record the review. If the change is trivial, run "node .claude/scripts/config-audit.mjs --stamp" after a clean audit.'
+    );
+    writeReviewState(root, { asked: fingerprint });
+  }
+}
 
-const behaviorChanges = changedFiles.filter(isBehaviorFile);
-const docsChanged = changedFiles.some(isDocFile);
+if (reasons.length === 0) process.exit(0);
 
-if (behaviorChanges.length === 0 || docsChanged) process.exit(0);
-
-const preview = behaviorChanges.slice(0, 8).join(", ");
-const more = behaviorChanges.length > 8 ? ` and ${behaviorChanges.length - 8} more` : "";
-
-process.stdout.write(
-  JSON.stringify({
-    decision: "block",
-    reason:
-      `Code or configuration changed (${preview}${more}) but no documentation did. Run the documentation pipeline now, in order: ` +
-      "update-project-docs, then documentation-generator, then documentation-reviewer. " +
-      'If the docs already match the code, say "Documentation is already synchronized" and finish.',
-  })
-);
+process.stdout.write(JSON.stringify({ decision: "block", reason: reasons.join(" ALSO: ") }));

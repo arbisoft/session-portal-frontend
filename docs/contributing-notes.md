@@ -173,8 +173,18 @@ Contributors should branch off `dev` and open PRs targeting `dev`. Release autom
 
 ## Documentation Expectations
 
-Changes to code, configuration, dependencies, CI or Docker files must update the matching docs in the same pull request (the mapping is in `.claude/skills/update-project-docs/SKILL.md`, "Project Doc Map"). In Claude Code sessions this is automated:
+Changes to code, configuration, dependencies, CI or Docker files must update the matching docs in the same pull request (the mapping is the "Project Doc Map" in `.claude/references/documentation-pipeline.md`). In Claude Code sessions this is automated:
 
 - `CLAUDE.md` requires the `update-project-docs` → `documentation-generator` → `documentation-reviewer` pipeline after every code or config change.
 - A `Stop` hook (`.claude/hooks/docs-sync-check.mjs`, registered in `.claude/settings.json`) asks for the pipeline once when source files changed but no documentation did.
 - Do not hand-edit `CHANGELOG.md`; `release-it` generates it.
+
+## Claude Code Configuration
+
+The Claude Code setup (`CLAUDE.md`, `.claude/agents`, `.claude/skills`, `.claude/references`, the Stop hook) is maintained so it does not drift from the code:
+
+- `node .claude/scripts/config-audit.mjs` is a dependency-free audit. It fails on invalid frontmatter, a skill file not named exactly `SKILL.md`, cited paths or `npm run` scripts that do not exist, and framework versions that disagree with `package.json`. It warns on unknown symbols, near-duplicate instructions, oversized skills and descriptions, and skills that commit without `disable-model-invocation`. `--json` gives a machine-readable report.
+- The `claude-config-maintainer` agent runs last on every code or config task. It runs the audit, checks whether the finished change means a rule should be updated, researches official documentation only when a tracked dependency moved, and records a local review stamp (`--stamp`, git-ignored).
+- `.claude/maintenance/state.json` is the committed research ledger: tracked packages, the versions last researched, recommendations that were declined or left as candidates, and identifiers the audit may not find in the repo.
+- Each topic has one owner file; shared protocols live in `.claude/references/`. Link to the owner instead of copying a rule.
+- The Stop hook blocks once when the audit has errors or when a code change has not been reviewed for config impact.
