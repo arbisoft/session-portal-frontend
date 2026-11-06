@@ -84,6 +84,8 @@ The `customBaseQuery` also triggers a client-side logout: any `401` response dis
 
 The token never reaches client JS. `customBaseQuery` sends requests to the BFF proxy (`src/app/bff/[...path]/route.ts`), which reads the HttpOnly `access` cookie and injects `Authorization: Bearer <token>` server-side. The proxy returns `401` when the cookie is missing.
 
+Video playback uses a second route, `src/app/bff/video/[slug]/route.ts` (`/bff/video/<slug>`), because a `<video>` element cannot send the guard header. It authenticates with the same HttpOnly cookie, returns `401` when the cookie is missing, and the backend checks the token on every request (including each `Range` request made when seeking). When the backend answers `401` the route also clears the `access` cookie, so a rejected token cannot stay "valid" for `src/proxy.ts`, which only checks expiry locally.
+
 ## Key Edge Cases
 
 | Scenario | Behavior |

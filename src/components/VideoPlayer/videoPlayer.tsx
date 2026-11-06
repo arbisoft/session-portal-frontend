@@ -24,6 +24,8 @@ import { VideoPlayerProps } from "./types";
 import "./styles.css";
 
 const DEFAULT_CONTROLS_DELAY_MS = 3000;
+// The stream URL has no file extension, so vidstack cannot infer the format and needs the MIME type spelled out.
+const DEFAULT_VIDEO_TYPE = "video/mp4";
 
 const VideoPlayer: FC<VideoPlayerProps> = ({
   captionsFile,
@@ -39,6 +41,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   posterSrc,
   title,
   videoSrc,
+  videoType = DEFAULT_VIDEO_TYPE,
   watchThresholdSeconds = 30,
   width = "70%",
 }) => {
@@ -90,7 +93,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         crossOrigin={crossOrigin}
         playsInline={playsInline}
         ref={player}
-        src={videoSrc}
+        src={videoSrc ? { src: videoSrc, type: videoType } : videoSrc}
         title={title}
         onPlay={() => trackEvent(GA_EVENTS.VIDEO_PLAY, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel })}
         onPause={() => trackEvent(GA_EVENTS.VIDEO_PAUSE, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel })}

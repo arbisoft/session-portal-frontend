@@ -20,7 +20,7 @@ import { DEFAULT_THUMBNAIL } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
 import { useEventDetailQuery, useIncrementViewCountMutation, useRecommendationQuery } from "@/redux/events/apiSlice";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
-import { fullName, transformVideoToCardData } from "@/utils/utils";
+import { fullName, getVideoStreamUrl, transformVideoToCardData } from "@/utils/utils";
 
 import SkeletonLoader from "./skeletonLoader";
 import { PresenterLink, StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
@@ -53,6 +53,7 @@ const VideoDetail = () => {
   const { data, isFetching, isLoading, isUninitialized, error } = useEventDetailQuery(videoId ?? skipToken);
 
   const isDataLoading = isFetching || isLoading || isUninitialized;
+  const playableVideoSlug = data?.video_file ? data.event?.slug : undefined;
 
   useEffect(() => {
     document.title = `${data?.event?.title ?? ""} - Sessions Portal`;
@@ -117,16 +118,16 @@ const VideoDetail = () => {
         <SkeletonLoader />
       ) : (
         <>
-          {data?.video_file && (
+          {playableVideoSlug && (
             <VideoPlayer
-              key={data.video_file}
+              key={playableVideoSlug}
               {...{
                 captionsFile: data?.captions_file,
                 crossOrigin: true,
                 playsInline: true,
                 width: "100%",
                 title: "",
-                videoSrc: data?.video_file ?? "",
+                videoSrc: getVideoStreamUrl(playableVideoSlug),
                 posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
                 posterAlt: data?.event?.title ?? "",
                 onWatchThreshold: handleWatchThreshold,

@@ -69,6 +69,7 @@ Current test suite includes unit tests for:
 
 - Utility functions (`src/utils/utils.ts`)
 - Proxy authentication (`src/proxy.ts`)
+- BFF route handlers (`src/app/bff/[...path]/route.test.ts`, `src/app/bff/video/[slug]/route.test.ts`)
 - Session verification (`src/features/AuthSession`): protected vs public routes, `401` redirect, kept session on 5xx/network errors, aborted in-flight verification, single request under React StrictMode, re-verification on rapid navigation
 - Feature pages: HomePage, LoginPage, VideosListingPage, SearchResultsPage, VideoDetail
 - Redux slices and API integrations
