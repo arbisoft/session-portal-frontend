@@ -169,7 +169,7 @@ Example response shape:
 | `useCreateTagMutation` | `POST /events/tags/` | Create a tag from the upload form | `Tag` |
 | `useCreateEventMutation` | `POST /events/` (multipart) | Publish an uploaded video as an event | `Event`, `Playlist`, `Tag` |
 
-The video file itself is not an RTK Query endpoint: `src/hooks/useVideoUpload.ts` uploads it with `XMLHttpRequest` through `/bff` to get progress events.
+The video file itself is not an RTK Query endpoint: `src/hooks/useVideoUpload.ts` drives the resumable upload engine in `src/services/resumableUpload/`, which sends chunks with `fetch` through `/bff` (streamed `Blob` bodies with per-chunk abort and retry, and no error toast per transient failure). Upload state lives in the hook, not in Redux; only a small resume record (session id, file fingerprint, confirmed bytes) is kept in `localStorage`.
 
 Example event detail request:
 

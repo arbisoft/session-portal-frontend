@@ -86,6 +86,10 @@ Examples found in the repository:
 - `src/redux/parseError.test.ts`
 - `src/utils/utils.test.ts`
 
+### Upload engine tests
+
+`src/services/resumableUpload/uploadManager.test.ts` runs the real `UploadManager` against `fakeUploadServer.ts`, an in-memory implementation of the backend upload protocol (sessions, offsets, checksums, finalization). Tests inject the network, sleep, random and clock dependencies, so interruptions, lost acknowledgements, reloads, pause and cancel run without timers or a backend, and assert that the bytes the fake server received equal the file. `fakeUploadServer.ts` is test support only and is not imported by application code.
+
 ## Current Test Coverage
 
 The current documentation baseline for active test work is Jest-based unit and component coverage under `src/`.

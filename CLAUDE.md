@@ -39,6 +39,7 @@ src/features/     → page-level components with all business logic
 src/components/   → reusable UI primitives (no business logic)
 src/redux/        → RTK Query API slices + login slice + store
 src/hooks/        → custom hooks (no auth hook — see Authentication)
+src/services/     → non-UI engines: resumableUpload/ (browser), runs-on-server-side/ (server only)
 src/models/       → TypeScript interfaces for API shapes
 src/utils/utils.ts → pure transform/display helpers
 ```
@@ -46,7 +47,7 @@ src/utils/utils.ts → pure transform/display helpers
 **Route → Feature mapping:**
 
 - `/` → proxy redirects to `/videos`
-- `/upload-video` → `UploadVideo` (staff only: the navbar entry is gated on `selectIsStaff`; uploads go through the BFF proxy)
+- `/upload-video` → `UploadVideo` (staff only: the navbar entry is gated on `selectIsStaff`; resumable chunked uploads go through the BFF proxy)
 - `/login` → `LoginPage`
 - `/videos` → `VideosListingPage`
 - `/videos/results` → `SearchResultsPage`
@@ -108,6 +109,10 @@ Custom GA events are pushed to the GTM `dataLayer` via `trackEvent`/`GA_EVENTS`/
 ## Architecture Guardian
 
 **Any task that adds or changes code, config, dependencies, CI or Docker files must invoke the `architecture-guardian` agent (`.claude/agents/architecture-guardian.md`) before being considered done** (and before `ga-event-tracker`). It enforces the layering, auth/token, security-header, dependency, testing and accessibility rules from the architecture advisory. Do this automatically.
+
+## UI Design Guidelines
+
+**Any task that adds or changes rendered UI (a page, feature component, shared component, `styled.tsx`, theme/colors, or any color, typography, spacing, radius or shadow) must invoke the `ui-design-guidelines` agent (`.claude/agents/ui-design-guidelines.md`) before being considered done**, after `architecture-guardian` and before `ga-event-tracker`. It audits the changed UI against the project's visual rules (MUI theme tokens, flat colors, one focal element per page, restrained borders/radius, contextual data) and fixes violations in place. Skip it for changes with no rendered UI surface. Do this automatically — don't wait for the user to ask for a design review.
 
 ## SonarQube Fixer
 

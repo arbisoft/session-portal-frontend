@@ -86,6 +86,34 @@ export interface VideoAssetUploadResponse {
   status: string;
 }
 
+export type UploadSessionStatus = "UPLOADING" | "FINALIZING" | "COMPLETED" | "FAILED" | "CANCELLED" | "EXPIRED";
+
+export interface UploadSession {
+  id: string;
+  filename: string;
+  file_size: number;
+  /** Contiguous bytes the server has durably committed; the only valid position to resume from. */
+  offset: number;
+  upload_status: UploadSessionStatus;
+  error_code: string;
+  video_asset_id: number | null;
+  expires_at: string;
+  chunk_size: number;
+  max_chunk_size: number;
+}
+
+export interface UploadSessionRequest {
+  filename: string;
+  file_size: number;
+  client_key: string;
+}
+
+export interface UploadErrorBody {
+  code?: string;
+  detail?: string;
+  offset?: number;
+}
+
 export interface UserSearchResult {
   id: number;
   first_name: string;

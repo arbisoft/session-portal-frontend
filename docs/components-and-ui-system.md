@@ -67,6 +67,10 @@ Used across listing/search flows for:
 - no results states
 - empty content states
 
+### `ConfirmDialog`
+
+Implemented in `src/components/ConfirmDialog/confirmDialog.tsx`. A presentational MUI dialog (`title`, `description`, `confirmLabel`, optional `cancelLabel`, `onConfirm`, `onCancel`) with `aria-labelledby` / `aria-describedby`. The safe (cancel) button is focused first, and Escape or a backdrop click calls `onCancel`. Used by the upload page to confirm cancelling or removing a video, discarding an unfinished upload and leaving the page.
+
 ### `ReadMore`
 
 Used on the video detail page to expand/collapse long descriptions.
@@ -115,6 +119,7 @@ Storybook stories are present beside multiple components, including:
 
 - `Button`
 - `Navbar`
+- `ConfirmDialog`
 - `Notification`
 - `ReadMore`
 - `Select`

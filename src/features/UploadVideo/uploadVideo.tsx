@@ -2,27 +2,48 @@
 
 import React, { useEffect, useState } from "react";
 
-import Box from "@mui/material/Box";
 import { useSelector } from "react-redux";
 
+import { useNotification } from "@/components/Notification";
 import useNavigation from "@/hooks/useNavigation";
+import { usePreventFileDrop } from "@/hooks/usePreventFileDrop";
 import { useVideoUpload } from "@/hooks/useVideoUpload";
 import { selectIsStaff } from "@/redux/login/selectors";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
-import { FORM_SCROLL_CONTAINER_ID } from "./fields";
 import VideoForm from "./form";
-import VideoPicker from "./videoPicker";
+import { UploadUi } from "./uploadStatus";
 
 const FileUpload = () => {
   const [videoFile, setVideoFile] = useState<File | undefined>();
-  const { uploadProgress, isUploading, videoAssetId, error, startUpload } = useVideoUpload();
+  const {
+    uploadProgress,
+    isUploading,
+    videoAssetId,
+    error,
+    startUpload,
+    phase,
+    notice,
+    canPause,
+    canResume,
+    canCancel,
+    pauseUpload,
+    resumeUpload,
+    cancelUpload,
+    pendingUpload,
+    discardPendingUpload,
+  } = useVideoUpload();
   const isStaff = useSelector(selectIsStaff);
   const { navigateTo } = useNavigation();
+  const notification = useNotification();
+
+  usePreventFileDrop();
 
   useEffect(() => {
-    if (!isStaff) navigateTo("videos");
-  }, [isStaff, navigateTo]);
+    if (isStaff) return;
+    notification.showNotification({ message: "Only staff members can upload videos", severity: "info" });
+    navigateTo("videos");
+  }, [isStaff, navigateTo, notification]);
 
   // Upload outcomes are reported once per transition of videoAssetId / error (startUpload resets both to null first).
   useEffect(() => {
@@ -34,49 +55,42 @@ const FileUpload = () => {
     if (error) trackEvent(GA_EVENTS.UPLOAD_VIDEO_FAILED, ANALYTICS_CATEGORY.UPLOAD_VIDEO, { reason: error });
   }, [error]);
 
-  const handleFileSelect = (file: File | undefined) => {
+  const handleFileSelect = (file: File) => {
     setVideoFile(file);
-    if (file) startUpload(file);
+    startUpload(file);
   };
 
-  const isInsideOtherScrollable = (target: Node): boolean => {
-    let el = target as HTMLElement | null;
-    while (el && el !== document.body) {
-      if (el.id === FORM_SCROLL_CONTAINER_ID) return false;
-      const { overflowY } = window.getComputedStyle(el);
-      if ((overflowY === "auto" || overflowY === "scroll") && el.scrollHeight > el.clientHeight) {
-        return true;
-      }
-      el = el.parentElement;
-    }
-    return false;
+  // Cancelling, removing or starting over returns to the file picker; the form keeps what was typed.
+  const handleCancel = () => {
+    cancelUpload();
+    setVideoFile(undefined);
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    const scrollEl = document.getElementById(FORM_SCROLL_CONTAINER_ID);
-    if (scrollEl && !scrollEl.contains(e.target as Node) && !isInsideOtherScrollable(e.target as Node)) {
-      scrollEl.scrollBy({ top: e.deltaY });
-    }
+  const upload: UploadUi = {
+    phase,
+    notice,
+    percent: uploadProgress,
+    error,
+    isActive: isUploading,
+    videoAssetId,
+    canPause,
+    canResume,
+    canCancel,
+    onPause: pauseUpload,
+    onResume: resumeUpload,
+    onCancel: handleCancel,
   };
 
   if (!isStaff) return null;
 
   return (
-    <Box
-      onWheel={handleWheel}
-      sx={(theme) => ({
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        height: `calc(100vh - ${theme.spacing(12)} - ${theme.spacing(3)})`,
-      })}
-    >
-      {!videoFile ? (
-        <VideoPicker onFileSelect={handleFileSelect} />
-      ) : (
-        <VideoForm uploadProgress={uploadProgress} isUploading={isUploading} videoAssetId={videoAssetId} uploadError={error} />
-      )}
-    </Box>
+    <VideoForm
+      file={videoFile}
+      upload={upload}
+      onFileSelect={handleFileSelect}
+      pendingUpload={pendingUpload}
+      onDiscardPending={discardPendingUpload}
+    />
   );
 };
 

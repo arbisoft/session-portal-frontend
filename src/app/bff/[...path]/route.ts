@@ -3,7 +3,15 @@ import { NextRequest } from "next/server";
 import { ACCESS_COOKIE_NAME, API_PROXY_GUARD_HEADER, API_PROXY_GUARD_VALUE, BASE_URL } from "@/constants/constants";
 import { reportHandledError, reportHandledMessage } from "@/utils/monitoring";
 
-const FORWARDED_REQUEST_HEADERS = ["accept", "accept-language", "content-length", "content-type"];
+// upload-* carry the resumable upload offset and per-chunk checksum (backend: PATCH events/videoassets/<id>/).
+const FORWARDED_REQUEST_HEADERS = [
+  "accept",
+  "accept-language",
+  "content-length",
+  "content-type",
+  "upload-offset",
+  "upload-checksum",
+];
 const DROPPED_RESPONSE_HEADERS = ["content-encoding", "content-length", "transfer-encoding", "connection", "set-cookie"];
 
 const jsonResponse = (body: object, status: number) =>

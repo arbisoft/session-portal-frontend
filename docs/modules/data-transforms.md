@@ -74,3 +74,18 @@ Title-cases every word in a string using a lowercase + regex replace approach. N
 ### `getQueryValue(key)`
 
 Normalises Next.js route params that may be `string | string[] | undefined` to a single `string`. Returns `""` for undefined. Used in route page files.
+
+## Upload helpers (`src/utils/upload.ts`, `src/utils/tags.ts`)
+
+Pure helpers behind the [Upload Video](./upload-video.md) page. Besides the resumable-upload helpers (error classification, retry delay, fingerprints, checksums), the page uses:
+
+| Function | Purpose |
+| --- | --- |
+| `formatBytes(bytes)` | `1536` -> `1.5 KB` |
+| `formatRate(bytesPerSecond)` | `5 MB` per second -> `5.0 MB/s` |
+| `formatTimeLeft(seconds)` | `less than a minute left`, `5 min left`, `1 h 15 min left` |
+| `isAllowedVideoFile(file)` | MIME type against `ALLOWED_TYPES`; the extension (`ALLOWED_VIDEO_EXTENSIONS`) only when the browser reports no type |
+| `titleFromFileName(name)` | `my_talk-2024.mp4` -> `my talk 2024`, the suggested title |
+| `toEventTimestamp(date)` | The chosen calendar day at 12:00 local time as an ISO string, so the day survives conversion to UTC |
+| `normalizeTagName(name)` (`tags.ts`) | Trims, strips leading `#`, caps at `TAG_MAX_LENGTH` |
+| `normalizeTagSelection(selected, existing)` (`tags.ts`) | Drops empty and duplicate (case-insensitive) tags and swaps a typed name for the existing tag with the same name |
