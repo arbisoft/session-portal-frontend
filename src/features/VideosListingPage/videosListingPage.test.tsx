@@ -43,12 +43,11 @@ describe("VideosListingPage filter and sort", () => {
     mockQuery = "";
   });
 
-  it("should show the labelled Filter and Sort control next to the title without any active filter chips", () => {
+  it("should show the page title without any active filter chips or a Filter and Sort control", () => {
     render(<VideosListingPage />);
 
     expect(screen.getByRole("heading", { name: "All videos" })).toBeInTheDocument();
-    expect(screen.getByText("Filter and Sort")).toBeVisible();
-    expect(screen.getByRole("button", { name: /Filter and Sort/ })).toHaveTextContent("Newest first");
+    expect(screen.queryByText("Filter and Sort")).not.toBeInTheDocument();
     expect(screen.queryByTestId("active-filters")).not.toBeInTheDocument();
   });
 
@@ -56,7 +55,6 @@ describe("VideosListingPage filter and sort", () => {
     mockQuery = "year=2020&order=event_time";
     render(<VideosListingPage />);
 
-    expect(screen.getByRole("button", { name: /Filter and Sort/ })).toHaveTextContent("2020 · Oldest first");
     expect(screen.getByText("Year: 2020")).toBeVisible();
     expect(screen.getByText("Sort: Oldest first")).toBeVisible();
 

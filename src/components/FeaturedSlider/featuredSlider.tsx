@@ -10,6 +10,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 export const FeaturedSlider = ({ slides }: FeaturedSliderProps) => {
+  if (slides.length < 1) return null;
   return (
     <StyledSliderContainer>
       <Swiper

@@ -18,7 +18,6 @@ import Button from "@/components/Button";
 import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import EmptyState from "@/components/EmptyState";
 import { FeaturedSlider } from "@/components/FeaturedSlider/featuredSlider";
-import FilterSortControl from "@/components/FilterSortControl";
 import VideoCard from "@/components/VideoCard";
 import useVideoFilters from "@/hooks/useVideoFilters";
 import { useVideoQueryManager } from "@/hooks/useVideoQueryManager";
@@ -37,7 +36,7 @@ const VideosListingPage = () => {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const { setPage, parsedParams, apiParams, page } = useVideoQueryManager(searchParams);
-  const { availableYears, clearFilters, clearSort, clearYear, setSort, setYear, sort, year } = useVideoFilters();
+  const { clearFilters, clearSort, clearYear, sort, year } = useVideoFilters();
 
   const shouldSkipFeaturedVideos = !!(parsedParams.tag || parsedParams.playlist || parsedParams.search || parsedParams.year);
 
@@ -162,18 +161,8 @@ const VideosListingPage = () => {
           direction={{ xs: "column", sm: "row" }}
           sx={{ alignItems: { sm: "center" }, justifyContent: { sm: "space-between" } }}
         >
-          <Stack sx={{ gap: 1 }}>
-            <Typography variant="h2">{getPageTitle()}</Typography>
-            <ActiveFilters sort={sort} year={year} onClearAll={clearFilters} onClearSort={clearSort} onClearYear={clearYear} />
-          </Stack>
-          <FilterSortControl
-            availableYears={availableYears}
-            sort={sort}
-            year={year}
-            onClear={clearFilters}
-            onSortChange={setSort}
-            onYearChange={setYear}
-          />
+          <Typography variant="h2">{getPageTitle()}</Typography>
+          <ActiveFilters sort={sort} year={year} onClearAll={clearFilters} onClearSort={clearSort} onClearYear={clearYear} />
         </Stack>
       </FilterBox>
 
