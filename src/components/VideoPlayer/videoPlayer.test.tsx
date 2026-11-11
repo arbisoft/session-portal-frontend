@@ -32,7 +32,6 @@ jest.mock("@mui/icons-material/PlayCircle", () => {
 
 jest.mock("@vidstack/react", () => {
   const mockSubscribe = jest.fn();
-  const mockUseMediaState = jest.fn();
   let capturedMediaPlayerProps: Record<string, unknown> = {};
 
   const mockMediaPlayerInstance = {
@@ -88,17 +87,15 @@ jest.mock("@vidstack/react", () => {
     Track: ({ src, type, kind, language }: { src?: string; type?: string; kind?: string; language?: string }) => (
       <div data-testid="caption-track" data-src={src} data-type={type} data-kind={kind} data-language={language} />
     ),
-    useMediaState: mockUseMediaState,
     __mockSubscribe: mockSubscribe,
-    __mockUseMediaState: mockUseMediaState,
     __mockMediaPlayerInstance: mockMediaPlayerInstance,
     __getMediaPlayerProps: () => capturedMediaPlayerProps,
   };
 });
 
 jest.mock("@vidstack/react/player/layouts/default", () => ({
-  DefaultVideoLayout: ({ icons }: { icons: unknown }) => (
-    <div data-testid="default-video-layout" data-icons={JSON.stringify(icons)} />
+  DefaultVideoLayout: ({ icons, noModal }: { icons: unknown; noModal?: boolean }) => (
+    <div data-testid="default-video-layout" data-icons={JSON.stringify(icons)} data-no-modal={String(!!noModal)} />
   ),
   defaultLayoutIcons: { play: "play-icon", pause: "pause-icon" },
 }));
@@ -146,23 +143,23 @@ describe("VideoPlayer", () => {
   const vidstackModule = jest.mocked(
     vidstackModuleOriginal as typeof vidstackModuleOriginal & {
       __mockSubscribe: jest.Mock;
-      __mockUseMediaState: jest.Mock;
       __getMediaPlayerProps: () => Record<string, unknown>;
     }
   );
 
-  const {
-    __mockSubscribe: mockSubscribe,
-    __mockUseMediaState: mockUseMediaState,
-    __getMediaPlayerProps: getMediaPlayerProps,
-  } = jest.mocked(vidstackModule);
+  const { __mockSubscribe: mockSubscribe, __getMediaPlayerProps: getMediaPlayerProps } = jest.mocked(vidstackModule);
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockUseMediaState.mockReturnValue(true);
     mockSubscribe.mockReturnValue(() => {});
   });
+
+  // Emulates vidstack reporting a state change through the player's own subscription.
+  const emitPlayerState = (state: { paused: boolean; ended?: boolean }) => {
+    const callback = mockSubscribe.mock.calls[mockSubscribe.mock.calls.length - 1][0];
+    act(() => callback({ ended: false, ...state }));
+  };
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -228,8 +225,6 @@ describe("VideoPlayer", () => {
 
   describe("Play/Pause Functionality", () => {
     it("shows play button when video is paused", () => {
-      mockUseMediaState.mockReturnValue(true);
-
       render(<VideoPlayer {...defaultProps} />);
 
       expect(screen.getByTestId("play-button")).toBeInTheDocument();
@@ -237,16 +232,13 @@ describe("VideoPlayer", () => {
     });
 
     it("hides play button when video is playing", () => {
-      mockUseMediaState.mockReturnValue(false);
-
       render(<VideoPlayer {...defaultProps} />);
+      emitPlayerState({ paused: false });
 
       expect(screen.queryByTestId("play-button")).not.toBeInTheDocument();
     });
 
     it("handles play button click", () => {
-      mockUseMediaState.mockReturnValue(true);
-
       render(<VideoPlayer {...defaultProps} />);
 
       const playButton = screen.getByTestId("play-button");
@@ -269,7 +261,7 @@ describe("VideoPlayer", () => {
       render(<VideoPlayer {...defaultProps} onVideoEnded={onVideoEnded} />);
 
       const subscribeCallback = mockSubscribe.mock.calls[0][0];
-      subscribeCallback({ ended: true });
+      subscribeCallback({ ended: true, paused: true });
 
       expect(onVideoEnded).toHaveBeenCalledTimes(1);
     });
@@ -280,7 +272,7 @@ describe("VideoPlayer", () => {
       render(<VideoPlayer {...defaultProps} onVideoEnded={onVideoEnded} />);
 
       const subscribeCallback = mockSubscribe.mock.calls[0][0];
-      subscribeCallback({ ended: false });
+      subscribeCallback({ ended: false, paused: true });
 
       expect(onVideoEnded).not.toHaveBeenCalled();
     });
@@ -290,7 +282,7 @@ describe("VideoPlayer", () => {
 
       const subscribeCallback = mockSubscribe.mock.calls[0][0];
 
-      expect(() => subscribeCallback({ ended: true })).not.toThrow();
+      expect(() => subscribeCallback({ ended: true, paused: true })).not.toThrow();
     });
   });
 
@@ -348,25 +340,16 @@ describe("VideoPlayer", () => {
     });
   });
 
-  describe("useMediaState Hook", () => {
-    it("calls useMediaState with correct parameters", () => {
+  describe("Player state subscription", () => {
+    it("updates play button visibility as the player reports play and pause", () => {
       render(<VideoPlayer {...defaultProps} />);
-
-      expect(mockUseMediaState).toHaveBeenCalledWith("paused", expect.any(Object));
-    });
-
-    it("updates play button visibility based on media state", () => {
-      // Start with paused state
-      mockUseMediaState.mockReturnValue(true);
-      const { rerender } = render(<VideoPlayer {...defaultProps} />);
-
       expect(screen.getByTestId("play-button")).toBeInTheDocument();
 
-      // Change to playing state
-      mockUseMediaState.mockReturnValue(false);
-      rerender(<VideoPlayer {...defaultProps} />);
-
+      emitPlayerState({ paused: false });
       expect(screen.queryByTestId("play-button")).not.toBeInTheDocument();
+
+      emitPlayerState({ paused: true });
+      expect(screen.getByTestId("play-button")).toBeInTheDocument();
     });
   });
 
@@ -431,13 +414,63 @@ describe("VideoPlayer", () => {
     });
 
     it("provides accessible play button", () => {
-      mockUseMediaState.mockReturnValue(true);
-
       render(<VideoPlayer {...defaultProps} />);
 
       const playButton = screen.getByTestId("play-button");
       expect(playButton).toBeInTheDocument();
       expect(playButton.tagName).toBe("BUTTON");
+    });
+  });
+
+  describe("Settings menu", () => {
+    it("should keep menus inside the player instead of a modal sheet on small layouts", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      expect(screen.getByTestId("default-video-layout")).toHaveAttribute("data-no-modal", "true");
+    });
+
+    describe("Escape key", () => {
+      const renderWithMenu = (isMenuOpen: boolean) => {
+        const menuKeyDown = jest.fn();
+        const { container } = render(
+          <>
+            <div id="media-menu-1" data-testid="menu-items" onKeyDown={menuKeyDown} />
+            <VideoPlayer {...defaultProps} />
+          </>
+        );
+        const wrapper = container.lastElementChild as HTMLElement;
+        const trigger = document.createElement("button");
+        trigger.className = "vds-menu-button";
+        trigger.setAttribute("aria-expanded", String(isMenuOpen));
+        trigger.setAttribute("aria-controls", "media-menu-1");
+        wrapper.appendChild(trigger);
+        return { menuKeyDown, trigger };
+      };
+
+      it("should forward Escape to the open menu when focus is still on its trigger", () => {
+        const { menuKeyDown, trigger } = renderWithMenu(true);
+
+        fireEvent.keyDown(trigger, { key: "Escape" });
+
+        expect(menuKeyDown).toHaveBeenCalledTimes(1);
+        expect(menuKeyDown.mock.calls[0][0].key).toBe("Escape");
+      });
+
+      it("should ignore Escape when no menu is open", () => {
+        const { menuKeyDown, trigger } = renderWithMenu(false);
+
+        fireEvent.keyDown(trigger, { key: "Escape" });
+
+        expect(menuKeyDown).not.toHaveBeenCalled();
+      });
+
+      it("should ignore other keys", () => {
+        const { menuKeyDown, trigger } = renderWithMenu(true);
+
+        fireEvent.keyDown(trigger, { key: "Enter" });
+
+        expect(menuKeyDown).not.toHaveBeenCalled();
+      });
     });
   });
 
@@ -531,7 +564,7 @@ describe("VideoPlayer", () => {
     it("should track video_complete when the video ends", () => {
       render(<VideoPlayer {...defaultProps} />);
       const subscribeCallback = mockSubscribe.mock.calls[0][0];
-      subscribeCallback({ ended: true });
+      subscribeCallback({ ended: true, paused: true });
 
       expect(sendGTMEvent).toHaveBeenCalledWith({
         event: GA_EVENTS.VIDEO_COMPLETE,
@@ -581,10 +614,10 @@ describe("VideoPlayer", () => {
     });
 
     it("should call onWatchThreshold once after the default threshold of playing time", () => {
-      mockUseMediaState.mockReturnValue(false);
       const onWatchThreshold = jest.fn();
 
       render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} />);
+      emitPlayerState({ paused: false });
 
       act(() => {
         jest.advanceTimersByTime(29_000);
@@ -598,10 +631,10 @@ describe("VideoPlayer", () => {
     });
 
     it("should track video_watch_threshold once when the threshold is reached", () => {
-      mockUseMediaState.mockReturnValue(false);
       (sendGTMEvent as jest.Mock).mockClear();
 
       render(<VideoPlayer {...defaultProps} onWatchThreshold={jest.fn()} watchThresholdSeconds={5} />);
+      emitPlayerState({ paused: false });
 
       act(() => {
         jest.advanceTimersByTime(4_000);
@@ -625,10 +658,10 @@ describe("VideoPlayer", () => {
     });
 
     it("should respect a custom watchThresholdSeconds", () => {
-      mockUseMediaState.mockReturnValue(false);
       const onWatchThreshold = jest.fn();
 
       render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} watchThresholdSeconds={5} />);
+      emitPlayerState({ paused: false });
 
       act(() => {
         jest.advanceTimersByTime(5_000);
@@ -638,7 +671,6 @@ describe("VideoPlayer", () => {
     });
 
     it("should not count time while the video is paused", () => {
-      mockUseMediaState.mockReturnValue(true);
       const onWatchThreshold = jest.fn();
 
       render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} watchThresholdSeconds={5} />);
@@ -650,10 +682,44 @@ describe("VideoPlayer", () => {
       expect(onWatchThreshold).not.toHaveBeenCalled();
     });
 
-    it("should not start counting when onWatchThreshold is not provided", () => {
-      mockUseMediaState.mockReturnValue(false);
+    it("should count a view when playback starts after mount without any parent re-render", () => {
+      const onWatchThreshold = jest.fn();
 
+      render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} watchThresholdSeconds={5} />);
+      emitPlayerState({ paused: false });
+
+      act(() => {
+        jest.advanceTimersByTime(5_000);
+      });
+
+      expect(onWatchThreshold).toHaveBeenCalledTimes(1);
+    });
+
+    it("should stop counting while paused and resume from the accumulated time", () => {
+      const onWatchThreshold = jest.fn();
+
+      render(<VideoPlayer {...defaultProps} onWatchThreshold={onWatchThreshold} watchThresholdSeconds={5} />);
+      emitPlayerState({ paused: false });
+      act(() => {
+        jest.advanceTimersByTime(3_000);
+      });
+
+      emitPlayerState({ paused: true });
+      act(() => {
+        jest.advanceTimersByTime(60_000);
+      });
+      expect(onWatchThreshold).not.toHaveBeenCalled();
+
+      emitPlayerState({ paused: false });
+      act(() => {
+        jest.advanceTimersByTime(2_000);
+      });
+      expect(onWatchThreshold).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not start counting when onWatchThreshold is not provided", () => {
       render(<VideoPlayer {...defaultProps} />);
+      emitPlayerState({ paused: false });
 
       expect(jest.getTimerCount()).toBe(0);
     });
@@ -686,6 +752,74 @@ describe("VideoPlayer", () => {
       };
 
       expect(() => render(<VideoPlayer {...minimalProps} />)).not.toThrow();
+    });
+  });
+  describe("loading and failure feedback", () => {
+    const emit = (state: Record<string, unknown>) => {
+      const subscribeCallback = mockSubscribe.mock.calls.at(-1)![0];
+      act(() => subscribeCallback({ ended: false, paused: true, ...state }));
+    };
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+      mockSubscribe.mockClear();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it("should show a spinner instead of the play button while a requested video loads", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      emit({ paused: false, canPlay: false });
+
+      expect(screen.getByRole("status")).toBeInTheDocument();
+      expect(screen.queryByTestId("play-button")).not.toBeInTheDocument();
+    });
+
+    it("should hide the spinner once the video can play", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      emit({ paused: false, canPlay: false });
+      emit({ paused: false, canPlay: true });
+
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
+    });
+
+    it("should show an error with a retry button when the media reports an error", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      emit({ paused: true, canPlay: false, error: { code: 4, message: "unsupported" } });
+
+      expect(screen.getByRole("alert")).toHaveTextContent("This video could not be loaded.");
+      expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
+    });
+
+    it("should report a stall when loading takes too long without an error", () => {
+      render(<VideoPlayer {...defaultProps} />);
+
+      emit({ paused: false, canPlay: false });
+      act(() => {
+        jest.advanceTimersByTime(20000);
+      });
+
+      expect(screen.getByRole("alert")).toHaveTextContent("The video is taking too long to load.");
+      expect(sendGTMEvent).toHaveBeenCalledWith(
+        expect.objectContaining({ event: GA_EVENTS.VIDEO_PLAY_ERROR, event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER })
+      );
+    });
+
+    it("should remount the player and start playback when retry is clicked", () => {
+      render(<VideoPlayer {...defaultProps} />);
+      emit({ paused: true, canPlay: false, error: { code: 4, message: "unsupported" } });
+      const subscriptions = mockSubscribe.mock.calls.length;
+
+      fireEvent.click(screen.getByRole("button", { name: "Retry" }));
+
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      expect(mockSubscribe.mock.calls.length).toBeGreaterThan(subscriptions);
+      expect(getMediaPlayerProps().autoPlay).toBe(true);
     });
   });
 });
