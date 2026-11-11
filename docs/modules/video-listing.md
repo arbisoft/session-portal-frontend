@@ -9,7 +9,8 @@ Displays all published session videos with filtering, sorting, featured content,
 | Concern | File |
 | --- | --- |
 | Page component | `src/features/VideosListingPage/videosListingPage.tsx` |
-| Filter/sort UI | `src/components/FilterSortMenu/filterSortMenu.tsx` (opened from the Home item in `src/components/Sidebar/sidebar.tsx`) |
+| Filter/sort UI | `src/components/FilterSortControl/filterSortControl.tsx` (labelled dropdown on the listing), `src/components/FilterSortMenu/filterSortMenu.tsx` (shared menu, also opened from the filter button in `src/components/Sidebar/sidebar.tsx`) |
+| Active filter chips | `src/features/VideosListingPage/activeFilters.tsx` |
 | Query parameter logic | `src/hooks/useVideoQueryManager.ts` |
 | Default API params | `src/features/VideosListingPage/types.ts` |
 | RTK Query endpoint | `src/redux/events/apiSlice.ts` (`getEvents`) |
@@ -100,14 +101,15 @@ The `getEvents` endpoint uses a custom cache accumulation strategy to support in
 
 ### Filter/Sort Navigation
 
-The filter button on the sidebar's **Home** item (the former "All Videos" item) opens `FilterSortMenu`. The menu is controlled by the URL: `useVideoFilters` (`src/hooks/useVideoFilters.ts`) reads `order` and `year` from the query string and exposes `setSort`, `setYear` and `clearFilters`, each of which calls `navigateTo("videos", newParams)`. That updates the URL, which makes `useVideoQueryManager` reset the page to 1 and recompute `apiParams`.
+The listing shows a labelled **Filter and Sort** dropdown (`FilterSortControl`) at the top right, next to the page title; it displays the current choice. The filter button on the sidebar's **Home** item (the former "All Videos" item) opens the same `FilterSortMenu` and is the entry point from other pages. The menu is controlled by the URL: `useVideoFilters` (`src/hooks/useVideoFilters.ts`) reads `order` and `year` from the query string and exposes `setSort`, `setYear`, `clearYear`, `clearSort` and `clearFilters`, each of which calls `navigateTo("videos", newParams)`. That updates the URL, which makes `useVideoQueryManager` reset the page to 1 and recompute `apiParams`.
 
 - On `/videos` the current view (`tag`, `playlist`, `search`) and the other filter are kept when one filter changes.
 - From any other page (video detail, search results) choosing a filter goes to the plain listing with only that filter, because the sidebar is shown there too.
 - On other pages the menu shows the defaults (Newest first, no year), since `order` and `year` are only read on `/videos`.
 - The drawer's sidebar stops click propagation on the filter button so the drawer (which closes on any click inside it) stays mounted while the menu is open; picking a menu item then closes both. Ids come from `useId` because the sidebar is mounted in both the desktop column and the drawer.
 - "Clear All Filters" keeps `tag`, `playlist` and `search` and drops `order` and `year`.
-- The listing page itself renders no filter control. Selecting a sort (even "Newest first") sets `order`, which hides the featured slider.
+- While a year is applied or the sort is not the default, `ActiveFilters` renders removable chips (`Year: 2020`, `Sort: Oldest first`) under the title plus a **Clear filters** button. Activating a chip removes only that filter (`clearYear` / `clearSort`); the default order never gets a chip. Chips are keyboard-operable (Enter on the chip removes it).
+- Selecting a sort (even "Newest first") sets `order`, which hides the featured slider.
 
 ### Page Title Logic
 

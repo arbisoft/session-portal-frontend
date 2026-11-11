@@ -54,7 +54,11 @@ Used for left-side navigation and drawer rendering. The first item is **Home** (
 
 ### `FilterSortMenu`
 
-Presentational, URL-agnostic menu for sorting (Newest/Oldest first) and filtering by year, with a "Clear All Filters" item. It is controlled through props (`anchorEl`, `sort`, `year`, `onSortChange`, `onYearChange`, `onClear`, `onClose`) and has no mount-time side effects. It fires the `video_sort_change`, `video_filter_year` and `video_filter_clear` analytics events. Used by `Sidebar`; the URL logic lives in `useVideoFilters`.
+Presentational, URL-agnostic menu for sorting (Newest/Oldest first) and filtering by year, with a "Clear All Filters" item. The selected sort and year carry a check mark (not only MUI's subtle highlight) and `aria-checked`. It is controlled through props (`anchorEl`, `sort`, `year`, `onSortChange`, `onYearChange`, `onClear`, `onClose`) and has no mount-time side effects. It fires the `video_sort_change`, `video_filter_year` and `video_filter_clear` analytics events. Used by `Sidebar` and `FilterSortControl`; the URL logic lives in `useVideoFilters`. Sort options and labels are shared through `src/constants/sort.ts`.
+
+### `FilterSortControl`
+
+The labelled **Filter and Sort** dropdown shown at the top right of the videos listing, next to the page title. The button always shows the current choice (`Newest first`, or `2020 · Oldest first` when a year is applied) and owns the open/close state of a `FilterSortMenu`. It takes the same value/handler props as the menu (`availableYears`, `sort`, `year`, `onSortChange`, `onYearChange`, `onClear`).
 
 ## Feedback and Utility Components
 

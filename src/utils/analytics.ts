@@ -30,6 +30,7 @@ export const GA_EVENTS = {
   VIDEO_SORT_CHANGE: "video_sort_change",
   VIDEO_FILTER_YEAR: "video_filter_year",
   VIDEO_FILTER_CLEAR: "video_filter_clear",
+  VIDEO_FILTER_REMOVE: "video_filter_remove",
   VIDEOS_RETRY_CLICK: "videos_retry_click",
   VIDEOS_LOAD_MORE: "videos_load_more",
   SEARCH_SUBMIT: "search_submit",

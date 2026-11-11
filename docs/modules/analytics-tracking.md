@@ -30,7 +30,7 @@ Event names are `lower_snake_case` constants in `GA_EVENTS`. Categories are in `
 | Navbar | `LOGOUT`, `NAV_LOGO_CLICK`, `NAV_DRAWER_TOGGLE`, `NAV_UPLOAD_VIDEO_CLICK`, `SEARCH_SUBMIT`, `SEARCH_CLEAR` | `src/components/Navbar/navbar.tsx` |
 | Theme | `THEME_TOGGLE` | `src/components/ThemeToggle/themeToggle.tsx` |
 | Sidebar | `SIDEBAR_PLAYLIST_SELECT` (the Home item still reports `playlist: "All Videos"` so historical data stays comparable), `TAG_SELECT` | `src/components/Sidebar/sidebar.tsx` |
-| Videos listing | `VIDEO_SORT_CHANGE`, `VIDEO_FILTER_YEAR`, `VIDEO_FILTER_CLEAR`, `VIDEOS_LOAD_MORE`, `VIDEOS_RETRY_CLICK` | `src/components/FilterSortMenu/filterSortMenu.tsx` (sort, year, clear; opened from the sidebar Home item), `videosListingPage.tsx` |
+| Videos listing | `VIDEO_SORT_CHANGE`, `VIDEO_FILTER_YEAR`, `VIDEO_FILTER_CLEAR`, `VIDEO_FILTER_REMOVE`, `VIDEOS_LOAD_MORE`, `VIDEOS_RETRY_CLICK` | `src/components/FilterSortMenu/filterSortMenu.tsx` (sort, year, clear; opened from the listing's Filter and Sort control or the sidebar filter button), `src/features/VideosListingPage/activeFilters.tsx` (`video_filter_remove` with `filter: year\|sort`; `video_filter_clear` with `source: active_filters`), `videosListingPage.tsx` |
 | Search results | `SEARCH_RESULTS_VIEW`, `SEARCH_LOAD_MORE` | `src/features/SearchResultsPage/searchResultsPage.tsx` |
 | Video card / slider | `VIDEO_CARD_CLICK`, `FEATURED_SLIDER_NAVIGATE` | `videoCard.tsx`, `featuredSlider.tsx` |
 | Video player | `VIDEO_PLAY`, `VIDEO_PAUSE`, `VIDEO_SEEK`, `VIDEO_VOLUME_CHANGE`, `VIDEO_FULLSCREEN_CHANGE`, `VIDEO_PLAYBACK_RATE_CHANGE`, `VIDEO_COMPLETE`, `VIDEO_PLAY_ERROR` | `src/components/VideoPlayer/videoPlayer.tsx` |

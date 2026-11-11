@@ -38,6 +38,17 @@ describe("FilterSortMenu", () => {
     expect(screen.getByRole("menuitemradio", { name: "2025" })).toHaveAttribute("aria-checked", "true");
   });
 
+  it("should draw a check mark on the selected sort and year only", () => {
+    renderMenu({ sort: "oldest", year: "2025" });
+
+    const hasCheck = (name: string) => screen.getByRole("menuitemradio", { name }).querySelector("svg") !== null;
+
+    expect(hasCheck("Oldest first")).toBe(true);
+    expect(hasCheck("2025")).toBe(true);
+    expect(hasCheck("Newest first")).toBe(false);
+    expect(hasCheck("This Year")).toBe(false);
+  });
+
   it("should report a sort change, track it and close", () => {
     const { onSortChange, onClose } = renderMenu();
 

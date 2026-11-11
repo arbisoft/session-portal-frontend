@@ -31,7 +31,6 @@ export const FilterBox = styled(Box, {
   () => css`
     width: 100%;
     .${stackClasses.root} {
-      margin-bottom: 20px;
       width: 100%;
 
       .${typographyClasses.h2} {
