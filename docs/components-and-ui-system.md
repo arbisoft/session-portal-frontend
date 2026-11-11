@@ -104,6 +104,8 @@ Both modes accept an optional `onToggle(isExpanded)` callback fired on click or 
 
 Displays video thumbnails with metadata, supports responsive image sizing for different screen sizes.
 
+Thumbnails with an absolute `http(s)` URL (the backend media host) are rendered `unoptimized`: the browser loads them directly, like the player poster. Routing them through `/_next/image` makes the Next server fetch them, and Next 16 rejects hosts that resolve to a private IP with `400 "url" parameter is not allowed`, which leaves every card showing its alt text. The bundled default thumbnail still goes through the optimizer.
+
 Used across:
 
 - featured slider
