@@ -1,444 +1,50 @@
 ---
 name: documentation-reviewer
-description: Perform a comprehensive review of project documentation and automatically fix gaps by generating missing or incomplete documentation files (README, API docs, architecture docs, onboarding guides, and operational documentation). Produces complete Markdown content ready to commit.
+description: Reviews Session Portal documentation against the code and repairs the gaps it finds. Use as the last step of the documentation pipeline, or when asked to audit docs, check README accuracy, verify commands and links, or fix stale setup, API, architecture, deployment or contribution documentation. Produces a coverage report plus the corrected Markdown.
 user-invocable: true
 ---
 
-# Documentation Reviewer & Generator
+# Documentation Reviewer and Repairer
 
-This skill performs a **staff-level documentation audit and auto-repair** of project documentation.
+Staff-level audit and repair of the project documentation. Step 3 of the documentation pipeline. It reviews quality, then fixes what it finds; output is complete Markdown ready to commit.
 
-It does two things:
+**Read `.claude/references/documentation-pipeline.md` first.** It holds the Project Doc Map, the pipeline order and the shared rules.
 
-1️⃣ **Review documentation quality**  
-2️⃣ **Generate or repair missing documentation**
+## Workflow
 
-All generated output is **complete Markdown content ready for `.md` files**.
-
----
-
-# Objectives
-
-Ensure documentation is:
-
-• clear  
-• complete  
-• technically accurate  
-• consistent with repository code  
-• helpful for developers and operators
-
-The skill ensures a project has sufficient documentation for:
-
-- developers
-- contributors
-- operators
-- API consumers
-
----
-
-## Self-Healing This Skill
-
-This file cites paths, doc names and conventions that drift as the repo changes. Treat it as fallible:
-
-1. **Verify before trusting.** At the start of every run, check that the files and directories this skill names exist (`git ls-files`, `ls`) and that the **Project Doc Map** below still matches the real `docs/` layout, `package.json` scripts and `example.env.local`.
-2. **Patch drift in the same run.** If a cited path no longer exists, a doc was renamed or split, a script or env var was added or removed, or a rule here contradicts what correct code in this repo does now, fix this SKILL.md in the same pass and list it under "Skill self-heal" in the final report. Do not leave it for a later run.
-3. **Only fix what you observed.** Do not speculatively rewrite sections you did not touch or verify.
-4. **Never invent.** If a replacement fact cannot be confirmed from the repository, write "not defined in the repository" instead of guessing.
-5. **Skill-specific checks:** Step 2 and Step 12 mention `.env.example`, `requirements.txt` and `docker-compose.yml`. In this repo the environment template is `example.env.local`; skip files that do not exist. Run the docs-to-code checks for real (every `npm run <script>` exists in `package.json`, every env var appears in code, every relative link resolves, `npx prettier --check README.md docs CONTRIBUTING.md` passes) instead of eyeballing them.
-
-## Automatic Execution
-
-This skill is part of the documentation pipeline that runs after every task that changes code, configuration, dependencies, CI or Docker files, in this order: `update-project-docs` → `documentation-generator` → `documentation-reviewer`. The project `CLAUDE.md` requires it, and the `Stop` hook in `.claude/settings.json` (`.claude/hooks/docs-sync-check.mjs`) re-prompts once when source files changed but no documentation did. If the docs already match the code, report "Documentation is already synchronized" and change nothing.
-
-## Project Doc Map (source of truth for this repo)
-
-Verify this table against `git ls-files docs README.md CONTRIBUTING.md CHANGELOG.md` and the real code before using it. It replaces the generic `docs/api/`, `docs/setup/`, `.env.example` style paths used elsewhere in this skill.
-
-| Change in | Update |
-| --- | --- |
-| `src/redux/**/apiSlice.ts`, `src/endpoints/**`, `src/app/bff/**` | `docs/api.md`, `docs/state-management-and-api-layer.md` |
-| `src/models/**` | `docs/data-models.md` |
-| `src/features/<Name>/**` | `docs/modules/<module>.md` (see `docs/README.md` index), `docs/routing-and-application-flows.md`, `docs/folder-structure.md` |
-| `src/components/**` | `docs/components-and-ui-system.md` |
-| `src/hooks/**`, `src/utils/**` | `docs/ARCHITECTURE.md` (hooks table), `docs/modules/data-transforms.md` |
-| `src/proxy.ts`, `src/app/login/**`, `src/redux/login/**`, `src/redux/store/**` | `docs/modules/authentication.md`, `docs/ARCHITECTURE.md`, `docs/state-management-and-api-layer.md` |
-| `src/utils/analytics.ts` | `docs/modules/analytics-tracking.md` |
-| `src/constants/featureFlags.ts` | `docs/modules/feature-flags.md` |
-| `package.json` scripts, `jest.config.ts` | `docs/scripts-and-tooling.md`, `docs/testing-guide.md`, `README.md` |
-| `example.env.local`, `next.config.ts`, `Dockerfile`, `.github/**` | `docs/environment-and-configuration.md`, `docs/deployment-and-release.md` |
-| `CHANGELOG.md` | generated by `release-it`; never hand-edit |
-
-A new feature module also needs a row in the `docs/README.md` module list and a link from `README.md`.
-
----
-
-# Review + Repair Workflow
-
-## Step 1 — Identify Documentation Files
-
-Detect documentation files in the repository.
-
-Typical locations:
-
-README.md  
-CONTRIBUTING.md  
-CHANGELOG.md
-
-docs/  
-docs/api/  
-docs/setup/  
-docs/architecture/  
-docs/deployment/
-
-Run:
+### 1. Collect the documentation set
 
 ```bash
-git ls-files | grep -E "README|docs|architecture|api|deployment|contributing"
-```
-
-If reviewing a PR:
-
-```bash
+git ls-files README.md CONTRIBUTING.md CHANGELOG.md docs
 git diff --name-only HEAD
 ```
 
-Focus only on **documentation-related files**.
+When reviewing a change, focus on documentation related to the diff. For a full audit, cover every file.
 
----
+### 2. Establish ground truth
 
-# Step 2 — Inspect Source-of-Truth Files
+Read `package.json` (scripts, engines), `.nvmrc`, `Dockerfile`, `docker-compose.yml`, `example.env.local`, `.github/workflows/*` and the `src/` layers. These determine real behavior. Summarize the project in a few lines before judging the docs.
 
-Documentation must match the implementation.
+### 3. Audit coverage
 
-Check repository files such as:
+Check that these exist and are current: README, setup, development workflow, architecture, folder structure, environment configuration, API and BFF contract, authentication flow, testing guide, deployment and operations (monitoring, rollback), contribution rules. Use the Project Doc Map to find the owning file for each.
 
-package.json requirements.txt Dockerfile docker-compose.yml .env.example example.env.local
+### 4. Detect gaps
 
-Source directories:
+Missing files, incomplete sections, outdated instructions, undocumented scripts or env vars, undocumented endpoints or routes, broken links, orphan docs not linked from `docs/README.md`.
 
-src/ app/ routes/ api/ services/
+### 5. Repair
 
-These files determine **real project behavior**.
+Fix every gap that can be verified from the repository: edit in place, or add a file only when the Project Doc Map has no owner for it. Generate complete, production-quality Markdown. README must cover overview, features, stack, install, configuration, usage, scripts, architecture, deployment, contributing and troubleshooting, with deep details linked from `docs/`.
 
----
+### 6. Verify docs against code
 
-# Step 3 — Identify Project Context
+Run the real checks from the shared reference: scripts exist, env vars exist in code, API and route examples match the code, relative links resolve, Prettier passes. Any mismatch means the documentation changes, not the code.
 
-Determine:
+## Output
 
-• What the project does • Intended users of documentation • Technology stack • Deployment environment
+1. **Review report**: coverage found, gaps detected, outdated passages, what you changed.
+2. **Quality score**: rate Coverage, Clarity, Structure, Accuracy, Onboarding and Operations as 🟢 Good, 🟡 Needs work or 🔴 Poor, with a one-line reason each.
+3. **Top improvements**: the most valuable remaining items, if any.
 
-Classify the project:
-
-- web application
-- backend API
-- microservice
-- open-source library
-- internal tooling
-- CLI tool
-
-Produce a short **project understanding summary**.
-
----
-
-# Step 4 — Documentation Coverage Audit
-
-Verify documentation exists for the following areas.
-
-### Core Documentation
-
-README Setup guide Development workflow Architecture overview
-
-### Engineering Documentation
-
-Project structure Environment configuration Dependency management
-
-### API Documentation
-
-REST endpoints GraphQL schema Authentication flow Request/response examples
-
-### Operational Documentation
-
-Deployment instructions Environment configuration Monitoring and logging Failure recovery
-
-### Contribution Documentation
-
-Branch strategy Commit conventions Code review workflow
-
----
-
-# Step 5 — Detect Documentation Gaps
-
-Identify:
-
-• missing documentation files • incomplete sections • outdated instructions • undocumented environment variables • undocumented scripts • undocumented API endpoints
-
-Example gaps:
-
-Missing:
-
-docs/api.md docs/architecture.md docs/setup.md
-
-Incomplete:
-
-README missing installation steps
-
----
-
-# Step 6 — Fix Documentation Gaps
-
-If gaps exist, **automatically generate missing documentation**.
-
-The skill must generate **complete `.md` files**.
-
-Example generated files:
-
-README.md docs/setup.md docs/architecture.md docs/api.md docs/deployment.md docs/contributing.md
-
-All files must contain **production-quality markdown**.
-
----
-
-# Step 7 — README Quality Review
-
-Ensure README contains:
-
-Project Overview Features Tech Stack Installation Configuration Usage Scripts Architecture API Deployment Contributing Troubleshooting
-
-If missing sections exist, **generate them**.
-
----
-
-# Step 8 — Architecture Documentation Generation
-
-If missing or weak, generate architecture documentation.
-
-Include:
-
-System overview Service components Folder structure explanation Data flow overview External integrations
-
-Example structure:
-
-```
-# Architecture
-
-## System Overview
-
-## Components
-
-## Data Flow
-
-## Folder Structure
-
-## External Integrations
-```
-
-Use repository structure to infer architecture.
-
----
-
-# Step 9 — API Documentation Generation
-
-If APIs exist, generate API documentation.
-
-Include:
-
-Endpoint descriptions Authentication method Request parameters Response examples Error responses
-
-Example format:
-
-```
-# API Documentation
-
-## GET /users
-
-### Description
-Returns list of users.
-
-### Response
-
-200 OK
-{
-  "id": "123",
-  "name": "Alice"
-}
-```
-
----
-
-# Step 10 — Developer Onboarding Documentation
-
-Ensure developers can start quickly.
-
-Include:
-
-Prerequisites Dependency installation Environment variables Database setup Running development server
-
-Example:
-
-```
-# Setup Guide
-
-## Prerequisites
-
-Node 18+
-Docker
-
-## Installation
-
-npm install
-
-## Run Development Server
-
-npm run dev
-```
-
----
-
-# Step 11 — Operational Documentation
-
-Ensure production readiness documentation exists.
-
-Include:
-
-Deployment steps Environment configuration Monitoring Logging Rollback instructions
-
-Example:
-
-```
-# Deployment
-
-## Build
-
-docker build -t app .
-
-## Run
-
-docker-compose up
-```
-
----
-
-# Step 12 — Docs-to-Code Consistency Check
-
-Ensure documentation matches repository behavior.
-
-Verify:
-
-• commands match package.json scripts • environment variables exist in code • API examples match routes • setup instructions match project structure
-
-If mismatch found → update documentation.
-
----
-
-# Step 13 — Documentation Maintainability
-
-Ensure documentation structure is scalable.
-
-Recommended structure:
-
-```
-docs/
-
-architecture.md
-api.md
-setup.md
-deployment.md
-contributing.md
-```
-
-Avoid large monolithic docs.
-
----
-
-# Step 14 — Generate Final Output
-
-Produce two outputs:
-
-## 1️⃣ Documentation Review Report
-
-Explain:
-
-• documentation coverage • gaps detected • outdated docs • improvements made
-
----
-
-## 2️⃣ Generated Documentation Files
-
-Provide **full markdown content** for each file.
-
-Example output:
-
-```
-File: docs/setup.md
-
-# Setup Guide
-
-## Prerequisites
-Node.js 18+
-Docker
-
-## Installation
-
-npm install
-```
-
----
-
-# Documentation Quality Score
-
-| Category   | Rating                            |
-| ---------- | --------------------------------- |
-| Coverage   | 🟢 Good / 🟡 Needs Work / 🔴 Poor |
-| Clarity    | 🟢 Good / 🟡 Needs Work / 🔴 Poor |
-| Structure  | 🟢 Good / 🟡 Needs Work / 🔴 Poor |
-| Accuracy   | 🟢 Good / 🟡 Needs Work / 🔴 Poor |
-| Onboarding | 🟢 Good / 🟡 Needs Work / 🔴 Poor |
-| Operations | 🟢 Good / 🟡 Needs Work / 🔴 Poor |
-
----
-
-# Top Documentation Improvements
-
-List the most impactful improvements.
-
-Example:
-
-1 Add architecture documentation 2 Document environment variables 3 Add API examples 4 Improve onboarding steps 5 Add deployment guide
-
----
-
-# Tone Guidelines
-
-Documentation must be:
-
-• clear • concise • developer-friendly • technically accurate
-
-Focus on **developer productivity and onboarding speed**.
-
-Avoid speculation when repository evidence is missing.
-
-Generate documentation based only on **verified repository behavior**.
-
-```
-
----
-
-# Key Improvements in This Refined Skill
-
-| Feature | Old Skill | New Skill |
-|---|---|---|
-Documentation review | ✓ | ✓ |
-Coverage audit | ✓ | ✓ |
-Architecture docs review | ✓ | ✓ |
-API docs review | ✓ | ✓ |
-Detect documentation gaps | ✗ | ✓ |
-Generate missing docs | ✗ | ✓ |
-Rewrite incomplete docs | ✗ | ✓ |
-Produce `.md` file content | ✗ | ✓ |
-Docs-to-code validation | ✓ | ✓ |
-Onboarding documentation generation | ✗ | ✓ |
-Deployment docs generation | ✗ | ✓ |
-
----
-```
+Tone: clear, concise, developer-friendly and technically accurate. Do not speculate where the repository gives no evidence. If everything already matches, say "Documentation is already synchronized."

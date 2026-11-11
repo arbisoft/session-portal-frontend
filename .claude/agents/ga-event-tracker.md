@@ -17,7 +17,7 @@ The specifics below reflect the state of the tracking system as of when this age
 
 1. Read `src/utils/analytics.ts` in full. Confirm it still exports `trackEvent`, `GA_EVENTS`, and `ANALYTICS_CATEGORY` (or whatever it's been renamed to — if the exports have changed, adapt to what's actually there instead of assuming this document is current).
 2. `grep -rn "trackEvent(" src` to see the full current set of call sites and confirm the call signature and param shapes actually in use today.
-3. If the utility has moved, been renamed, or the shape has changed materially, follow what the code actually does now, and treat the rest of this document as historical intent rather than literal instructions.
+3. If the utility has moved, been renamed, or the shape has changed materially, follow what the code actually does now, and treat the rest of this document as historical intent rather than literal instructions. Patch the stale part of this file in the same run, per `.claude/references/self-healing.md`.
 
 ## The convention (as of writing)
 

@@ -24,7 +24,7 @@ Apply every applicable item. Mark Critical / Warning / Suggestion per the severi
 - [ ] `src/app/login/actions.ts`'s server action sets the `access` cookie as HttpOnly server-side and returns `access: null, refresh: null` — the token must never be returned to, stored by, or read from client code
 - [ ] Client-side Redux login state (`loginActions.login`) is only dispatched after the server action returns successfully — not optimistically before the cookie is confirmed set
 - [ ] `customBaseQuery`'s `401` → `logout()` dispatch (imported from `src/redux/login/actions.ts`, never the string `"login/logout"`) is preserved in any new base query or query wrapper — don't bypass `customBaseQuery` with a raw `fetchBaseQuery` for a new API slice
-- [ ] Backend calls from the browser go only through the BFF proxy (`src/app/bff/[...path]/route.ts`); no client-side `fetch` to `BASE_URL` with an `Authorization` header, and no UI gating on a client-held token
+- [ ] Backend calls from the browser go only through the BFF proxy (`src/app/bff/[...path]/route.ts`), except dedicated media routes that meet the sanctioned-exception conditions in `architecture-guardian.md` section 2; no client-side `fetch` to `BASE_URL` with an `Authorization` header, and no UI gating on a client-held token
 - [ ] Persisted Redux shape changes bump `version` and add a migration in `src/redux/store/configureStore.tsx`
 - [ ] No circular imports through the store (`baseApi` ↔ `customBaseQuery` ↔ `login/*`); shared actions live in leaf files
 
@@ -61,7 +61,7 @@ Apply every applicable item. Mark Critical / Warning / Suggestion per the severi
 - [ ] A new env var that must stay server-only is **not** prefixed `NEXT_PUBLIC_` — that prefix inlines the value into the client bundle at build time; only genuinely public values (base URL, GTM ID, client ID meant for the browser) should use it
 - [ ] No open redirect — any redirect target derived from user input (query params, especially `redirect_to`) is validated against `isValidInternalRedirectPath` or equivalent before use in `NextResponse.redirect`/`router.push`
 - [ ] Auth tokens are never read from or written to `localStorage`/`sessionStorage`/Redux/a non-HttpOnly cookie, and never logged or sent in analytics events — the `access` cookie must stay HttpOnly, set only by the server action
-- [ ] Security headers in `next.config.ts` (HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, CSP) are not weakened; any new third-party script/frame/connection is added to the CSP; no `'unsafe-eval'` outside development
+- [ ] `next.config.ts` sets no security headers or CSP today (see `docs/ARCHITECTURE.md`). If any are introduced (HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, CSP), they are never weakened, new third-party script/frame/connection origins are added, and there is no `'unsafe-eval'` outside development
 - [ ] `images.remotePatterns` never uses a wildcard host — only the backend host plus `NEXT_PUBLIC_IMAGE_HOSTS`
 - [ ] No `@ts-ignore`/`@ts-expect-error` in production code; test-only hooks live in `jest.setup.ts`
 - [ ] Route handlers under `src/app/api/**` and `src/app/bff/**` validate input (path segments, method, body), fail closed without credentials, and never leak backend internals in errors
@@ -160,6 +160,11 @@ Apply these to every review; they mirror `.claude/agents/architecture-guardian.m
 - [ ] LSP: components accepting a shared props shape or `as`/`component` override do not narrow or break the base contract
 - [ ] ISP: props and hook return values expose only what consumers use; no wide "options" objects passed through untouched
 - [ ] DIP: modules depend on abstractions (selectors, action creators, `baseApi`, `notificationManager`) instead of reaching into another module's state shape or string action types
+
+### Framework currency (Next.js 16, React 19, MUI 9) (Warning)
+
+- [ ] Request APIs are awaited (`await cookies()`, `await headers()`, Promise `params` / `searchParams`); no `middleware.ts`, no `next lint`, no `images.domains`, no removed MUI 9 props (see `architecture-guardian.md` section 8 and `ui-design-guidelines.md`)
+- [ ] `reactCompiler`, `cacheComponents` and a migration to RTK `build.infiniteQuery` are not introduced as side effects of an unrelated change
 
 ### Advisory health rating
 
