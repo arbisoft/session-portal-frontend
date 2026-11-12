@@ -42,6 +42,13 @@ describe("ConfirmDialog", () => {
     expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
+  it("should dismiss through the close icon like the cancel button", () => {
+    const { onConfirm, onCancel } = setup();
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onConfirm).not.toHaveBeenCalled();
+  });
+
   it("should render nothing while closed", () => {
     setup(false);
 

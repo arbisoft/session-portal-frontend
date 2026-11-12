@@ -117,6 +117,14 @@ describe("Navbar Component", () => {
     });
   });
 
+  test("should show the user's initial when there is no avatar picture", async () => {
+    mockUserInfo.avatar = null as unknown as string;
+    customRender(<Navbar />);
+
+    await waitFor(() => expect(screen.getByTestId("avatar-btn")).toHaveTextContent("J"));
+    mockUserInfo.avatar = "https://example.com/avatar.jpg";
+  });
+
   test("should render avatar button", async () => {
     customRender(<Navbar />);
     await waitFor(() => {

@@ -46,7 +46,7 @@ Provides the authenticated application shell:
 
 ### `Navbar`
 
-Used as the top navigation bar. Based on surrounding code and tests/stories, it also handles drawer toggle behavior.
+Used as the top navigation bar. Based on surrounding code and tests/stories, it also handles drawer toggle behavior. The account avatar shows the user's picture, or their initial when there is none.
 
 ### `Sidebar`
 
@@ -83,7 +83,7 @@ Used across listing/search flows for:
 
 ### `ConfirmDialog`
 
-Implemented in `src/components/ConfirmDialog/confirmDialog.tsx`. A presentational MUI dialog (`title`, `description`, `confirmLabel`, optional `cancelLabel`, `onConfirm`, `onCancel`) with `aria-labelledby` / `aria-describedby`. The safe (cancel) button is focused first, and Escape or a backdrop click calls `onCancel`. Used by the upload page to confirm cancelling or removing a video, discarding an unfinished upload and leaving the page.
+Implemented in `src/components/ConfirmDialog/confirmDialog.tsx`. A presentational MUI dialog (`title`, `description`, `confirmLabel`, optional `cancelLabel`, `onConfirm`, `onCancel`) with `aria-labelledby` / `aria-describedby`. The safe (cancel) button is focused first, and Escape, a backdrop click or the close (X) icon in the top-right corner calls `onCancel`. The cancel button uses the `Button` `color="inherit"` option so it stays readable on dark surfaces, where the primary colour has too little contrast. Used by the upload page to confirm cancelling or removing a video, discarding an unfinished upload and leaving the page.
 
 ### `ReadMore`
 
