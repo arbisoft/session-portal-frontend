@@ -128,6 +128,8 @@ const VideoDetail = () => {
                 width: "100%",
                 title: "",
                 videoSrc: getVideoStreamUrl(playableVideoSlug),
+                // Empty (or missing, from an older backend) falls back to the player's MP4 default.
+                videoType: data?.video_type || undefined,
                 posterSrc: data?.thumbnail || DEFAULT_THUMBNAIL,
                 posterAlt: data?.event?.title ?? "",
                 onWatchThreshold: handleWatchThreshold,

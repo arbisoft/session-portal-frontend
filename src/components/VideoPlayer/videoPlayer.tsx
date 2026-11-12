@@ -13,6 +13,7 @@ import {
   type MediaPlayerInstance,
   type MediaVolumeChange,
   PlayButton,
+  type VideoMimeType,
 } from "@vidstack/react";
 import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
 import clsx from "clsx";
@@ -26,7 +27,14 @@ import "./styles.css";
 
 const DEFAULT_CONTROLS_DELAY_MS = 3000;
 // The stream URL has no file extension, so vidstack cannot infer the format and needs the MIME type spelled out.
-const DEFAULT_VIDEO_TYPE = "video/mp4";
+const DEFAULT_VIDEO_TYPE: VideoMimeType = "video/mp4";
+// What the backend reports for a stored file, in the spelling vidstack accepts. Anything else falls back to MP4.
+const SUPPORTED_VIDEO_TYPES: Record<string, VideoMimeType> = {
+  "video/mp4": "video/mp4",
+  "video/webm": "video/webm",
+  "video/ogg": "video/ogg",
+  "video/x-msvideo": "video/avi",
+};
 // The browser keeps retrying a failing stream (e.g. repeated 503s) without ever raising an error, so a load that has not
 // produced a playable frame by now is reported to the user instead of spinning forever.
 const STALL_TIMEOUT_MS = 20000;
@@ -49,12 +57,13 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   posterSrc,
   title,
   videoSrc,
-  videoType = DEFAULT_VIDEO_TYPE,
+  videoType,
   watchThresholdSeconds = 30,
   width = "70%",
 }) => {
   const player = useRef<MediaPlayerInstance>(null);
   const videoLabel = title || posterAlt;
+  const resolvedVideoType = (videoType && SUPPORTED_VIDEO_TYPES[videoType]) || DEFAULT_VIDEO_TYPE;
 
   // Not useMediaState: it reads player.current during the first render (still null), so it binds to vidstack's static
   // initial store and never sees playback start. The subscription below is created after mount.
@@ -143,7 +152,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         crossOrigin={crossOrigin}
         playsInline={playsInline}
         ref={player}
-        src={videoSrc ? { src: videoSrc, type: videoType } : videoSrc}
+        src={videoSrc ? { src: videoSrc, type: resolvedVideoType } : videoSrc}
         title={title}
         onPlay={() => trackEvent(GA_EVENTS.VIDEO_PLAY, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel })}
         onPause={() => trackEvent(GA_EVENTS.VIDEO_PAUSE, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel })}

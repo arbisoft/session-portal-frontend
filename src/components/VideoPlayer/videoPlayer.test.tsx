@@ -221,6 +221,17 @@ describe("VideoPlayer", () => {
 
       expect(screen.getByTestId("media-player")).toHaveAttribute("data-type", "video/webm");
     });
+
+    it.each([
+      ["video/ogg", "video/ogg"],
+      ["video/x-msvideo", "video/avi"],
+      ["video/quicktime", "video/mp4"],
+      ["", "video/mp4"],
+    ])("should declare %s as %s", (reported, declared) => {
+      render(<VideoPlayer {...defaultProps} videoType={reported} />);
+
+      expect(screen.getByTestId("media-player")).toHaveAttribute("data-type", declared);
+    });
   });
 
   describe("Play/Pause Functionality", () => {

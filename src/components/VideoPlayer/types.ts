@@ -14,7 +14,8 @@ export interface VideoPlayerProps {
   posterSrc: string;
   title: string;
   videoSrc: string;
-  videoType?: "video/mp4" | "video/webm" | "video/ogg";
+  /** Media type of the stream. The URL has no extension, so it cannot be inferred. Defaults to MP4. */
+  videoType?: string;
   watchThresholdSeconds?: number;
   width?: string;
 }

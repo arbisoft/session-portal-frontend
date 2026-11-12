@@ -18,6 +18,7 @@ let mockVideoId: string | undefined = "my-video";
 const buildDetailState = (overrides: Record<string, unknown> = {}) => ({
   data: {
     video_file: "/api/v1/events/videoasset/my-video/stream/",
+    video_type: "video/webm",
     view_count: 3,
     event: {
       title: "A session",
@@ -78,9 +79,19 @@ jest.mock("@/components/containers/MainLayoutContainer", () => ({
 
 jest.mock("@/components/VideoPlayer", () => ({
   __esModule: true,
-  default: ({ onWatchThreshold, posterSrc, videoSrc }: { onWatchThreshold: () => void; posterSrc: string; videoSrc: string }) => {
+  default: ({
+    onWatchThreshold,
+    posterSrc,
+    videoSrc,
+    videoType,
+  }: {
+    onWatchThreshold: () => void;
+    posterSrc: string;
+    videoSrc: string;
+    videoType?: string;
+  }) => {
     mockWatchThreshold = onWatchThreshold;
-    return <div data-testid="video-player" data-poster={posterSrc} data-src={videoSrc} />;
+    return <div data-testid="video-player" data-poster={posterSrc} data-src={videoSrc} data-type={videoType ?? ""} />;
   },
 }));
 
@@ -197,6 +208,23 @@ describe("VideoDetail", () => {
       render(<VideoDetail />);
 
       expect(screen.getByTestId("video-player")).toHaveAttribute("data-src", "/bff/video/my-video");
+    });
+
+    it("should declare the media type the server reports for this video", () => {
+      render(<VideoDetail />);
+
+      expect(screen.getByTestId("video-player")).toHaveAttribute("data-type", "video/webm");
+    });
+
+    it.each([
+      ["empty", ""],
+      ["missing", undefined],
+    ])("should leave the player on its MP4 default when the type is %s", (_, type) => {
+      mockDetailState = buildDetailState({ data: { ...buildDetailState().data, video_type: type } });
+
+      render(<VideoDetail />);
+
+      expect(screen.getByTestId("video-player")).toHaveAttribute("data-type", "");
     });
 
     it("should skip the video player when the event has no video file", () => {

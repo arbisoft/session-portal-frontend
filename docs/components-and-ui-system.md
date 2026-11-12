@@ -124,7 +124,7 @@ Observed variants include:
 Used on the video detail page and receives fields such as:
 
 - `videoSrc`
-- `videoType` (`"video/mp4"` by default, or `"video/webm"` / `"video/ogg"`): the MIME type handed to Vidstack alongside `videoSrc`. The stream URL (`/bff/video/<slug>`) has no file extension, so without it Vidstack cannot pick a loader and logs "could not find a loader for any of the given media sources" before falling back to fetching the source headers
+- `videoType` (string, `"video/mp4"` when empty or not recognised; `"video/webm"`, `"video/ogg"` and `"video/x-msvideo"` are mapped to Vidstack's spelling): the MIME type handed to Vidstack alongside `videoSrc`. The stream URL (`/bff/video/<slug>`) has no file extension, so without it Vidstack cannot pick a loader and logs "could not find a loader for any of the given media sources" before falling back to fetching the source headers
 - `posterSrc`
 - `posterAlt`
 - `playsInline`

@@ -108,6 +108,7 @@ Retrieve detailed information about a specific video asset/event.
   "thumbnail": "string",
   "title": "string",
   "video_file": "string",
+  "video_type": "string", // media type to declare for video_file, e.g. "video/mp4"; "" without a playable video
   "captions_file": "string", // optional; .vtt or .srt URL
   "view_count": 0
 }
