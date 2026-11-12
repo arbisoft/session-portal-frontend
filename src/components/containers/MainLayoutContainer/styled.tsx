@@ -50,6 +50,8 @@ export const ContentContainer = styled(Box)(({ theme }) => ({
   alignContent: "flex-start",
   width: "100%",
   flexGrow: 1,
+  // A flex item never shrinks below its content by default, so one long unbroken word would widen the whole page.
+  minWidth: 0,
   paddingInline: theme.spacing(2),
 
   [theme.breakpoints.up("sm")]: {
