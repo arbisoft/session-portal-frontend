@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, type KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import Button from "@mui/material/Button";
@@ -62,6 +62,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   width = "70%",
 }) => {
   const player = useRef<MediaPlayerInstance>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const videoLabel = title || posterAlt;
   const resolvedVideoType = (videoType && SUPPORTED_VIDEO_TYPES[videoType]) || DEFAULT_VIDEO_TYPE;
 
@@ -112,12 +113,19 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   };
 
   // Vidstack closes a menu on Escape only while focus is inside its items; opening it by mouse leaves focus on the trigger.
-  const handleKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
-    if (event.key !== "Escape") return;
-    const trigger = event.currentTarget.querySelector(OPEN_MENU_TRIGGER_SELECTOR);
-    const menuId = trigger?.getAttribute("aria-controls");
-    document.getElementById(menuId ?? "")?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
-  };
+  // A native listener keeps the wrapper a plain element: it only observes Escape bubbling up, so it needs no role.
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return undefined;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      const trigger = wrapper.querySelector(OPEN_MENU_TRIGGER_SELECTOR);
+      const menuId = trigger?.getAttribute("aria-controls");
+      document.getElementById(menuId ?? "")?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    };
+    wrapper.addEventListener("keydown", handleKeyDown);
+    return () => wrapper.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const accumulatedTimeRef = useRef(0);
   const hasCountedRef = useRef(false);
@@ -142,7 +150,7 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   }, [isPaused, onWatchThreshold, videoLabel, watchThresholdSeconds]);
 
   return (
-    <div style={{ width, height }} onKeyDown={handleKeyDown}>
+    <div ref={wrapperRef} style={{ width, height }}>
       <MediaPlayer
         key={attempt}
         autoPlay={attempt > 0}

@@ -85,34 +85,130 @@ const progressTitle = (phase: UploadPhase) => {
   }
 };
 
+const CANCEL_UPLOAD_COPY = {
+  action: "Cancel upload",
+  title: "Cancel this upload?",
+  description: "The upload will stop and what was sent so far will be discarded. The details you filled in are kept.",
+  keep: "Keep uploading",
+  analyticsDialog: "cancel_upload",
+};
+
+const REMOVE_VIDEO_COPY = {
+  action: "Remove video",
+  title: "Remove this video?",
+  description:
+    "The uploaded video will be removed and you will need to choose a video again. The details you filled in are kept.",
+  keep: "Keep video",
+  analyticsDialog: "remove_video",
+};
+
+type DetailsInput = { percent: number; sentBytes: number; totalBytes: number; bytesPerSecond: number | null };
+
+const getUploadDetails = ({ percent, sentBytes, totalBytes, bytesPerSecond }: DetailsInput) => {
+  const parts = [`${percent}%`, `${formatBytes(sentBytes)} of ${formatBytes(totalBytes)}`];
+  if (bytesPerSecond) {
+    parts.push(formatRate(bytesPerSecond), formatTimeLeft((totalBytes - sentBytes) / bytesPerSecond));
+  }
+  return parts.join(" · ");
+};
+
+type ProgressProps = { upload: UploadUi; details: string };
+
+const UploadProgress = ({ upload, details }: ProgressProps) => {
+  const { phase, percent, error } = upload;
+  const isIndeterminate = phase === "creating" || phase === "finalizing";
+  const isFailed = phase === "failed";
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <Typography variant="bodySmall" color={isFailed ? "error" : "textPrimary"}>
+        {progressTitle(phase)}
+      </Typography>
+      {(upload.isActive || isFailed) && (
+        <LinearProgress
+          // The two variants animate differently; switching one element between them makes the bar sweep back
+          // from wherever the indeterminate animation was, so each variant gets its own element.
+          key={isIndeterminate ? "indeterminate" : "determinate"}
+          aria-label="Video upload progress"
+          variant={isIndeterminate ? "indeterminate" : "determinate"}
+          value={percent}
+          color={isFailed ? "error" : "inherit"}
+        />
+      )}
+      {upload.isActive && !isIndeterminate && (
+        <Typography variant="bodySmall" color="textSecondary" sx={{ fontVariantNumeric: "tabular-nums" }}>
+          {details}
+        </Typography>
+      )}
+      {phase === "interrupted" && (
+        <Typography variant="bodySmall" color="textSecondary">
+          {upload.notice ?? "Connection problem."}
+        </Typography>
+      )}
+      {isFailed && error && (
+        <Typography variant="bodySmall" color="error">
+          {error}
+        </Typography>
+      )}
+    </Box>
+  );
+};
+
+type ActionsProps = {
+  upload: UploadUi;
+  canRemove: boolean;
+  removeLabel: string;
+  onRequestRemove: () => void;
+  onChooseAnother: () => void;
+};
+
+const UploadActions = ({ upload, canRemove, removeLabel, onRequestRemove, onChooseAnother }: ActionsProps) => {
+  const isFailed = upload.phase === "failed";
+
+  return (
+    <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+      {upload.canPause && (
+        <Button size="small" variant="outlined" color="inherit" onClick={upload.onPause}>
+          Pause
+        </Button>
+      )}
+      {upload.canResume && (
+        <Button size="small" variant="outlined" color="inherit" onClick={upload.onResume}>
+          {upload.phase === "paused" ? "Resume" : "Retry now"}
+        </Button>
+      )}
+      {canRemove && (
+        <Button
+          size="small"
+          variant="outlined"
+          color="inherit"
+          // A failed upload has nothing to lose, so choosing another video needs no confirmation.
+          onClick={isFailed ? onChooseAnother : onRequestRemove}
+        >
+          {isFailed ? "Choose another video" : removeLabel}
+        </Button>
+      )}
+    </Box>
+  );
+};
+
 type PanelProps = { file: File; upload: UploadUi; isPublishing?: boolean };
 
 export const UploadStatusPanel = ({ file, upload, isPublishing = false }: PanelProps) => {
   const [confirmingRemove, setConfirmingRemove] = useState(false);
-  const { phase, percent, error } = upload;
+  const { phase, percent } = upload;
   const sentBytes = upload.sentBytes ?? Math.floor((file.size * percent) / 100);
   const bytesPerSecond = useUploadRate(sentBytes, phase === "uploading");
 
-  const isIndeterminate = phase === "creating" || phase === "finalizing";
-  const isFailed = phase === "failed";
   const isComplete = phase === "completed";
-  const showProgress = upload.isActive || isFailed;
   // Removing a finished upload deletes its video on the server, which must not happen while an event is being created from it.
-  const canRemove = !isPublishing && (upload.canCancel || isComplete || isFailed);
-  const needsConfirmation = !isFailed;
+  const canRemove = !isPublishing && (upload.canCancel || isComplete || phase === "failed");
+  const copy = upload.canCancel ? CANCEL_UPLOAD_COPY : REMOVE_VIDEO_COPY;
 
   // A connection drop can hide the button while its dialog is open; the dialog must not stay behind with other wording.
   useEffect(() => {
     if (!canRemove) setConfirmingRemove(false);
   }, [canRemove]);
-
-  const remainingSeconds = bytesPerSecond ? (file.size - sentBytes) / bytesPerSecond : null;
-  const details = [
-    `${percent}%`,
-    `${formatBytes(sentBytes)} of ${formatBytes(file.size)}`,
-    bytesPerSecond ? formatRate(bytesPerSecond) : null,
-    remainingSeconds !== null ? formatTimeLeft(remainingSeconds) : null,
-  ].filter(Boolean);
 
   const handleRemove = () => {
     setConfirmingRemove(false);
@@ -123,9 +219,7 @@ export const UploadStatusPanel = ({ file, upload, isPublishing = false }: PanelP
   // declined and the no-confirmation paths are tracked here.
   const handleKeep = () => {
     setConfirmingRemove(false);
-    trackEvent(GA_EVENTS.UPLOAD_CONFIRM_DECLINED, ANALYTICS_CATEGORY.UPLOAD_VIDEO, {
-      dialog: upload.canCancel ? "cancel_upload" : "remove_video",
-    });
+    trackEvent(GA_EVENTS.UPLOAD_CONFIRM_DECLINED, ANALYTICS_CATEGORY.UPLOAD_VIDEO, { dialog: copy.analyticsDialog });
   };
 
   const handleChooseAnother = () => {
@@ -133,7 +227,7 @@ export const UploadStatusPanel = ({ file, upload, isPublishing = false }: PanelP
     handleRemove();
   };
 
-  const removeLabel = upload.canCancel ? "Cancel upload" : "Remove video";
+  const details = getUploadDetails({ percent, sentBytes, totalBytes: file.size, bytesPerSecond });
 
   return (
     <Box
@@ -158,71 +252,22 @@ export const UploadStatusPanel = ({ file, upload, isPublishing = false }: PanelP
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-        <Typography variant="bodySmall" color={isFailed ? "error" : "textPrimary"}>
-          {progressTitle(phase)}
-        </Typography>
-        {showProgress && (
-          <LinearProgress
-            // The two variants animate differently; switching one element between them makes the bar sweep back
-            // from wherever the indeterminate animation was, so each variant gets its own element.
-            key={isIndeterminate ? "indeterminate" : "determinate"}
-            aria-label="Video upload progress"
-            variant={isIndeterminate ? "indeterminate" : "determinate"}
-            value={percent}
-            color={isFailed ? "error" : "inherit"}
-          />
-        )}
-        {upload.isActive && !isIndeterminate && (
-          <Typography variant="bodySmall" color="textSecondary" sx={{ fontVariantNumeric: "tabular-nums" }}>
-            {details.join(" · ")}
-          </Typography>
-        )}
-        {phase === "interrupted" && (
-          <Typography variant="bodySmall" color="textSecondary">
-            {upload.notice ?? "Connection problem."}
-          </Typography>
-        )}
-        {isFailed && error && (
-          <Typography variant="bodySmall" color="error">
-            {error}
-          </Typography>
-        )}
-      </Box>
+      <UploadProgress upload={upload} details={details} />
 
-      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-        {upload.canPause && (
-          <Button size="small" variant="outlined" color="inherit" onClick={upload.onPause}>
-            Pause
-          </Button>
-        )}
-        {upload.canResume && (
-          <Button size="small" variant="outlined" color="inherit" onClick={upload.onResume}>
-            {phase === "paused" ? "Resume" : "Retry now"}
-          </Button>
-        )}
-        {canRemove && (
-          <Button
-            size="small"
-            variant="outlined"
-            color="inherit"
-            onClick={needsConfirmation ? () => setConfirmingRemove(true) : handleChooseAnother}
-          >
-            {isFailed ? "Choose another video" : removeLabel}
-          </Button>
-        )}
-      </Box>
+      <UploadActions
+        upload={upload}
+        canRemove={canRemove}
+        removeLabel={copy.action}
+        onRequestRemove={() => setConfirmingRemove(true)}
+        onChooseAnother={handleChooseAnother}
+      />
 
       <ConfirmDialog
         open={confirmingRemove}
-        title={upload.canCancel ? "Cancel this upload?" : "Remove this video?"}
-        description={
-          upload.canCancel
-            ? "The upload will stop and what was sent so far will be discarded. The details you filled in are kept."
-            : "The uploaded video will be removed and you will need to choose a video again. The details you filled in are kept."
-        }
-        confirmLabel={upload.canCancel ? "Cancel upload" : "Remove video"}
-        cancelLabel={upload.canCancel ? "Keep uploading" : "Keep video"}
+        title={copy.title}
+        description={copy.description}
+        confirmLabel={copy.action}
+        cancelLabel={copy.keep}
         onConfirm={handleRemove}
         onCancel={handleKeep}
       />
