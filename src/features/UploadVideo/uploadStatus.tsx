@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import Box from "@mui/material/Box";
@@ -19,6 +19,8 @@ export type UploadUi = {
   /** Why the transfer is waiting or interrupted, when it is. */
   notice: string | null;
   percent: number;
+  /** Bytes sent so far, finer than `percent`. Derived from `percent` when absent. */
+  sentBytes?: number;
   /** Message for a failed upload; null otherwise. */
   error: string | null;
   /** A transfer is in progress, including paused and interrupted ones. */
@@ -83,21 +85,27 @@ const progressTitle = (phase: UploadPhase) => {
   }
 };
 
-type PanelProps = { file: File; upload: UploadUi };
+type PanelProps = { file: File; upload: UploadUi; isPublishing?: boolean };
 
-export const UploadStatusPanel = ({ file, upload }: PanelProps) => {
+export const UploadStatusPanel = ({ file, upload, isPublishing = false }: PanelProps) => {
   const [confirmingRemove, setConfirmingRemove] = useState(false);
   const { phase, percent, error } = upload;
-  const bytesPerSecond = useUploadRate(percent, file.size, phase === "uploading");
+  const sentBytes = upload.sentBytes ?? Math.floor((file.size * percent) / 100);
+  const bytesPerSecond = useUploadRate(sentBytes, phase === "uploading");
 
   const isIndeterminate = phase === "creating" || phase === "finalizing";
   const isFailed = phase === "failed";
   const isComplete = phase === "completed";
   const showProgress = upload.isActive || isFailed;
-  const canRemove = upload.canCancel || isComplete || isFailed;
+  // Removing a finished upload deletes its video on the server, which must not happen while an event is being created from it.
+  const canRemove = !isPublishing && (upload.canCancel || isComplete || isFailed);
   const needsConfirmation = !isFailed;
 
-  const sentBytes = Math.floor((file.size * percent) / 100);
+  // A connection drop can hide the button while its dialog is open; the dialog must not stay behind with other wording.
+  useEffect(() => {
+    if (!canRemove) setConfirmingRemove(false);
+  }, [canRemove]);
+
   const remainingSeconds = bytesPerSecond ? (file.size - sentBytes) / bytesPerSecond : null;
   const details = [
     `${percent}%`,
@@ -156,6 +164,9 @@ export const UploadStatusPanel = ({ file, upload }: PanelProps) => {
         </Typography>
         {showProgress && (
           <LinearProgress
+            // The two variants animate differently; switching one element between them makes the bar sweep back
+            // from wherever the indeterminate animation was, so each variant gets its own element.
+            key={isIndeterminate ? "indeterminate" : "determinate"}
             aria-label="Video upload progress"
             variant={isIndeterminate ? "indeterminate" : "determinate"}
             value={percent}
@@ -181,12 +192,12 @@ export const UploadStatusPanel = ({ file, upload }: PanelProps) => {
 
       <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
         {upload.canPause && (
-          <Button size="small" variant="outlined" onClick={upload.onPause}>
+          <Button size="small" variant="outlined" color="inherit" onClick={upload.onPause}>
             Pause
           </Button>
         )}
         {upload.canResume && (
-          <Button size="small" variant="outlined" onClick={upload.onResume}>
+          <Button size="small" variant="outlined" color="inherit" onClick={upload.onResume}>
             {phase === "paused" ? "Resume" : "Retry now"}
           </Button>
         )}
@@ -194,6 +205,7 @@ export const UploadStatusPanel = ({ file, upload }: PanelProps) => {
           <Button
             size="small"
             variant="outlined"
+            color="inherit"
             onClick={needsConfirmation ? () => setConfirmingRemove(true) : handleChooseAnother}
           >
             {isFailed ? "Choose another video" : removeLabel}

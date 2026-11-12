@@ -14,7 +14,12 @@ export type UploadSnapshot = {
   /** Bytes the server confirmed as durably stored. Never an estimate. */
   confirmedBytes: number;
   totalBytes: number;
-  /** Transfer progress from confirmed bytes. 100 while finalizing: the upload is only complete in `completed`. */
+  /**
+   * Bytes confirmed plus the part of the chunk being sent right now, so progress moves while a chunk uploads. Falls
+   * back to `confirmedBytes` whenever a chunk ends without being confirmed. Only for display: resuming uses the server.
+   */
+  sentBytes: number;
+  /** `sentBytes` as a whole percent. At most 99 until the server has confirmed everything; 100 while finalizing. */
   percent: number;
   videoAssetId: number | null;
   failure: UploadFailure | null;

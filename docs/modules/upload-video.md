@@ -23,13 +23,15 @@ Lets staff users upload a video file (up to 20 GB), describe it, and publish it 
 | Text / date fields, `FieldLabel` | `src/features/UploadVideo/fields.tsx` |
 | Presenter, playlist, tags | `src/features/UploadVideo/selectFields.tsx` |
 | Leave-page confirmation | `src/features/UploadVideo/leaveGuardDialog.tsx` |
+| Form draft kept across a reload (save, restore, clear) | `src/features/UploadVideo/useUploadDraft.ts` |
+| Draft persistence (text fields in `localStorage`, thumbnail image in IndexedDB) | `src/services/uploadDraft/` (`draftStorage.ts`, `thumbnailStore.ts`) |
 | Shared confirmation dialog | `src/components/ConfirmDialog/` |
 | Upload hook | `src/hooks/useVideoUpload.ts` |
-| Upload speed / time left | `src/hooks/useUploadRate.ts` |
+| Upload speed / time left (from sent bytes) | `src/hooks/useUploadRate.ts` |
 | Unsaved-work guard | `src/hooks/useLeaveGuard.ts` |
 | Stray file-drop guard | `src/hooks/usePreventFileDrop.ts` |
 | Upload engine (no React) | `src/services/resumableUpload/` (see below) |
-| Pure helpers | `src/utils/upload.ts` (sizes, rate, video type check, title from file name, event timestamp), `src/utils/tags.ts` |
+| Pure helpers | `src/utils/upload.ts` (sizes, rate, video type check, title from file name, event timestamp, future-day check, thumbnail size and shape advice), `src/utils/tags.ts` |
 | Endpoint paths | `src/endpoints/events.ts` (`uploadVideoAsset`), `src/endpoints/users.ts` |
 | RTK Query endpoints | `src/redux/events/apiSlice.ts` |
 | Staff selector | `src/redux/login/selectors.ts` (`selectIsStaff`) |
@@ -51,8 +53,8 @@ The page is one card with a **Video** section and the metadata fields side by si
 
 1. **Choose a video** (`VideoPicker`, shown in the Video section until a file is chosen). Drag-and-drop onto the dashed zone or the "Select video" button. The type is checked with `isAllowedVideoFile` (`ALLOWED_TYPES`, falling back to `ALLOWED_VIDEO_EXTENSIONS` when the browser reports no MIME type, e.g. some `.mov` files) and the size limit is `MAX_VIDEO_FILE_SIZE_BYTES` (20 GB, the same as the backend `RESUMABLE_UPLOAD_MAX_FILE_BYTES`). The file dialog is filtered with the same constants (`ALLOWED_TYPES` plus `ALLOWED_VIDEO_EXTENSIONS`), so a `.mov` that reports no MIME type is still selectable. A rejection shows a persistent inline error alert. Dropping several files uses the first and says so. `usePreventFileDrop` stops a file dropped anywhere else on the page from making the browser open it and leave the page. If an unfinished upload from an earlier page load exists, an info alert names it and offers **Discard** (with a confirmation); selecting the same file continues it, any other file starts over.
 2. **Upload starts immediately** (`useVideoUpload.startUpload`). The upload engine creates (or re-attaches to) a server upload session and sends the file in sequential chunks (the server's `chunk_size`, 8 MiB by default) through the BFF proxy. The Video section becomes `UploadStatusPanel`: file name and size, progress bar, `percent · bytes sent of total · speed · time left` (speed and time left from `useUploadRate`, shown after a few seconds of data), and **Pause / Resume (Retry now) / Cancel upload** buttons. **Cancel upload** and **Remove video** (after completion) ask for confirmation, then return to the picker; **Choose another video** after a failure does not ask. The form keeps everything typed. Focus moves to "Select video" when the picker comes back.
-3. **Fill the form** (`VideoForm`) at any time, including before choosing a video. Fields: title (suggested from the file name via `titleFromFileName` when empty, max 255 characters), presenters (user search from 2 characters, at least one required), session date (defaults to today), description, thumbnail, playlists, tags. Required fields carry the label asterisk, optional ones say "(optional)". Validation uses `yup` with `mode: "onTouched"` (a field is checked when the user leaves it, then on every change); errors are `helperText` linked to the input, and a failed submit focuses the first invalid field and the footer says "Fix the highlighted fields to publish."
-   - **Thumbnail** (`ThumbnailField`): a two-button toggle (Auto-generated / Custom image, exposed with `aria-pressed`). A custom image must be JPG, PNG or WebP and at most `THUMBNAIL_MAX_BYTES` (5 MB; a client-side policy, the backend limit is not defined in this repository), is previewed at 16:9 and can be replaced or removed.
+3. **Fill the form** (`VideoForm`) at any time, including before choosing a video. Fields: title (suggested from the file name via `titleFromFileName` when empty, max 255 characters), presenters (user search from 2 characters, at least one required), session date (defaults to today; today or earlier only: future days are disabled in the calendar and a typed future date fails validation with "Session date can't be in the future"), description (at most `DESCRIPTION_MAX_LENGTH`, 5000 characters, the same limit the backend enforces), thumbnail, playlists, tags. Title and description show a live `used/limit` counter and stop accepting input at the limit (`maxLength`); the yup rule still catches longer restored text. The details are kept across a reload while an upload exists (`useUploadDraft`): title, session date, description, presenters (stored as the people, to show their names), playlists, tags and the custom thumbnail are saved under `upload-video:draft:v1:<userId>` in `localStorage` (the image in IndexedDB, best effort) and restored when the unfinished upload is found again. They are removed on publish, on **Discard**, and when the video is cancelled or removed; nothing is saved before an upload exists. Required fields carry the label asterisk, optional ones say "(optional)". Validation uses `yup` with `mode: "onTouched"` (a field is checked when the user leaves it, then on every change); errors are `helperText` linked to the input, and a failed submit focuses the first invalid field and the footer says "Fix the highlighted fields to publish."
+   - **Thumbnail** (`ThumbnailField`): a two-button toggle (Auto-generated / Custom image, exposed with `aria-pressed`). A custom image must be JPG, PNG or WebP and at most `THUMBNAIL_MAX_BYTES` (5 MB; a client-side policy, the backend limit is not defined in this repository), is previewed at 16:9 and can be replaced or removed. The accepted formats, size limit and recommended size (16:9, at least `THUMBNAIL_RECOMMENDED_WIDTH`×`THUMBNAIL_RECOMMENDED_HEIGHT`, 1280×720) are always shown under the toggle, and a non-blocking warning (`thumbnailWarnings` in `src/utils/upload.ts`) appears for portrait or smaller images. Switching to Auto-generated keeps the chosen image so Custom image restores it without reopening the picker; Remove discards it.
    - **Tags**: type and press Enter to create. Input is normalized (`normalizeTagSelection`): leading `#` removed, empty and duplicate names dropped, and a name matching an existing tag in any letter case reuses that tag instead of creating a duplicate. Names are capped at `TAG_MAX_LENGTH` (100, the backend column size).
    - **Presenters**: chips show the name; two selected people with the same name also show their email.
 4. **Publish** (`PublishBar`; a single `role="status"` line next to the button says what is happening and why Publish is unavailable, from `getPublishStatus`):
@@ -65,6 +67,26 @@ The page is one card with a **Video** section and the metadata fields side by si
 
 `LeaveGuardDialog` mounts `useLeaveGuard` while a video is chosen or the form has been edited. A reload or tab close gets the browser's native prompt. A click on an in-app link is intercepted in the capture phase (the App Router has no navigation blocker), and a "Leave this page?" `ConfirmDialog` is shown; confirming calls `router.push` with the intercepted path (validated with `isValidInternalRedirectPath`). External, new-tab, download, modified-click and same-page links are not intercepted, and programmatic navigation after publishing is not blocked. The browser Back button is not intercepted. An unfinished upload can be continued later by selecting the same file.
 
+### Form draft across a reload (`useUploadDraft`)
+
+**What and why.** An upload can outlive the page (see "Surviving a reload" below), but the details typed next to it used to be lost on a refresh. `useUploadDraft` (`src/features/UploadVideo/useUploadDraft.ts`, used by `VideoForm`) keeps them with the unfinished upload. It is for staff who refresh, lose the connection, or have the session expire (the page then sends them to log in and back, see Troubleshooting) while a large video is uploading.
+
+**What is kept.** Title, session date, description, presenters, playlists, tags and the custom thumbnail. The text fields go through `createDraftStorage` (`src/services/uploadDraft/draftStorage.ts`) into `localStorage` under `upload-video:draft:v1:<userId>` (`UPLOAD_DRAFT_KEY`); stored data is validated on read and ignored if it has the wrong shape (the guarded read/write itself is the shared `src/services/jsonStorage.ts`). While the session date is half typed (an invalid date) the draft saves today's date instead, so closing the form never throws. Presenters are stored as the people themselves (id, names, email) because the form only holds ids but has to show names. The thumbnail image is too large for `localStorage`, so `thumbnailStore.ts` keeps it in IndexedDB (database `upload-video-draft`, store `thumbnails`). Everything is best effort: when storage is missing, full or blocked the form works as before and nothing is restored.
+
+**When it runs.**
+
+| Moment | What happens |
+| --- | --- |
+| A video is chosen, or an unfinished upload is waiting (`hasUpload`) | Edits are saved about 300 ms after the last change. The thumbnail is saved when it changes. |
+| The unfinished-upload banner appears and the form is still empty | The draft is restored once: values are set as dirty (so the leave guard protects them), presenters are re-shown from the stored people, the thumbnail is loaded from IndexedDB. A saved date that is invalid or now in the future (`isFutureDay`) falls back to today. `UPLOAD_DRAFT_RESTORED` is reported with two flags. |
+| The form closes (navigation, the session-expired redirect) | The latest values are saved immediately, so the last 300 ms of typing is not lost. |
+| Publish succeeds, **Discard** is confirmed, or the video is cancelled or removed | The draft and the stored thumbnail are deleted, and the closing save is skipped. |
+| No video chosen and no unfinished upload | Nothing is saved. A form that was only typed into is not restored. |
+
+Saving is held back until the restore attempt has finished, otherwise the empty form would overwrite the draft it is about to restore.
+
+**Edge cases.** The draft is keyed by user id, so another account on the same browser does not see it. It stays in the browser after logout until the upload is published, discarded or cancelled (the stored upload reference behaves the same way). Leaving the page with the leave-page dialog keeps the draft too: it is restored together with the unfinished upload, never on its own.
+
 ### Resumable upload engine (`src/services/resumableUpload/`)
 
 Framework-free TypeScript; `useVideoUpload` is its React binding. Unlike `src/services/runs-on-server-side/`, this folder runs in the browser.
@@ -72,16 +94,16 @@ Framework-free TypeScript; `useVideoUpload` is its React binding. Unlike `src/se
 | File | Role |
 | --- | --- |
 | `uploadManager.ts` | `UploadManager`: the state machine (create/re-attach, chunk loop, retries, pause/resume/cancel, finalization polling) |
-| `transport.ts` | `createUploadApi`: `fetch` calls to `/bff/events/videoassets` with the `x-requested-with` guard header; `UploadApiError`. The session id is URL-encoded before it is joined to the path, because it is also read back from `localStorage` |
+| `transport.ts` | `createUploadApi`: `fetch` calls to `/bff/events/videoassets`, except a chunk sent with an `onProgress` callback, which uses `XMLHttpRequest` because only its upload events report bytes sent while the request runs with the `x-requested-with` guard header; `UploadApiError`. The session id is URL-encoded before it is joined to the path, because it is also read back from `localStorage` |
 | `storage.ts` | Persists the minimum needed to find the session again (`localStorage`, best effort) |
 | `failures.ts` | Failure messages, notices and error-to-failure mapping |
 | `environment.ts` | Abortable sleep and online/offline detection |
-| `types.ts` | `UploadPhase`, `UploadSnapshot`, `UploadEvent` |
+| `types.ts` | `UploadPhase`, `UploadSnapshot` (including `sentBytes`), `UploadEvent` |
 | `fakeUploadServer.ts` | In-memory implementation of the protocol, used by tests only |
 
 Backend protocol (see the backend's `UPLOADS.md`): `POST /events/videoassets/` creates a session, `PATCH /events/videoassets/<id>/` appends a chunk at `Upload-Offset`, `GET` returns the confirmed `offset` and status, `DELETE` cancels, `POST .../finalize/` re-queues finalization. The same endpoints are listed in [API Reference](../api.md).
 
-**The server decides where to resume.** Progress shown is `confirmedOffset / fileSize`, never an estimate from bytes in flight. After any chunk that failed, was aborted (pause) or got no response, the next step is a status query, so a chunk the server already committed (lost acknowledgement) is not sent twice and a chunk it did not commit is not skipped. A `409 offset_mismatch` carries the server offset, and the client continues from it.
+**The server decides where to resume.** Resuming always uses `confirmedOffset`, the bytes the server stored. The progress bar and text are finer than that: while a chunk is uploading they add the bytes of that chunk that have left the browser (`sentBytes`, from the `XMLHttpRequest` upload progress events, throttled to about one update per 150 ms), so a file smaller than one chunk still shows rising progress. That part is not stored yet, so the percentage stays at 99 until the server confirms the last chunk, and a chunk that fails drops back to the confirmed position. After any chunk that failed, was aborted (pause) or got no response, the next step is a status query, so a chunk the server already committed (lost acknowledgement) is not sent twice and a chunk it did not commit is not skipped. A `409 offset_mismatch` carries the server offset, and the client continues from it.
 
 **Phases** (`UploadPhase`): `idle`, `creating`, `uploading`, `paused`, `interrupted`, `finalizing`, `completed`, `failed`, `cancelled`. At the end of the transfer the percentage is 100 but the phase is `finalizing` ("Processing video…"): the video asset id is only exposed in `completed`, after the backend has verified the file and created the asset.
 
@@ -89,9 +111,9 @@ Backend protocol (see the backend's `UPLOADS.md`): `POST /events/videoassets/` c
 
 **Per-chunk integrity.** Each chunk carries `Upload-Checksum: sha256 <base64>` (computed with SubtleCrypto when available, skipped in insecure contexts); the backend rejects a chunk whose bytes do not match and commits nothing. The backend also verifies the file size and container signature at finalization.
 
-**Surviving a reload.** After every committed chunk `{ sessionId, fingerprint (name, size, lastModified), confirmedBytes, updatedAt }` is written to `localStorage` under `upload-video:session:v1:<userId>`. It contains no token, no file content and no file path; the file cannot be stored, so after a reload the user must select the same file. A selected file continues the session only when its fingerprint matches and the server still reports a usable session for the same size; otherwise a new session is created (and a mismatching stored one is cancelled on the server). Navigating away or unmounting stops the transfer but does not cancel the server session.
+**Surviving a reload.** After every committed chunk `{ sessionId, fingerprint (name, size, lastModified), confirmedBytes, updatedAt }` is written to `localStorage` under `upload-video:session:v1:<userId>`. It contains no token, no file content and no file path; the file cannot be stored, so after a reload the user must select the same file. A selected file continues the session only when its fingerprint matches and the server still reports a usable session for the same size (uploading, finalizing, or already `COMPLETED` with a video: a session that finished just before the reload is picked up as completed, not uploaded again); otherwise a new session is created (and a mismatching stored one is cancelled on the server). Navigating away or unmounting stops the transfer but does not cancel the server session.
 
-**Pause** aborts the in-flight request, so at most the current chunk is re-sent after resuming. **Cancel** stops the transfer, asks the server to delete the partial file (retrying briefly if a chunk is still being written) and returns to the picker.
+**Pause** aborts the in-flight request, so at most the current chunk is re-sent after resuming. **Cancel** stops the transfer, asks the server to delete the partial file (retrying briefly if a chunk is still being written) and returns to the picker. **Remove video** after completion sends the same `DELETE`, which makes the server delete the unused asset and its video; it is not sent while the file is `finalizing` (the server would answer 409), and the button is hidden while the event is being published so the video is not deleted under the request that is using it.
 
 ### `useVideoUpload`
 
@@ -100,16 +122,16 @@ Returns the original fields `{ uploadProgress, isUploading, videoAssetId, error,
 | Situation | Behavior |
 | --- | --- |
 | Upload completes (`COMPLETED`) | `videoAssetId` is set, `isUploading` is `false` |
-| Connection lost / server error | `phase: "interrupted"`, `notice` explains, `isUploading` stays `true`, `error` stays `null` |
-| Retries exhausted | `phase: "interrupted"`, resume with **Retry now** |
-| Session rejected as unauthorized (`401`) | Dispatches `logout()`, `error`: "Your session has expired. Please log in again." |
+| Connection lost / server error | `phase: "interrupted"`, `notice` explains, `isUploading` stays `true`, `error` stays `null`. Only **Retry now** is offered while it retries on its own (`canPause` and `canCancel` are `false`); they return when the upload continues |
+| Retries exhausted | `phase: "interrupted"` with `stalled: true`, resume with **Retry now**; **Cancel upload** is offered again so the user can give up |
+| Session rejected as unauthorized (`401`) | `error`: "Your session has expired. Please log in again.", `isSessionExpired` is `true`. Redux login state is left alone (a `logout()` would clear the stored user and trip the staff gate). The page shows a warning toast and goes to `/login?redirect_to=/upload-video`; the draft is flushed to storage and the stored upload kept, so after signing in the details and the unfinished upload are restored |
 | Session expired or cancelled on server | `error` asks the user to select the file again; the stored reference is dropped |
 | Server out of disk (`507`) | `error` says so; retryable, the stored session is kept |
 | File failed verification or processing | `error` explains; start a new upload |
 | New file selected mid-upload | The running upload is stopped and replaced |
 | Component unmounts mid-upload | The transfer stops, the server session is kept so it can be resumed |
 
-The hook only re-renders when something visible changes (phase, whole percent, notice, failure), not on every chunk.
+The hook only re-renders when something visible changes (phase, percent, sent bytes, notice, failure), not on every progress event. Speed and time left (`useUploadRate`) are a running average of `sentBytes` and appear after about two seconds of transfer. The progress bar is a separate element for the indeterminate (preparing, processing) and determinate (uploading) states, because switching one MUI bar between the two makes it sweep backwards from 100%.
 
 ## Analytics
 
@@ -127,12 +149,14 @@ Events are in the `upload_video` category (see [Analytics Tracking](./analytics-
 - If `createEvent` fails after new tags were created, those tags remain on the backend. Retrying the publish in the same form reuses them instead of creating duplicates.
 - Thumbnails are limited client-side to JPG/PNG/WebP up to 5 MB. This is a UI policy; the backend only validates that the file is an image (`ImageField`) and its own size limit is not defined in this repository.
 - API failures during publish show the single error toast from `customBaseQuery`; the form only adds a success toast and analytics. Upload requests do not use `customBaseQuery`, so transient chunk failures never produce error toasts.
+- Progress inside a chunk counts bytes the browser has handed to the network, which can run slightly ahead of what the server has received. That is why the percentage never shows 100 until the server confirms the last chunk, and why a failed chunk falls back to the confirmed position.
+- Title and description stop accepting input at `TITLE_MAX_LENGTH` (255) and `DESCRIPTION_MAX_LENGTH` (5000). Text that gets past the input (a restored draft) is still caught by the yup rules. The backend enforces the same limits.
 - The `uploadVideo` feature flag no longer exists; access is controlled by `is_staff`.
-- The upload engine calls `fetch` itself rather than RTK Query: chunks are streamed `Blob` bodies with per-chunk abort, retry and reconcile semantics, and a toast per transient failure would be noise. It still goes through `/bff` with the guard header, so the token stays in the HttpOnly cookie.
+- The upload engine calls `fetch` (and `XMLHttpRequest` for chunks, which is the only API that reports upload progress) itself rather than RTK Query: chunks are streamed `Blob` bodies with per-chunk abort, retry and reconcile semantics, and a toast per transient failure would be noise. It still goes through `/bff` with the guard header, so the token stays in the HttpOnly cookie.
 
 ## Tests
 
-`videoPicker.test.tsx`, `uploadVideo.test.tsx`, `uploadStatus.test.tsx`, `form.test.tsx`, `form.analytics.test.tsx`, `selectFields.test.tsx`, `thumbnailField.test.tsx`, `leaveGuardDialog.test.tsx` (feature); `src/components/ConfirmDialog/confirmDialog.test.tsx`; `src/hooks/useVideoUpload.test.tsx`, `useUploadRate.test.ts`, `useLeaveGuard.test.tsx`, `usePreventFileDrop.test.tsx`; `src/services/resumableUpload/*.test.ts` (the manager is tested against `fakeUploadServer.ts`, including interruptions, lost acknowledgements, reloads, pause and cancel, and asserts the received bytes equal the file); `src/utils/upload.test.ts`, `src/utils/tags.test.ts`; `src/app/bff/[...path]/route.test.ts` (upload headers); `src/redux/events/uploadEndpoints.test.tsx`; `src/redux/login/selectors.test.ts`.
+`src/services/uploadDraft/draftStorage.test.ts`, `thumbnailStore.test.ts` (draft persistence; `useUploadDraft.test.tsx` covers the invalid-date save, the rest of the hook is covered through the draft tests in `form.test.tsx`), `videoPicker.test.tsx`, `uploadVideo.test.tsx`, `uploadStatus.test.tsx`, `form.test.tsx`, `form.analytics.test.tsx`, `selectFields.test.tsx`, `thumbnailField.test.tsx`, `leaveGuardDialog.test.tsx` (feature); `src/components/ConfirmDialog/confirmDialog.test.tsx`; `src/hooks/useVideoUpload.test.tsx`, `useUploadRate.test.ts`, `useLeaveGuard.test.tsx`, `usePreventFileDrop.test.tsx`; `src/services/resumableUpload/*.test.ts` (the manager is tested against `fakeUploadServer.ts`, including interruptions, lost acknowledgements, reloads, pause and cancel, and asserts the received bytes equal the file); `src/utils/upload.test.ts`, `src/utils/tags.test.ts`; `src/app/bff/[...path]/route.test.ts` (upload headers); `src/redux/events/uploadEndpoints.test.tsx`; `src/redux/login/selectors.test.ts`.
 
 ## Troubleshooting
 
@@ -140,7 +164,7 @@ Events are in the `upload_video` category (see [Analytics Tracking](./analytics-
 | --- | --- |
 | "Upload a video" is missing from the user menu | The logged-in user's `is_staff` is `false`, or the session was persisted before `is_staff` existed (log in again) |
 | Visiting `/upload-video` sends you back to `/videos` | Same as above: `FileUpload` redirects non-staff users |
-| "Your session has expired. Please log in again." | The proxy returned `401`; `logout()` was dispatched and the `access` cookie is cleared |
+| "Your session has expired. Please log in again." | The proxy returned `401` and cleared the `access` cookie. You are sent to the login page and brought back to this page afterwards, with your details and unfinished upload restored; select the same video to continue |
 | "Connection problem. Retrying…" that never ends | The backend or a proxy rejects chunk requests (for example a body-size limit below 16 MiB). After 8 retries the upload stops with a Retry now button |
 | "Upload paused after repeated connection problems" | The connection was unstable; **Retry now** continues from the confirmed offset |
 | "Unfinished upload: …" in the Video section | A previous upload was interrupted by a reload. Select the same file to continue, or Discard |
@@ -148,4 +172,9 @@ Events are in the `upload_video` category (see [Analytics Tracking](./analytics-
 | Stuck on "Processing video…" | The backend Celery worker is not running or cannot reach the media volume; finalization is queued there |
 | "Network error during upload." | No longer shown: connection problems now surface as an interrupted upload that retries |
 | "Leave this page?" appears when clicking a link | Intentional: a video is chosen or the form has unsaved edits. Stay to keep working, or leave and select the same file later to continue |
+| Details typed before choosing a video are gone after a refresh | By design: the draft is only saved once a video is chosen or an unfinished upload exists. Pick the video first, then fill the form |
+| Details are empty after a refresh although an upload was running | Browser storage is blocked or full (private window, site data cleared), or the upload had already been published, discarded or cancelled |
+| A thumbnail warning ("portrait", "smaller than 1280x720") | Advice only: the image is accepted but is cropped to 16:9 or may look blurry. Choose a 16:9 image of at least 1280x720 |
+| "Session date can't be in the future" | Only today or earlier can be chosen; the calendar disables later days and a typed later date fails validation |
+| Progress stays at 99% for a moment | All bytes were sent and the server is confirming the last chunk; then "Processing video…" starts |
 | Upload requests return `403` `{"message":"Forbidden"}` | The `x-requested-with: session-portal` guard header is missing; uploads must go through `useVideoUpload` |

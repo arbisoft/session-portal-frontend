@@ -1,6 +1,6 @@
 import { sendGTMEvent } from "@next/third-parties/google";
 
-import { customRender as render, fireEvent, screen, within } from "@/jest/utils/testUtils";
+import { customRender as render, fireEvent, screen, waitFor, within } from "@/jest/utils/testUtils";
 import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
 
 import { getPublishStatus, UploadStatusPanel, UploadUi } from "./uploadStatus";
@@ -96,6 +96,24 @@ describe("UploadStatusPanel", () => {
     expect(screen.getByText("You're offline.")).toBeInTheDocument();
   });
 
+  it("should show only Retry now while a connection problem is being retried", () => {
+    render(
+      <UploadStatusPanel file={file} upload={ui({ phase: "interrupted", canResume: true, canPause: false, canCancel: false })} />
+    );
+
+    expect(screen.getAllByRole("button").map((button) => button.textContent)).toEqual(["Retry now"]);
+  });
+
+  it("should close an open cancel dialog when the connection drops and cancelling is no longer possible", async () => {
+    const { rerender } = render(<UploadStatusPanel file={file} upload={ui({ canCancel: true })} />);
+    fireEvent.click(screen.getByRole("button", { name: "Cancel upload" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+
+    rerender(<UploadStatusPanel file={file} upload={ui({ phase: "interrupted", canResume: true, canCancel: false })} />);
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
   it("should ask for confirmation before cancelling an upload and keep it when declined", () => {
     const upload = ui({ canCancel: true });
     render(<UploadStatusPanel file={file} upload={upload} />);
@@ -123,6 +141,16 @@ describe("UploadStatusPanel", () => {
     expect(upload.onCancel).toHaveBeenCalledTimes(1);
     // The cancellation itself is reported by the upload manager; the panel adds nothing on confirm.
     expect(sendGTMEvent).not.toHaveBeenCalled();
+  });
+
+  it("should not offer removing a finished video while the event is being published", () => {
+    const upload = ui({ phase: "completed", isActive: false, percent: 100, videoAssetId: 7 });
+    const { rerender } = render(<UploadStatusPanel file={file} upload={upload} isPublishing />);
+
+    expect(screen.queryByRole("button", { name: "Remove video" })).not.toBeInTheDocument();
+
+    rerender(<UploadStatusPanel file={file} upload={upload} />);
+    expect(screen.getByRole("button", { name: "Remove video" })).toBeInTheDocument();
   });
 
   it("should track keeping a finished video when the removal is declined", () => {

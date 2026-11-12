@@ -2,10 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { UPLOAD_STORAGE_KEY } from "@/constants/constants";
-import { logout } from "@/redux/login/actions";
 import { selectCurrentUser } from "@/redux/login/selectors";
 import { createUploadStorage, StoredUpload } from "@/services/resumableUpload/storage";
 import { createUploadApi } from "@/services/resumableUpload/transport";
@@ -16,6 +15,8 @@ import { reportHandledMessage } from "@/utils/monitoring";
 
 export type VideoUploadState = {
   uploadProgress: number;
+  /** Bytes sent so far, including the part of the current chunk that is still on its way. */
+  sentBytes: number;
   isUploading: boolean;
   videoAssetId: number | null;
   error: string | null;
@@ -26,6 +27,8 @@ export type VideoUploadState = {
   canPause: boolean;
   canResume: boolean;
   canCancel: boolean;
+  /** The server rejected the upload as unauthorized: the login session ended. The upload itself stays resumable. */
+  isSessionExpired: boolean;
   pauseUpload: () => void;
   resumeUpload: () => void;
   cancelUpload: () => void;
@@ -35,13 +38,14 @@ export type VideoUploadState = {
 };
 
 const ACTIVE_PHASES = new Set<UploadPhase>(["creating", "uploading", "paused", "interrupted", "finalizing"]);
-const CANCELLABLE_PHASES = new Set<UploadPhase>(["creating", "uploading", "paused", "interrupted"]);
+const CANCELLABLE_PHASES = new Set<UploadPhase>(["creating", "uploading", "paused"]);
 const REPORTED_FAILURES = new Set(["unknown", "verification_failed"]);
 
 // Progress changes at most once per percent in the UI; confirmedBytes may lag by less than that between renders.
 const isSameView = (a: UploadSnapshot, b: UploadSnapshot) =>
   a.phase === b.phase &&
   a.percent === b.percent &&
+  a.sentBytes === b.sentBytes &&
   a.notice === b.notice &&
   a.videoAssetId === b.videoAssetId &&
   a.failure === b.failure &&
@@ -53,7 +57,6 @@ export const useVideoUpload = (): VideoUploadState => {
   const [pendingUpload, setPendingUpload] = useState<StoredUpload | null>(null);
   const managerRef = useRef<UploadManager | null>(null);
   const shownRef = useRef<UploadSnapshot>(IDLE_SNAPSHOT);
-  const dispatch = useDispatch();
   const userId = useSelector(selectCurrentUser)?.id;
   // The manager must outlive a change of user id (the current user loads after the first render), so the storage key
   // is resolved on every access instead of when the manager is created.
@@ -86,7 +89,6 @@ export const useVideoUpload = (): VideoUploadState => {
           trackEvent(GA_EVENTS.UPLOAD_VIDEO_CANCELLED, ANALYTICS_CATEGORY.UPLOAD_VIDEO);
           break;
         case "failed":
-          if (event.code === "unauthorized") dispatch(logout());
           if (REPORTED_FAILURES.has(event.code)) {
             reportHandledMessage("Resumable video upload failed", { source: "video_upload", extra: { code: event.code } });
           }
@@ -118,7 +120,7 @@ export const useVideoUpload = (): VideoUploadState => {
       manager.dispose();
       managerRef.current = null;
     };
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     setPendingUpload(managerRef.current?.peekStored() ?? null);
@@ -139,10 +141,14 @@ export const useVideoUpload = (): VideoUploadState => {
   }, []);
 
   const { phase } = snapshot;
-  const canPause = phase === "uploading" || (phase === "interrupted" && !snapshot.stalled);
+  // While a dropped connection is being retried automatically only "Retry now" is offered. Once retries ran out
+  // (stalled) nothing is happening any more, so the user must still be able to give up on the upload.
+  const canPause = phase === "uploading";
+  const canCancel = CANCELLABLE_PHASES.has(phase) || (phase === "interrupted" && snapshot.stalled === true);
 
   return {
     uploadProgress: snapshot.percent,
+    sentBytes: snapshot.sentBytes,
     isUploading: ACTIVE_PHASES.has(phase),
     videoAssetId: snapshot.videoAssetId,
     error: snapshot.failure?.message ?? null,
@@ -151,7 +157,8 @@ export const useVideoUpload = (): VideoUploadState => {
     notice: snapshot.notice,
     canPause,
     canResume: phase === "paused" || phase === "interrupted" || (phase === "failed" && !!snapshot.failure?.retryable),
-    canCancel: CANCELLABLE_PHASES.has(phase),
+    canCancel,
+    isSessionExpired: snapshot.failure?.code === "unauthorized",
     pauseUpload,
     resumeUpload,
     cancelUpload,

@@ -20,12 +20,17 @@ export const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".webm"];
 export const THUMBNAIL_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const THUMBNAIL_MAX_BYTES = 5 * 1024 ** 2;
 export const THUMBNAIL_MAX_LABEL = "5MB";
+export const THUMBNAIL_RECOMMENDED_WIDTH = 1280;
+export const THUMBNAIL_RECOMMENDED_HEIGHT = 720;
 export const TITLE_MAX_LENGTH = 255;
+// Must match the backend EVENT_DESCRIPTION_MAX_LENGTH.
+export const DESCRIPTION_MAX_LENGTH = 5000;
 export const TAG_MAX_LENGTH = 100;
 // Must match the backend RESUMABLE_UPLOAD_MAX_FILE_BYTES.
 export const MAX_VIDEO_FILE_SIZE_BYTES = 20 * 1024 ** 3;
 export const MAX_VIDEO_FILE_SIZE_LABEL = "20GB";
 export const UPLOAD_STORAGE_KEY = "upload-video:session:v1";
+export const UPLOAD_DRAFT_KEY = "upload-video:draft:v1";
 export const UPLOAD_MAX_CONSECUTIVE_RETRIES = 8;
 export const UPLOAD_RETRY_BASE_DELAY_MS = 1000;
 export const UPLOAD_RETRY_MAX_DELAY_MS = 30_000;

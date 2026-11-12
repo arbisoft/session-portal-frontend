@@ -1,10 +1,24 @@
+import { sendGTMEvent } from "@next/third-parties/google";
+import userEvent from "@testing-library/user-event";
+
+import { UPLOAD_DRAFT_KEY } from "@/constants/constants";
 import { customRender as render, fireEvent, screen, waitFor, within } from "@/jest/utils/testUtils";
+import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
 
 import VideoForm from "./form";
 import { UploadUi } from "./uploadStatus";
 
+jest.mock("@next/third-parties/google", () => ({ sendGTMEvent: jest.fn() }));
+
 const mockCreateEvent = jest.fn();
 const mockPush = jest.fn();
+
+const mockLoadThumbnail = jest.fn();
+const mockSaveThumbnail = jest.fn();
+jest.mock("@/services/uploadDraft/thumbnailStore", () => ({
+  loadDraftThumbnail: (...args: unknown[]) => mockLoadThumbnail(...args),
+  saveDraftThumbnail: (...args: unknown[]) => mockSaveThumbnail(...args),
+}));
 
 jest.mock("next/navigation", () => ({ useRouter: () => ({ push: mockPush }) }));
 
@@ -117,7 +131,7 @@ describe("VideoForm", () => {
 
     expect(await screen.findByText("Description is required")).toBeInTheDocument();
     expect(screen.getByText("At least one presenter is required")).toBeInTheDocument();
-    expect(screen.getByLabelText(/^Description/)).toHaveAccessibleDescription("Description is required");
+    expect(screen.getByLabelText(/^Description/)).toHaveAccessibleDescription("Description is required 0/5000");
     expect(screen.getByRole("alert")).toHaveTextContent("Fix the highlighted fields to publish.");
     // Focus moves to the first invalid field in form order, which is Presenters.
     await waitFor(() => expect(screen.getByLabelText(/^Presenters/)).toHaveFocus());
@@ -182,5 +196,172 @@ describe("VideoForm", () => {
 
     expect(mockPush).toHaveBeenCalledWith("/videos");
     link.remove();
+  });
+
+  it("should show a live counter and stop typing at the limit for the title and the description", () => {
+    // No file, so the title is not pre-filled from a file name.
+    renderForm({ file: undefined, upload: idleUpload });
+    const title = screen.getByLabelText(/^Title/);
+    const description = screen.getByLabelText(/^Description/);
+
+    expect(title).toHaveAttribute("maxlength", "255");
+    expect(description).toHaveAttribute("maxlength", "5000");
+    expect(screen.getByText("0/255")).toBeInTheDocument();
+    expect(screen.getByText("0/5000")).toBeInTheDocument();
+
+    fireEvent.change(title, { target: { value: "Quarterly talk" } });
+    fireEvent.change(description, { target: { value: "x".repeat(1234) } });
+
+    expect(screen.getByText("14/255")).toBeInTheDocument();
+    expect(screen.getByText("1234/5000")).toBeInTheDocument();
+  });
+
+  it("should reject a description over the limit that slipped past the input", async () => {
+    renderForm({ upload: makeUpload({ videoAssetId: 9, phase: "completed", isActive: false, percent: 100 }) });
+    fireEvent.change(screen.getByLabelText(/^Title/), { target: { value: "Talk" } });
+    // maxLength only limits typing; a restored draft or script can still set a longer value.
+    fireEvent.change(screen.getByLabelText(/^Description/), { target: { value: "x".repeat(5001) } });
+
+    fireEvent.click(screen.getByRole("button", { name: /^publish/i }));
+
+    expect(await screen.findByText("Description can be at most 5000 characters")).toBeInTheDocument();
+    expect(mockCreateEvent).not.toHaveBeenCalled();
+  });
+
+  it("should reject a session date in the future instead of publishing it", async () => {
+    renderForm({ upload: makeUpload({ videoAssetId: 9, phase: "completed", isActive: false, percent: 100 }) });
+    fireEvent.change(screen.getByLabelText(/^Title/), { target: { value: "Talk" } });
+    fireEvent.change(screen.getByLabelText(/^Description/), { target: { value: "About it" } });
+    const year = String(new Date().getFullYear() + 1);
+    await userEvent.click(screen.getByRole("spinbutton", { name: "Month" }));
+    await userEvent.keyboard(`1225${year}`);
+
+    fireEvent.click(screen.getByRole("button", { name: /^publish/i }));
+
+    expect(await screen.findByText("Session date can't be in the future")).toBeInTheDocument();
+    expect(mockCreateEvent).not.toHaveBeenCalled();
+  });
+
+  describe("draft kept across a reload", () => {
+    const DRAFT_KEY = `${UPLOAD_DRAFT_KEY}:anonymous`;
+    const pendingUpload = {
+      sessionId: "s1",
+      fingerprint: { name: "my_quarterly-talk.mp4", size: 10, lastModified: 1 },
+      confirmedBytes: 0,
+      updatedAt: 1,
+    };
+    const draft = {
+      title: "Quarterly talk",
+      event_date: "2026-01-10T12:00:00.000Z",
+      description: "What we shipped",
+      presenters: [{ id: 7, first_name: "Ada", last_name: "Lovelace", full_name: "Ada Lovelace", email: "ada@arbisoft.com" }],
+      playlists: [],
+      tags: ["brand-new"],
+    };
+
+    beforeEach(() => {
+      jest.mocked(sendGTMEvent).mockClear();
+      window.localStorage.clear();
+      global.URL.createObjectURL = jest.fn(() => "blob:preview");
+      global.URL.revokeObjectURL = jest.fn();
+      mockLoadThumbnail.mockReset().mockResolvedValue(null);
+      mockSaveThumbnail.mockReset().mockResolvedValue(undefined);
+    });
+
+    it("should restore the saved details when an unfinished upload is found", async () => {
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      mockLoadThumbnail.mockResolvedValue(new File(["x"], "cover.png", { type: "image/png" }));
+
+      renderForm({ file: undefined, upload: idleUpload, pendingUpload });
+
+      expect(await screen.findByDisplayValue("Quarterly talk")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("What we shipped")).toBeInTheDocument();
+      expect(screen.getByText("Ada Lovelace")).toBeInTheDocument();
+      expect(screen.getByText("#brand-new")).toBeInTheDocument();
+      expect(await screen.findByText("cover.png")).toBeInTheDocument();
+      expect(sendGTMEvent).toHaveBeenCalledWith({
+        event: GA_EVENTS.UPLOAD_DRAFT_RESTORED,
+        event_category: ANALYTICS_CATEGORY.UPLOAD_VIDEO,
+        details_restored: true,
+        thumbnail_restored: true,
+      });
+      expect(JSON.stringify((sendGTMEvent as jest.Mock).mock.calls)).not.toContain("Quarterly talk");
+    });
+
+    it("should save what was typed just before the form closes, without waiting for the debounce", () => {
+      const { unmount } = renderForm();
+
+      fireEvent.change(screen.getByLabelText(/^Title/), { target: { value: "Typed right before leaving" } });
+      unmount();
+
+      expect(JSON.parse(window.localStorage.getItem(DRAFT_KEY) as string)).toMatchObject({ title: "Typed right before leaving" });
+    });
+
+    it("should not write the draft back when the form closes after it was cleared on purpose", async () => {
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      const { unmount } = renderForm({ file: undefined, upload: idleUpload, pendingUpload });
+      await screen.findByDisplayValue("Quarterly talk");
+
+      fireEvent.click(screen.getByRole("button", { name: "Discard" }));
+      fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: /discard/i }));
+      await waitFor(() => expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull());
+      unmount();
+
+      expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull();
+    });
+
+    it("should not restore anything when there is no unfinished upload", async () => {
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+
+      renderForm({ file: undefined, upload: idleUpload, pendingUpload: null });
+
+      await waitFor(() => expect(screen.getByLabelText(/^Title/)).toHaveValue(""));
+      expect(sendGTMEvent).not.toHaveBeenCalledWith(expect.objectContaining({ event: GA_EVENTS.UPLOAD_DRAFT_RESTORED }));
+      expect(window.localStorage.getItem(DRAFT_KEY)).toBe(JSON.stringify(draft));
+    });
+
+    it("should not overwrite the saved draft with an empty form before restoring it", async () => {
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+
+      renderForm({ file: undefined, upload: idleUpload, pendingUpload });
+      await screen.findByDisplayValue("Quarterly talk");
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(JSON.parse(window.localStorage.getItem(DRAFT_KEY) as string)).toMatchObject({ title: "Quarterly talk" });
+    });
+
+    it("should save edits while a video is chosen", async () => {
+      renderForm();
+
+      fireEvent.change(screen.getByLabelText(/^Title/), { target: { value: "Typed while uploading" } });
+
+      await waitFor(() =>
+        expect(JSON.parse(window.localStorage.getItem(DRAFT_KEY) as string)).toMatchObject({ title: "Typed while uploading" })
+      );
+    });
+
+    it("should not save anything before an upload exists", async () => {
+      renderForm({ file: undefined, upload: idleUpload, pendingUpload: null });
+
+      fireEvent.change(screen.getByLabelText(/^Title/), { target: { value: "Just typing" } });
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull();
+    });
+
+    it("should remove the saved details when the unfinished upload is discarded", async () => {
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      const onDiscardPending = jest.fn();
+      renderForm({ file: undefined, upload: idleUpload, pendingUpload, onDiscardPending });
+      await screen.findByDisplayValue("Quarterly talk");
+
+      fireEvent.click(screen.getByRole("button", { name: "Discard" }));
+      const dialog = await screen.findByRole("dialog");
+      fireEvent.click(within(dialog).getByRole("button", { name: /discard/i }));
+
+      await waitFor(() => expect(onDiscardPending).toHaveBeenCalled());
+      expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull();
+      expect(mockSaveThumbnail).toHaveBeenCalledWith(DRAFT_KEY, null);
+    });
   });
 });

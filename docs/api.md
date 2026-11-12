@@ -161,7 +161,7 @@ Create (publish) an event from an uploaded video asset. Sent as `multipart/form-
 
 **Request Body:**
 
-- `title`, `description` (string)
+- `title` (string, at most 255 characters), `description` (string, at most 5000 characters; longer text is rejected with `400`)
 - `event_time` (ISO 8601 string)
 - `video_asset_id` (number, from the upload response)
 - `playlists` (repeated number field)

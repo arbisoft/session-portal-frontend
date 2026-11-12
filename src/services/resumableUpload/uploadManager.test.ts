@@ -110,6 +110,68 @@ describe("UploadManager", () => {
       expect(snapshots[snapshots.length - 1].phase).toBe("completed");
     });
 
+    describe("progress while a chunk is being sent", () => {
+      const tickingClock = () => {
+        let time = 0;
+        return () => {
+          time += 1000;
+          return time;
+        };
+      };
+
+      it("should rise inside a single chunk instead of staying at 0 until it completes", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [0.25, 0.5, 0.75, 1];
+        const { manager, snapshots } = setup(server, { now: tickingClock() });
+
+        await manager.start(makeFile());
+
+        const duringChunk = snapshots.filter(
+          (snapshot) => snapshot.phase === "uploading" && snapshot.confirmedBytes === 0 && snapshot.sentBytes > 0
+        );
+        expect(duringChunk.map((snapshot) => snapshot.sentBytes)).toEqual(expect.arrayContaining([5, 11, 16]));
+        expect(new Set(duringChunk.map((snapshot) => snapshot.percent)).size).toBeGreaterThan(2);
+        expect(snapshots[snapshots.length - 1]).toMatchObject({ phase: "completed", percent: 100, sentBytes: BYTES.length });
+      });
+
+      it("should not reach 100% until the server has confirmed the bytes", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [1];
+        const { manager, snapshots } = setup(server, { now: tickingClock() });
+
+        await manager.start(makeFile());
+
+        const unconfirmed = snapshots.filter((snapshot) => snapshot.phase === "uploading" && snapshot.confirmedBytes === 0);
+        expect(Math.max(...unconfirmed.map((snapshot) => snapshot.percent))).toBe(99);
+        expect(Math.max(...unconfirmed.map((snapshot) => snapshot.sentBytes))).toBe(BYTES.length);
+      });
+
+      it("should fall back to the confirmed position when a chunk fails", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [0.5];
+        server.chunkFaults = [{ http: 503 }];
+        const { manager, snapshots } = setup(server, { now: tickingClock() });
+
+        await manager.start(makeFile());
+
+        const ahead = snapshots.findIndex((snapshot) => snapshot.phase === "uploading" && snapshot.sentBytes > 0);
+        expect(ahead).toBeGreaterThan(-1);
+        const after = snapshots.slice(ahead + 1).find((snapshot) => snapshot.sentBytes === 0);
+        expect(after).toMatchObject({ confirmedBytes: 0, percent: 0 });
+      });
+
+      it("should not report faster than the screen needs", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+        const { manager, snapshots } = setup(server, { now: () => 5000 });
+
+        await manager.start(makeFile());
+
+        const midChunk = snapshots.filter((snapshot) => snapshot.phase === "uploading" && snapshot.sentBytes > 0);
+        expect(midChunk.length).toBeLessThanOrEqual(2);
+      });
+    });
+
     it("should persist the confirmed position after every chunk", async () => {
       const { manager, store } = setup(server);
       const saved: number[] = [];
@@ -280,6 +342,46 @@ describe("UploadManager", () => {
       expect(server.created).toBe(1);
       expect(server.committed).toEqual(BYTES);
       expect(second.manager.getSnapshot()).toMatchObject({ phase: "completed", resumed: true });
+    });
+
+    it("should reuse a session that finished while the page was reloading instead of uploading again", async () => {
+      const file = makeFile();
+      server.fileSize = file.size;
+      server.committed = [...BYTES];
+      server.status = "COMPLETED";
+      const { manager, store, events } = setup(server, {}, storedFor(file, server.sessionId));
+
+      await manager.start(file);
+
+      expect(server.created).toBe(0);
+      expect(server.sentOffsets).toEqual([]);
+      expect(server.cancelled).toEqual([]);
+      expect(manager.getSnapshot()).toMatchObject({ phase: "completed", videoAssetId: 42, percent: 100, resumed: true });
+      expect(events[0]).toEqual({ type: "started", resumed: true, sizeBytes: BYTES.length });
+      expect(store.state.record).toBeNull();
+    });
+
+    it("should still start a new session when the finished one has no video any more", async () => {
+      const file = makeFile();
+      server.fileSize = file.size;
+      server.status = "COMPLETED";
+      jest.spyOn(server, "getSession").mockResolvedValueOnce({
+        id: server.sessionId,
+        filename: "talk.mp4",
+        file_size: file.size,
+        offset: file.size,
+        upload_status: "COMPLETED",
+        error_code: "",
+        video_asset_id: null,
+        expires_at: "2030-01-01T00:00:00Z",
+        chunk_size: 4,
+        max_chunk_size: 8,
+      });
+      const { manager } = setup(server, {}, storedFor(file, server.sessionId));
+
+      await manager.start(file);
+
+      expect(server.created).toBe(1);
     });
 
     it("should start a new session when the stored one belongs to a different file", async () => {
@@ -491,6 +593,17 @@ describe("UploadManager", () => {
 
       expect(server.cancelled).toEqual([]);
       expect(store.state.record).toBeNull();
+      expect(manager.getSnapshot().phase).toBe("cancelled");
+    });
+
+    it("should delete the finished video on the server when it is removed after completing", async () => {
+      const { manager } = setup(server);
+      await manager.start(makeFile());
+      expect(manager.getSnapshot().phase).toBe("completed");
+
+      await manager.cancel();
+
+      expect(server.cancelled).toEqual([server.sessionId]);
       expect(manager.getSnapshot().phase).toBe("cancelled");
     });
 

@@ -91,5 +91,8 @@ Pure helpers behind the [Upload Video](./upload-video.md) page. Besides the resu
 | `isAllowedVideoFile(file)` | MIME type against `ALLOWED_TYPES`; the extension (`ALLOWED_VIDEO_EXTENSIONS`) only when the browser reports no type |
 | `titleFromFileName(name)` | `my_talk-2024.mp4` -> `my talk 2024`, the suggested title |
 | `toEventTimestamp(date)` | The chosen calendar day at 12:00 local time as an ISO string, so the day survives conversion to UTC |
+| `isFutureDay(date)` | `true` when the calendar day is after today; invalid dates are not "in the future". Used by the session-date rule and when restoring a saved draft |
+| `thumbnailIssues({ width, height })` | `{ portrait, small }` flags for a chosen thumbnail (portrait is cropped to 16:9; smaller than `THUMBNAIL_RECOMMENDED_WIDTH` x `THUMBNAIL_RECOMMENDED_HEIGHT` looks blurry) |
+| `thumbnailWarnings({ width, height })` | The user-facing warning sentences for those flags; empty for a 16:9 image of at least 1280x720 |
 | `normalizeTagName(name)` (`tags.ts`) | Trims, strips leading `#`, caps at `TAG_MAX_LENGTH` |
 | `normalizeTagSelection(selected, existing)` (`tags.ts`) | Drops empty and duplicate (case-insensitive) tags and swaps a typed name for the existing tag with the same name |

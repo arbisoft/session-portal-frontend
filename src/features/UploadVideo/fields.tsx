@@ -4,6 +4,7 @@ import React, { ReactNode } from "react";
 
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import InputLabel from "@mui/material/InputLabel";
 import TextField from "@mui/material/TextField";
@@ -12,6 +13,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Control, Controller } from "react-hook-form";
 
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from "@/constants/constants";
 import { Tag } from "@/models/Events";
 
 import { InputContainer } from "./styled";
@@ -48,6 +50,18 @@ export const FieldLabel = ({ htmlFor, id, children, optional = false }: FieldLab
   </InputLabel>
 );
 
+type HelperTextProps = { error?: string; length: number; max: number };
+
+/** The validation message (if any) on the left and a live "used/limit" counter on the right. */
+const HelperText = ({ error, length, max }: HelperTextProps) => (
+  <Box component="span" sx={{ display: "flex", gap: 2, justifyContent: "space-between" }}>
+    <span>{error}</span>
+    <Box component="span" sx={{ flexShrink: 0, marginInlineStart: "auto", fontVariantNumeric: "tabular-nums" }}>
+      {length}/{max}
+    </Box>
+  </Box>
+);
+
 export const TitleField = ({ control }: FieldProps) => (
   <Controller
     name="title"
@@ -62,8 +76,9 @@ export const TitleField = ({ control }: FieldProps) => (
           variant="outlined"
           fullWidth
           error={!!fieldState.error}
-          helperText={fieldState.error?.message}
-          slotProps={{ htmlInput: { "aria-required": true } }}
+          helperText={<HelperText error={fieldState.error?.message} length={field.value.length} max={TITLE_MAX_LENGTH} />}
+          // Typing and pasting stop at the limit, so the counter never shows a value that cannot be published.
+          slotProps={{ htmlInput: { "aria-required": true, maxLength: TITLE_MAX_LENGTH } }}
         />
       </InputContainer>
     )}
@@ -88,6 +103,8 @@ export const EventDateField = ({ control }: FieldProps) => (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DatePicker
             value={field.value ?? null}
+            // A session must already have happened to be uploaded.
+            disableFuture
             onChange={field.onChange}
             onClose={field.onBlur}
             inputRef={field.ref}
@@ -120,9 +137,9 @@ export const DescriptionField = ({ control }: FieldProps) => (
           minRows={4}
           fullWidth
           error={!!fieldState.error}
-          helperText={fieldState.error?.message}
+          helperText={<HelperText error={fieldState.error?.message} length={field.value.length} max={DESCRIPTION_MAX_LENGTH} />}
           sx={{ "& textarea": { resize: "vertical" } }}
-          slotProps={{ htmlInput: { "aria-required": true } }}
+          slotProps={{ htmlInput: { "aria-required": true, maxLength: DESCRIPTION_MAX_LENGTH } }}
         />
       </InputContainer>
     )}

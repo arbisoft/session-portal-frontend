@@ -76,7 +76,7 @@ App-level special files: `src/app/error.tsx` (route error boundary), `src/app/gl
 | `VideosListingPage` | Browsing videos, featured content, filters, virtualized list with infinite loading |
 | `SearchResultsPage` | Search-specific result presentation |
 | `VideoDetail` | Player page with metadata and recommendations |
-| `UploadVideo` | Staff-only single-page upload form: video dropzone / status panel, metadata fields, thumbnail toggle, sticky publish bar (`form.tsx`, `fields.tsx`, `selectFields.tsx`, `thumbnailField.tsx`, `videoPicker.tsx`, `uploadStatus.tsx`, `publishBar.tsx`) |
+| `UploadVideo` | Staff-only single-page upload form: video dropzone / status panel, metadata fields, thumbnail toggle, sticky publish bar (`form.tsx`, `fields.tsx`, `selectFields.tsx`, `thumbnailField.tsx`, `videoPicker.tsx`, `uploadStatus.tsx`, `publishBar.tsx`, `useUploadDraft.ts`) |
 
 ## Component Organization Pattern
 
@@ -130,6 +130,8 @@ These define request/response and domain object shapes used across features and 
 
 - `src/services/runs-on-server-side/` contains utilities intended for server execution only (not client bundles). These are distinct from Next.js server actions (`src/app/login/actions.ts`) and from the RTK Query API layer.
 - `src/services/resumableUpload/` is the opposite: the framework-free, browser-side engine for resumable video uploads (state machine, transport, persistence). It is used through `src/hooks/useVideoUpload.ts`. See [Upload Video](./modules/upload-video.md).
+- `src/services/jsonStorage.ts` is the guarded `localStorage` wrapper (validated read, best-effort write) shared by `createUploadStorage` and `createDraftStorage`.
+- `src/services/uploadDraft/` is browser-side persistence for the upload form's draft: `draftStorage.ts` (validated `localStorage` read/write of the text fields) and `thumbnailStore.ts` (the custom thumbnail image in IndexedDB, best effort). It is used through `src/features/UploadVideo/useUploadDraft.ts`.
 
 ## Notes
 
