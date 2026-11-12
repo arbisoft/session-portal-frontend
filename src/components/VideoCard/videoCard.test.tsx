@@ -52,6 +52,20 @@ describe("VideoCard", () => {
     expect(decodeURIComponent(imgUrl)).toContain(mockProps.data.thumbnail);
   });
 
+  it("should load an absolute backend thumbnail directly instead of through the image optimizer", () => {
+    render(
+      <VideoCard {...mockProps} data={{ ...mockProps.data, thumbnail: "https://api.example.com/media/thumbnails/a.jpg" }} />
+    );
+
+    expect(screen.getByTestId("video-card-image")).toHaveAttribute("src", "https://api.example.com/media/thumbnails/a.jpg");
+  });
+
+  it("should keep serving the bundled default image through the optimizer", () => {
+    render(<VideoCard {...mockProps} data={{ ...mockProps.data, thumbnail: "" }} />);
+
+    expect(screen.getByTestId("video-card-image").getAttribute("src")).toContain("/_next/image");
+  });
+
   it("should displays default image when thumbnail is not provided", () => {
     render(<VideoCard {...mockProps} data={{ ...mockProps.data, thumbnail: "" }} />);
 

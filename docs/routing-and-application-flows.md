@@ -85,9 +85,11 @@ Recognized search params:
 
 ## Search Results Flow
 
+The route's `page.tsx` redirects to `/videos` when `search` is missing, empty or whitespace-only, so the results page never renders with a blank term.
+
 `SearchResultsPage`:
 
-- reads `search` from query params
+- reads and trims `search` from query params
 - requests paginated results with `page_size: 10`
 - uses `Virtuoso` for incremental rendering
 - renders a no-results state when data is absent or error occurs

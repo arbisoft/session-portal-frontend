@@ -46,7 +46,7 @@ Provides the authenticated application shell:
 
 ### `Navbar`
 
-Used as the top navigation bar. Based on surrounding code and tests/stories, it also handles drawer toggle behavior.
+Used as the top navigation bar. Based on surrounding code and tests/stories, it also handles drawer toggle behavior. The account avatar shows the user's picture, or their initial when there is none.
 
 ### `Sidebar`
 
@@ -54,7 +54,11 @@ Used for left-side navigation and drawer rendering. The first item is **Home** (
 
 ### `FilterSortMenu`
 
-Presentational, URL-agnostic menu for sorting (Newest/Oldest first) and filtering by year, with a "Clear All Filters" item. It is controlled through props (`anchorEl`, `sort`, `year`, `onSortChange`, `onYearChange`, `onClear`, `onClose`) and has no mount-time side effects. It fires the `video_sort_change`, `video_filter_year` and `video_filter_clear` analytics events. Used by `Sidebar`; the URL logic lives in `useVideoFilters`.
+Presentational, URL-agnostic menu for sorting (Newest/Oldest first) and filtering by year, with a "Clear All Filters" item. The selected sort and year carry a check mark (not only MUI's subtle highlight) and `aria-checked`. It is controlled through props (`anchorEl`, `sort`, `year`, `onSortChange`, `onYearChange`, `onClear`, `onClose`) and has no mount-time side effects. It fires the `video_sort_change`, `video_filter_year` and `video_filter_clear` analytics events. Used by `Sidebar` and `FilterSortControl` (the latter is currently not rendered by any page); the URL logic lives in `useVideoFilters`. Sort options and labels are shared through `src/constants/sort.ts`.
+
+### `FilterSortControl`
+
+The labelled **Filter and Sort** dropdown. It is no longer rendered on the videos listing page and is currently unused by any page; the component and its tests are kept. The button always shows the current choice (`Newest first`, or `2020 · Oldest first` when a year is applied) and owns the open/close state of a `FilterSortMenu`. It takes the same value/handler props as the menu (`availableYears`, `sort`, `year`, `onSortChange`, `onYearChange`, `onClear`).
 
 ## Feedback and Utility Components
 
@@ -79,7 +83,7 @@ Used across listing/search flows for:
 
 ### `ConfirmDialog`
 
-Implemented in `src/components/ConfirmDialog/confirmDialog.tsx`. A presentational MUI dialog (`title`, `description`, `confirmLabel`, optional `cancelLabel`, `onConfirm`, `onCancel`) with `aria-labelledby` / `aria-describedby`. The safe (cancel) button is focused first, and Escape or a backdrop click calls `onCancel`. Used by the upload page to confirm cancelling or removing a video, discarding an unfinished upload and leaving the page.
+Implemented in `src/components/ConfirmDialog/confirmDialog.tsx`. A presentational MUI dialog (`title`, `description`, `confirmLabel`, optional `cancelLabel`, `onConfirm`, `onCancel`) with `aria-labelledby` / `aria-describedby`. The safe (cancel) button is focused first, and Escape, a backdrop click or the close (X) icon in the top-right corner calls `onCancel`. The cancel button uses the `Button` `color="inherit"` option so it stays readable on dark surfaces, where the primary colour has too little contrast. Used by the upload page to confirm cancelling or removing a video, discarding an unfinished upload and leaving the page.
 
 ### `ReadMore`
 
@@ -100,6 +104,8 @@ Both modes accept an optional `onToggle(isExpanded)` callback fired on click or 
 
 Displays video thumbnails with metadata, supports responsive image sizing for different screen sizes.
 
+Thumbnails with an absolute `http(s)` URL (the backend media host) are rendered `unoptimized`: the browser loads them directly, like the player poster. Routing them through `/_next/image` makes the Next server fetch them, and Next 16 rejects hosts that resolve to a private IP with `400 "url" parameter is not allowed`, which leaves every card showing its alt text. The bundled default thumbnail still goes through the optimizer.
+
 Used across:
 
 - featured slider
@@ -118,6 +124,7 @@ Observed variants include:
 Used on the video detail page and receives fields such as:
 
 - `videoSrc`
+- `videoType` (string, `"video/mp4"` when empty or not recognised; `"video/webm"`, `"video/ogg"` and `"video/x-msvideo"` are mapped to Vidstack's spelling): the MIME type handed to Vidstack alongside `videoSrc`. The stream URL (`/bff/video/<slug>`) has no file extension, so without it Vidstack cannot pick a loader and logs "could not find a loader for any of the given media sources" before falling back to fetching the source headers
 - `posterSrc`
 - `posterAlt`
 - `playsInline`
@@ -125,7 +132,7 @@ Used on the video detail page and receives fields such as:
 - `controlsDelay` (milliseconds of inactivity during playback before the controls auto-hide; default `3000`, controls stay visible while paused)
 - `keyTarget` (`"document"` by default, or `"player"`): where Vidstack keyboard shortcuts listen. With `"document"` the arrow keys (and `j`/`l`) seek (5s, 10s with Shift), the number keys `0`-`9` jump to 0-90% of the video, Space/`k` toggles play, `m`/`f`/`c`/`i` toggle mute/fullscreen/captions/picture-in-picture, and Up/Down change volume wherever focus is on the page. Vidstack ignores them while focus is in an input, textarea, select, contenteditable, menu item (`role=menuitem*`) or timer, and for Enter/Space on a `button` or `[role=button]`. The tradeoff is that Space and Up/Down no longer scroll the page (including when a plain link is focused). The shortcuts are bound to the first player on the page, which is fine because only the video detail page mounts one. With `"player"` they only work while focus is inside the player, which is why seeking silently stopped after clicking elsewhere on the page.
 
-The player is built on Vidstack and themed in `src/components/VideoPlayer/styles.css`. The seek bar (`.vds-time-slider`) fill uses a blue gradient, driven by `--seek-gradient-start` (`#1d4ed8`) and `--seek-gradient-end` (`--focus-color`, `#4e9cf6`) on `.player`; its thumb (the dot) is solid `--focus-color`. The volume slider keeps Vidstack's default brand color. The settings menu is trimmed: `noAudioGain` removes the Audio Boost slider, and a top-level CSS rule hides the "Announcements" toggle in the Accessibility menu (Vidstack has no prop for it; announcements are on by default, and the rule matches the English `aria-label`, so revisit it if `translations` is ever passed to `DefaultVideoLayout`). The toggle's choice is persisted by Vidstack in `localStorage` (`vds-player::announcements`), so a user who had already switched announcements off keeps that setting but can no longer change it. Vidstack 1.15.7's default layout has no "Loop" control, so there is nothing to remove for it.
+The player is built on Vidstack and themed in `src/components/VideoPlayer/styles.css`. The seek bar (`.vds-time-slider`) fill uses a blue gradient, driven by `--seek-gradient-start` (`#1d4ed8`) and `--seek-gradient-end` (`--focus-color`, `#4e9cf6`) on `.player`; its thumb (the dot) is solid `--focus-color`. The volume slider keeps Vidstack's default brand color. The settings menu is trimmed: `noAudioGain` removes the Audio Boost slider, and a top-level CSS rule hides the "Announcements" toggle in the Accessibility menu (Vidstack has no prop for it; announcements are on by default, and the rule matches the English `aria-label`, so revisit it if `translations` is ever passed to `DefaultVideoLayout`). The toggle's choice is persisted by Vidstack in `localStorage` (`vds-player::announcements`), so a user who had already switched announcements off keeps that setting but can no longer change it. Vidstack 1.15.7's default layout has no "Loop" control, so there is nothing to remove for it. Pressing Escape closes an open settings menu even when focus is still on its trigger (as after opening it with the mouse), which Vidstack alone only does while focus is inside the menu items. The wrapper `div` around the player forwards the key through a native `keydown` listener attached in a `useEffect`; it is a plain element with no ARIA role and no `onKeyDown` prop.
 
 ## Form-Related UI
 

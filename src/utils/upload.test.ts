@@ -19,6 +19,9 @@ import {
   hasRetriesLeft,
   isAllowedVideoFile,
   parseRetryAfter,
+  isFutureDay,
+  thumbnailIssues,
+  thumbnailWarnings,
   titleFromFileName,
   toEventTimestamp,
   toPercent,
@@ -231,5 +234,44 @@ describe("toEventTimestamp", () => {
     expect(new Date(toEventTimestamp(midnight)).getDate()).toBe(22);
     expect(new Date(toEventTimestamp(lateEvening)).getDate()).toBe(22);
     expect(new Date(toEventTimestamp(midnight)).getHours()).toBe(12);
+  });
+});
+
+describe("thumbnailWarnings", () => {
+  it.each([
+    [1280, 720, 0],
+    [1920, 1080, 0],
+    [160, 90, 1],
+    [720, 1280, 2],
+    [2000, 3000, 1],
+  ])("should give the expected number of warnings for %ix%i", (width, height, count) => {
+    expect(thumbnailWarnings({ width, height })).toHaveLength(count);
+  });
+});
+
+describe("thumbnailIssues", () => {
+  it.each([
+    [1280, 720, { portrait: false, small: false }],
+    [160, 90, { portrait: false, small: true }],
+    [720, 1280, { portrait: true, small: true }],
+    [2000, 3000, { portrait: true, small: false }],
+  ])("should flag %ix%i", (width, height, expected) => {
+    expect(thumbnailIssues({ width, height })).toEqual(expected);
+  });
+});
+
+describe("isFutureDay", () => {
+  it("should treat later days as future and today or earlier as not", () => {
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+
+    expect(isFutureDay(tomorrow)).toBe(true);
+    expect(isFutureDay(now)).toBe(false);
+    expect(isFutureDay(yesterday)).toBe(false);
+  });
+
+  it("should not treat an invalid date as future", () => {
+    expect(isFutureDay(new Date("nope"))).toBe(false);
   });
 });

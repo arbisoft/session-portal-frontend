@@ -10,6 +10,7 @@ import {
   generateYearList,
   getQueryValue,
   transformVideoToCardData,
+  getVideoStreamUrl,
   isValidInternalRedirectPath,
   isPublicRoute,
 } from "./utils";
@@ -371,5 +372,15 @@ describe("isPublicRoute", () => {
     expect(isPublicRoute("/videos")).toBe(false);
     expect(isPublicRoute("/loginx")).toBe(false);
     expect(isPublicRoute("/")).toBe(false);
+  });
+});
+
+describe("getVideoStreamUrl", () => {
+  it("should point at the same-origin authenticated stream route", () => {
+    expect(getVideoStreamUrl("my-talk-12")).toBe("/bff/video/my-talk-12");
+  });
+
+  it("should encode characters that could alter the path", () => {
+    expect(getVideoStreamUrl("a/b?c")).toBe("/bff/video/a%2Fb%3Fc");
   });
 });

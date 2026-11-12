@@ -83,6 +83,24 @@ describe("useVideoFilters", () => {
     expect(mockNavigateTo).toHaveBeenCalledWith("videos", { search: "react" });
   });
 
+  it("should drop only the year, keeping the view and sort, when removing the year filter", () => {
+    setLocation("/videos", "playlist=Talks&order=event_time&year=2024");
+    const { result } = renderHook(() => useVideoFilters());
+
+    result.current.clearYear();
+
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { playlist: "Talks", order: "event_time" });
+  });
+
+  it("should drop only the sort, keeping the view and year, when resetting the sort", () => {
+    setLocation("/videos", "tag=ai&order=event_time&year=2024");
+    const { result } = renderHook(() => useVideoFilters());
+
+    result.current.clearSort();
+
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "ai", year: "2024" });
+  });
+
   it("should navigate to the plain listing when clearing with nothing to keep", () => {
     const { result } = renderHook(() => useVideoFilters());
 

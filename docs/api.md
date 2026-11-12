@@ -4,6 +4,8 @@ This document describes the API endpoints consumed by the Session Portal Fronten
 
 The browser never calls the backend directly. Requests go to the BFF proxy (`/bff/<path>`, `src/app/bff/[...path]/route.ts`), which reads the HttpOnly `access` cookie and attaches the `Authorization: Bearer` header server-side. The documented paths below are the backend paths the proxy forwards to.
 
+Video bytes use a second route, `/bff/video/<slug>` (`src/app/bff/video/[slug]/route.ts`), because a `<video>` element cannot send the guard header. It authenticates with the same HttpOnly cookie, forwards `Range`/`If-Range` (requesting an identity encoding so offsets stay valid), always answers `Cache-Control: private, no-cache`, and proxies the backend's `GET /events/videoasset/<slug>/stream/` (returns 200/206/416 and requires a valid token on every request). `video_file` fields in API responses are that stream path, never a `/media/` URL.
+
 ## Authentication
 
 All API requests except login require a Bearer token. The frontend never handles the token in client code; see the BFF note above.
@@ -106,6 +108,7 @@ Retrieve detailed information about a specific video asset/event.
   "thumbnail": "string",
   "title": "string",
   "video_file": "string",
+  "video_type": "string", // media type to declare for video_file, e.g. "video/mp4"; "" without a playable video
   "captions_file": "string", // optional; .vtt or .srt URL
   "view_count": 0
 }
@@ -159,7 +162,7 @@ Create (publish) an event from an uploaded video asset. Sent as `multipart/form-
 
 **Request Body:**
 
-- `title`, `description` (string)
+- `title` (string, at most 255 characters), `description` (string, at most 5000 characters; longer text is rejected with `400`)
 - `event_time` (ISO 8601 string)
 - `video_asset_id` (number, from the upload response)
 - `playlists` (repeated number field)

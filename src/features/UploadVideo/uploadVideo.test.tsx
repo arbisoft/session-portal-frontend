@@ -21,6 +21,7 @@ const defaultUploadState = {
   canPause: false,
   canResume: false,
   canCancel: false,
+  isSessionExpired: false,
   pauseUpload: jest.fn(),
   resumeUpload: jest.fn(),
   cancelUpload: jest.fn(),
@@ -40,6 +41,7 @@ jest.mock("react-redux", () => ({
 }));
 
 jest.mock("@/hooks/useNavigation", () => ({
+  ...jest.requireActual("@/hooks/useNavigation"),
   __esModule: true,
   default: () => ({ navigateTo: mockNavigateTo }),
 }));
@@ -90,6 +92,32 @@ describe("FileUpload", () => {
     jest.clearAllMocks();
     mockUploadState = defaultUploadState;
     asStaff(true);
+  });
+
+  it("should say the session expired and send the user to log in with a way back, not claim a missing permission", () => {
+    mockUploadState = { ...defaultUploadState, phase: "failed", isSessionExpired: true };
+
+    render(<FileUpload />);
+
+    expect(mockNotification.showNotification).toHaveBeenCalledWith({
+      message: "Your session has expired. Please log in again.",
+      severity: "warning",
+    });
+    expect(mockNavigateTo).toHaveBeenCalledWith("login", { redirect_to: "/upload-video" });
+    expect(mockNotification.showNotification).not.toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Only staff members can upload videos" })
+    );
+  });
+
+  it("should report the expired session once, however often the page renders again", () => {
+    mockUploadState = { ...defaultUploadState, phase: "failed", isSessionExpired: true };
+
+    const { rerender } = render(<FileUpload />);
+    rerender(<FileUpload />);
+    rerender(<FileUpload />);
+
+    expect(mockNotification.showNotification).toHaveBeenCalledTimes(1);
+    expect(mockNavigateTo).toHaveBeenCalledTimes(1);
   });
 
   it("should show the whole form straight away, without a chosen file", () => {

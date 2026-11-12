@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useSelector } from "react-redux";
 
 import { useNotification } from "@/components/Notification";
-import useNavigation from "@/hooks/useNavigation";
+import { REDIRECT_TO_KEY } from "@/constants/constants";
+import useNavigation, { ALLOWED_PAGES } from "@/hooks/useNavigation";
 import { usePreventFileDrop } from "@/hooks/usePreventFileDrop";
 import { useVideoUpload } from "@/hooks/useVideoUpload";
 import { selectIsStaff } from "@/redux/login/selectors";
@@ -16,8 +17,10 @@ import { UploadUi } from "./uploadStatus";
 
 const FileUpload = () => {
   const [videoFile, setVideoFile] = useState<File | undefined>();
+  const hasHandledExpiryRef = useRef(false);
   const {
     uploadProgress,
+    sentBytes,
     isUploading,
     videoAssetId,
     error,
@@ -27,6 +30,7 @@ const FileUpload = () => {
     canPause,
     canResume,
     canCancel,
+    isSessionExpired,
     pauseUpload,
     resumeUpload,
     cancelUpload,
@@ -44,6 +48,16 @@ const FileUpload = () => {
     notification.showNotification({ message: "Only staff members can upload videos", severity: "info" });
     navigateTo("videos");
   }, [isStaff, navigateTo, notification]);
+
+  // An expired login is not a permission problem: say so, and send the user to log in with a way back. The form
+  // details and the unfinished upload are kept (see useUploadDraft), so they are waiting after signing in again.
+  useEffect(() => {
+    // navigateTo changes identity on every render, so without this the toast and redirect would repeat until the route changes.
+    if (!isSessionExpired || hasHandledExpiryRef.current) return;
+    hasHandledExpiryRef.current = true;
+    notification.showNotification({ message: "Your session has expired. Please log in again.", severity: "warning" });
+    navigateTo("login", { [REDIRECT_TO_KEY]: ALLOWED_PAGES.uploadVideo });
+  }, [isSessionExpired, navigateTo, notification]);
 
   // Upload outcomes are reported once per transition of videoAssetId / error (startUpload resets both to null first).
   useEffect(() => {
@@ -70,6 +84,7 @@ const FileUpload = () => {
     phase,
     notice,
     percent: uploadProgress,
+    sentBytes,
     error,
     isActive: isUploading,
     videoAssetId,

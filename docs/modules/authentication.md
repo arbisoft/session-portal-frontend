@@ -69,7 +69,7 @@ Token validation is local (no network call): the proxy decodes the JWT payload f
 1. Deletes the `access` cookie via Next.js `cookies()` API
 2. Calls `redirect("/login")` — this is a server-side redirect
 
-The `customBaseQuery` also triggers a client-side logout: any `401` response dispatches `logout()` (from `src/redux/login/actions.ts`), which resets the Redux login state to `initialState` (all null fields).
+The `customBaseQuery` also triggers a client-side logout: any `401` response dispatches `logout()` (from `src/redux/login/actions.ts`), which resets the Redux login state to `initialState` (all null fields). The one exception is the resumable upload engine, which does not use `customBaseQuery`: a `401` during an upload does not dispatch `logout()` (that would clear the stored user and make the upload page treat the user as non-staff). `useVideoUpload` exposes `isSessionExpired` instead, and the upload page shows "Your session has expired. Please log in again." and redirects to `/login?redirect_to=/upload-video`; see [Upload Video](./upload-video.md).
 
 ### Session Persistence
 
@@ -83,6 +83,8 @@ The `customBaseQuery` also triggers a client-side logout: any `401` response dis
 ### Token Usage
 
 The token never reaches client JS. `customBaseQuery` sends requests to the BFF proxy (`src/app/bff/[...path]/route.ts`), which reads the HttpOnly `access` cookie and injects `Authorization: Bearer <token>` server-side. The proxy returns `401` when the cookie is missing.
+
+Video playback uses a second route, `src/app/bff/video/[slug]/route.ts` (`/bff/video/<slug>`), because a `<video>` element cannot send the guard header. It authenticates with the same HttpOnly cookie, returns `401` when the cookie is missing, and the backend checks the token on every request (including each `Range` request made when seeking). When the backend answers `401` the route also clears the `access` cookie, so a rejected token cannot stay "valid" for `src/proxy.ts`, which only checks expiry locally.
 
 ## Key Edge Cases
 

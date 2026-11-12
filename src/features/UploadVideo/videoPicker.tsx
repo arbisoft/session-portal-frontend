@@ -146,7 +146,14 @@ const VideoPicker: FC<VideoPickerProps> = ({ onFileSelect, pendingUpload, onDisc
           severity="info"
           role="status"
           action={
-            <Button size="small" variant="outlined" onClick={() => setConfirmingDiscard(true)}>
+            <Button
+              size="small"
+              variant="outlined"
+              color="inherit"
+              onClick={() => setConfirmingDiscard(true)}
+              // The alert's action slot is narrow; without this the label breaks into "DISCAR" and "D".
+              sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
+            >
               Discard
             </Button>
           }

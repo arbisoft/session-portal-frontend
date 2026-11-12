@@ -3,7 +3,6 @@ import { useTransition } from "react";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { useTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
 import Image from "next/image";
@@ -24,7 +23,6 @@ import { isValidInternalRedirectPath } from "@/utils/utils";
 import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
 
 export default function LoginPage() {
-  const theme = useTheme();
   const { navigateTo } = useNavigation();
   const { showNotification } = useNotification();
   const { isFeatureEnabled } = useFeatureFlags();
@@ -96,7 +94,7 @@ export default function LoginPage() {
       </Box>
       <LoginSubContainer>
         <Image height={33} width={131} src="/assets/images/arbisoft-logo.png" alt="arbisoft-logo" />
-        <Typography variant="h4" color={theme.palette.text.secondary}>
+        <Typography variant="h4" color="secondary">
           Sessions Portal
         </Typography>
         <LoginButtonContainer>
@@ -111,7 +109,7 @@ export default function LoginPage() {
           >
             <Box className="button-content">
               <Image height={20} width={20} src="/assets/svgs/google.svg" alt="google-logo" />
-              <Typography color="textSecondary">Sign in with Google</Typography>
+              <Typography color="primary">Sign in with Google</Typography>
             </Box>
           </Button>
         </LoginButtonContainer>

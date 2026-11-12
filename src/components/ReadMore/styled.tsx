@@ -5,6 +5,7 @@ import { pxToRem } from "@/utils/styleUtils";
 
 export const StyledReadMore = styled(Typography, { name: "Logo" })(() => {
   return css`
+    overflow-wrap: anywhere;
     white-space: pre-line;
 
     .hidden {

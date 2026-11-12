@@ -31,7 +31,6 @@ export const FilterBox = styled(Box, {
         color: ${theme.palette.common.white};
         font-size: ${pxToRem(24)};
         font-weight: 500;
-        text-transform: capitalize;
 
         ${theme.breakpoints.down("sm")} {
           font-size: ${pxToRem(20)};

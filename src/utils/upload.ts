@@ -1,6 +1,10 @@
+import { isAfter, startOfDay } from "date-fns";
+
 import {
   ALLOWED_TYPES,
   ALLOWED_VIDEO_EXTENSIONS,
+  THUMBNAIL_RECOMMENDED_HEIGHT,
+  THUMBNAIL_RECOMMENDED_WIDTH,
   UPLOAD_MAX_CONSECUTIVE_RETRIES,
   UPLOAD_RETRY_AFTER_CAP_MS,
   UPLOAD_RETRY_BASE_DELAY_MS,
@@ -144,4 +148,30 @@ export const toEventTimestamp = (date: Date): string => {
   const noon = new Date(date);
   noon.setHours(12, 0, 0, 0);
   return noon.toISOString();
+};
+
+/** True when the calendar day of `date` is after today. Invalid dates are not "in the future". */
+export const isFutureDay = (date: Date): boolean => !Number.isNaN(date.getTime()) && isAfter(startOfDay(date), new Date());
+
+type ThumbnailFit = { width: number; height: number };
+
+/** What is off about a chosen thumbnail: portrait images get cropped to 16:9, small ones look blurry. */
+export const thumbnailIssues = ({ width, height }: ThumbnailFit) => ({
+  portrait: height > width,
+  small: width < THUMBNAIL_RECOMMENDED_WIDTH || height < THUMBNAIL_RECOMMENDED_HEIGHT,
+});
+
+/** Non-blocking advice about a chosen thumbnail. */
+export const thumbnailWarnings = (fit: ThumbnailFit): string[] => {
+  const { portrait, small } = thumbnailIssues(fit);
+  const warnings: string[] = [];
+  if (portrait) {
+    warnings.push("This image is portrait, so it will be cropped to 16:9 and the top and bottom may be cut off.");
+  }
+  if (small) {
+    warnings.push(
+      `This image is smaller than ${THUMBNAIL_RECOMMENDED_WIDTH}×${THUMBNAIL_RECOMMENDED_HEIGHT} and may look blurry.`
+    );
+  }
+  return warnings;
 };

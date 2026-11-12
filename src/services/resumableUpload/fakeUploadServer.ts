@@ -36,6 +36,8 @@ export class FakeUploadServer implements UploadApi {
   knownSession = true;
   release: (() => void) | null = null;
   fileSize = 0;
+  /** Fractions of each chunk reported through `onProgress` before the request settles, e.g. [0.5, 1]. */
+  progressSteps: number[] = [];
 
   constructor(private readonly chunkSize = 4) {}
 
@@ -74,8 +76,16 @@ export class FakeUploadServer implements UploadApi {
     return this.describe();
   }
 
-  async sendChunk(_sessionId: string, offset: number, chunk: Blob, _checksum: string | undefined, signal: AbortSignal) {
+  async sendChunk(
+    _sessionId: string,
+    offset: number,
+    chunk: Blob,
+    _checksum: string | undefined,
+    signal: AbortSignal,
+    onProgress?: (sentBytes: number) => void
+  ) {
     this.sentOffsets.push(offset);
+    this.progressSteps.forEach((fraction) => onProgress?.(Math.floor(chunk.size * fraction)));
     const fault = this.chunkFaults.shift() ?? "ok";
     if (fault === "network") throw new UploadApiError("network", 0, "network_error");
     if (typeof fault === "object") {

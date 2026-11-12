@@ -1,7 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { logout } from "@/redux/login/actions";
 import { StoredUpload } from "@/services/resumableUpload/storage";
 import { UploadEvent, UploadSnapshot } from "@/services/resumableUpload/types";
 import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
@@ -54,6 +53,7 @@ const file = new File(["video"], "talk.mp4", { type: "video/mp4" });
 const snapshot = (overrides: Partial<UploadSnapshot> = {}): UploadSnapshot => ({
   phase: "uploading",
   confirmedBytes: 10,
+  sentBytes: 10,
   totalBytes: 100,
   percent: 10,
   videoAssetId: null,
@@ -151,17 +151,27 @@ describe("useVideoUpload", () => {
       isUploading: true,
       error: null,
       notice: "Connection problem. Retrying…",
-      canPause: true,
+      canPause: false,
+      canCancel: false,
       canResume: true,
     });
   });
 
-  it("should not offer pause once an interrupted upload has stalled", () => {
+  it("should offer only cancel and retry once an interrupted upload has stalled", () => {
     const { result } = renderHook(() => useVideoUpload());
 
     act(() => manager().deps.onChange(snapshot({ phase: "interrupted", stalled: true })));
 
-    expect(result.current).toMatchObject({ canPause: false, canResume: true });
+    expect(result.current).toMatchObject({ canPause: false, canCancel: true, canResume: true });
+  });
+
+  it("should bring pause and cancel back when the upload continues after a connection problem", () => {
+    const { result } = renderHook(() => useVideoUpload());
+
+    act(() => manager().deps.onChange(snapshot({ phase: "interrupted", notice: "You're offline." })));
+    act(() => manager().deps.onChange(snapshot({ phase: "uploading" })));
+
+    expect(result.current).toMatchObject({ canPause: true, canCancel: true });
   });
 
   it("should surface a failure as the error message and offer retry only when it is retryable", () => {
@@ -235,13 +245,32 @@ describe("useVideoUpload", () => {
     expect(current.discardStored).not.toHaveBeenCalled();
   });
 
-  it("should log the user out when the upload is rejected as unauthorized", () => {
-    renderHook(() => useVideoUpload());
+  it("should flag an expired session without logging the user out", () => {
+    const { result } = renderHook(() => useVideoUpload());
 
     act(() => manager().deps.onEvent({ type: "failed", code: "unauthorized" }));
+    act(() =>
+      manager().deps.onChange(
+        snapshot({ phase: "failed", failure: { code: "unauthorized", message: "Your session has expired.", retryable: false } })
+      )
+    );
 
-    expect(dispatch).toHaveBeenCalledWith(logout());
+    // Logging out would wipe the stored user, which made the page treat the user as a non-staff member.
+    expect(dispatch).not.toHaveBeenCalled();
+    expect(result.current.isSessionExpired).toBe(true);
     expect(mockCaptureMessage).not.toHaveBeenCalled();
+  });
+
+  it("should not flag an expired session for other failures", () => {
+    const { result } = renderHook(() => useVideoUpload());
+
+    act(() =>
+      manager().deps.onChange(
+        snapshot({ phase: "failed", failure: { code: "storage_full", message: "Out of space", retryable: true } })
+      )
+    );
+
+    expect(result.current.isSessionExpired).toBe(false);
   });
 
   it("should report unexpected failures to Sentry with the failure code only", () => {

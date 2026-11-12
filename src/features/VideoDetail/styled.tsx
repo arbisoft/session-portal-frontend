@@ -5,6 +5,9 @@ import Link from "next/link";
 
 import { pxToRem } from "@/utils/styleUtils";
 
+// Shared by the video title (h1) and the "Session Details" heading (h2) so the two stay visually consistent.
+const HEADING_FONT_SIZE = pxToRem(20);
+
 export const StyledTitleSection = styled(Box, {
   name: "StyledTitleSection",
 })(
@@ -15,8 +18,11 @@ export const StyledTitleSection = styled(Box, {
     padding-top: ${theme.spacing(2)};
     width: 100%;
 
+    min-width: 0;
+
     h4 {
-      font-size: ${pxToRem(20)};
+      font-size: ${HEADING_FONT_SIZE};
+      overflow-wrap: anywhere;
       font-weight: 700;
       line-height: 1.3;
       text-transform: capitalize;
@@ -43,6 +49,7 @@ export const StyledDetailSection = styled(Box, {
     p,
     time {
       font-size: ${pxToRem(14)};
+      overflow-wrap: anywhere;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
@@ -77,7 +84,7 @@ export const StyledNotesSection = styled(Box, {
     width: 100%;
 
     h5 {
-      font-size: ${pxToRem(22)};
+      font-size: ${HEADING_FONT_SIZE};
       font-style: normal;
       font-weight: 400;
       line-height: normal;
@@ -86,13 +93,13 @@ export const StyledNotesSection = styled(Box, {
 
     .description {
       background: ${alpha(theme.palette.common.white, 0.15)};
-      border-radius: 12px;
+      border-radius: ${theme.spacing(1)};
       gap: 10px;
       margin-top: ${theme.spacing(2)};
       padding: 20px;
 
       p {
-        color: #fff;
+        color: ${theme.palette.text.primary};
         font-size: ${pxToRem(12)};
         font-style: normal;
         font-weight: 400;

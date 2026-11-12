@@ -16,6 +16,9 @@ export const VideoCardContainer = styled(Card, {
     border-radius: unset;
     cursor: pointer;
     display: grid;
+    /* The implicit column would otherwise grow to the longest unbroken word and spill out of the card. */
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
     overflow: unset;
     width: ${$width};
     height: ${$height};
@@ -58,6 +61,8 @@ export const VideoCardContainer = styled(Card, {
         display: flex;
         flex-direction: column;
         gap: 7px;
+        min-width: 0;
+        overflow-wrap: anywhere;
         width: 100%;
 
         .${typographyClasses.h1}, .${typographyClasses.h5}, .${typographyClasses.h3} {
@@ -66,7 +71,7 @@ export const VideoCardContainer = styled(Card, {
           display: -webkit-box;
           overflow: hidden;
           text-overflow: ellipsis;
-          color: #fff;
+          color: ${theme.palette.text.primary};
         }
 
         .date-time,
@@ -172,7 +177,7 @@ export const VideoCardContainer = styled(Card, {
 
     &.featured-card {
       background-color: ${alpha(theme.palette.common.white, theme.palette.mode === "dark" ? 0.06 : 0.7)};
-      border-radius: 12px;
+      border-radius: ${theme.spacing(1)};
       display: flex;
       padding: 30px;
 
@@ -213,7 +218,7 @@ export const VideoCardContainer = styled(Card, {
         .video-detail {
           width: calc(100% - 430px);
           gap: 5px;
-          color: #fff;
+          color: ${theme.palette.text.primary};
 
           ${theme.breakpoints.down("md")} {
             width: calc(100% - 320px);
@@ -276,7 +281,7 @@ export const VideoCardContainer = styled(Card, {
         .video-detail {
           width: calc(100% - 430px);
           gap: 10px;
-          color: #fff;
+          color: ${theme.palette.text.primary};
 
           ${theme.breakpoints.down("md")} {
             width: calc(100% - 320px);

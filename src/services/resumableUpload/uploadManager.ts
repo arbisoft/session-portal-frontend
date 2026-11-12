@@ -30,11 +30,15 @@ import { UploadEvent, UploadNetwork, UploadSnapshot } from "./types";
 const CANCEL_ATTEMPTS = 3;
 const CANCEL_RETRY_MS = 1000;
 const PAUSED_POLL_MS = 60_000;
+// Upload progress events can arrive dozens of times a second; the screen does not need more than a few.
+const PROGRESS_INTERVAL_MS = 150;
+const PROGRESS_CAP_PERCENT = 99;
 
 export const IDLE_SNAPSHOT: UploadSnapshot = {
   phase: "idle",
   confirmedBytes: 0,
   totalBytes: 0,
+  sentBytes: 0,
   percent: 0,
   videoAssetId: null,
   failure: null,
@@ -76,6 +80,7 @@ export class UploadManager {
   private disposed = false;
   private failuresInRow = 0;
   private startedAt = 0;
+  private lastProgressAt = 0;
   private readonly wakeups = new Set<() => void>();
 
   constructor(deps: UploadManagerDeps) {
@@ -135,8 +140,9 @@ export class UploadManager {
 
   async cancel() {
     const { phase, failure: current } = this.snapshot;
-    // A session that is finalizing, completed or closed by the server cannot be cancelled, so asking would only 409.
-    const serverCancellable = phase !== "finalizing" && phase !== "completed" && !(phase === "failed" && !current?.retryable);
+    // A session that is finalizing or closed by the server cannot be cancelled, so asking would only 409. A completed
+    // one can: the server then deletes the unused video, which would otherwise stay in storage.
+    const serverCancellable = phase !== "finalizing" && !(phase === "failed" && !current?.retryable);
     const sessionId = serverCancellable ? (this.sessionId ?? this.deps.storage.load()?.sessionId ?? null) : null;
     this.abortRun();
     this.deps.storage.clear();
@@ -256,12 +262,15 @@ export class UploadManager {
     return created;
   }
 
-  // Resumes a stored session only when the server still knows it and it describes the same file.
+  // Resumes a stored session only when the server still knows it and it describes the same file. A session that
+  // finished while the page was reloading is picked up as it is: the video is already on the server, so uploading
+  // it again would only leave the first copy unused.
   private async reattach(stored: StoredUpload, file: File, signal: AbortSignal): Promise<UploadSession | null> {
     try {
       const session = await this.withRetry(() => this.deps.api.getSession(stored.sessionId, signal), signal);
-      const usable = session.upload_status === "UPLOADING" || session.upload_status === "FINALIZING";
-      return usable && session.file_size === file.size ? session : null;
+      const isInProgress = session.upload_status === "UPLOADING" || session.upload_status === "FINALIZING";
+      const isFinishedWithVideo = session.upload_status === "COMPLETED" && session.video_asset_id !== null;
+      return (isInProgress || isFinishedWithVideo) && session.file_size === file.size ? session : null;
     } catch (error) {
       if (error instanceof RunAborted || error instanceof RetriesExhausted) throw error;
       if (classifyUploadError(toErrorInfo(error)).kind === "gone") return null;
@@ -330,7 +339,12 @@ export class UploadManager {
     signal.addEventListener("abort", forward, { once: true });
     this.chunkAbort = controller;
     try {
-      return await this.deps.api.sendChunk(session.id, session.offset, chunk, checksum, controller.signal);
+      return await this.deps.api.sendChunk(session.id, session.offset, chunk, checksum, controller.signal, (sentBytes) =>
+        this.reportProgress(sentBytes, chunk.size)
+      );
+    } catch (error) {
+      this.showConfirmedProgress();
+      throw error;
     } finally {
       signal.removeEventListener("abort", forward);
       this.chunkAbort = null;
@@ -346,7 +360,13 @@ export class UploadManager {
   }
 
   private async awaitFinalization(session: UploadSession, signal: AbortSignal): Promise<UploadSession> {
-    this.setSnapshot({ phase: "finalizing", confirmedBytes: session.file_size, percent: 100, notice: null });
+    this.setSnapshot({
+      phase: "finalizing",
+      confirmedBytes: session.file_size,
+      sentBytes: session.file_size,
+      percent: 100,
+      notice: null,
+    });
     const waitStartedAt = this.now();
     let delay = UPLOAD_FINALIZE_POLL_MIN_MS;
     let nudged = false;
@@ -413,9 +433,28 @@ export class UploadManager {
     this.failuresInRow = 0;
   }
 
+  // Moves the bar with the bytes of the current chunk that have left the browser. They are not stored yet, so the
+  // percentage stays below 100 and a chunk that fails falls back to what the server confirmed (showConfirmedProgress).
+  private reportProgress(chunkSentBytes: number, chunkSize: number) {
+    const { confirmedBytes, totalBytes, sentBytes: shown } = this.snapshot;
+    const now = this.now();
+    const isChunkEnd = chunkSentBytes >= chunkSize;
+    if (!isChunkEnd && now - this.lastProgressAt < PROGRESS_INTERVAL_MS) return;
+    const sentBytes = Math.min(confirmedBytes + chunkSentBytes, totalBytes);
+    if (sentBytes === shown) return;
+    this.lastProgressAt = now;
+    this.setSnapshot({ sentBytes, percent: Math.min(PROGRESS_CAP_PERCENT, toPercent(sentBytes, totalBytes)) });
+  }
+
+  private showConfirmedProgress() {
+    const { confirmedBytes, totalBytes, sentBytes } = this.snapshot;
+    if (sentBytes === confirmedBytes) return;
+    this.setSnapshot({ sentBytes: confirmedBytes, percent: toPercent(confirmedBytes, totalBytes) });
+  }
+
   private commit(confirmedBytes: number) {
     const { totalBytes } = this.snapshot;
-    this.setSnapshot({ confirmedBytes, percent: toPercent(confirmedBytes, totalBytes) });
+    this.setSnapshot({ confirmedBytes, sentBytes: confirmedBytes, percent: toPercent(confirmedBytes, totalBytes) });
     if (this.sessionId && this.fingerprint) {
       this.deps.storage.save({
         sessionId: this.sessionId,
@@ -431,6 +470,7 @@ export class UploadManager {
     this.setSnapshot({
       phase: "completed",
       confirmedBytes: session.file_size,
+      sentBytes: session.file_size,
       percent: 100,
       videoAssetId: session.video_asset_id,
       notice: null,

@@ -11,8 +11,8 @@ import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { FieldProps } from "./fields";
 
 const LEAVE_DESCRIPTION =
-  "The details you entered and any upload in progress will be lost. " +
-  "You can continue an unfinished upload later by selecting the same video again.";
+  "An upload in progress will stop. You can continue it later by selecting the same video again, and the details " +
+  "you entered are restored with it. Details typed before a video was chosen will be lost.";
 
 type LeaveGuardDialogProps = FieldProps & { hasFile: boolean };
 

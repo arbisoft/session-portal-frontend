@@ -1,17 +1,19 @@
 "use client";
 
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   MediaPlayer,
   MediaProvider,
-  useMediaState,
   Poster,
   Track,
   type MediaPlayerInstance,
   type MediaVolumeChange,
   PlayButton,
+  type VideoMimeType,
 } from "@vidstack/react";
 import { defaultLayoutIcons, DefaultVideoLayout } from "@vidstack/react/player/layouts/default";
 import clsx from "clsx";
@@ -24,6 +26,22 @@ import { VideoPlayerProps } from "./types";
 import "./styles.css";
 
 const DEFAULT_CONTROLS_DELAY_MS = 3000;
+// The stream URL has no file extension, so vidstack cannot infer the format and needs the MIME type spelled out.
+const DEFAULT_VIDEO_TYPE: VideoMimeType = "video/mp4";
+// What the backend reports for a stored file, in the spelling vidstack accepts. Anything else falls back to MP4.
+const SUPPORTED_VIDEO_TYPES: Record<string, VideoMimeType> = {
+  "video/mp4": "video/mp4",
+  "video/webm": "video/webm",
+  "video/ogg": "video/ogg",
+  "video/x-msvideo": "video/avi",
+};
+// The browser keeps retrying a failing stream (e.g. repeated 503s) without ever raising an error, so a load that has not
+// produced a playable frame by now is reported to the user instead of spinning forever.
+const STALL_TIMEOUT_MS = 20000;
+const STALL_MESSAGE = "The video is taking too long to load.";
+const ERROR_MESSAGE = "This video could not be loaded.";
+// The settings trigger vidstack gives the root menu (submenu triggers are nested inside it and come later in the DOM).
+const OPEN_MENU_TRIGGER_SELECTOR = ".vds-menu-button[aria-expanded='true']";
 
 const VideoPlayer: FC<VideoPlayerProps> = ({
   captionsFile,
@@ -39,15 +57,30 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   posterSrc,
   title,
   videoSrc,
+  videoType,
   watchThresholdSeconds = 30,
   width = "70%",
 }) => {
   const player = useRef<MediaPlayerInstance>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const videoLabel = title || posterAlt;
+  const resolvedVideoType = (videoType && SUPPORTED_VIDEO_TYPES[videoType]) || DEFAULT_VIDEO_TYPE;
+
+  // Not useMediaState: it reads player.current during the first render (still null), so it binds to vidstack's static
+  // initial store and never sees playback start. The subscription below is created after mount.
+  const [isPaused, setIsPaused] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasMediaError, setHasMediaError] = useState(false);
+  const [hasStalled, setHasStalled] = useState(false);
+  // Bumping the key remounts the player, which discards the failed request and starts a fresh load.
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     // Subscribe to state updates.
-    return player.current!.subscribe(({ ended }) => {
+    return player.current!.subscribe(({ canPlay = true, ended, error = null, paused, waiting = false }) => {
+      setIsPaused(paused);
+      setHasMediaError(!!error);
+      setIsLoading(!error && !canPlay && (!paused || waiting));
       if (ended) {
         trackEvent(GA_EVENTS.VIDEO_COMPLETE, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel });
         if (onVideoEnded) {
@@ -55,9 +88,44 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
         }
       }
     });
-  }, [onVideoEnded, videoLabel]);
+  }, [onVideoEnded, videoLabel, attempt]);
 
-  const isPaused = useMediaState("paused", player);
+  useEffect(() => {
+    if (!isLoading) {
+      setHasStalled(false);
+      return undefined;
+    }
+    const timeout = setTimeout(() => {
+      setHasStalled(true);
+      trackEvent(GA_EVENTS.VIDEO_PLAY_ERROR, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel, message: "load_timeout" });
+    }, STALL_TIMEOUT_MS);
+    return () => clearTimeout(timeout);
+  }, [isLoading, videoLabel]);
+
+  const hasFailed = hasMediaError || hasStalled;
+  const shouldShowPlayButton = isPaused && !isLoading && !hasFailed;
+
+  const handleRetry = () => {
+    setHasMediaError(false);
+    setHasStalled(false);
+    setIsLoading(false);
+    setAttempt((previous) => previous + 1);
+  };
+
+  // Vidstack closes a menu on Escape only while focus is inside its items; opening it by mouse leaves focus on the trigger.
+  // A native listener keeps the wrapper a plain element: it only observes Escape bubbling up, so it needs no role.
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return undefined;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      const trigger = wrapper.querySelector(OPEN_MENU_TRIGGER_SELECTOR);
+      const menuId = trigger?.getAttribute("aria-controls");
+      document.getElementById(menuId ?? "")?.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    };
+    wrapper.addEventListener("keydown", handleKeyDown);
+    return () => wrapper.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const accumulatedTimeRef = useRef(0);
   const hasCountedRef = useRef(false);
@@ -82,15 +150,17 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
   }, [isPaused, onWatchThreshold, videoLabel, watchThresholdSeconds]);
 
   return (
-    <div style={{ width, height }}>
+    <div ref={wrapperRef} style={{ width, height }}>
       <MediaPlayer
+        key={attempt}
+        autoPlay={attempt > 0}
         className={clsx("player", className)}
         controlsDelay={controlsDelay}
         keyTarget={keyTarget}
         crossOrigin={crossOrigin}
         playsInline={playsInline}
         ref={player}
-        src={videoSrc}
+        src={videoSrc ? { src: videoSrc, type: resolvedVideoType } : videoSrc}
         title={title}
         onPlay={() => trackEvent(GA_EVENTS.VIDEO_PLAY, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel })}
         onPause={() => trackEvent(GA_EVENTS.VIDEO_PAUSE, ANALYTICS_CATEGORY.VIDEO_PLAYER, { title: videoLabel })}
@@ -131,14 +201,30 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
           )}
         </MediaProvider>
 
-        {isPaused && (
+        {isLoading && !hasFailed && (
+          <div className="player-status" role="status" aria-live="polite">
+            <CircularProgress size={48} aria-label="Loading video" />
+          </div>
+        )}
+
+        {hasFailed && (
+          <div className="player-status player-status--error" role="alert">
+            <p>{hasMediaError ? ERROR_MESSAGE : STALL_MESSAGE}</p>
+            <Button variant="contained" onClick={handleRetry}>
+              Retry
+            </Button>
+          </div>
+        )}
+
+        {shouldShowPlayButton && (
           <PlayButton className="vds-main-play-button">
             <PlayCircleIcon className="play-icon" />
           </PlayButton>
         )}
 
         {/* Layouts */}
-        <DefaultVideoLayout icons={defaultLayoutIcons} noAudioGain />
+        {/* noModal keeps menus next to their icon inside the player; the small-layout default is a sheet portaled to <body> */}
+        <DefaultVideoLayout icons={defaultLayoutIcons} noAudioGain noModal />
       </MediaPlayer>
     </div>
   );
