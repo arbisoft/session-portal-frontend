@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
@@ -23,13 +23,13 @@ import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { fullName, transformVideoToCardData } from "@/utils/utils";
 
 import SkeletonLoader from "./skeletonLoader";
-import { StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
+import { PresenterLink, StyledDetailSection, StyledNotesSection, StyledTitleSection, TagsContainer } from "./styled";
 
 type RecommendationsContext = { isFetching: boolean };
 
 const RecommendationsFooter = ({ context }: { context?: RecommendationsContext }) =>
   context?.isFetching ? (
-    <Box mt={2} sx={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+    <Box sx={{ mt: 2, display: "flex", flexDirection: "column", gap: "16px" }}>
       {Array.from({ length: 3 }).map((_, idx) => (
         <Skeleton key={idx} variant="rounded" width="100%" height={90} />
       ))}
@@ -78,6 +78,9 @@ const VideoDetail = () => {
   const countedViewCount = countedViews?.videoId === videoId ? countedViews?.viewCount : undefined;
   const displayedViewCount = countedViewCount ?? data?.view_count;
   const dataEvent = data?.event;
+  const presenters = (dataEvent?.presenters ?? [])
+    .map((presenter) => ({ id: presenter.user_id, name: fullName(presenter) }))
+    .filter(({ name }) => name);
   const allRecommendations = recommendationsData?.results ?? [];
 
   return (
@@ -85,7 +88,7 @@ const VideoDetail = () => {
       isLeftSidebarVisible={false}
       shouldShowDrawer
       rightSidebar={
-        <Box pr={1} data-testid="recommendation-card">
+        <Box sx={{ pr: 1 }} data-testid="recommendation-card">
           <Virtuoso
             data={allRecommendations}
             useWindowScroll
@@ -137,8 +140,21 @@ const VideoDetail = () => {
               </Typography>
             </StyledTitleSection>
             <StyledDetailSection>
-              <Typography color="textSecondary" variant="h6" component="p" tabIndex={0}>
-                {dataEvent?.presenters.map(fullName).join(", ")}
+              <Typography color="textSecondary" variant="h6" component="p">
+                {presenters.map(({ id, name }, index) => (
+                  <Fragment key={id}>
+                    {index > 0 && ", "}
+                    <PresenterLink
+                      href={getPageUrl("searchResult", { search: name })}
+                      // Presenter details (name, email, id) are deliberately not reported.
+                      onClick={() =>
+                        trackEvent(GA_EVENTS.PRESENTER_LINK_CLICK, ANALYTICS_CATEGORY.SEARCH, { source: "video_detail" })
+                      }
+                    >
+                      {name}
+                    </PresenterLink>
+                  </Fragment>
+                ))}
               </Typography>
               <Typography color="textSecondary" component="time" dateTime={dataEvent?.event_time} tabIndex={0}>
                 {format(dataEvent?.event_time ?? "", "MMM dd, yyyy")}
@@ -154,7 +170,18 @@ const VideoDetail = () => {
                 Session Details
               </Typography>
               <div className="description">
-                <ReadMore text={dataEvent?.description ?? ""} showLessText="Show Less" showMoreText="Show More" />
+                <ReadMore
+                  text={dataEvent?.description ?? ""}
+                  maxLines={4}
+                  showLessText="Show Less"
+                  showMoreText="Show More"
+                  onToggle={(isExpanded) =>
+                    trackEvent(GA_EVENTS.VIDEO_DESCRIPTION_TOGGLE, ANALYTICS_CATEGORY.VIDEO_PLAYER, {
+                      action: isExpanded ? "expand" : "collapse",
+                      source: "video_detail",
+                    })
+                  }
+                />
                 {(dataEvent?.tags?.length ?? 0) > 0 && (
                   <TagsContainer>
                     {dataEvent?.tags?.map((tag) => (

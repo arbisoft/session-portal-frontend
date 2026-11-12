@@ -100,10 +100,12 @@ Available hooks:
 | `useFeatureFlags`      | Feature flag resolution with URL override support                                 |
 | `useDebounce`          | Debounced value for search inputs                                                 |
 | `useSidebar`           | Fetches tags and playlists for the navigation sidebar                             |
+| `useVideoFilters`      | URL-driven sort/year filter state and navigation for the sidebar Home filter      |
 | `useVideoUpload`       | React binding of the resumable upload engine: progress, pause, resume, cancel     |
 | `useUploadRate`        | Average upload speed from progress samples, for the speed and time-left text      |
 | `useLeaveGuard`        | Browser prompt on reload plus interception of in-app link clicks for unsaved work |
 | `usePreventFileDrop`   | Stops a file dropped outside a drop zone from navigating the browser away         |
+| `useCloseOnScroll`     | Closes a popup when a given scroll container scrolls                              |
 
 ## Authentication Architecture
 
@@ -171,7 +173,7 @@ Cross-cutting concerns that sit outside the feature layers:
 
 - **Sentry** is initialized per runtime (`sentry.server.config.ts`, `sentry.edge.config.ts`, `src/instrumentation-client.ts`), registered through `src/instrumentation.ts`, and wrapped around the Next.js config outside development.
 - **Error boundaries**: `src/app/error.tsx` (route) and `src/app/global-error.tsx` (root layout) report to Sentry and render fallback UI; `src/app/not-found.tsx` handles 404s.
-- **Stale chunk recovery** (`src/utils/chunkLoadRecovery.ts`) hard-reloads once per session when a tab opened before a deploy requests a missing chunk.
+- **Stale chunk recovery** (`src/utils/chunkLoadRecovery.ts`) hard-reloads once per session when a tab opened before a deploy requests a missing chunk. It and `LoginPage` access `window.location` only through `src/utils/browserLocation.ts` (`reloadPage`, `getLocationSearch`) so tests can mock it.
 - **Analytics**: `trackEvent` in `src/utils/analytics.ts` pushes events to the GTM `dataLayer` from feature and component handlers.
 
 Details: [Monitoring and Error Recovery](./modules/monitoring-and-error-recovery.md), [Analytics Tracking](./modules/analytics-tracking.md).

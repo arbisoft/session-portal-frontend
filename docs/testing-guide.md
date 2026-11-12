@@ -49,6 +49,20 @@ Key settings:
 - imports `@testing-library/jest-dom`
 - imports `whatwg-fetch`
 
+## Testing MUI 9 Components
+
+- Assert state through MUI state classes (`Mui-selected`, `MuiChip-filled`, `MuiChip-outlined`) or ARIA attributes, not through computed colors. Theme colors are CSS variables that jsdom cannot resolve, and jsdom serializes `transparent` as `rgba(0, 0, 0, 0)`.
+- MUI 9 renders fewer utility classes than MUI 7 (for example no `MuiChip-labelSmall`, `MuiChip-clickableColorDefault` or `MuiInputBase-inputSizeSmall`), and emotion class hashes changed. Snapshots recorded under MUI 7 must be regenerated (`npx jest -u`) after reviewing the diff.
+- `InitColorSchemeScript` emits its inline `<script>` only during the server render and hydration. A client-side `render()` produces an empty fragment; use `renderToString` from `react-dom/server` to test the script (see `src/components/theme/theme-provider.test.tsx`).
+- Drawer and other transition-based closing is asynchronous. Wrap the `aria-hidden` assertion in `waitFor`.
+
+## Mocking `window` and `window.location` (jsdom 30)
+
+`jest-environment-jsdom` 30 makes `window.location` and `window` non-configurable, so `Object.defineProperty(window, "location", ...)` and `jest.spyOn(global, "window", "get")` throw.
+
+- **Reload / search string:** code calls `reloadPage()` / `getLocationSearch()` from `src/utils/browserLocation.ts`; tests `jest.mock("@/utils/browserLocation", ...)` (see `chunkLoadRecovery.test.ts`, `error.test.tsx`, `loginPage.test.tsx`).
+- **SSR branches (`typeof window === "undefined"`):** put the test in its own file with a `@jest-environment node` docblock (see `src/utils/analytics.ssr.test.ts`).
+
 ## Test Coverage
 
 Current test suite includes unit tests for:

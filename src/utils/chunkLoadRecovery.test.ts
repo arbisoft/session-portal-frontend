@@ -1,5 +1,11 @@
 import { isChunkLoadError, recoverFromChunkLoadError } from "./chunkLoadRecovery";
 
+const mockReload = jest.fn();
+
+jest.mock("@/utils/browserLocation", () => ({
+  reloadPage: () => mockReload(),
+}));
+
 describe("isChunkLoadError", () => {
   it("should return true when the message matches Failed to load chunk", () => {
     expect(isChunkLoadError(new Error("Failed to load chunk foo.js from module 123"))).toBe(true);
@@ -19,15 +25,9 @@ describe("isChunkLoadError", () => {
 });
 
 describe("recoverFromChunkLoadError", () => {
-  const mockReload = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
     sessionStorage.clear();
-    Object.defineProperty(window, "location", {
-      value: { reload: mockReload },
-      writable: true,
-    });
   });
 
   it("should reload once and return true for a chunk load error", () => {

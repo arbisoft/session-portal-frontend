@@ -18,6 +18,7 @@ import { useFeatureFlags } from "@/hooks/useFeatureFlags";
 import useNavigation from "@/hooks/useNavigation";
 import { loginActions } from "@/redux/login/slice";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
+import { getLocationSearch } from "@/utils/browserLocation";
 import { isValidInternalRedirectPath } from "@/utils/utils";
 
 import { LoginButtonContainer, LoginContainer, LoginSubContainer } from "./styled";
@@ -34,10 +35,7 @@ export default function LoginPage() {
 
   // Persist redirect target from query string or fallback to window query in cases where
   // new token/redirect flow reloads page and Next hook may not yet resolve.
-  const rawRedirectTo =
-    params.get(REDIRECT_TO_KEY) ??
-    /* c8 ignore next -- SSR-only fallback; window is always defined in jsdom */
-    (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get(REDIRECT_TO_KEY) : null);
+  const rawRedirectTo = params.get(REDIRECT_TO_KEY) ?? new URLSearchParams(getLocationSearch()).get(REDIRECT_TO_KEY);
 
   const redirectTo = isValidInternalRedirectPath(rawRedirectTo) ? rawRedirectTo : null;
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
@@ -89,7 +87,7 @@ export default function LoginPage() {
 
   return (
     <LoginContainer>
-      <Box position="fixed" top={8} right={8}>
+      <Box sx={{ position: "fixed", top: 8, right: 8 }}>
         {isDarkModeVisible && (
           <span data-testid="theme-toggle">
             <ThemeToggle />

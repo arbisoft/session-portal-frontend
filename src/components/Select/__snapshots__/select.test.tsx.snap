@@ -17,7 +17,7 @@ exports[`Select Component should match snapshot 1`] = `
       <div
         aria-expanded="false"
         aria-haspopup="listbox"
-        class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input MuiInputBase-inputSizeSmall css-14xswyl-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+        class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-p1ghwh-MuiNativeSelect-root-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
         role="combobox"
         tabindex="0"
       >
@@ -32,12 +32,13 @@ exports[`Select Component should match snapshot 1`] = `
         aria-hidden="true"
         aria-invalid="false"
         class="MuiSelect-nativeInput css-j0riat-MuiSelect-nativeInput"
+        id="_r_n_"
         tabindex="-1"
         value=""
       />
       <svg
         aria-hidden="true"
-        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon MuiSelect-iconOutlined css-1778ep4-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
+        class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium MuiSelect-icon css-1778ep4-MuiSvgIcon-root-MuiNativeSelect-root-MuiSelect-icon"
         data-testid="ArrowDropDownIcon"
         focusable="false"
         viewBox="0 0 24 24"

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlined";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
@@ -138,9 +138,9 @@ export const UploadStatusPanel = ({ file, upload }: PanelProps) => {
         p: 2,
       })}
     >
-      <Box display="flex" alignItems="center" gap={1.5} minWidth={0}>
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, minWidth: 0 }}>
         {isComplete && <CheckCircleOutlineIcon aria-hidden color="success" />}
-        <Box minWidth={0}>
+        <Box sx={{ minWidth: 0 }}>
           <Typography noWrap title={file.name}>
             {file.name}
           </Typography>
@@ -150,7 +150,7 @@ export const UploadStatusPanel = ({ file, upload }: PanelProps) => {
         </Box>
       </Box>
 
-      <Box display="flex" flexDirection="column" gap={1}>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
         <Typography variant="bodySmall" color={isFailed ? "error" : "textPrimary"}>
           {progressTitle(phase)}
         </Typography>
@@ -179,7 +179,7 @@ export const UploadStatusPanel = ({ file, upload }: PanelProps) => {
         )}
       </Box>
 
-      <Box display="flex" gap={1} flexWrap="wrap">
+      <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
         {upload.canPause && (
           <Button size="small" variant="outlined" onClick={upload.onPause}>
             Pause

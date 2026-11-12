@@ -10,6 +10,7 @@ jest.mock("@next/third-parties/google", () => ({ sendGTMEvent: jest.fn() }));
 
 const mockIncrementViewCount = jest.fn();
 const mockNavigateTo = jest.fn();
+let mockPresenters: { user_id: number; first_name: string; last_name: string; email: string }[] = [];
 let mockWatchThreshold: (() => void) | undefined;
 let mockEndReached: (() => void) | undefined;
 let mockVideoId: string | undefined = "my-video";
@@ -38,6 +39,11 @@ const buildRecommendation = (id: number) => ({
 });
 
 let mockDetailState = buildDetailState();
+
+const withPresenters = (state: ReturnType<typeof buildDetailState>) =>
+  mockPresenters.length && state.data
+    ? { ...state, data: { ...state.data, event: { ...state.data.event, presenters: mockPresenters } } }
+    : state;
 let mockRecommendationState: Record<string, unknown> = { data: { results: [], next: null }, isFetching: false };
 
 jest.mock("next/navigation", () => ({
@@ -48,7 +54,8 @@ jest.mock("@/hooks/useNavigation", () => ({
   __esModule: true,
   default: () => ({
     navigateTo: mockNavigateTo,
-    getPageUrl: (_page: string, params?: { tag?: string }) => `/videos?tag=${params?.tag}`,
+    getPageUrl: (page: string, params?: Record<string, string>) =>
+      page === "searchResult" ? `/videos/results?${new URLSearchParams(params).toString()}` : `/videos?tag=${params?.tag}`,
   }),
 }));
 
@@ -108,7 +115,7 @@ jest.mock("react-virtuoso", () => ({
 }));
 
 jest.mock("@/redux/events/apiSlice", () => ({
-  useEventDetailQuery: () => mockDetailState,
+  useEventDetailQuery: () => withPresenters(mockDetailState),
   useRecommendationQuery: () => mockRecommendationState,
   useIncrementViewCountMutation: () => [mockIncrementViewCount],
 }));
@@ -353,5 +360,121 @@ describe("VideoDetail", () => {
 
       expect(sendGTMEvent).not.toHaveBeenCalled();
     });
+  });
+});
+
+describe("VideoDetail description toggle analytics", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPresenters = [];
+    mockDetailState = buildDetailState();
+    mockRecommendationState = { data: { results: [], next: null }, isFetching: false };
+    Object.defineProperty(HTMLElement.prototype, "scrollHeight", { configurable: true, value: 200 });
+    Object.defineProperty(HTMLElement.prototype, "clientHeight", { configurable: true, value: 80 });
+  });
+
+  afterEach(() => {
+    delete (HTMLElement.prototype as unknown as Record<string, unknown>).scrollHeight;
+    delete (HTMLElement.prototype as unknown as Record<string, unknown>).clientHeight;
+  });
+
+  it("should track expanding and collapsing the description without sending any text", () => {
+    const { getByTestId } = render(<VideoDetail />);
+
+    act(() => {
+      getByTestId("show-more-button").click();
+    });
+    act(() => {
+      getByTestId("show-more-button").click();
+    });
+
+    const toggleCalls = (sendGTMEvent as jest.Mock).mock.calls.filter(
+      ([payload]) => payload.event === GA_EVENTS.VIDEO_DESCRIPTION_TOGGLE
+    );
+    expect(toggleCalls).toEqual([
+      [
+        {
+          event: GA_EVENTS.VIDEO_DESCRIPTION_TOGGLE,
+          event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+          action: "expand",
+          source: "video_detail",
+        },
+      ],
+      [
+        {
+          event: GA_EVENTS.VIDEO_DESCRIPTION_TOGGLE,
+          event_category: ANALYTICS_CATEGORY.VIDEO_PLAYER,
+          action: "collapse",
+          source: "video_detail",
+        },
+      ],
+    ]);
+    expect(JSON.stringify(toggleCalls)).not.toMatch(/A session/);
+  });
+});
+
+describe("VideoDetail presenters", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPresenters = [];
+    mockDetailState = buildDetailState();
+    mockRecommendationState = { data: { results: [], next: null }, isFetching: false };
+  });
+
+  it("should link each presenter name to search results filtered by that name", () => {
+    mockPresenters = [
+      { user_id: 1, first_name: "Ada", last_name: "Lovelace", email: "ada@arbisoft.com" },
+      { user_id: 2, first_name: "Alan", last_name: "Turing", email: "alan@arbisoft.com" },
+    ];
+    const { getByRole } = render(<VideoDetail />);
+
+    expect(getByRole("link", { name: "Ada Lovelace" })).toHaveAttribute("href", "/videos/results?search=Ada+Lovelace");
+    expect(getByRole("link", { name: "Alan Turing" })).toHaveAttribute("href", "/videos/results?search=Alan+Turing");
+  });
+
+  it("should track a presenter click without reporting any presenter details", () => {
+    mockPresenters = [{ user_id: 1, first_name: "Ada", last_name: "Lovelace", email: "ada@arbisoft.com" }];
+    const { getByRole } = render(<VideoDetail />);
+
+    act(() => {
+      getByRole("link", { name: "Ada Lovelace" }).addEventListener("click", (e) => e.preventDefault());
+      getByRole("link", { name: "Ada Lovelace" }).click();
+    });
+
+    expect(sendGTMEvent).toHaveBeenCalledWith({
+      event: GA_EVENTS.PRESENTER_LINK_CLICK,
+      event_category: ANALYTICS_CATEGORY.SEARCH,
+      source: "video_detail",
+    });
+    expect(JSON.stringify((sendGTMEvent as jest.Mock).mock.calls)).not.toMatch(/ada|lovelace/i);
+  });
+
+  it("should skip presenters without a name and not leave a stray separator", () => {
+    mockPresenters = [
+      { user_id: 3, first_name: "", last_name: "", email: "noname@arbisoft.com" },
+      { user_id: 1, first_name: "Ada", last_name: "Lovelace", email: "ada@arbisoft.com" },
+    ];
+    const { getAllByRole, getByRole } = render(<VideoDetail />);
+
+    expect(getAllByRole("link")).toHaveLength(1);
+    expect(getByRole("link", { name: "Ada Lovelace" }).parentElement).toHaveTextContent(/^Ada Lovelace$/);
+  });
+
+  it("should render the presenter list without React key warnings", () => {
+    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    mockPresenters = [
+      { user_id: 1, first_name: "Ada", last_name: "Lovelace", email: "ada@arbisoft.com" },
+      { user_id: 2, first_name: "Alan", last_name: "Turing", email: "alan@arbisoft.com" },
+    ];
+    render(<VideoDetail />);
+
+    expect(consoleError.mock.calls.flat().join(" ")).not.toMatch(/unique "key" prop/);
+    consoleError.mockRestore();
+  });
+
+  it("should not render any link when there are no presenters", () => {
+    const { queryByRole } = render(<VideoDetail />);
+
+    expect(queryByRole("link")).toBeNull();
   });
 });

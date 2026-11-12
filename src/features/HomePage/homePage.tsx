@@ -5,7 +5,10 @@ import Skeleton from "@mui/material/Skeleton";
 
 const HomePage: FC = () => {
   return (
-    <Box data-testid="home-page" width="100vw" height="100vh" display="flex" justifyContent="center" alignItems="center">
+    <Box
+      data-testid="home-page"
+      sx={{ width: "100vw", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}
+    >
       <Skeleton variant="rectangular" width={450} height={203} sx={{ borderRadius: "12px" }} />
     </Box>
   );

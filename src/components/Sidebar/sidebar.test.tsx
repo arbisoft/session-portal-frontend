@@ -1,9 +1,13 @@
+import { sendGTMEvent } from "@next/third-parties/google";
 import { usePathname, useSearchParams } from "next/navigation";
 
 import useSidebar from "@/hooks/useSidebar";
-import { screen, fireEvent, waitFor, customRender } from "@/jest/utils/testUtils";
+import { screen, fireEvent, waitFor, customRender, within } from "@/jest/utils/testUtils";
+import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
 
 import Sidebar from "./sidebar";
+
+jest.mock("@next/third-parties/google", () => ({ sendGTMEvent: jest.fn() }));
 
 jest.mock("@/hooks/useSidebar", () => ({
   __esModule: true,
@@ -20,6 +24,7 @@ jest.mock("next/navigation", () => ({
 
 const mockNavigateTo = jest.fn();
 jest.mock("@/hooks/useNavigation", () => ({
+  ...jest.requireActual("@/hooks/useNavigation"),
   __esModule: true,
   default: () => ({
     navigateTo: mockNavigateTo,
@@ -85,7 +90,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item);
 
     await waitFor(() => {
-      expect(screen.getByTestId("sidebar-item-All")).toHaveStyle("background-color: transparent");
+      expect(screen.getByTestId("sidebar-item-All")).toHaveClass("Mui-selected");
     });
   });
 
@@ -110,7 +115,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
 
     await waitFor(() => {
-      expect(screen.getByTestId("sidebar-item-Test-2")).toHaveStyle("background-color: transparent");
+      expect(screen.getByTestId("sidebar-item-Test-2")).not.toHaveClass("Mui-selected");
     });
   });
 
@@ -133,7 +138,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item);
 
     await waitFor(() => {
-      expect(screen.getByTestId("sidebar-item-All")).toHaveStyle("background-color: transparent");
+      expect(screen.getByTestId("sidebar-item-All")).toHaveClass("Mui-selected");
     });
   });
 
@@ -145,7 +150,7 @@ describe("Sidebar Component", () => {
     fireEvent.click(item1);
     fireEvent.click(item2);
     await waitFor(() => {
-      expect(item2).toHaveStyle("background-color: transparent");
+      expect(item2).not.toHaveClass("Mui-selected");
     });
   });
 
@@ -168,7 +173,7 @@ describe("Sidebar Component", () => {
     customRender(<Sidebar />);
 
     await waitFor(() => {
-      expect(screen.getAllByRole("link")).toHaveLength(mockItems.length);
+      expect(within(screen.getByTestId("sidebar-tags")).getAllByRole("link")).toHaveLength(mockItems.length);
     });
   });
 
@@ -211,10 +216,10 @@ describe("Sidebar Component", () => {
   });
 
   it("should highlight the selected tag correctly", () => {
-    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams("tag=2"));
+    (useSearchParams as jest.Mock).mockReturnValue(new URLSearchParams("tag=Test-2"));
     customRender(<Sidebar />);
     const selectedTag = screen.getByTestId("sidebar-tags-Test-2");
-    expect(selectedTag).toHaveStyle("background-color: transparent");
+    expect(selectedTag).toHaveClass("MuiChip-filled");
   });
 
   it("should allow clicking on a tag and trigger navigation", () => {
@@ -222,5 +227,152 @@ describe("Sidebar Component", () => {
     const tag = screen.getByTestId("sidebar-tags-Test-1");
     fireEvent.click(tag);
     expect(tag).toHaveAttribute("href", "/videos?tag=Test-1");
+  });
+});
+
+describe("Sidebar Home item filter", () => {
+  const mockPlaylists = [{ id: "1", name: "Test-1" }];
+
+  const mockSearch = (values: Record<string, string>) =>
+    (useSearchParams as jest.Mock).mockReturnValue({ get: jest.fn((key: string) => values[key] ?? null) });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (usePathname as jest.Mock).mockReturnValue("/videos");
+    mockSearch({});
+    (useSidebar as jest.Mock).mockReturnValue({ playlists: mockPlaylists, arePlaylistsLoading: false, tags: [] });
+  });
+
+  const openFilterMenu = () => {
+    fireEvent.click(screen.getByTestId("sidebar-filter-button"));
+    return screen.getByRole("menu", { name: "Filter and sort videos" });
+  };
+
+  it("should label the first sidebar item Home", () => {
+    customRender(<Sidebar />);
+
+    expect(within(screen.getByTestId("sidebar-item-All")).getByText("Home")).toBeInTheDocument();
+    expect(screen.queryByText("All Videos")).not.toBeInTheDocument();
+  });
+
+  it("should keep the filter button outside the Home link and the playlist menu", () => {
+    customRender(<Sidebar />);
+
+    const filterButton = screen.getByTestId("sidebar-filter-button");
+    expect(screen.getByTestId("sidebar-item-All")).not.toContainElement(filterButton);
+    expect(screen.getByRole("menu", { name: "Video playlists" })).not.toContainElement(filterButton);
+  });
+
+  it("should open the sort and filter menu from the filter button", () => {
+    customRender(<Sidebar />);
+    const filterButton = screen.getByTestId("sidebar-filter-button");
+    expect(filterButton).toHaveAttribute("aria-expanded", "false");
+
+    const menu = openFilterMenu();
+
+    expect(filterButton).toHaveAttribute("aria-expanded", "true");
+    expect(within(menu).getByText("Sort By")).toBeInTheDocument();
+    expect(within(menu).getByRole("menuitemradio", { name: "Newest first" })).toHaveAttribute("aria-checked", "true");
+    expect(within(menu).getByText("Filter by")).toBeInTheDocument();
+    expect(within(menu).getByRole("menuitem", { name: "Clear all filters" })).toBeInTheDocument();
+  });
+
+  it("should sort oldest first and keep the current playlist and year", async () => {
+    mockSearch({ playlist: "Test-1", year: "2024" });
+    customRender(<Sidebar />);
+
+    fireEvent.click(within(openFilterMenu()).getByRole("menuitemradio", { name: "Oldest first" }));
+
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { playlist: "Test-1", year: "2024", order: "event_time" });
+    await waitFor(() => expect(screen.queryByRole("menu", { name: "Filter and sort videos" })).not.toBeInTheDocument());
+  });
+
+  it("should filter by the chosen year", () => {
+    customRender(<Sidebar />);
+    const year = String(new Date().getFullYear() - 1);
+
+    fireEvent.click(within(openFilterMenu()).getByRole("menuitemradio", { name: year }));
+
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { year });
+  });
+
+  it("should show the year from the URL as selected", () => {
+    mockSearch({ year: "2023" });
+    customRender(<Sidebar />);
+
+    expect(within(openFilterMenu()).getByRole("menuitemradio", { name: "2023" })).toHaveAttribute("aria-checked", "true");
+  });
+
+  it("should clear sort and year but keep the current view", () => {
+    mockSearch({ tag: "Test-3", order: "event_time", year: "2024" });
+    customRender(<Sidebar />);
+
+    fireEvent.click(within(openFilterMenu()).getByRole("menuitem", { name: "Clear all filters" }));
+
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { tag: "Test-3" });
+  });
+
+  it("should start from the unfiltered Home view when filtering from another page", () => {
+    (usePathname as jest.Mock).mockReturnValue("/videos/my-video");
+    mockSearch({ tag: "Test-3" });
+    customRender(<Sidebar />);
+
+    fireEvent.click(within(openFilterMenu()).getByRole("menuitemradio", { name: "Oldest first" }));
+
+    expect(mockNavigateTo).toHaveBeenCalledWith("videos", { order: "event_time" });
+  });
+
+  it("should not let the filter button click reach a parent that closes the drawer", () => {
+    const onParentClick = jest.fn();
+    customRender(
+      <div onClick={onParentClick}>
+        <Sidebar />
+      </div>
+    );
+
+    fireEvent.click(screen.getByTestId("sidebar-filter-button"));
+
+    expect(onParentClick).not.toHaveBeenCalled();
+    expect(screen.getByRole("menu", { name: "Filter and sort videos" })).toBeInTheDocument();
+  });
+
+  it("should link the filter button to its menu with unique ids", () => {
+    customRender(<Sidebar />);
+    const button = screen.getByTestId("sidebar-filter-button");
+
+    const menu = openFilterMenu();
+
+    expect(menu).toHaveAttribute("aria-labelledby", button.id);
+    const controlledId = button.getAttribute("aria-controls") ?? "";
+    expect(controlledId).not.toBe("");
+    expect(document.querySelectorAll(`[id="${controlledId}"]`)).toHaveLength(1);
+    expect(document.getElementById(controlledId)).toContainElement(menu);
+  });
+
+  it("should not navigate just by opening the menu or rendering the sidebar", () => {
+    customRender(<Sidebar />);
+    openFilterMenu();
+
+    expect(mockNavigateTo).not.toHaveBeenCalled();
+  });
+
+  it("should keep reporting the Home item as the All Videos playlist for continuity of historical data", () => {
+    customRender(<Sidebar />);
+
+    fireEvent.click(screen.getByTestId("sidebar-item-All"));
+
+    expect(sendGTMEvent).toHaveBeenCalledWith({
+      event: GA_EVENTS.SIDEBAR_PLAYLIST_SELECT,
+      event_category: ANALYTICS_CATEGORY.SIDEBAR,
+      playlist: "All Videos",
+    });
+  });
+
+  it("should not report an analytics event just for opening the filter menu", () => {
+    customRender(<Sidebar />);
+
+    openFilterMenu();
+
+    expect(sendGTMEvent).not.toHaveBeenCalled();
   });
 });

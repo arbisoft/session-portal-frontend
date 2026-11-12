@@ -10,6 +10,66 @@ exports[`Sidebar Component should match snapshot 1`] = `
     <div
       class="MuiStack-root css-ujfjh4-MuiStack-root-MenuStack-root"
     >
+      <div
+        class="MuiBox-root css-1fcp6w-HomeRow-root"
+      >
+        <ul
+          class="MuiList-root MuiList-padding css-eyvtph-MuiList-root"
+          role="none"
+          tabindex="-1"
+        >
+          <a
+            aria-current="page"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="sidebar-item-All"
+            href="/videos"
+            role="link"
+            tabindex="0"
+          >
+            <img
+              alt=""
+              aria-hidden="true"
+              data-nimg="1"
+              data-testid="sidebar-item-icon"
+              decoding="async"
+              height="12"
+              loading="lazy"
+              src="/assets/images/sidebar-item-icon.svg"
+              style="color: transparent;"
+              width="18"
+            />
+            <p
+              class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
+              title="Home"
+            >
+              Home
+            </p>
+          </a>
+        </ul>
+        <button
+          aria-expanded="false"
+          aria-haspopup="menu"
+          aria-label="Filter and sort videos"
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-7vlqis-MuiButtonBase-root-MuiIconButton-root"
+          data-testid="sidebar-filter-button"
+          id="_r_2s_-filter-button"
+          tabindex="0"
+          title="Filter and sort"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-4uxqju-MuiSvgIcon-root"
+            data-testid="FilterListIcon"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M10 18h4v-2h-4zM3 6v2h18V6zm3 7h12v-2H6z"
+            />
+          </svg>
+        </button>
+      </div>
       <ul
         aria-label="Video playlists"
         class="MuiList-root MuiList-padding css-zym0s0-MuiList-root"
@@ -17,34 +77,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
         tabindex="-1"
       >
         <a
-          aria-current="page"
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
-          data-testid="sidebar-item-All"
-          href="/videos"
-          role="menuitem"
-          tabindex="0"
-        >
-          <img
-            alt=""
-            aria-hidden="true"
-            data-nimg="1"
-            data-testid="sidebar-item-icon"
-            decoding="async"
-            height="12"
-            loading="lazy"
-            src="/assets/images/sidebar-item-icon.svg"
-            style="color: transparent;"
-            width="18"
-          />
-          <p
-            class="MuiTypography-root MuiTypography-bodySmall css-fmwgzn-MuiTypography-root"
-            title="All Videos"
-          >
-            All Videos
-          </p>
-        </a>
-        <a
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-1"
           href="/videos?playlist=Test-1"
           role="menuitem"
@@ -70,7 +103,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           </p>
         </a>
         <a
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-2"
           href="/videos?playlist=Test-2"
           role="menuitem"
@@ -96,7 +129,7 @@ exports[`Sidebar Component should match snapshot 1`] = `
           </p>
         </a>
         <a
-          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-1p3i3vh-MuiButtonBase-root-MuiMenuItem-root"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters css-1mjdm57-MuiButtonBase-root-MuiMenuItem-root"
           data-testid="sidebar-item-Test-3"
           href="/videos?playlist=Test-3"
           role="menuitem"
@@ -130,42 +163,42 @@ exports[`Sidebar Component should match snapshot 1`] = `
       >
         <a
           aria-current="false"
-          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
+          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable css-ehrr9u-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-1"
           href="/videos?tag=Test-1"
           role="link"
           tabindex="0"
         >
           <span
-            class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+            class="MuiChip-label css-19m61dl-MuiChip-label"
           >
             #Test-1
           </span>
         </a>
         <a
           aria-current="false"
-          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
+          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable css-ehrr9u-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-2"
           href="/videos?tag=Test-2"
           role="link"
           tabindex="0"
         >
           <span
-            class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+            class="MuiChip-label css-19m61dl-MuiChip-label"
           >
             #Test-2
           </span>
         </a>
         <a
           aria-current="false"
-          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable MuiChip-clickableColorDefault MuiChip-outlinedDefault css-i1t60f-MuiButtonBase-root-MuiChip-root"
+          class="MuiButtonBase-root MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-clickable css-ehrr9u-MuiButtonBase-root-MuiChip-root"
           data-testid="sidebar-tags-Test-3"
           href="/videos?tag=Test-3"
           role="link"
           tabindex="0"
         >
           <span
-            class="MuiChip-label MuiChip-labelSmall css-19m61dl-MuiChip-label"
+            class="MuiChip-label css-19m61dl-MuiChip-label"
           >
             #Test-3
           </span>

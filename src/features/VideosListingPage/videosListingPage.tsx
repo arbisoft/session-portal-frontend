@@ -19,21 +19,18 @@ import MainLayoutContainer from "@/components/containers/MainLayoutContainer";
 import EmptyState from "@/components/EmptyState";
 import { FeaturedSlider } from "@/components/FeaturedSlider/featuredSlider";
 import VideoCard from "@/components/VideoCard";
-import useNavigation from "@/hooks/useNavigation";
 import { useVideoQueryManager } from "@/hooks/useVideoQueryManager";
 import { OrderingField } from "@/models/Events";
 import { useGetEventsQuery } from "@/redux/events/apiSlice";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
-import { generateYearList, parseNonPassedParams, transformVideoToCardData } from "@/utils/utils";
+import { transformVideoToCardData } from "@/utils/utils";
 
-import DateFilterDropdown from "./DateFilterDropdown";
 import SkeletonLoader from "./skeletonLoader";
 import { FilterBox, VideoListingContainer } from "./styled";
 import { defaultParams } from "./types";
 
 const VideosListingPage = () => {
   const searchParams = useSearchParams();
-  const { navigateTo } = useNavigation();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
   const { setPage, parsedParams, apiParams, page } = useVideoQueryManager(searchParams);
@@ -63,27 +60,6 @@ const VideosListingPage = () => {
   const { data: featureVideos, isFetching: isFeatureFetching } = useGetEventsQuery(defaultEventParams, {
     skip: shouldSkipFeaturedVideos,
   });
-
-  const onQueryParamChange = (key: "order" | "year", val: unknown) => {
-    navigateTo(
-      "videos",
-      parseNonPassedParams({
-        ...parsedParams,
-        [key]: val,
-      }) as Record<string, string>
-    );
-  };
-
-  const onClearFilterHandler = () => {
-    navigateTo(
-      "videos",
-      parseNonPassedParams({
-        tag: parsedParams.tag ?? undefined,
-        playlist: parsedParams.playlist ?? undefined,
-        search: parsedParams.search ?? undefined,
-      }) as Record<string, string>
-    );
-  };
 
   const getPageTitle = (): string => {
     if (parsedParams.tag) return `#${parsedParams.tag}`;
@@ -185,14 +161,6 @@ const VideosListingPage = () => {
           <Typography variant="h2" sx={{ paddingBottom: { xs: 2 } }}>
             {getPageTitle()}
           </Typography>
-          <DateFilterDropdown
-            availableYears={generateYearList(2020)}
-            initialSort={(parsedParams.order?.startsWith("-") ?? "-") ? "newest" : "oldest"}
-            initialYear={parsedParams.year || undefined}
-            onSortChange={(val) => onQueryParamChange("order", val === "newest" ? "-event_time" : "event_time")}
-            onYearChange={(val) => onQueryParamChange("year", val)}
-            onClear={onClearFilterHandler}
-          />
         </Stack>
       </FilterBox>
 
@@ -219,9 +187,7 @@ const VideosListingPage = () => {
         </>
       )}
 
-      <Box width="100%" paddingBlock={3}>
-        {renderContent()}
-      </Box>
+      <Box sx={{ width: "100%", paddingBlock: 3 }}>{renderContent()}</Box>
     </MainLayoutContainer>
   );
 };

@@ -75,21 +75,21 @@ const ThumbnailField = ({ thumbnail, onChange }: ThumbnailFieldProps) => {
       </ToggleButtonGroup>
 
       {thumbnail && previewUrl ? (
-        <Box display="flex" gap={2} alignItems="center" flexWrap="wrap">
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
           <Box
             component="img"
             src={previewUrl}
             alt="Selected thumbnail preview"
             sx={{ aspectRatio: "16 / 9", borderRadius: 2, maxWidth: 240, objectFit: "cover", width: "100%" }}
           />
-          <Box display="flex" flexDirection="column" gap={1} minWidth={0}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
             <Typography variant="bodySmall" sx={{ overflowWrap: "anywhere" }}>
               {thumbnail.name}
             </Typography>
             <Typography variant="bodySmall" color="textSecondary">
               {formatBytes(thumbnail.size)}
             </Typography>
-            <Box display="flex" gap={1}>
+            <Box sx={{ display: "flex", gap: 1 }}>
               <Button size="small" variant="outlined" onClick={openPicker}>
                 Replace
               </Button>

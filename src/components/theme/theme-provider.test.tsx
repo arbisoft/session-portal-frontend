@@ -1,6 +1,7 @@
 import { createTheme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { render } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 
 import { colors } from "./colors";
 import InitColorSchemeScript from "./init-color-scheme-script";
@@ -92,7 +93,7 @@ describe("ThemeProvider", () => {
       </ThemeProvider>
     );
     expect(container.firstChild).toHaveStyle(`
-      background-color: unset;
+      background-color: rgba(0, 0, 0, 0);
     `);
   });
 
@@ -118,13 +119,13 @@ describe("ThemeProvider", () => {
     expect(theme.palette.mode).toBe("dark");
   });
 
-  it("should ensure background color is unset in global styles", () => {
+  it("should ensure background color is transparent in global styles", () => {
     const { container } = render(
       <ThemeProvider>
         <div>Test</div>
       </ThemeProvider>
     );
-    expect(container.firstChild).toHaveStyle("background-color: unset");
+    expect(container.firstChild).toHaveStyle("background-color: rgba(0, 0, 0, 0)");
   });
 
   it("should set height to 100% for html, body, and __next root", () => {
@@ -194,13 +195,20 @@ describe("InitColorSchemeScript", () => {
     expect(asFragment()).toMatchSnapshot();
   });
 
+  it("should emit the class-based color scheme script on the server render", () => {
+    const html = renderToString(<InitColorSchemeScript />);
+    expect(html).toContain("<script");
+    expect(html).toContain("mui-mode");
+    expect(html).toContain("classList.add");
+  });
+
   it("should render InitColorSchemeScriptMui internally", () => {
     const { container } = render(<InitColorSchemeScript />);
     expect(container.firstChild).toBeDefined();
   });
 
-  it("should not apply unexpected props", () => {
+  it("should not render the script again on client renders (MUI 9 drops it after hydration)", () => {
     const { container } = render(<InitColorSchemeScript />);
-    expect(container.firstChild).not.toHaveAttribute("unexpected-prop");
+    expect(container.querySelector("script")).toBeNull();
   });
 });
