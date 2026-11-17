@@ -89,11 +89,19 @@ describe("EventDateField", () => {
     renderDate({ onSubmit });
     await userEvent.click(screen.getByRole("button", { name: /choose date/i }));
 
-    await userEvent.click(await screen.findByRole("gridcell", { name: "15" }));
+    // The 1st is never in the future, so the test does not depend on the day it runs.
+    await userEvent.click(await screen.findByRole("gridcell", { name: "1" }));
     fireEvent.click(screen.getByRole("button", { name: "submit" }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalled());
-    expect((onSubmit.mock.calls[0][0] as FormValues).event_date.getDate()).toBe(15);
+    expect((onSubmit.mock.calls[0][0] as FormValues).event_date.getDate()).toBe(1);
+  });
+
+  it("should not let the calendar go past the current month", async () => {
+    renderDate();
+    await userEvent.click(screen.getByRole("button", { name: /choose date/i }));
+
+    expect(await screen.findByRole("button", { name: /next month/i })).toBeDisabled();
   });
 
   it("should display the validation message", async () => {

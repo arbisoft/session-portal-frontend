@@ -176,7 +176,7 @@ describe("VideoPicker resumable upload", () => {
     setup({ pendingUpload, onDiscardPending: jest.fn() });
 
     expect(screen.getByRole("status")).toHaveTextContent(
-      "Unfinished upload: big-talk.mp4 (4.0 GB, 25% sent). Select the same file to continue; any other file starts over."
+      "Unfinished upload: big-talk.mp4 (4.0 GB, 25% sent). Select the same file to continue; any other file starts a new upload."
     );
   });
 

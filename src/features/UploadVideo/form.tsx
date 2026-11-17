@@ -12,14 +12,15 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { useNotification } from "@/components/Notification";
-import { TITLE_MAX_LENGTH } from "@/constants/constants";
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from "@/constants/constants";
 import useNavigation from "@/hooks/useNavigation";
-import { Tag } from "@/models/Events";
+import { UnfinishedStatus } from "@/hooks/useVideoUpload";
+import { Tag, UploadSession, UserSearchResult } from "@/models/Events";
 import { useCreateEventMutation, useCreateTagMutation } from "@/redux/events/apiSlice";
 import { StoredUpload } from "@/services/resumableUpload/storage";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { normalizeTagName } from "@/utils/tags";
-import { titleFromFileName, toEventTimestamp } from "@/utils/upload";
+import { isFutureDay, titleFromFileName, toEventTimestamp } from "@/utils/upload";
 
 import { DescriptionField, EventDateField, FormValues, TitleField } from "./fields";
 import LeaveGuardDialog from "./leaveGuardDialog";
@@ -27,7 +28,9 @@ import PublishBar from "./publishBar";
 import { PlaylistsField, PresenterField, TagsField } from "./selectFields";
 import { StyledCard } from "./styled";
 import ThumbnailField from "./thumbnailField";
+import UnfinishedUploads from "./unfinishedUploads";
 import { getPublishStatus, UploadStatusPanel, UploadUi } from "./uploadStatus";
+import { useUploadDraft } from "./useUploadDraft";
 import VideoPicker from "./videoPicker";
 
 const schema = yup
@@ -37,8 +40,16 @@ const schema = yup
       .trim()
       .required("Title is required")
       .max(TITLE_MAX_LENGTH, `Title can be at most ${TITLE_MAX_LENGTH} characters`),
-    event_date: yup.date().typeError("Enter a valid date").required("Session date is required"),
-    description: yup.string().trim().required("Description is required"),
+    event_date: yup
+      .date()
+      .typeError("Enter a valid date")
+      .required("Session date is required")
+      .test("not-in-future", "Session date can't be in the future", (value) => !value || !isFutureDay(value)),
+    description: yup
+      .string()
+      .trim()
+      .required("Description is required")
+      .max(DESCRIPTION_MAX_LENGTH, `Description can be at most ${DESCRIPTION_MAX_LENGTH} characters`),
     presenter_ids: yup.array().of(yup.number().required()).min(1, "At least one presenter is required").default([]),
     playlists: yup.array().of(yup.number().required()).default([]),
     tags: yup.array().default([]),
@@ -53,12 +64,32 @@ type VideoFormProps = {
   /** Unfinished upload from an earlier page load; selecting the same file continues it. */
   pendingUpload?: StoredUpload | null;
   onDiscardPending?: () => void;
+  /** Unfinished uploads on the server (other than the running one), listed above the form. */
+  unfinishedUploads?: UploadSession[];
+  unfinishedStatus?: UnfinishedStatus;
+  /** The user chose the file of an unfinished upload to continue it. */
+  onContinueUnfinished?: (session: UploadSession, file: File) => void;
+  /** Resolves `false` when the upload could not be deleted. */
+  onDeleteUnfinished?: (session: UploadSession) => Promise<boolean>;
 };
 
-const VideoForm = ({ file, upload, onFileSelect, pendingUpload, onDiscardPending }: VideoFormProps) => {
+const NO_UNFINISHED: UploadSession[] = [];
+
+const VideoForm = ({
+  file,
+  upload,
+  onFileSelect,
+  pendingUpload,
+  onDiscardPending,
+  unfinishedUploads = NO_UNFINISHED,
+  unfinishedStatus = "ready",
+  onContinueUnfinished,
+  onDeleteUnfinished,
+}: VideoFormProps) => {
   const { navigateTo } = useNavigation();
   const notification = useNotification();
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [presenters, setPresenters] = useState<UserSearchResult[]>([]);
   const [isQueued, setIsQueued] = useState(false);
   const [hadFile, setHadFile] = useState(false);
   const publishInFlightRef = useRef(false);
@@ -78,6 +109,35 @@ const VideoForm = ({ file, upload, onFileSelect, pendingUpload, onDiscardPending
       tags: [],
     },
   });
+
+  const { clearDraft, restoreVersion } = useUploadDraft({
+    control,
+    getValues,
+    setValue,
+    thumbnail,
+    onRestoreThumbnail: (restored) => setThumbnail((current) => current ?? restored),
+    presenters,
+    onRestorePresenters: setPresenters,
+    file,
+    pendingUpload,
+  });
+
+  const handleDiscardPending = () => {
+    clearDraft();
+    onDiscardPending?.();
+  };
+
+  // The stored upload is shown in the list when the server still holds it. The picker notice stays as the fallback
+  // for one the list does not contain (still finalizing, already finished, or the list could not be loaded).
+  const isPendingListed = !!pendingUpload && unfinishedUploads.some((session) => session.id === pendingUpload.sessionId);
+  const isPendingNoticeHidden = unfinishedStatus === "loading" || isPendingListed;
+  const pendingForPicker = isPendingNoticeHidden ? null : pendingUpload;
+
+  const handleDeleteUnfinished = async (session: UploadSession) => {
+    const removed = (await onDeleteUnfinished?.(session)) ?? false;
+    if (removed && pendingUpload?.sessionId === session.id) clearDraft();
+    return removed;
+  };
 
   const { videoAssetId, phase } = upload;
   const fileName = file?.name;
@@ -128,6 +188,7 @@ const VideoForm = ({ file, upload, onFileSelect, pendingUpload, onDiscardPending
           tags: [...existingTagIds, ...newTagIds],
         }).unwrap();
 
+        clearDraft();
         trackEvent(GA_EVENTS.UPLOAD_PUBLISH_SUCCESS, ANALYTICS_CATEGORY.UPLOAD_VIDEO);
         notification.showNotification({ message: "Session published successfully!", severity: "success" });
         navigateTo("videoDetail", { id: event.slug });
@@ -138,7 +199,7 @@ const VideoForm = ({ file, upload, onFileSelect, pendingUpload, onDiscardPending
         publishInFlightRef.current = false;
       }
     },
-    [createEvent, createTag, thumbnail, notification, navigateTo]
+    [createEvent, createTag, thumbnail, notification, navigateTo, clearDraft]
   );
 
   // Re-reads the form when the upload finishes, so edits made while queued are published, not the values at click time.
@@ -189,55 +250,68 @@ const VideoForm = ({ file, upload, onFileSelect, pendingUpload, onDiscardPending
   const isPublishDisabled = !file || (!videoAssetId && !upload.isActive) || isPublishing || isQueued;
 
   return (
-    <StyledCard>
-      <CardHeader title="Upload Video" slotProps={{ title: { component: "h1" } }} />
+    <>
+      <UnfinishedUploads
+        sessions={unfinishedUploads}
+        isUploadActive={upload.isActive}
+        onContinue={(session, selected) => onContinueUnfinished?.(session, selected)}
+        onDelete={handleDeleteUnfinished}
+      />
+      <StyledCard>
+        <CardHeader title="Upload Video" slotProps={{ title: { component: "h1" } }} />
 
-      <form onSubmit={onSubmit} noValidate>
-        <CardContent>
-          <Grid container spacing={3}>
-            {/* Video first in the DOM and on screen at every width, so tab order matches what is visible. */}
-            <Grid size={{ xs: 12, md: 5 }}>
-              <Typography component="h2" variant="h5" sx={{ fontWeight: 500, mb: 1.5 }}>
-                Video
-              </Typography>
-              {file ? (
-                <UploadStatusPanel file={file} upload={upload} />
-              ) : (
-                <VideoPicker
-                  onFileSelect={onFileSelect}
-                  pendingUpload={pendingUpload}
-                  onDiscardPending={onDiscardPending}
-                  focusOnMount={hadFile}
+        <form onSubmit={onSubmit} noValidate>
+          <CardContent>
+            <Grid container spacing={3}>
+              {/* Video first in the DOM and on screen at every width, so tab order matches what is visible. */}
+              <Grid size={{ xs: 12, md: 5 }}>
+                <Typography component="h2" variant="h5" sx={{ fontWeight: 500, mb: 1.5 }}>
+                  Video
+                </Typography>
+                {file ? (
+                  <UploadStatusPanel file={file} upload={upload} isPublishing={isPublishing} />
+                ) : (
+                  <VideoPicker
+                    onFileSelect={onFileSelect}
+                    pendingUpload={pendingForPicker}
+                    onDiscardPending={handleDiscardPending}
+                    focusOnMount={hadFile}
+                  />
+                )}
+              </Grid>
+
+              <Grid size={{ xs: 12, md: 7 }}>
+                <TitleField control={control} />
+                <PresenterField
+                  key={restoreVersion}
+                  control={control}
+                  initialSelected={presenters}
+                  onSelectedChange={setPresenters}
                 />
-              )}
+                <EventDateField control={control} />
+                <DescriptionField control={control} />
+                <ThumbnailField thumbnail={thumbnail} onChange={setThumbnail} />
+                <PlaylistsField control={control} />
+                <TagsField control={control} />
+              </Grid>
             </Grid>
+          </CardContent>
 
-            <Grid size={{ xs: 12, md: 7 }}>
-              <TitleField control={control} />
-              <PresenterField control={control} />
-              <EventDateField control={control} />
-              <DescriptionField control={control} />
-              <ThumbnailField thumbnail={thumbnail} onChange={setThumbnail} />
-              <PlaylistsField control={control} />
-              <TagsField control={control} />
-            </Grid>
-          </Grid>
-        </CardContent>
+          <CardActions>
+            <PublishBar
+              control={control}
+              status={status}
+              isDisabled={isPublishDisabled}
+              isPublishing={isPublishing}
+              isQueued={isQueued}
+              onCancelQueued={handleCancelQueued}
+            />
+          </CardActions>
+        </form>
 
-        <CardActions>
-          <PublishBar
-            control={control}
-            status={status}
-            isDisabled={isPublishDisabled}
-            isPublishing={isPublishing}
-            isQueued={isQueued}
-            onCancelQueued={handleCancelQueued}
-          />
-        </CardActions>
-      </form>
-
-      <LeaveGuardDialog control={control} hasFile={!!file} />
-    </StyledCard>
+        <LeaveGuardDialog control={control} hasFile={!!file} />
+      </StyledCard>
+    </>
   );
 };
 

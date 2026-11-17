@@ -34,8 +34,12 @@ export class FakeUploadServer implements UploadApi {
   chunkFaults: ChunkFault[] = [];
   statusFaults: Array<UploadApiError | null> = [];
   knownSession = true;
+  /** Set to make `cancelSession` reject, like a server that cannot be reached. */
+  cancelFault: UploadApiError | null = null;
   release: (() => void) | null = null;
   fileSize = 0;
+  /** Fractions of each chunk reported through `onProgress` before the request settles, e.g. [0.5, 1]. */
+  progressSteps: number[] = [];
 
   constructor(private readonly chunkSize = 4) {}
 
@@ -62,6 +66,10 @@ export class FakeUploadServer implements UploadApi {
     return this.describe();
   }
 
+  async listSessions() {
+    return this.knownSession && this.status === "UPLOADING" ? [this.describe()] : [];
+  }
+
   async getSession(sessionId: string) {
     const fault = this.statusFaults.shift();
     if (fault) throw fault;
@@ -74,8 +82,16 @@ export class FakeUploadServer implements UploadApi {
     return this.describe();
   }
 
-  async sendChunk(_sessionId: string, offset: number, chunk: Blob, _checksum: string | undefined, signal: AbortSignal) {
+  async sendChunk(
+    _sessionId: string,
+    offset: number,
+    chunk: Blob,
+    _checksum: string | undefined,
+    signal: AbortSignal,
+    onProgress?: (sentBytes: number) => void
+  ) {
     this.sentOffsets.push(offset);
+    this.progressSteps.forEach((fraction) => onProgress?.(Math.floor(chunk.size * fraction)));
     const fault = this.chunkFaults.shift() ?? "ok";
     if (fault === "network") throw new UploadApiError("network", 0, "network_error");
     if (typeof fault === "object") {
@@ -102,6 +118,7 @@ export class FakeUploadServer implements UploadApi {
   }
 
   async cancelSession(sessionId: string) {
+    if (this.cancelFault) throw this.cancelFault;
     this.cancelled.push(sessionId);
   }
 }

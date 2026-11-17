@@ -189,6 +189,32 @@ describe("MainLayoutContainer", () => {
     });
   });
 
+  test("should show the filter button in the sidebar by default", () => {
+    render(
+      <MainLayoutContainer>
+        <div>Test Content</div>
+      </MainLayoutContainer>
+    );
+
+    expect(screen.getByTestId("sidebar-filter-button")).toBeInTheDocument();
+  });
+
+  test("should hide the filter button but keep playlists and tags when isFilterVisible is false", async () => {
+    render(
+      <MainLayoutContainer shouldShowDrawer isLeftSidebarVisible={false} isFilterVisible={false}>
+        <div>Test Content</div>
+      </MainLayoutContainer>
+    );
+
+    fireEvent.click(screen.getByTestId("open-drawer"));
+
+    await waitFor(() => expect(screen.getByTestId("drawer")).toBeInTheDocument());
+    expect(screen.getByTestId("sidebar-item-All")).toBeInTheDocument();
+    expect(screen.getByTestId("sidebar-item-Test-1")).toBeInTheDocument();
+    expect(screen.getByTestId("sidebar-tags-Test-1")).toBeInTheDocument();
+    expect(screen.queryByTestId("sidebar-filter-button")).not.toBeInTheDocument();
+  });
+
   test("should close the drawer when Escape key is pressed", async () => {
     render(
       <MainLayoutContainer shouldShowDrawer={true}>

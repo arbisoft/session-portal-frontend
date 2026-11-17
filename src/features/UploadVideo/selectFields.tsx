@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Ref, useState } from "react";
+import React, { Ref, useMemo, useState } from "react";
 
 import Autocomplete from "@mui/material/Autocomplete";
 import Chip from "@mui/material/Chip";
@@ -27,8 +27,21 @@ type AutocompleteFieldProps<T> = {
 
 const presenterName = (user: UserSearchResult) => user.full_name || `${user.first_name} ${user.last_name}`.trim();
 
-const PresenterAutocomplete = ({ onChange, onBlur, inputRef, error }: Omit<AutocompleteFieldProps<number[]>, "value">) => {
-  const [selected, setSelected] = useState<UserSearchResult[]>([]);
+type PresenterAutocompleteProps = Omit<AutocompleteFieldProps<number[]>, "value"> & {
+  /** People already chosen when the field mounts (a restored draft). Remount the field to apply a new list. */
+  initialSelected?: UserSearchResult[];
+  onSelectedChange?: (people: UserSearchResult[]) => void;
+};
+
+const PresenterAutocomplete = ({
+  onChange,
+  onBlur,
+  inputRef,
+  error,
+  initialSelected = [],
+  onSelectedChange,
+}: PresenterAutocompleteProps) => {
+  const [selected, setSelected] = useState<UserSearchResult[]>(initialSelected);
   const [presenterQuery, setPresenterQuery] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [searchUsers, { data: userResults = [], isFetching: isSearchingUsers }] = useLazySearchUsersQuery();
@@ -69,6 +82,7 @@ const PresenterAutocomplete = ({ onChange, onBlur, inputRef, error }: Omit<Autoc
       onInputChange={handleInputChange}
       onChange={(_, next) => {
         setSelected(next);
+        onSelectedChange?.(next);
         onChange(next.map((user) => user.id));
       }}
       onBlur={onBlur}
@@ -123,7 +137,9 @@ const PresenterAutocomplete = ({ onChange, onBlur, inputRef, error }: Omit<Autoc
   );
 };
 
-export const PresenterField = ({ control }: FieldProps) => (
+type PresenterFieldProps = FieldProps & Pick<PresenterAutocompleteProps, "initialSelected" | "onSelectedChange">;
+
+export const PresenterField = ({ control, initialSelected, onSelectedChange }: PresenterFieldProps) => (
   <Controller
     name="presenter_ids"
     control={control}
@@ -135,23 +151,27 @@ export const PresenterField = ({ control }: FieldProps) => (
           onBlur={field.onBlur}
           inputRef={field.ref}
           error={fieldState.error?.message}
+          initialSelected={initialSelected}
+          onSelectedChange={onSelectedChange}
         />
       </InputContainer>
     )}
   />
 );
 
-const PlaylistsAutocomplete = ({ onChange, onBlur, inputRef }: Omit<AutocompleteFieldProps<number[]>, "value" | "error">) => {
+const PlaylistsAutocomplete = ({ value, onChange, onBlur, inputRef }: Omit<AutocompleteFieldProps<number[]>, "error">) => {
   const { data: playlists = [] } = usePlaylistsQuery();
+  const selectedPlaylists = useMemo(() => playlists.filter((playlist) => value.includes(playlist.id)), [playlists, value]);
 
   return (
     <Autocomplete
       id="upload-playlists"
       multiple
+      value={selectedPlaylists}
       options={playlists}
       disableCloseOnSelect
       getOptionLabel={(option) => option.name}
-      isOptionEqualToValue={(option, value) => option.id === value.id}
+      isOptionEqualToValue={(option, chosen) => option.id === chosen.id}
       onChange={(_, selected) => onChange(selected.map((p) => p.id))}
       onBlur={onBlur}
       renderOption={(props, option, { selected }) => {
@@ -178,7 +198,7 @@ export const PlaylistsField = ({ control }: FieldProps) => (
         <FieldLabel htmlFor="upload-playlists" optional>
           Playlists
         </FieldLabel>
-        <PlaylistsAutocomplete onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} />
+        <PlaylistsAutocomplete value={field.value ?? []} onChange={field.onChange} onBlur={field.onBlur} inputRef={field.ref} />
       </InputContainer>
     )}
   />

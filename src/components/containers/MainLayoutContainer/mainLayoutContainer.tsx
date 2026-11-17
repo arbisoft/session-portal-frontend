@@ -13,6 +13,7 @@ import { MainContainer, SidebarWidth, LeftSidebar, RightSidebar, ContentContaine
 type TMainLayoutContainer = {
   children: React.ReactNode;
   isLeftSidebarVisible?: boolean;
+  isFilterVisible?: boolean;
   rightSidebar?: ReactNode;
   shouldShowDrawer?: boolean;
   maxWidth?: ContainerOwnProps["maxWidth"];
@@ -22,6 +23,7 @@ const MainLayoutContainer = ({
   children,
   rightSidebar,
   isLeftSidebarVisible = true,
+  isFilterVisible = true,
   shouldShowDrawer = false,
   maxWidth = "xl",
 }: TMainLayoutContainer) => {
@@ -34,7 +36,7 @@ const MainLayoutContainer = ({
       <Navbar onDrawerToggle={toggleDrawer(!open)} shouldShowDrawer={shouldShowDrawer} isDrawerOpen={open} />
       {isLeftSidebarVisible && (
         <LeftSidebar data-testid="left-sidebar">
-          <Sidebar />
+          <Sidebar isFilterVisible={isFilterVisible} />
         </LeftSidebar>
       )}
       <MainContainer maxWidth={maxWidth} isSidebarAvailable={isLeftSidebarVisible}>
@@ -56,7 +58,7 @@ const MainLayoutContainer = ({
                 if (event.key === "Escape") setOpen(false);
               }}
             >
-              <Sidebar />
+              <Sidebar isFilterVisible={isFilterVisible} />
             </Box>
           </StyledDrawer>
         )}

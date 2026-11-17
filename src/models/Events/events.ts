@@ -7,6 +7,8 @@ export interface EventDetail {
   thumbnail: string;
   title: string;
   video_file: string;
+  /** Media type to declare for `video_file`; empty when there is no playable video. */
+  video_type: string;
   view_count: number;
 }
 

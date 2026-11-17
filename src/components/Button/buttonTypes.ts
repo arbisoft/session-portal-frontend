@@ -7,7 +7,8 @@ type PropsToBeOmitted = "color";
 export interface ButtonProps extends Omit<MuiButtonProps, PropsToBeOmitted> {
   buttonType?: "normal" | "icon";
   className?: string;
-  color?: ButtonColor;
+  // "inherit" follows the surrounding text colour; use it where the primary colour has no contrast (dark surfaces).
+  color?: ButtonColor | "inherit";
   isActive?: boolean;
   loading?: boolean;
 }

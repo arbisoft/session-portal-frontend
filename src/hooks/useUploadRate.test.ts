@@ -15,7 +15,7 @@ describe("useUploadRate", () => {
   afterEach(() => jest.restoreAllMocks());
 
   it("should report nothing until enough time has passed", () => {
-    const { result, rerender } = renderHook(({ percent }) => useUploadRate(percent, TOTAL, true), {
+    const { result, rerender } = renderHook(({ percent }) => useUploadRate((percent / 100) * TOTAL, true), {
       initialProps: { percent: 0 },
     });
 
@@ -26,7 +26,7 @@ describe("useUploadRate", () => {
   });
 
   it("should average the speed over the elapsed time", () => {
-    const { result, rerender } = renderHook(({ percent }) => useUploadRate(percent, TOTAL, true), {
+    const { result, rerender } = renderHook(({ percent }) => useUploadRate((percent / 100) * TOTAL, true), {
       initialProps: { percent: 0 },
     });
 
@@ -37,7 +37,7 @@ describe("useUploadRate", () => {
   });
 
   it("should forget the speed when the transfer stops", () => {
-    const { result, rerender } = renderHook(({ active, percent }) => useUploadRate(percent, TOTAL, active), {
+    const { result, rerender } = renderHook(({ active, percent }) => useUploadRate((percent / 100) * TOTAL, active), {
       initialProps: { active: true, percent: 0 },
     });
     now += 10_000;

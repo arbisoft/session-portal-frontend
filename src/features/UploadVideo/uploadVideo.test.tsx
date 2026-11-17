@@ -21,11 +21,15 @@ const defaultUploadState = {
   canPause: false,
   canResume: false,
   canCancel: false,
+  isSessionExpired: false,
   pauseUpload: jest.fn(),
   resumeUpload: jest.fn(),
   cancelUpload: jest.fn(),
   pendingUpload: null as unknown,
   discardPendingUpload: jest.fn(),
+  unfinishedUploads: [] as unknown[],
+  unfinishedStatus: "ready",
+  deleteUnfinishedUpload: jest.fn().mockResolvedValue(true),
 };
 let mockUploadState = defaultUploadState;
 
@@ -40,6 +44,7 @@ jest.mock("react-redux", () => ({
 }));
 
 jest.mock("@/hooks/useNavigation", () => ({
+  ...jest.requireActual("@/hooks/useNavigation"),
   __esModule: true,
   default: () => ({ navigateTo: mockNavigateTo }),
 }));
@@ -65,6 +70,10 @@ jest.mock("./form", () => ({
     pendingUpload: { sessionId: string } | null;
     onFileSelect: (file: File) => void;
     onDiscardPending: () => void;
+    unfinishedUploads: Array<{ id: string }>;
+    unfinishedStatus: string;
+    onContinueUnfinished: (session: { id: string }, file: File) => void;
+    onDeleteUnfinished: (session: { id: string }) => Promise<boolean>;
   }) => (
     <div
       data-testid="video-form"
@@ -76,6 +85,10 @@ jest.mock("./form", () => ({
     >
       <button onClick={() => props.onFileSelect(mockFile)}>select</button>
       <button onClick={props.onDiscardPending}>discard</button>
+      <span data-testid="unfinished">{props.unfinishedUploads.map((session) => session.id).join(",")}</span>
+      <span data-testid="unfinished-status">{props.unfinishedStatus}</span>
+      <button onClick={() => props.onContinueUnfinished({ id: "s9" }, mockFile)}>continue unfinished</button>
+      <button onClick={() => void props.onDeleteUnfinished({ id: "s9" })}>delete unfinished</button>
       <button onClick={props.upload.onPause}>pause</button>
       <button onClick={props.upload.onResume}>resume</button>
       <button onClick={props.upload.onCancel}>cancel</button>
@@ -92,11 +105,65 @@ describe("FileUpload", () => {
     asStaff(true);
   });
 
+  it("should say the session expired and send the user to log in with a way back, not claim a missing permission", () => {
+    mockUploadState = { ...defaultUploadState, phase: "failed", isSessionExpired: true };
+
+    render(<FileUpload />);
+
+    expect(mockNotification.showNotification).toHaveBeenCalledWith({
+      message: "Your session has expired. Please log in again.",
+      severity: "warning",
+    });
+    expect(mockNavigateTo).toHaveBeenCalledWith("login", { redirect_to: "/upload-video" });
+    expect(mockNotification.showNotification).not.toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Only staff members can upload videos" })
+    );
+  });
+
+  it("should report the expired session once, however often the page renders again", () => {
+    mockUploadState = { ...defaultUploadState, phase: "failed", isSessionExpired: true };
+
+    const { rerender } = render(<FileUpload />);
+    rerender(<FileUpload />);
+    rerender(<FileUpload />);
+
+    expect(mockNotification.showNotification).toHaveBeenCalledTimes(1);
+    expect(mockNavigateTo).toHaveBeenCalledTimes(1);
+  });
+
   it("should show the whole form straight away, without a chosen file", () => {
     render(<FileUpload />);
 
     expect(screen.getByTestId("video-form")).toHaveAttribute("data-file", "");
     expect(mockNavigateTo).not.toHaveBeenCalled();
+  });
+
+  it("should pass the unfinished uploads to the form", () => {
+    mockUploadState = { ...defaultUploadState, unfinishedUploads: [{ id: "a" }, { id: "b" }], unfinishedStatus: "ready" };
+
+    render(<FileUpload />);
+
+    expect(screen.getByTestId("unfinished")).toHaveTextContent("a,b");
+    expect(screen.getByTestId("unfinished-status")).toHaveTextContent("ready");
+  });
+
+  it("should continue the chosen session with the selected file instead of creating a new upload", () => {
+    mockUploadState = { ...defaultUploadState };
+
+    render(<FileUpload />);
+    fireEvent.click(screen.getByText("continue unfinished"));
+
+    expect(mockUploadState.startUpload).toHaveBeenCalledWith(mockFile, "s9");
+    expect(screen.getByTestId("video-form")).toHaveAttribute("data-file", "talk.mp4");
+  });
+
+  it("should delete an unfinished upload through the hook by its session id", () => {
+    mockUploadState = { ...defaultUploadState };
+
+    render(<FileUpload />);
+    fireEvent.click(screen.getByText("delete unfinished"));
+
+    expect(mockUploadState.deleteUnfinishedUpload).toHaveBeenCalledWith("s9");
   });
 
   it("should start the upload and pass the file and upload state to the form when a file is selected", () => {

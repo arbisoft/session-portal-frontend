@@ -7,6 +7,8 @@ export const FAILURE_MESSAGES: Record<UploadFailureCode, string> = {
   unauthorized: "Your session has expired. Please log in again.",
   expired: "This upload expired or was cancelled. Select the file again to start a new upload.",
   rejected: "The server rejected this upload. Check the file and try again.",
+  too_many_uploads:
+    "You have too many uploads in progress. Continue or delete an unfinished upload above, then choose your video again.",
   storage_full: "The server is out of storage space. Try again later or contact an administrator.",
   processing_failed: "The video could not be processed. Check that the file is a valid video.",
   verification_failed: "The uploaded file did not pass verification. Select the file to upload it again.",
@@ -24,6 +26,8 @@ const RETRYABLE_FAILURES = new Set<UploadFailureCode>(["storage_full", "unknown"
 // The server session may still be usable, so its stored reference is kept for a later resume.
 export const KEEP_STORED_FAILURES = new Set<UploadFailureCode>(["unauthorized", "storage_full", "unknown"]);
 const VERIFICATION_ERROR_CODES = new Set(["size_mismatch", "checksum_mismatch", "invalid_file_signature"]);
+
+export const SESSION_UNUSABLE = "session_unusable";
 
 export class RunAborted extends Error {}
 export class RetriesExhausted extends Error {}
@@ -47,6 +51,7 @@ export const toFailure = (code: UploadFailureCode): UploadFailure => ({
 export const failureCodeFor = (error: unknown): UploadFailureCode => {
   if (error instanceof SessionFailed) {
     if (error.errorCode === "processing_failed") return "processing_failed";
+    if (error.errorCode === SESSION_UNUSABLE) return "expired";
     return VERIFICATION_ERROR_CODES.has(error.errorCode) ? "verification_failed" : "unknown";
   }
   const outcome = classifyUploadError(toErrorInfo(error));

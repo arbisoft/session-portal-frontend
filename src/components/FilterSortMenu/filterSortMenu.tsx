@@ -1,17 +1,21 @@
+import CheckIcon from "@mui/icons-material/Check";
 import Divider from "@mui/material/Divider";
+import ListItemIcon from "@mui/material/ListItemIcon";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 
+import { SORT_OPTIONS } from "@/constants/sort";
 import { SortOption } from "@/models/Events";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
 import { FilterSortMenuProps } from "./types";
 
-const SORT_OPTIONS: { label: string; value: SortOption }[] = [
-  { label: "Newest first", value: "newest" },
-  { label: "Oldest first", value: "oldest" },
-];
+// Selection must not rely on the theme's subtle highlight alone, so the chosen option also carries a check mark.
+// Unselected options keep an empty slot so the labels stay aligned.
+const SelectionMark = ({ isSelected }: { isSelected: boolean }) => (
+  <ListItemIcon sx={{ minWidth: 28 }}>{isSelected && <CheckIcon fontSize="small" aria-hidden="true" />}</ListItemIcon>
+);
 
 const FilterSortMenu = ({
   anchorEl,
@@ -74,6 +78,7 @@ const FilterSortMenu = ({
           role="menuitemradio"
           aria-checked={sort === value}
         >
+          <SelectionMark isSelected={sort === value} />
           {label}
         </MenuItem>
       ))}
@@ -93,6 +98,7 @@ const FilterSortMenu = ({
           role="menuitemradio"
           aria-checked={year === value}
         >
+          <SelectionMark isSelected={year === value} />
           {label}
         </MenuItem>
       ))}

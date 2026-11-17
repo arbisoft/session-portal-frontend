@@ -52,7 +52,7 @@ const SearchResultsPage = () => {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
 
   const [page, setPage] = useState(1);
-  const search = searchParams?.get("search") ?? "";
+  const search = (searchParams?.get("search") ?? "").trim();
 
   const [getEvents, { data: videoListings, isFetching, isLoading, isUninitialized, isError }] = useLazyGetEventsQuery();
 
