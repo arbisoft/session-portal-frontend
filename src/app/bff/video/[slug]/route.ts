@@ -6,8 +6,8 @@ import { reportHandledError, reportHandledMessage } from "@/utils/monitoring";
 // A <video> element cannot attach the guard header or a Bearer token, so this route (outside the generic BFF proxy)
 // authenticates with the HttpOnly session cookie instead. SameSite=Strict keeps other sites from riding on it.
 const FORWARDED_REQUEST_HEADERS = ["range", "if-range"];
-// Allow-list so nothing the backend adds (cookies, CORS, caching hints) leaks through. content-length is kept:
-// the bytes are passed through untouched and the player needs it for seeking.
+// Allow-list so nothing the backend adds (cookies, CORS, caching hints) leaks through. Next's sendResponse strips
+// content-length from route-handler responses, so a proxy in front of Next has to re-compute it.
 const FORWARDED_RESPONSE_HEADERS = [
   "content-type",
   "content-length",

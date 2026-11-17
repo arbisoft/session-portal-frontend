@@ -63,6 +63,7 @@ Route handlers (not pages; `src/proxy.ts` excludes `/bff/` from its auth redirec
 | --- | --- | --- |
 | `/bff/<path>` | `src/app/bff/[...path]/route.ts` | Generic API proxy: attaches the Bearer token and enforces the guard header |
 | `/bff/video/<slug>` | `src/app/bff/video/[slug]/route.ts` | Cookie-authenticated, Range-aware video stream for the `<video>` element |
+| `/bff/video` | `src/app/bff/video/route.ts` | Empty-slug case: answers `400` `Invalid video` instead of falling through to the generic proxy's `403` |
 
 App-level special files: `src/app/error.tsx` (route error boundary), `src/app/global-error.tsx` (root error boundary), `src/app/not-found.tsx` (404).
 
