@@ -9,6 +9,7 @@ import { REDIRECT_TO_KEY } from "@/constants/constants";
 import useNavigation, { ALLOWED_PAGES } from "@/hooks/useNavigation";
 import { usePreventFileDrop } from "@/hooks/usePreventFileDrop";
 import { useVideoUpload } from "@/hooks/useVideoUpload";
+import { UploadSession } from "@/models/Events";
 import { selectIsStaff } from "@/redux/login/selectors";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
@@ -36,6 +37,9 @@ const FileUpload = () => {
     cancelUpload,
     pendingUpload,
     discardPendingUpload,
+    unfinishedUploads,
+    unfinishedStatus,
+    deleteUnfinishedUpload,
   } = useVideoUpload();
   const isStaff = useSelector(selectIsStaff);
   const { navigateTo } = useNavigation();
@@ -74,6 +78,12 @@ const FileUpload = () => {
     startUpload(file);
   };
 
+  // Continuing attaches to the chosen server session; it never creates a new one.
+  const handleContinueUnfinished = (session: UploadSession, file: File) => {
+    setVideoFile(file);
+    startUpload(file, session.id);
+  };
+
   // Cancelling, removing or starting over returns to the file picker; the form keeps what was typed.
   const handleCancel = () => {
     cancelUpload();
@@ -105,6 +115,10 @@ const FileUpload = () => {
       onFileSelect={handleFileSelect}
       pendingUpload={pendingUpload}
       onDiscardPending={discardPendingUpload}
+      unfinishedUploads={unfinishedUploads}
+      unfinishedStatus={unfinishedStatus}
+      onContinueUnfinished={handleContinueUnfinished}
+      onDeleteUnfinished={(session) => deleteUnfinishedUpload(session.id)}
     />
   );
 };

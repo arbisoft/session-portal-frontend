@@ -25,6 +25,8 @@ export class UploadApiError extends Error {
 
 export interface UploadApi {
   createSession(body: UploadSessionRequest, signal?: AbortSignal): Promise<UploadSession>;
+  /** The caller's unfinished uploads (still uploading, not expired), newest first. */
+  listSessions(signal?: AbortSignal): Promise<UploadSession[]>;
   getSession(sessionId: string, signal?: AbortSignal): Promise<UploadSession>;
   /** `onProgress` receives the bytes of this chunk handed to the network so far, while the request is running. */
   sendChunk(
@@ -148,6 +150,10 @@ export const createUploadApi = (fetchImpl: typeof fetch = (...args) => fetch(...
   return {
     createSession: (body, signal) =>
       sendJson("", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal }),
+    listSessions: async (signal) => {
+      const response = await send("", { method: "GET", signal });
+      return (await response.json()) as UploadSession[];
+    },
     getSession: (sessionId, signal) => sendJson(sessionPath(sessionId), { method: "GET", signal }),
     sendChunk: (sessionId, offset, chunk, checksum, signal, onProgress) => {
       const headers = {

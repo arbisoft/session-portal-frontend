@@ -42,6 +42,10 @@ describe("classifyUploadError", () => {
     [{ kind: "http", status: 404, code: "http_404" }, { kind: "gone" }],
     [{ kind: "http", status: 401, code: "http_401" }, { kind: "unauthorized" }],
     [
+      { kind: "http", status: 409, code: "too_many_active_uploads" },
+      { kind: "fatal", failure: "too_many_uploads" },
+    ],
+    [
       { kind: "http", status: 507, code: "insufficient_storage" },
       { kind: "fatal", failure: "storage_full" },
     ],

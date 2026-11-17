@@ -76,7 +76,7 @@ App-level special files: `src/app/error.tsx` (route error boundary), `src/app/gl
 | `VideosListingPage` | Browsing videos, featured content, filters, virtualized list with infinite loading |
 | `SearchResultsPage` | Search-specific result presentation |
 | `VideoDetail` | Player page with metadata and recommendations |
-| `UploadVideo` | Staff-only single-page upload form: video dropzone / status panel, metadata fields, thumbnail toggle, sticky publish bar (`form.tsx`, `fields.tsx`, `selectFields.tsx`, `thumbnailField.tsx`, `videoPicker.tsx`, `uploadStatus.tsx`, `publishBar.tsx`, `useUploadDraft.ts`) |
+| `UploadVideo` | Staff-only single-page upload form: video dropzone / status panel, metadata fields, thumbnail toggle, sticky publish bar (`form.tsx`, `fields.tsx`, `selectFields.tsx`, `thumbnailField.tsx`, `videoPicker.tsx`, `unfinishedUploads.tsx`, `uploadStatus.tsx`, `publishBar.tsx`, `useUploadDraft.ts`) |
 
 ## Component Organization Pattern
 

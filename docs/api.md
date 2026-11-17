@@ -139,6 +139,7 @@ The upload UI sends the video in chunks through these endpoints, which share the
 | Endpoint | Purpose |
 | --- | --- |
 | `POST /events/videoassets/` | Body `{ filename, file_size, client_key }`. `201` with a new `UploadSession`, or `200` with the existing one when `client_key` is replayed |
+| `GET /events/videoassets/` | The caller's unfinished uploads (`UPLOADING`, not expired), newest first, as an `UploadSession[]`. Drives the "Unfinished uploads" list on the upload page |
 | `GET /events/videoassets/{id}/` | Authoritative status: `offset` (confirmed bytes), `upload_status`, `video_asset_id` once `COMPLETED` |
 | `PATCH /events/videoassets/{id}/` | Append a chunk. Headers `Content-Type: application/offset+octet-stream`, `Upload-Offset`, optional `Upload-Checksum: sha256 <base64>`. Errors carry `{ code, detail, offset? }` |
 | `POST /events/videoassets/{id}/finalize/` | Re-queue server-side finalization (`202`) |

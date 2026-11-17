@@ -364,4 +364,129 @@ describe("VideoForm", () => {
       expect(mockSaveThumbnail).toHaveBeenCalledWith(DRAFT_KEY, null);
     });
   });
+
+  describe("unfinished uploads list", () => {
+    const DRAFT_KEY = `${UPLOAD_DRAFT_KEY}:anonymous`;
+    const listed = {
+      id: "s1",
+      filename: "my_quarterly-talk.mp4",
+      file_size: 100,
+      offset: 40,
+      upload_status: "UPLOADING" as const,
+      error_code: "",
+      video_asset_id: null,
+      expires_at: "2030-01-01T00:00:00Z",
+      chunk_size: 8,
+      max_chunk_size: 16,
+    };
+    const pendingUpload = {
+      sessionId: "s1",
+      fingerprint: { name: "my_quarterly-talk.mp4", size: 100, lastModified: 1 },
+      confirmedBytes: 40,
+      updatedAt: 1,
+    };
+
+    beforeEach(() => {
+      window.localStorage.clear();
+      mockLoadThumbnail.mockReset().mockResolvedValue(null);
+      mockSaveThumbnail.mockReset().mockResolvedValue(undefined);
+    });
+
+    it("should show the unfinished uploads above the form with Continue and Delete", () => {
+      renderForm({ file: undefined, upload: idleUpload, unfinishedUploads: [listed] });
+
+      const list = screen.getByRole("region", { name: "Unfinished uploads" });
+      expect(within(list).getByText("my_quarterly-talk.mp4")).toBeInTheDocument();
+      expect(within(list).getByRole("button", { name: /^Continue upload/ })).toBeInTheDocument();
+      expect(within(list).getByRole("button", { name: /^Delete upload/ })).toBeInTheDocument();
+    });
+
+    it("should not repeat the stored upload in the picker when the list already shows it", () => {
+      renderForm({ file: undefined, upload: idleUpload, unfinishedUploads: [listed], pendingUpload });
+
+      expect(screen.queryByText(/Unfinished upload:/)).not.toBeInTheDocument();
+    });
+
+    it("should still show the picker notice for a stored upload the list does not contain", () => {
+      renderForm({ file: undefined, upload: idleUpload, unfinishedUploads: [], unfinishedStatus: "ready", pendingUpload });
+
+      expect(screen.getByText(/Unfinished upload:/)).toBeInTheDocument();
+    });
+
+    it("should hold back the picker notice while the list is loading so it does not flash", () => {
+      renderForm({ file: undefined, upload: idleUpload, unfinishedStatus: "loading", pendingUpload });
+
+      expect(screen.queryByText(/Unfinished upload:/)).not.toBeInTheDocument();
+    });
+
+    it("should fall back to the picker notice when the list could not be loaded", () => {
+      renderForm({ file: undefined, upload: idleUpload, unfinishedStatus: "error", pendingUpload });
+
+      expect(screen.getByText(/Unfinished upload:/)).toBeInTheDocument();
+    });
+
+    it("should remove the saved details when the stored upload is deleted from the list", async () => {
+      window.localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({
+          title: "Quarterly talk",
+          event_date: "2026-01-10T12:00:00.000Z",
+          description: "d",
+          presenters: [],
+          playlists: [],
+          tags: [],
+        })
+      );
+      const onDeleteUnfinished = jest.fn().mockResolvedValue(true);
+      renderForm({ file: undefined, upload: idleUpload, unfinishedUploads: [listed], pendingUpload, onDeleteUnfinished });
+      await screen.findByDisplayValue("Quarterly talk");
+
+      fireEvent.click(screen.getByRole("button", { name: /^Delete upload of/ }));
+      fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Delete upload" }));
+
+      await waitFor(() => expect(onDeleteUnfinished).toHaveBeenCalledWith(listed));
+      await waitFor(() => expect(window.localStorage.getItem(DRAFT_KEY)).toBeNull());
+    });
+
+    it("should keep the saved details when the upload could not be deleted", async () => {
+      window.localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({
+          title: "Quarterly talk",
+          event_date: "2026-01-10T12:00:00.000Z",
+          description: "d",
+          presenters: [],
+          playlists: [],
+          tags: [],
+        })
+      );
+      const onDeleteUnfinished = jest.fn().mockResolvedValue(false);
+      renderForm({ file: undefined, upload: idleUpload, unfinishedUploads: [listed], pendingUpload, onDeleteUnfinished });
+      await screen.findByDisplayValue("Quarterly talk");
+
+      fireEvent.click(screen.getByRole("button", { name: /^Delete upload of/ }));
+      fireEvent.click(within(await screen.findByRole("dialog")).getByRole("button", { name: "Delete upload" }));
+
+      await waitFor(() => expect(onDeleteUnfinished).toHaveBeenCalled());
+      expect(window.localStorage.getItem(DRAFT_KEY)).not.toBeNull();
+    });
+
+    it("should hand the chosen file and session to the page when continuing", () => {
+      const onContinueUnfinished = jest.fn();
+      const { container } = renderForm({
+        file: undefined,
+        upload: idleUpload,
+        unfinishedUploads: [listed],
+        onContinueUnfinished,
+      });
+      const input = container.querySelector("input[aria-label='Video file to continue']") as HTMLInputElement;
+      const chosen = new File(["x"], "my_quarterly-talk.mp4", { type: "video/mp4" });
+      Object.defineProperty(chosen, "size", { value: 100 });
+
+      fireEvent.click(screen.getByRole("button", { name: /^Continue upload/ }));
+      fireEvent.change(input, { target: { files: [chosen] } });
+
+      expect(onContinueUnfinished).toHaveBeenCalledWith(listed, chosen);
+    });
+  });
 });

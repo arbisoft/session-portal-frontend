@@ -23,6 +23,16 @@ describe("createUploadApi", () => {
     expect(init.cache).toBe("no-store");
   });
 
+  it("should list the unfinished sessions", async () => {
+    fetchImpl.mockResolvedValue(json([session]));
+
+    await expect(api.listSessions()).resolves.toEqual([session]);
+
+    expect(fetchImpl.mock.calls[0][0]).toBe("/bff/events/videoassets");
+    expect(fetchImpl.mock.calls[0][1].method).toBe("GET");
+    expect(fetchImpl.mock.calls[0][1].headers).toMatchObject({ "x-requested-with": "session-portal" });
+  });
+
   it("should query a session by id", async () => {
     fetchImpl.mockResolvedValue(json(session));
 

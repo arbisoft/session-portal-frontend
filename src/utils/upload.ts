@@ -18,6 +18,7 @@ export type UploadFailureCode =
   | "expired"
   | "rejected"
   | "storage_full"
+  | "too_many_uploads"
   | "processing_failed"
   | "verification_failed"
   | "retries_exhausted"
@@ -51,6 +52,7 @@ export const classifyUploadError = ({ kind, status, code }: UploadErrorInfo): Up
   if (TRANSIENT_CODES.has(code)) return { kind: "transient" };
   if (GONE_CODES.has(code) || status === 404 || status === 410) return { kind: "gone" };
   if (status === 401) return { kind: "unauthorized" };
+  if (code === "too_many_active_uploads") return { kind: "fatal", failure: "too_many_uploads" };
   if (code === "insufficient_storage" || status === 507) return { kind: "fatal", failure: "storage_full" };
   if (TRANSIENT_STATUSES.has(status)) return { kind: "transient" };
   return { kind: "fatal", failure: status === 0 ? "unknown" : "rejected" };

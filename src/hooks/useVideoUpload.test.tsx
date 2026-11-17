@@ -1,6 +1,7 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { UploadSession } from "@/models/Events";
 import { StoredUpload } from "@/services/resumableUpload/storage";
 import { UploadEvent, UploadSnapshot } from "@/services/resumableUpload/types";
 import { ANALYTICS_CATEGORY, GA_EVENTS } from "@/utils/analytics";
@@ -29,6 +30,8 @@ type ManagerDeps = {
 
 const mockManagers: Array<Record<string, jest.Mock> & { deps: ManagerDeps }> = [];
 let mockStored: StoredUpload | null = null;
+// null keeps the list request pending, so tests that do not care about the list see no late state updates.
+let mockUnfinished: UploadSession[] | null = null;
 
 jest.mock("@/services/resumableUpload/uploadManager", () => ({
   ...jest.requireActual("@/services/resumableUpload/uploadManager"),
@@ -39,6 +42,10 @@ jest.mock("@/services/resumableUpload/uploadManager", () => ({
     resume = jest.fn();
     cancel = jest.fn().mockResolvedValue(undefined);
     discardStored = jest.fn().mockResolvedValue(undefined);
+    listUnfinished = jest.fn(() =>
+      mockUnfinished ? Promise.resolve(mockUnfinished) : new Promise<UploadSession[]>(() => undefined)
+    );
+    discardSession = jest.fn().mockResolvedValue(true);
     dispose = jest.fn();
     peekStored = jest.fn(() => mockStored);
 
@@ -57,6 +64,7 @@ const snapshot = (overrides: Partial<UploadSnapshot> = {}): UploadSnapshot => ({
   totalBytes: 100,
   percent: 10,
   videoAssetId: null,
+  sessionId: null,
   failure: null,
   notice: null,
   resumed: false,
@@ -71,6 +79,7 @@ describe("useVideoUpload", () => {
   beforeEach(() => {
     mockManagers.length = 0;
     mockStored = null;
+    mockUnfinished = null;
     dispatch.mockClear();
     mockSendGTMEvent.mockClear();
     mockCaptureMessage.mockClear();
@@ -91,7 +100,7 @@ describe("useVideoUpload", () => {
 
     act(() => result.current.startUpload(file));
 
-    expect(manager().start).toHaveBeenCalledWith(file);
+    expect(manager().start).toHaveBeenCalledWith(file, { sessionId: undefined });
   });
 
   it("should scope the stored upload to the signed-in user", () => {
@@ -346,5 +355,149 @@ describe("useVideoUpload", () => {
 
     expect(window.localStorage.getItem("upload-video:session:v1:anonymous")).not.toBeNull();
     window.localStorage.clear();
+  });
+
+  describe("unfinished uploads", () => {
+    const unfinished = (id: string): UploadSession => ({
+      id,
+      filename: `${id}.mp4`,
+      file_size: 100,
+      offset: 40,
+      upload_status: "UPLOADING",
+      error_code: "",
+      video_asset_id: null,
+      expires_at: "2030-01-01T00:00:00Z",
+      chunk_size: 8,
+      max_chunk_size: 16,
+    });
+
+    it("should load the unfinished uploads on mount", async () => {
+      mockUnfinished = [unfinished("a"), unfinished("b")];
+      const { result } = renderHook(() => useVideoUpload());
+      expect(result.current.unfinishedStatus).toBe("loading");
+
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+
+      expect(result.current.unfinishedUploads.map((session) => session.id)).toEqual(["a", "b"]);
+    });
+
+    it("should report an error when the list cannot be loaded and still allow uploading", async () => {
+      mockUnfinished = [];
+      const { result } = renderHook(() => useVideoUpload());
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+      manager().listUnfinished.mockRejectedValueOnce(new Error("offline"));
+
+      act(() =>
+        manager().deps.onChange(snapshot({ phase: "failed", failure: { code: "unknown", message: "x", retryable: true } }))
+      );
+
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("error"));
+    });
+
+    it("should hide the upload that is running on this page from the list", async () => {
+      mockUnfinished = [unfinished("a"), unfinished("b")];
+      const { result } = renderHook(() => useVideoUpload());
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+
+      act(() => manager().deps.onChange(snapshot({ sessionId: "a" })));
+
+      expect(result.current.unfinishedUploads.map((session) => session.id)).toEqual(["b"]);
+    });
+
+    it("should read the list again when an upload fails, so a rejected start shows what is blocking it", async () => {
+      mockUnfinished = [];
+      const { result } = renderHook(() => useVideoUpload());
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+      mockUnfinished = [unfinished("a")];
+
+      act(() =>
+        manager().deps.onChange(
+          snapshot({ phase: "failed", failure: { code: "too_many_uploads", message: "m", retryable: false } })
+        )
+      );
+
+      await waitFor(() => expect(result.current.unfinishedUploads).toHaveLength(1));
+    });
+
+    it("should read the list again only after the server has deleted a cancelled upload", async () => {
+      mockUnfinished = [];
+      const { result } = renderHook(() => useVideoUpload());
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+      const listCalls = manager().listUnfinished.mock.calls.length;
+      let finishCancel: () => void = () => undefined;
+      manager().cancel.mockReturnValueOnce(new Promise<void>((resolve) => (finishCancel = resolve)));
+
+      act(() => {
+        result.current.cancelUpload();
+        manager().deps.onChange(snapshot({ phase: "cancelled" }));
+      });
+      expect(manager().listUnfinished).toHaveBeenCalledTimes(listCalls);
+
+      mockUnfinished = [unfinished("a")];
+      await act(async () => finishCancel());
+
+      await waitFor(() => expect(result.current.unfinishedUploads).toHaveLength(1));
+    });
+
+    it("should ignore a list response that arrives after a newer one", async () => {
+      mockUnfinished = [];
+      const { result } = renderHook(() => useVideoUpload());
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+      let resolveOlder: (sessions: UploadSession[]) => void = () => undefined;
+      manager().listUnfinished.mockReturnValueOnce(new Promise<UploadSession[]>((resolve) => (resolveOlder = resolve)));
+      mockUnfinished = [unfinished("newer")];
+
+      act(() => manager().deps.onChange(snapshot({ phase: "finalizing" })));
+      act(() => manager().deps.onChange(snapshot({ phase: "completed" })));
+      await waitFor(() => expect(result.current.unfinishedUploads.map((session) => session.id)).toEqual(["newer"]));
+      await act(async () => resolveOlder([unfinished("older")]));
+
+      expect(result.current.unfinishedUploads.map((session) => session.id)).toEqual(["newer"]);
+    });
+
+    it("should start the chosen session when continuing", () => {
+      const { result } = renderHook(() => useVideoUpload());
+
+      act(() => result.current.startUpload(file, "a"));
+
+      expect(manager().start).toHaveBeenCalledWith(file, { sessionId: "a" });
+    });
+
+    it("should remove a deleted upload from the list and from the stored upload", async () => {
+      mockUnfinished = [unfinished("a"), unfinished("b")];
+      mockStored = {
+        sessionId: "a",
+        fingerprint: { name: "a.mp4", size: 100, lastModified: 1 },
+        confirmedBytes: 40,
+        updatedAt: 1,
+      };
+      const { result } = renderHook(() => useVideoUpload());
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+
+      let removed = false;
+      await act(async () => {
+        removed = await result.current.deleteUnfinishedUpload("a");
+      });
+
+      expect(removed).toBe(true);
+      expect(manager().discardSession).toHaveBeenCalledWith("a");
+      expect(result.current.unfinishedUploads.map((session) => session.id)).toEqual(["b"]);
+      expect(result.current.pendingUpload).toBeNull();
+    });
+
+    it("should keep the upload listed when the server could not delete it", async () => {
+      mockUnfinished = [unfinished("a")];
+      const { result } = renderHook(() => useVideoUpload());
+      await waitFor(() => expect(result.current.unfinishedStatus).toBe("ready"));
+      manager().discardSession.mockResolvedValueOnce(false);
+
+      let removed = true;
+      await act(async () => {
+        removed = await result.current.deleteUnfinishedUpload("a");
+      });
+
+      expect(removed).toBe(false);
+      expect(result.current.unfinishedUploads).toHaveLength(1);
+    });
   });
 });

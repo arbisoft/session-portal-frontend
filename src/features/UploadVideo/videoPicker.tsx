@@ -9,12 +9,7 @@ import Typography from "@mui/material/Typography";
 
 import Button from "@/components/Button";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import {
-  ALLOWED_TYPES,
-  ALLOWED_VIDEO_EXTENSIONS,
-  MAX_VIDEO_FILE_SIZE_BYTES,
-  MAX_VIDEO_FILE_SIZE_LABEL,
-} from "@/constants/constants";
+import { MAX_VIDEO_FILE_SIZE_BYTES, MAX_VIDEO_FILE_SIZE_LABEL, VIDEO_INPUT_ACCEPT } from "@/constants/constants";
 import { StoredUpload } from "@/services/resumableUpload/storage";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { formatBytes, isAllowedVideoFile, toPercent } from "@/utils/upload";
@@ -36,8 +31,6 @@ const REJECTION_MESSAGES = {
 } as const;
 
 type Rejection = keyof typeof REJECTION_MESSAGES;
-
-const VIDEO_INPUT_ACCEPT = [...ALLOWED_TYPES, ...ALLOWED_VIDEO_EXTENSIONS].join(",");
 
 const VideoPicker: FC<VideoPickerProps> = ({ onFileSelect, pendingUpload, onDiscardPending, focusOnMount = false }) => {
   const [dragOver, setDragOver] = useState(false);
@@ -161,7 +154,7 @@ const VideoPicker: FC<VideoPickerProps> = ({ onFileSelect, pendingUpload, onDisc
         >
           Unfinished upload: {pendingUpload.fingerprint.name} ({formatBytes(pendingUpload.fingerprint.size)},{" "}
           {toPercent(pendingUpload.confirmedBytes, pendingUpload.fingerprint.size)}% sent). Select the same file to continue; any
-          other file starts over.
+          other file starts a new upload.
         </Alert>
       )}
 

@@ -19,6 +19,7 @@ import {
   NOTICES,
   RetriesExhausted,
   RunAborted,
+  SESSION_UNUSABLE,
   SessionFailed,
   toErrorInfo,
   toFailure,
@@ -41,11 +42,14 @@ export const IDLE_SNAPSHOT: UploadSnapshot = {
   sentBytes: 0,
   percent: 0,
   videoAssetId: null,
+  sessionId: null,
   failure: null,
   notice: null,
   resumed: false,
   stalled: false,
 };
+
+export type StartOptions = { sessionId?: string };
 
 export type UploadManagerDeps = {
   api: UploadApi;
@@ -96,8 +100,12 @@ export class UploadManager {
     return this.deps.storage.load();
   }
 
-  /** Begins uploading `file`, continuing the stored session when it is the same file. Replaces a running upload. */
-  start(file: File): Promise<void> {
+  /**
+   * Begins uploading `file`, continuing the stored session when it is the same file. Replaces a running upload.
+   * With `options.sessionId` the upload attaches to that existing server session (an unfinished upload picked from
+   * the list) instead of the stored one, and never creates a new session.
+   */
+  start(file: File, options: StartOptions = {}): Promise<void> {
     this.abortRun();
     this.file = file;
     this.fingerprint = buildFingerprint(file);
@@ -107,7 +115,7 @@ export class UploadManager {
     const controller = new AbortController();
     this.runAbort = controller;
     this.setSnapshot({ ...IDLE_SNAPSHOT, phase: "creating", totalBytes: file.size });
-    return this.execute(file, controller);
+    return this.execute(file, controller, options.sessionId);
   }
 
   pause() {
@@ -157,6 +165,27 @@ export class UploadManager {
     const stored = this.deps.storage.load();
     this.deps.storage.clear();
     if (stored) await this.cancelOnServer(stored.sessionId);
+  }
+
+  /** The caller's unfinished uploads on the server, newest first. */
+  listUnfinished(signal?: AbortSignal): Promise<UploadSession[]> {
+    return this.deps.api.listSessions(signal);
+  }
+
+  /**
+   * Deletes one unfinished upload on the server. If it is the stored or the running one, that reference is dropped
+   * too. Resolves `false` when the server could not be reached, so the caller can keep the entry on screen.
+   */
+  async discardSession(sessionId: string): Promise<boolean> {
+    const removed = await this.cancelOnServer(sessionId);
+    if (!removed) return false;
+    if (this.deps.storage.load()?.sessionId === sessionId) this.deps.storage.clear();
+    if (this.sessionId === sessionId) {
+      this.abortRun();
+      this.sessionId = null;
+      this.setSnapshot({ ...IDLE_SNAPSHOT, phase: "cancelled", totalBytes: this.snapshot.totalBytes });
+    }
+    return true;
   }
 
   /** Stops all work without touching the server, so the session stays resumable (unmount, navigation, reload). */
@@ -213,11 +242,11 @@ export class UploadManager {
     return this.interruptible(signal, (local) => (this.deps.sleep ?? abortableSleep)(ms, local));
   }
 
-  private async execute(file: File, controller: AbortController) {
+  private async execute(file: File, controller: AbortController, resumeSessionId?: string) {
     const { signal } = controller;
     this.loopActive = true;
     try {
-      let current = await this.openSession(file, signal);
+      let current = await this.openSession(file, signal, resumeSessionId);
       for (;;) {
         this.ensureActive(signal);
         if (current.upload_status === "COMPLETED") return this.complete(current);
@@ -233,21 +262,17 @@ export class UploadManager {
     return undefined;
   }
 
-  private async openSession(file: File, signal: AbortSignal): Promise<UploadSession> {
+  private async openSession(file: File, signal: AbortSignal, resumeSessionId?: string): Promise<UploadSession> {
     const fingerprint = this.fingerprint as FileFingerprint;
     const stored = this.deps.storage.load();
 
+    if (resumeSessionId) return this.adopt(await this.attachTo(resumeSessionId, file, signal), file);
+
+    // A stored session for a different file is left alone: it stays in the user's list of unfinished uploads, where
+    // it can be continued or deleted on purpose, instead of being destroyed by starting something else.
     if (stored && fingerprintsMatch(stored.fingerprint, fingerprint)) {
       const existing = await this.reattach(stored, file, signal);
-      if (existing) {
-        this.sessionId = existing.id;
-        this.setSnapshot({ resumed: true, totalBytes: file.size });
-        this.commit(existing.offset);
-        this.emit({ type: "started", resumed: true, sizeBytes: file.size });
-        return existing;
-      }
-    } else if (stored) {
-      void this.cancelOnServer(stored.sessionId);
+      if (existing) return this.adopt(existing, file);
     }
     this.deps.storage.clear();
 
@@ -257,9 +282,28 @@ export class UploadManager {
       signal
     );
     this.sessionId = created.id;
+    this.setSnapshot({ sessionId: created.id });
     this.commit(created.offset);
     this.emit({ type: "started", resumed: false, sizeBytes: file.size });
     return created;
+  }
+
+  // Continues a session the server already holds, from the offset the server reports.
+  private adopt(existing: UploadSession, file: File): UploadSession {
+    this.sessionId = existing.id;
+    this.setSnapshot({ resumed: true, totalBytes: file.size, sessionId: existing.id });
+    this.commit(existing.offset);
+    this.emit({ type: "started", resumed: true, sizeBytes: file.size });
+    return existing;
+  }
+
+  // The session chosen from the unfinished-uploads list. A session that is gone surfaces as an expired failure; one
+  // that cannot take this file is a failure too, because creating a replacement would leave a duplicate behind.
+  private async attachTo(sessionId: string, file: File, signal: AbortSignal): Promise<UploadSession> {
+    const session = await this.withRetry(() => this.deps.api.getSession(sessionId, signal), signal);
+    const isUsable = session.upload_status === "UPLOADING" || session.upload_status === "FINALIZING";
+    if (!isUsable || session.file_size !== file.size) throw new SessionFailed(SESSION_UNUSABLE);
+    return session;
   }
 
   // Resumes a stored session only when the server still knows it and it describes the same file. A session that
@@ -494,17 +538,20 @@ export class UploadManager {
     this.emit({ type: "failed", code });
   }
 
-  private async cancelOnServer(sessionId: string) {
+  // Resolves true once the server no longer holds the session (deleted, or already unknown to it).
+  private async cancelOnServer(sessionId: string): Promise<boolean> {
     for (let attempt = 1; attempt <= CANCEL_ATTEMPTS; attempt += 1) {
       try {
         await this.deps.api.cancelSession(sessionId);
-        return;
+        return true;
       } catch (error) {
+        if (error instanceof UploadApiError && error.status === 404) return true;
         // A chunk that was in flight may still hold the session lock for a moment; anything else will not improve.
         const retryable = error instanceof UploadApiError && error.code === "upload_in_progress";
-        if (!retryable || attempt === CANCEL_ATTEMPTS) return;
+        if (!retryable || attempt === CANCEL_ATTEMPTS) return false;
         await (this.deps.sleep ?? abortableSleep)(CANCEL_RETRY_MS, new AbortController().signal);
       }
     }
+    return false;
   }
 }

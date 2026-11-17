@@ -384,13 +384,13 @@ describe("UploadManager", () => {
       expect(server.created).toBe(1);
     });
 
-    it("should start a new session when the stored one belongs to a different file", async () => {
+    it("should start a new session and leave the stored one for a different file alone", async () => {
       const stored = storedFor(makeFile("other.mp4"), "old-session");
       const { manager } = setup(server, {}, stored);
 
       await manager.start(makeFile());
 
-      expect(server.cancelled).toEqual(["old-session"]);
+      expect(server.cancelled).toEqual([]);
       expect(server.created).toBe(1);
     });
 
@@ -682,6 +682,120 @@ describe("UploadManager", () => {
 
       expect(manager.getSnapshot().phase).toBe("completed");
       expect(server.committed).toEqual(BYTES);
+    });
+
+    describe("unfinished uploads", () => {
+      it("should list the unfinished uploads the server holds", async () => {
+        const { manager } = setup(server);
+        await manager.start(makeFile());
+        server.status = "UPLOADING";
+
+        const sessions = await manager.listUnfinished();
+
+        expect(sessions.map((session) => session.id)).toEqual([server.sessionId]);
+      });
+
+      it("should continue the chosen session from the server offset without creating a new one", async () => {
+        server.fileSize = BYTES.length;
+        server.committed = BYTES.slice(0, 8);
+        const { manager, events } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(server.created).toBe(0);
+        expect(server.sentOffsets[0]).toBe(8);
+        expect(server.committed).toEqual(BYTES);
+        expect(manager.getSnapshot()).toMatchObject({ phase: "completed", resumed: true, sessionId: server.sessionId });
+        expect(events).toContainEqual({ type: "started", resumed: true, sizeBytes: BYTES.length });
+      });
+
+      it("should continue the chosen session even when a different upload is stored", async () => {
+        server.fileSize = BYTES.length;
+        server.committed = BYTES.slice(0, 8);
+        const { manager } = setup(server, {}, storedFor(makeFile("other.mp4"), "other-session"));
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(server.created).toBe(0);
+        expect(server.cancelled).toEqual([]);
+      });
+
+      it("should fail as expired when the chosen session is gone, without creating a replacement", async () => {
+        server.knownSession = false;
+        const { manager } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(manager.getSnapshot().phase).toBe("failed");
+        expect(manager.getSnapshot().failure?.code).toBe("expired");
+        expect(server.created).toBe(0);
+      });
+
+      it("should refuse a file whose size differs from the chosen session", async () => {
+        server.fileSize = BYTES.length + 1;
+        const { manager } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(manager.getSnapshot().phase).toBe("failed");
+        expect(server.created).toBe(0);
+        expect(server.sentOffsets).toEqual([]);
+      });
+
+      it("should fail as expired, not retryable, when the chosen session is no longer uploading", async () => {
+        server.status = "COMPLETED";
+        const { manager } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(manager.getSnapshot().failure).toMatchObject({ code: "expired", retryable: false });
+        expect(server.created).toBe(0);
+      });
+
+      it("should delete an unfinished upload and drop it from storage when it is the stored one", async () => {
+        const { manager, store } = setup(server, {}, storedFor(makeFile(), "left-behind"));
+
+        await expect(manager.discardSession("left-behind")).resolves.toBe(true);
+
+        expect(server.cancelled).toEqual(["left-behind"]);
+        expect(store.state.record).toBeNull();
+      });
+
+      it("should keep the stored reference of another upload when deleting one", async () => {
+        const { manager, store } = setup(server, {}, storedFor(makeFile(), "kept"));
+
+        await manager.discardSession("other");
+
+        expect(store.state.record?.sessionId).toBe("kept");
+      });
+
+      it("should treat a session the server does not know as deleted", async () => {
+        server.cancelFault = new UploadApiError("http", 404, "http_404");
+        const { manager } = setup(server);
+
+        await expect(manager.discardSession("unknown")).resolves.toBe(true);
+      });
+
+      it("should report a failed deletion and keep the stored reference", async () => {
+        server.cancelFault = new UploadApiError("network", 0, "network_error");
+        const { manager, store } = setup(server, {}, storedFor(makeFile(), "left-behind"));
+
+        await expect(manager.discardSession("left-behind")).resolves.toBe(false);
+
+        expect(store.state.record?.sessionId).toBe("left-behind");
+      });
+
+      it("should stop and reset the running upload when its own session is deleted", async () => {
+        server.chunkFaults = ["hold"];
+        const { manager } = setup(server);
+        const running = manager.start(makeFile());
+        await waitUntil(() => server.release !== null);
+
+        await manager.discardSession(server.sessionId);
+        await running;
+
+        expect(manager.getSnapshot()).toMatchObject({ phase: "cancelled", sessionId: null });
+      });
     });
 
     it("should stop notifying once disposed", async () => {

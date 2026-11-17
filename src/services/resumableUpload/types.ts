@@ -22,6 +22,8 @@ export type UploadSnapshot = {
   /** `sentBytes` as a whole percent. At most 99 until the server has confirmed everything; 100 while finalizing. */
   percent: number;
   videoAssetId: number | null;
+  /** Server session this upload is attached to, once it has one. */
+  sessionId: string | null;
   failure: UploadFailure | null;
   /** Why the transfer is interrupted or waiting, for display. */
   notice: string | null;

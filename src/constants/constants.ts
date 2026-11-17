@@ -17,6 +17,7 @@ export const DEFAULT_LANGUAGE_DIR = "ltr";
 export const ALLOWED_TYPES = ["video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"];
 // Some browsers/OSes report an empty MIME type for valid videos (e.g. .mov), so the extension is the fallback.
 export const ALLOWED_VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".webm"];
+export const VIDEO_INPUT_ACCEPT = [...ALLOWED_TYPES, ...ALLOWED_VIDEO_EXTENSIONS].join(",");
 export const THUMBNAIL_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const THUMBNAIL_MAX_BYTES = 5 * 1024 ** 2;
 export const THUMBNAIL_MAX_LABEL = "5MB";

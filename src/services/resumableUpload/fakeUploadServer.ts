@@ -34,6 +34,8 @@ export class FakeUploadServer implements UploadApi {
   chunkFaults: ChunkFault[] = [];
   statusFaults: Array<UploadApiError | null> = [];
   knownSession = true;
+  /** Set to make `cancelSession` reject, like a server that cannot be reached. */
+  cancelFault: UploadApiError | null = null;
   release: (() => void) | null = null;
   fileSize = 0;
   /** Fractions of each chunk reported through `onProgress` before the request settles, e.g. [0.5, 1]. */
@@ -62,6 +64,10 @@ export class FakeUploadServer implements UploadApi {
     this.fileSize = body.file_size;
     this.knownSession = true;
     return this.describe();
+  }
+
+  async listSessions() {
+    return this.knownSession && this.status === "UPLOADING" ? [this.describe()] : [];
   }
 
   async getSession(sessionId: string) {
@@ -112,6 +118,7 @@ export class FakeUploadServer implements UploadApi {
   }
 
   async cancelSession(sessionId: string) {
+    if (this.cancelFault) throw this.cancelFault;
     this.cancelled.push(sessionId);
   }
 }
