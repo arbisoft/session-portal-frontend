@@ -69,8 +69,16 @@ jest.mock("@/hooks/useNavigation", () => ({
 
 jest.mock("@/components/containers/MainLayoutContainer", () => ({
   __esModule: true,
-  default: ({ children, rightSidebar }: { children: React.ReactNode; rightSidebar: React.ReactNode }) => (
-    <div>
+  default: ({
+    children,
+    rightSidebar,
+    isFilterVisible,
+  }: {
+    children: React.ReactNode;
+    rightSidebar: React.ReactNode;
+    isFilterVisible?: boolean;
+  }) => (
+    <div data-testid="layout" data-filter-visible={String(isFilterVisible)}>
       {children}
       {rightSidebar}
     </div>
@@ -146,6 +154,12 @@ describe("VideoDetail", () => {
     mockVideoId = "my-video";
     mockDetailState = buildDetailState();
     mockRecommendationState = { data: { results: [], next: null }, isFetching: false };
+  });
+
+  it("should hide the sidebar sort and filter on the video page", () => {
+    const { getByTestId } = render(<VideoDetail />);
+
+    expect(getByTestId("layout")).toHaveAttribute("data-filter-visible", "false");
   });
 
   describe("view count analytics", () => {

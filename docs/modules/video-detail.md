@@ -62,6 +62,7 @@ This runs after every render where `title` changes, including the initial empty 
 `MainLayoutContainer` receives:
 
 - `isLeftSidebarVisible={false}` — no tag/playlist sidebar; more space for content
+- `isFilterVisible={false}` — the drawer's sort/filter button is hidden (no list to filter); Home, playlists and tags stay as navigation links
 - `shouldShowDrawer={true}` — hamburger drawer available on all screen sizes
 - `rightSidebar={<Virtuoso recommendations list />}` — recommendations are injected into the right sidebar slot, hidden on mobile (`xs: none, md: block`)
 

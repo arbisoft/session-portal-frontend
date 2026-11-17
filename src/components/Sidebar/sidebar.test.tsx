@@ -255,6 +255,20 @@ describe("Sidebar Home item filter", () => {
     expect(screen.queryByText("All Videos")).not.toBeInTheDocument();
   });
 
+  it("should hide the filter button and keep the navigation links when isFilterVisible is false", () => {
+    (useSidebar as jest.Mock).mockReturnValue({
+      playlists: mockPlaylists,
+      arePlaylistsLoading: false,
+      tags: [{ id: "9", name: "ai" }],
+    });
+    customRender(<Sidebar isFilterVisible={false} />);
+
+    expect(screen.queryByTestId("sidebar-filter-button")).not.toBeInTheDocument();
+    expect(screen.getByTestId("sidebar-item-All")).toBeInTheDocument();
+    expect(screen.getByTestId("sidebar-item-Test-1")).toBeInTheDocument();
+    expect(screen.getByTestId("sidebar-tags-ai")).toBeInTheDocument();
+  });
+
   it("should keep the filter button outside the Home link and the playlist menu", () => {
     customRender(<Sidebar />);
 

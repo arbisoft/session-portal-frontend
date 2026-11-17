@@ -50,7 +50,7 @@ Used as the top navigation bar. Based on surrounding code and tests/stories, it 
 
 ### `Sidebar`
 
-Used for left-side navigation and drawer rendering. The first item is **Home** (links to `/videos`; it used to be labeled "All Videos"). Next to it sits a filter button (`aria-label="Filter and sort videos"`) that opens `FilterSortMenu`; the button is a sibling of the Home link, not inside it, and is not part of the playlist `role="menu"`. The Home link sits in a presentational `MenuList` (`role="none"`) because MUI 9 `MenuItem`s must be inside a `MenuList`. Playlists and tags follow.
+Used for left-side navigation and drawer rendering. The first item is **Home** (links to `/videos`; it used to be labeled "All Videos"). Next to it sits a filter button (`aria-label="Filter and sort videos"`) that opens `FilterSortMenu`; the button is a sibling of the Home link, not inside it, and is not part of the playlist `role="menu"`. The `isFilterVisible` prop (default `true`, also on `MainLayoutContainer`) removes the button and the menu; the video page sets it to `false` because it has no list to sort or filter, so choosing an option would only navigate away from the video. Playlists and tags stay as links there. The Home link sits in a presentational `MenuList` (`role="none"`) because MUI 9 `MenuItem`s must be inside a `MenuList`. Playlists and tags follow.
 
 ### `FilterSortMenu`
 

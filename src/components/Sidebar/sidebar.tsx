@@ -18,6 +18,7 @@ import useVideoFilters from "@/hooks/useVideoFilters";
 import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 
 import { HomeMenuList, HomeRow, StyledMenuItem, MenuStack, SidebarContainer, TagsContainer, Text } from "./styled";
+import { SidebarProps } from "./types";
 
 const loadingTags: string[] = new Array(10).fill("").map(() => faker.lorem.words(1));
 
@@ -25,7 +26,7 @@ const HOME_LABEL = "Home";
 // Kept as the analytics value so historical sidebar_playlist_select data stays comparable after the rename.
 const HOME_ANALYTICS_LABEL = "All Videos";
 
-const Sidebar = () => {
+const Sidebar = ({ isFilterVisible = true }: SidebarProps) => {
   const searchParams = useSearchParams();
   const { arePlaylistsLoading, tags, playlists } = useSidebar();
   const { availableYears, clearFilters, setSort, setYear, sort, year } = useVideoFilters();
@@ -70,36 +71,40 @@ const Sidebar = () => {
             </StyledMenuItem>
           </HomeMenuList>
 
-          <IconButton
-            id={filterButtonId}
-            data-testid="sidebar-filter-button"
-            aria-label="Filter and sort videos"
-            aria-haspopup="menu"
-            aria-expanded={isFilterMenuOpen}
-            aria-controls={isFilterMenuOpen ? filterMenuId : undefined}
-            title="Filter and sort"
-            onClick={(event) => {
-              // The drawer closes on any click inside it; opening the menu must not unmount the sidebar that owns it.
-              event.stopPropagation();
-              setFilterAnchor(event.currentTarget);
-            }}
-          >
-            <FilterListIcon aria-hidden="true" />
-          </IconButton>
+          {isFilterVisible && (
+            <IconButton
+              id={filterButtonId}
+              data-testid="sidebar-filter-button"
+              aria-label="Filter and sort videos"
+              aria-haspopup="menu"
+              aria-expanded={isFilterMenuOpen}
+              aria-controls={isFilterMenuOpen ? filterMenuId : undefined}
+              title="Filter and sort"
+              onClick={(event) => {
+                // The drawer closes on any click inside it; opening the menu must not unmount the sidebar that owns it.
+                event.stopPropagation();
+                setFilterAnchor(event.currentTarget);
+              }}
+            >
+              <FilterListIcon aria-hidden="true" />
+            </IconButton>
+          )}
         </HomeRow>
 
-        <FilterSortMenu
-          anchorEl={filterAnchor}
-          availableYears={availableYears}
-          id={filterMenuId}
-          labelledBy={filterButtonId}
-          sort={sort}
-          year={year}
-          onClose={() => setFilterAnchor(null)}
-          onSortChange={setSort}
-          onYearChange={setYear}
-          onClear={clearFilters}
-        />
+        {isFilterVisible && (
+          <FilterSortMenu
+            anchorEl={filterAnchor}
+            availableYears={availableYears}
+            id={filterMenuId}
+            labelledBy={filterButtonId}
+            sort={sort}
+            year={year}
+            onClose={() => setFilterAnchor(null)}
+            onSortChange={setSort}
+            onYearChange={setYear}
+            onClear={clearFilters}
+          />
+        )}
 
         {arePlaylistsLoading ? (
           <MenuList aria-busy="true" aria-label="Loading playlists" data-testid="loading">

@@ -87,6 +87,8 @@ const VideoDetail = () => {
   return (
     <MainLayoutContainer
       isLeftSidebarVisible={false}
+      // There is no list on a video page, so sort/filter would only navigate away from the video.
+      isFilterVisible={false}
       shouldShowDrawer
       rightSidebar={
         <Box sx={{ pr: 1 }} data-testid="recommendation-card">
