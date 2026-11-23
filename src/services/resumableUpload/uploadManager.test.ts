@@ -110,6 +110,68 @@ describe("UploadManager", () => {
       expect(snapshots[snapshots.length - 1].phase).toBe("completed");
     });
 
+    describe("progress while a chunk is being sent", () => {
+      const tickingClock = () => {
+        let time = 0;
+        return () => {
+          time += 1000;
+          return time;
+        };
+      };
+
+      it("should rise inside a single chunk instead of staying at 0 until it completes", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [0.25, 0.5, 0.75, 1];
+        const { manager, snapshots } = setup(server, { now: tickingClock() });
+
+        await manager.start(makeFile());
+
+        const duringChunk = snapshots.filter(
+          (snapshot) => snapshot.phase === "uploading" && snapshot.confirmedBytes === 0 && snapshot.sentBytes > 0
+        );
+        expect(duringChunk.map((snapshot) => snapshot.sentBytes)).toEqual(expect.arrayContaining([5, 11, 16]));
+        expect(new Set(duringChunk.map((snapshot) => snapshot.percent)).size).toBeGreaterThan(2);
+        expect(snapshots[snapshots.length - 1]).toMatchObject({ phase: "completed", percent: 100, sentBytes: BYTES.length });
+      });
+
+      it("should not reach 100% until the server has confirmed the bytes", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [1];
+        const { manager, snapshots } = setup(server, { now: tickingClock() });
+
+        await manager.start(makeFile());
+
+        const unconfirmed = snapshots.filter((snapshot) => snapshot.phase === "uploading" && snapshot.confirmedBytes === 0);
+        expect(Math.max(...unconfirmed.map((snapshot) => snapshot.percent))).toBe(99);
+        expect(Math.max(...unconfirmed.map((snapshot) => snapshot.sentBytes))).toBe(BYTES.length);
+      });
+
+      it("should fall back to the confirmed position when a chunk fails", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [0.5];
+        server.chunkFaults = [{ http: 503 }];
+        const { manager, snapshots } = setup(server, { now: tickingClock() });
+
+        await manager.start(makeFile());
+
+        const ahead = snapshots.findIndex((snapshot) => snapshot.phase === "uploading" && snapshot.sentBytes > 0);
+        expect(ahead).toBeGreaterThan(-1);
+        const after = snapshots.slice(ahead + 1).find((snapshot) => snapshot.sentBytes === 0);
+        expect(after).toMatchObject({ confirmedBytes: 0, percent: 0 });
+      });
+
+      it("should not report faster than the screen needs", async () => {
+        server = new FakeUploadServer(64);
+        server.progressSteps = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+        const { manager, snapshots } = setup(server, { now: () => 5000 });
+
+        await manager.start(makeFile());
+
+        const midChunk = snapshots.filter((snapshot) => snapshot.phase === "uploading" && snapshot.sentBytes > 0);
+        expect(midChunk.length).toBeLessThanOrEqual(2);
+      });
+    });
+
     it("should persist the confirmed position after every chunk", async () => {
       const { manager, store } = setup(server);
       const saved: number[] = [];
@@ -282,13 +344,53 @@ describe("UploadManager", () => {
       expect(second.manager.getSnapshot()).toMatchObject({ phase: "completed", resumed: true });
     });
 
-    it("should start a new session when the stored one belongs to a different file", async () => {
+    it("should reuse a session that finished while the page was reloading instead of uploading again", async () => {
+      const file = makeFile();
+      server.fileSize = file.size;
+      server.committed = [...BYTES];
+      server.status = "COMPLETED";
+      const { manager, store, events } = setup(server, {}, storedFor(file, server.sessionId));
+
+      await manager.start(file);
+
+      expect(server.created).toBe(0);
+      expect(server.sentOffsets).toEqual([]);
+      expect(server.cancelled).toEqual([]);
+      expect(manager.getSnapshot()).toMatchObject({ phase: "completed", videoAssetId: 42, percent: 100, resumed: true });
+      expect(events[0]).toEqual({ type: "started", resumed: true, sizeBytes: BYTES.length });
+      expect(store.state.record).toBeNull();
+    });
+
+    it("should still start a new session when the finished one has no video any more", async () => {
+      const file = makeFile();
+      server.fileSize = file.size;
+      server.status = "COMPLETED";
+      jest.spyOn(server, "getSession").mockResolvedValueOnce({
+        id: server.sessionId,
+        filename: "talk.mp4",
+        file_size: file.size,
+        offset: file.size,
+        upload_status: "COMPLETED",
+        error_code: "",
+        video_asset_id: null,
+        expires_at: "2030-01-01T00:00:00Z",
+        chunk_size: 4,
+        max_chunk_size: 8,
+      });
+      const { manager } = setup(server, {}, storedFor(file, server.sessionId));
+
+      await manager.start(file);
+
+      expect(server.created).toBe(1);
+    });
+
+    it("should start a new session and leave the stored one for a different file alone", async () => {
       const stored = storedFor(makeFile("other.mp4"), "old-session");
       const { manager } = setup(server, {}, stored);
 
       await manager.start(makeFile());
 
-      expect(server.cancelled).toEqual(["old-session"]);
+      expect(server.cancelled).toEqual([]);
       expect(server.created).toBe(1);
     });
 
@@ -494,6 +596,17 @@ describe("UploadManager", () => {
       expect(manager.getSnapshot().phase).toBe("cancelled");
     });
 
+    it("should delete the finished video on the server when it is removed after completing", async () => {
+      const { manager } = setup(server);
+      await manager.start(makeFile());
+      expect(manager.getSnapshot().phase).toBe("completed");
+
+      await manager.cancel();
+
+      expect(server.cancelled).toEqual([server.sessionId]);
+      expect(manager.getSnapshot().phase).toBe("cancelled");
+    });
+
     it("should not ask the server to cancel once the file is finalizing", async () => {
       server.pollsUntilComplete = 50;
       const { manager } = setup(server);
@@ -569,6 +682,120 @@ describe("UploadManager", () => {
 
       expect(manager.getSnapshot().phase).toBe("completed");
       expect(server.committed).toEqual(BYTES);
+    });
+
+    describe("unfinished uploads", () => {
+      it("should list the unfinished uploads the server holds", async () => {
+        const { manager } = setup(server);
+        await manager.start(makeFile());
+        server.status = "UPLOADING";
+
+        const sessions = await manager.listUnfinished();
+
+        expect(sessions.map((session) => session.id)).toEqual([server.sessionId]);
+      });
+
+      it("should continue the chosen session from the server offset without creating a new one", async () => {
+        server.fileSize = BYTES.length;
+        server.committed = BYTES.slice(0, 8);
+        const { manager, events } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(server.created).toBe(0);
+        expect(server.sentOffsets[0]).toBe(8);
+        expect(server.committed).toEqual(BYTES);
+        expect(manager.getSnapshot()).toMatchObject({ phase: "completed", resumed: true, sessionId: server.sessionId });
+        expect(events).toContainEqual({ type: "started", resumed: true, sizeBytes: BYTES.length });
+      });
+
+      it("should continue the chosen session even when a different upload is stored", async () => {
+        server.fileSize = BYTES.length;
+        server.committed = BYTES.slice(0, 8);
+        const { manager } = setup(server, {}, storedFor(makeFile("other.mp4"), "other-session"));
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(server.created).toBe(0);
+        expect(server.cancelled).toEqual([]);
+      });
+
+      it("should fail as expired when the chosen session is gone, without creating a replacement", async () => {
+        server.knownSession = false;
+        const { manager } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(manager.getSnapshot().phase).toBe("failed");
+        expect(manager.getSnapshot().failure?.code).toBe("expired");
+        expect(server.created).toBe(0);
+      });
+
+      it("should refuse a file whose size differs from the chosen session", async () => {
+        server.fileSize = BYTES.length + 1;
+        const { manager } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(manager.getSnapshot().phase).toBe("failed");
+        expect(server.created).toBe(0);
+        expect(server.sentOffsets).toEqual([]);
+      });
+
+      it("should fail as expired, not retryable, when the chosen session is no longer uploading", async () => {
+        server.status = "COMPLETED";
+        const { manager } = setup(server);
+
+        await manager.start(makeFile(), { sessionId: server.sessionId });
+
+        expect(manager.getSnapshot().failure).toMatchObject({ code: "expired", retryable: false });
+        expect(server.created).toBe(0);
+      });
+
+      it("should delete an unfinished upload and drop it from storage when it is the stored one", async () => {
+        const { manager, store } = setup(server, {}, storedFor(makeFile(), "left-behind"));
+
+        await expect(manager.discardSession("left-behind")).resolves.toBe(true);
+
+        expect(server.cancelled).toEqual(["left-behind"]);
+        expect(store.state.record).toBeNull();
+      });
+
+      it("should keep the stored reference of another upload when deleting one", async () => {
+        const { manager, store } = setup(server, {}, storedFor(makeFile(), "kept"));
+
+        await manager.discardSession("other");
+
+        expect(store.state.record?.sessionId).toBe("kept");
+      });
+
+      it("should treat a session the server does not know as deleted", async () => {
+        server.cancelFault = new UploadApiError("http", 404, "http_404");
+        const { manager } = setup(server);
+
+        await expect(manager.discardSession("unknown")).resolves.toBe(true);
+      });
+
+      it("should report a failed deletion and keep the stored reference", async () => {
+        server.cancelFault = new UploadApiError("network", 0, "network_error");
+        const { manager, store } = setup(server, {}, storedFor(makeFile(), "left-behind"));
+
+        await expect(manager.discardSession("left-behind")).resolves.toBe(false);
+
+        expect(store.state.record?.sessionId).toBe("left-behind");
+      });
+
+      it("should stop and reset the running upload when its own session is deleted", async () => {
+        server.chunkFaults = ["hold"];
+        const { manager } = setup(server);
+        const running = manager.start(makeFile());
+        await waitUntil(() => server.release !== null);
+
+        await manager.discardSession(server.sessionId);
+        await running;
+
+        expect(manager.getSnapshot()).toMatchObject({ phase: "cancelled", sessionId: null });
+      });
     });
 
     it("should stop notifying once disposed", async () => {

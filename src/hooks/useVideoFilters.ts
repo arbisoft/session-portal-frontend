@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import { usePathname, useSearchParams } from "next/navigation";
 
+import { DEFAULT_SORT } from "@/constants/sort";
 import { SortOption } from "@/models/Events";
 import { generateYearList, parseNonPassedParams } from "@/utils/utils";
 
@@ -28,7 +29,7 @@ const useVideoFilters = () => {
   const order = (isOnListing && searchParams?.get("order")) || null;
   const year = (isOnListing && searchParams?.get("year")) || undefined;
   const isOldestFirst = order !== null && !order.startsWith("-");
-  const sort: SortOption = isOldestFirst ? "oldest" : "newest";
+  const sort: SortOption = isOldestFirst ? "oldest" : DEFAULT_SORT;
 
   const pick = (keys: readonly string[]) =>
     isOnListing ? Object.fromEntries(keys.map((key) => [key, searchParams?.get(key) ?? undefined])) : {};
@@ -45,7 +46,11 @@ const useVideoFilters = () => {
 
   const clearFilters = () => navigateTo("videos", parseNonPassedParams(pick(VIEW_PARAMS)) as Record<string, string>);
 
-  return { availableYears, clearFilters, setSort, setYear, sort, year };
+  const clearYear = () => navigateWith({ year: undefined });
+
+  const clearSort = () => navigateWith({ order: undefined });
+
+  return { availableYears, clearFilters, clearSort, clearYear, setSort, setYear, sort, year };
 };
 
 export default useVideoFilters;

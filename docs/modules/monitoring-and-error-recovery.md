@@ -19,6 +19,7 @@ Reports runtime errors and performance data to Sentry, shows fallback UI when re
 | Stale-chunk recovery                        | `src/utils/chunkLoadRecovery.ts`                              |
 | `window.location` wrappers (mockable)       | `src/utils/browserLocation.ts`                                |
 | API proxy error capture                     | `src/app/bff/[...path]/route.ts`                              |
+| Video stream proxy error capture            | `src/app/bff/video/[slug]/route.ts`                           |
 | Unparseable API response capture            | `src/redux/customBaseQuery.ts`                                |
 | Unexpected upload failure capture           | `src/hooks/useVideoUpload.ts`                                 |
 | Reporting helpers and request scrubber      | `src/utils/monitoring.ts`                                     |
@@ -51,6 +52,7 @@ Errors that the code catches and turns into a response or a toast never reach `o
 With the default `dataCollection`, the SDK attaches the incoming request to server events. `sentry.server.config.ts` and `sentry.edge.config.ts` therefore pass `scrubRequestData` as both `beforeSend` and `beforeSendTransaction` (traces carry the same request data). Both configs also set `traceLifecycle: "static"`, because the Sentry 11 default (`"stream"`) ignores `beforeSendTransaction` and would skip the scrubbing for traces. The scrubber drops the `Cookie` / `Authorization` headers (the BFF request carries the HttpOnly access token), parsed cookies, the query string and the request body.
 
 - **BFF proxy** (`src/app/bff/[...path]/route.ts`, via the `monitoring.ts` helpers): a failed upstream `fetch` is captured as an exception before the proxy returns `502`, and any upstream `5xx` is captured as a message (`method`, `path` and `status` only). Because both RTK Query calls and XHR uploads go through the proxy, this is the single place that sees backend `5xx` responses.
+- **Video stream route** (`src/app/bff/video/[slug]/route.ts`): a failed upstream `fetch` is captured as an exception (source `bff_video_stream`, `slug` only) before the route returns `502`, and any upstream `5xx` is captured as a message with the `slug` and `status`. A request aborted by the browser (seeking, navigation) is not reported; the route answers `499`.
 - **`customBaseQuery`**: a `PARSING_ERROR` (for example an HTML error page from a gateway in front of the app) is captured with the endpoint path. Ordinary `4xx` and `5xx` statuses are not captured here, to avoid duplicating the proxy report.
 - **`useVideoUpload`**: an upload that ends with an unknown failure or fails the backend's file verification is captured as "Resumable video upload failed" with the failure code only. Connection problems, expiry, rejection and `401` are expected outcomes and are not captured.
 
@@ -76,6 +78,6 @@ A tab opened before a deploy may request a chunk hash the server no longer has. 
 
 ## Tests
 
-`src/instrumentation.test.ts`, `src/instrumentation-client.test.ts`, `src/instrumentation-client.production.test.ts`, `src/app/error.test.tsx`, `src/utils/chunkLoadRecovery.test.ts`, `src/utils/monitoring.test.ts`, and the capture assertions in `src/app/bff/[...path]/route.test.ts`, `src/redux/customBaseQuery.test.ts` and `src/hooks/useVideoUpload.test.tsx`. `global-error.tsx` and `not-found.tsx` have no dedicated test file.
+`src/instrumentation.test.ts`, `src/instrumentation-client.test.ts`, `src/instrumentation-client.production.test.ts`, `src/app/error.test.tsx`, `src/utils/chunkLoadRecovery.test.ts`, `src/utils/monitoring.test.ts`, and the capture assertions in `src/app/bff/[...path]/route.test.ts`, `src/app/bff/video/[slug]/route.test.ts`, `src/redux/customBaseQuery.test.ts` and `src/hooks/useVideoUpload.test.tsx`. `global-error.tsx` and `not-found.tsx` have no dedicated test file.
 
 Tests for the reload path mock `@/utils/browserLocation` (`reloadPage`) because `window.location` is not redefinable under jsdom 30; see [testing-guide.md](../testing-guide.md).

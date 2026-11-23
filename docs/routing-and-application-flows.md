@@ -85,9 +85,11 @@ Recognized search params:
 
 ## Search Results Flow
 
+The route's `page.tsx` redirects to `/videos` when `search` is missing, empty or whitespace-only, so the results page never renders with a blank term.
+
 `SearchResultsPage`:
 
-- reads `search` from query params
+- reads and trims `search` from query params
 - requests paginated results with `page_size: 10`
 - uses `Virtuoso` for incremental rendering
 - renders a no-results state when data is absent or error occurs
@@ -112,7 +114,7 @@ Recognized search params:
 The upload route (`/upload-video`) is available to authenticated staff users only. `FileUpload` reads `selectIsStaff` and redirects everyone else to `/videos`; the Navbar menu entry is gated the same way. There is no feature flag.
 
 - `FileUpload` always renders `VideoForm`: the whole form is visible from the start and the file picker (`VideoPicker`) or the upload status panel (`UploadStatusPanel`) is its "Video" section, depending on whether a file is chosen
-- Selecting a file starts the upload immediately (`useVideoUpload`: resumable chunks through the BFF proxy; pause, resume and cancel are offered while it runs). Cancelling returns to the picker and keeps what was typed
+- Selecting a file starts the upload immediately (`useVideoUpload`: resumable chunks through the BFF proxy; pause, resume and cancel are offered while it runs; unfinished uploads from earlier visits are listed above the form with Continue and Delete). Cancelling returns to the picker and keeps what was typed
 - `VideoForm` collects: title, presenters, session date, description, thumbnail, playlists, tags. Submitting before the upload finishes queues the publish (it can be cancelled) until the video asset id is available
 - While a video is chosen or the form is edited, leaving the page asks for confirmation (`useLeaveGuard`)
 - Publishing calls `createEvent` (creating new tags first via `createTag`), then navigates to the new video detail page

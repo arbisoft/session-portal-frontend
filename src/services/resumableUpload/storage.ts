@@ -1,3 +1,4 @@
+import { createJsonStorage, JsonStorage, KeyValueStore } from "@/services/jsonStorage";
 import { FileFingerprint } from "@/utils/upload";
 
 // Only what is needed to find the server session again. The file itself cannot be stored: after a reload the user
@@ -9,13 +10,7 @@ export type StoredUpload = {
   updatedAt: number;
 };
 
-export interface UploadStorage {
-  load(): StoredUpload | null;
-  save(record: StoredUpload): void;
-  clear(): void;
-}
-
-type KeyValueStore = Pick<Storage, "getItem" | "setItem" | "removeItem">;
+export type UploadStorage = JsonStorage<StoredUpload>;
 
 const isStoredUpload = (value: unknown): value is StoredUpload => {
   const record = value as StoredUpload | null;
@@ -29,40 +24,5 @@ const isStoredUpload = (value: unknown): value is StoredUpload => {
   );
 };
 
-// Storage can be missing, full or blocked (private windows, site-data settings), so every access is guarded and the
-// upload still works without it, only without surviving a reload.
-export const createUploadStorage = (key: string, store?: KeyValueStore): UploadStorage => {
-  const resolve = (): KeyValueStore | null => {
-    try {
-      return store ?? window.localStorage;
-    } catch {
-      return null;
-    }
-  };
-
-  return {
-    load() {
-      try {
-        const raw = resolve()?.getItem(key);
-        const parsed: unknown = raw ? JSON.parse(raw) : null;
-        return isStoredUpload(parsed) ? parsed : null;
-      } catch {
-        return null;
-      }
-    },
-    save(record) {
-      try {
-        resolve()?.setItem(key, JSON.stringify(record));
-      } catch {
-        // Persistence is best effort.
-      }
-    },
-    clear() {
-      try {
-        resolve()?.removeItem(key);
-      } catch {
-        // Persistence is best effort.
-      }
-    },
-  };
-};
+export const createUploadStorage = (key: string, store?: KeyValueStore): UploadStorage =>
+  createJsonStorage(key, isStoredUpload, store);

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 
 // Shorter samples are too noisy to turn into a speed or time estimate.
-const MIN_SAMPLE_SECONDS = 3;
+const MIN_SAMPLE_SECONDS = 2;
 
-type Baseline = { time: number; percent: number };
+type Baseline = { time: number; sentBytes: number };
 
 /**
  * Average transfer speed (bytes/second) since the transfer last started or resumed, or null while there is not
- * enough data. Progress only moves in whole percents, so the estimate is a running average rather than an instant rate.
+ * enough data. It is a running average rather than an instant rate, so it settles instead of jumping.
  */
-export const useUploadRate = (percent: number, totalBytes: number, isTransferring: boolean): number | null => {
+export const useUploadRate = (sentBytes: number, isTransferring: boolean): number | null => {
   const baseline = useRef<Baseline | null>(null);
   const [bytesPerSecond, setBytesPerSecond] = useState<number | null>(null);
 
@@ -21,13 +21,13 @@ export const useUploadRate = (percent: number, totalBytes: number, isTransferrin
     }
     const now = Date.now();
     if (!baseline.current) {
-      baseline.current = { time: now, percent };
+      baseline.current = { time: now, sentBytes };
       return;
     }
     const elapsedSeconds = (now - baseline.current.time) / 1000;
-    const sentBytes = ((percent - baseline.current.percent) / 100) * totalBytes;
-    if (elapsedSeconds >= MIN_SAMPLE_SECONDS && sentBytes > 0) setBytesPerSecond(sentBytes / elapsedSeconds);
-  }, [percent, totalBytes, isTransferring]);
+    const transferred = sentBytes - baseline.current.sentBytes;
+    if (elapsedSeconds >= MIN_SAMPLE_SECONDS && transferred > 0) setBytesPerSecond(transferred / elapsedSeconds);
+  }, [sentBytes, isTransferring]);
 
   return bytesPerSecond;
 };

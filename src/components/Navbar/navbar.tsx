@@ -46,6 +46,8 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
   const isDarkModeVisible = isFeatureEnabled("darkModeSwitcher");
 
   const userInfo = useSelector(selectUserInfo);
+  // Shown whenever there is no picture (none stored, or it did not load), instead of the anonymous person icon.
+  const avatarInitial = (userInfo.full_name || userInfo.first_name)?.toString().trim().charAt(0).toUpperCase() || undefined;
   const isStaff = useSelector(selectIsStaff);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -196,7 +198,9 @@ function Navbar({ onDrawerToggle, shouldShowDrawer, isDrawerOpen = false }: Navb
                 aria-haspopup="true"
                 aria-expanded={Boolean(anchorElUser)}
               >
-                <Avatar variant="rounded" alt={userInfo.full_name?.toString()} src={userInfo.avatar?.toString()} />
+                <Avatar variant="rounded" alt={userInfo.full_name?.toString()} src={userInfo.avatar?.toString()}>
+                  {avatarInitial}
+                </Avatar>
               </IconButton>
             </Tooltip>
             <Menu

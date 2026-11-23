@@ -7,5 +7,6 @@ export const StyledSliderContainer = styled(Box, {
   () => css`
     width: 100%;
     position: relative;
+    margin-top: 20px;
   `
 );

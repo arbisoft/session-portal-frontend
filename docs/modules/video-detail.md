@@ -62,6 +62,7 @@ This runs after every render where `title` changes, including the initial empty 
 `MainLayoutContainer` receives:
 
 - `isLeftSidebarVisible={false}` — no tag/playlist sidebar; more space for content
+- `isFilterVisible={false}` — the drawer's sort/filter button is hidden (no list to filter); Home, playlists and tags stay as navigation links
 - `shouldShowDrawer={true}` — hamburger drawer available on all screen sizes
 - `rightSidebar={<Virtuoso recommendations list />}` — recommendations are injected into the right sidebar slot, hidden on mobile (`xs: none, md: block`)
 
@@ -89,14 +90,14 @@ Page starts at 1, increments on scroll. The `page` state lives in the component,
 
 `VideoPlayer` receives:
 
-- `videoSrc`: `data.video_file` (direct file URL from backend)
+- `videoSrc`: `getVideoStreamUrl(data.event.slug)` → `/bff/video/<slug>`, a same-origin, cookie-authenticated stream. The backend's `video_file` is an API path used only as a "has a video" flag; the video file itself is never referenced by URL, so a copied link does not play outside a logged-in session. The player passes it to Vidstack as `{ src, type }` with `type` taken from the backend's `video_type` for this video (the URL has no extension to infer the format from). The player maps it to Vidstack's spelling (`video/x-msvideo` becomes `video/avi`) and falls back to `video/mp4` when it is empty, missing or not recognised. Newly uploaded videos are always MP4; older WebM files report `video/webm`. Captions are the exception: `captionsFile` still points at the backend URL.
 - `posterSrc`: `data.thumbnail` or `DEFAULT_THUMBNAIL` fallback
 - `posterAlt`: the event title
 - `crossOrigin: true`, `playsInline: true`
 - `captionsFile`: `data.captions_file` (optional)
 - `onWatchThreshold`: records a view (see below)
 
-The player is only rendered when `data.video_file` is truthy. If the backend returns no video file, the player is omitted silently. The player is keyed by `video_file`, so navigating to a recommended video remounts it and resets the watch-time counters.
+The player is only rendered when `data.video_file` is truthy and the event has a slug. If the backend returns no video file, the player is omitted silently. The player is keyed by the event slug, so navigating to a recommended video remounts it and resets the watch-time counters.
 
 ### Captions
 

@@ -16,6 +16,8 @@ import { ANALYTICS_CATEGORY, GA_EVENTS, trackEvent } from "@/utils/analytics";
 import { ImageWrapper, VideoCardContainer } from "./styled";
 import { VideoCardProps } from "./types";
 
+const ABSOLUTE_URL_PATTERN = /^https?:\/\//i;
+
 const VideoCard: FC<VideoCardProps> = ({
   className,
   data,
@@ -26,6 +28,7 @@ const VideoCard: FC<VideoCardProps> = ({
   href,
 }) => {
   const { mode } = useColorScheme();
+  const thumbnailSrc = data.thumbnail || DEFAULT_THUMBNAIL;
 
   const headingVariant: Record<typeof variant, TypographyProps["variant"]> = {
     "featured-card": "h1",
@@ -83,7 +86,9 @@ const VideoCard: FC<VideoCardProps> = ({
             alt={data.title}
             height={196}
             width={315}
-            src={data.thumbnail || DEFAULT_THUMBNAIL}
+            src={thumbnailSrc}
+            // The Next optimizer refuses hosts that resolve to a private IP (400), which leaves cards showing alt text.
+            unoptimized={ABSOLUTE_URL_PATTERN.test(thumbnailSrc)}
             loading="lazy"
             placeholder="blur"
             blurDataURL={BLUR_DATA_URI}

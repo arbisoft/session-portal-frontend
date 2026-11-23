@@ -69,6 +69,7 @@ Current test suite includes unit tests for:
 
 - Utility functions (`src/utils/utils.ts`)
 - Proxy authentication (`src/proxy.ts`)
+- BFF route handlers (`src/app/bff/[...path]/route.test.ts`, `src/app/bff/video/[slug]/route.test.ts`, `src/app/bff/video/route.test.ts`)
 - Session verification (`src/features/AuthSession`): protected vs public routes, `401` redirect, kept session on 5xx/network errors, aborted in-flight verification, single request under React StrictMode, re-verification on rapid navigation
 - Feature pages: HomePage, LoginPage, VideosListingPage, SearchResultsPage, VideoDetail
 - Redux slices and API integrations
@@ -118,7 +119,7 @@ Examples found in the repository include:
 - `src/components/Sidebar/sidebar.test.tsx`
 - `src/components/ThemeToggle/themeToggle.test.tsx`
 - `src/components/Button/button.test.tsx`
-- `src/features/UploadVideo/form.test.tsx`, `form.analytics.test.tsx`, `fields.test.tsx`, `selectFields.test.tsx`, `videoPicker.test.tsx`, `uploadVideo.test.tsx`
+- `src/features/UploadVideo/form.test.tsx`, `form.analytics.test.tsx`, `fields.test.tsx`, `selectFields.test.tsx`, `videoPicker.test.tsx`, `unfinishedUploads.test.tsx`, `uploadVideo.test.tsx`
 - `src/features/VideoDetail/videoDetail.test.tsx`
 
 ### Mocking conventions used by the feature tests

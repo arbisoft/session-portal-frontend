@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 
-import { BASE_URL, DEFAULT_THUMBNAIL, PUBLIC_ROUTES } from "@/constants/constants";
+import { API_PROXY_PREFIX, BASE_URL, DEFAULT_THUMBNAIL, PUBLIC_ROUTES } from "@/constants/constants";
 import { Event } from "@/models/Events";
 
 export function formatDateTime(event_time: string) {
@@ -59,6 +59,9 @@ export const getQueryValue = (key?: string | string[]) => {
   const value = Array.isArray(key) ? key[0] : key;
   return value ?? "";
 };
+
+// The <video> element cannot send the proxy guard header, so it plays from a same-origin, cookie-authenticated route.
+export const getVideoStreamUrl = (slug: string) => `${API_PROXY_PREFIX}/video/${encodeURIComponent(slug)}`;
 
 export const transformVideoToCardData = (video: Event) => ({
   event_time: formatDateTime(video.event_time),
