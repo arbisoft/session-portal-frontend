@@ -207,8 +207,4 @@ The skill must:
 
 # Self-Healing This Skill
 
-This SKILL.md cites specific paths and conventions (`src/app/`, `src/features/`, `src/components/`, `src/redux/`, `src/hooks/`, `src/models/`, `src/proxy.ts`, the `ASP-NN` ticket prefix, the categorization table in Step 3). Don't treat it as permanently accurate:
-
-- If a run surfaces a cited path that no longer exists, a layer that's been restructured, or a categorization row that no longer fits how the codebase is organized, that's a stale skill, not a one-off exception.
-- Patch this SKILL.md in the same pass — add or fix the relevant row/example — rather than leaving the correction for a future run to rediscover.
-- Only fix what you actually observed drifting during this run; don't speculatively rewrite sections you didn't touch.
+Follow `.claude/references/self-healing.md`. Skill-specific: the categorization table in Step 3 and the `ASP-NN` ticket prefix cite `src/` layers and paths. If a run shows a path or layer that no longer fits, add or fix the row in the same pass.

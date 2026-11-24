@@ -33,6 +33,10 @@ Configured tools found:
 - Prettier integration through ESLint plugin
 - TypeScript strict mode
 
+### Claude Code configuration audit
+
+`node .claude/scripts/config-audit.mjs` (no install needed; `--json`, `--stamp` and `--update-state` options) checks `CLAUDE.md`, `.claude/agents`, `.claude/skills` and the Stop hook for drift. See `docs/contributing-notes.md`, "Claude Code Configuration".
+
 ### Commit hygiene
 
 Configured tools found:
